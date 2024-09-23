@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HairSalonBE.API", "XuongMayBE.API\HairSalonBE.API.csproj", "{E86CB317-3B91-4F7F-B8C7-78F489F55322}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HairSalonBE.API", "HairSalonBE.API\HairSalonBE.API.csproj", "{E86CB317-3B91-4F7F-B8C7-78F489F55322}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1.SERVER", "1.SERVER", "{9691541A-5338-4A03-B235-FFDEC3B3C1FF}"
 EndProject
@@ -13,17 +13,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3.REPOSITORY", "3.REPOSITOR
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4.CORE", "4.CORE", "{12CE3619-4469-4C83-B47E-E32520DAF33D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HairSalon.Core", "XuongMay.Core\HairSalon.Core.csproj", "{3227B95A-7DD4-4A86-BA2A-9976468AB18F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HairSalon.Core", "HairSalon.Core\HairSalon.Core.csproj", "{3227B95A-7DD4-4A86-BA2A-9976468AB18F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HairSalon.Repositories", "XuongMay.Repositories\HairSalon.Repositories.csproj", "{A165021E-D517-4F3C-B51D-95E9EB60B968}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HairSalon.Repositories", "HairSalon.Repositories\HairSalon.Repositories.csproj", "{A165021E-D517-4F3C-B51D-95E9EB60B968}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HairSalon.Contract.Repositories", "XuongMay.Contract.Repositories\HairSalon.Contract.Repositories.csproj", "{3D04F4D4-0E02-4849-97A9-9E1D386B3B8A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HairSalon.Contract.Repositories", "HairSalon.Contract.Repositories\HairSalon.Contract.Repositories.csproj", "{3D04F4D4-0E02-4849-97A9-9E1D386B3B8A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HairSalon.Services", "XuongMay.Services\HairSalon.Services.csproj", "{F04B3A27-AE75-4661-B298-CE69F6717865}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HairSalon.Services", "HairSalon.Services\HairSalon.Services.csproj", "{F04B3A27-AE75-4661-B298-CE69F6717865}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HairSalon.Contract.Services", "XuongMay.Contract.Services\HairSalon.Contract.Services.csproj", "{C35A33FC-8BB0-4027-9094-4DAB48AC3513}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HairSalon.Contract.Services", "HairSalon.Contract.Services\HairSalon.Contract.Services.csproj", "{C35A33FC-8BB0-4027-9094-4DAB48AC3513}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HairSalon.ModelViews", "XuongMay.ModelViews\HairSalon.ModelViews.csproj", "{FBAA5C63-0D97-469D-A24D-212E029657C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HairSalon.ModelViews", "HairSalon.ModelViews\HairSalon.ModelViews.csproj", "{FBAA5C63-0D97-469D-A24D-212E029657C8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
