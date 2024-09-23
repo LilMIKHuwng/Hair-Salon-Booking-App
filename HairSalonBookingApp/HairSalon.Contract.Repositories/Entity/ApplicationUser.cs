@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
-using XuongMay.Contract.Repositories.Entity;
-using XuongMay.Core.Utils;
+﻿using HairSalon.Contract.Repositories.Entity;
+using HairSalon.Core.Utils;
+using Microsoft.AspNetCore.Identity;
 
-namespace XuongMay.Repositories.Entity
+namespace HairSalon.Repositories.Entity
 {
     public class ApplicationUser : IdentityUser<Guid>
     {

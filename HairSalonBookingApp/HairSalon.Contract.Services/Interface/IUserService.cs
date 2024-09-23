@@ -1,6 +1,6 @@
-﻿using XuongMay.ModelViews.UserModelViews;
+﻿using HairSalon.ModelViews.UserModelViews;
 
-namespace XuongMay.Contract.Services.Interface
+namespace HairSalon.Contract.Services.Interface
 {
     public interface IUserService
     {

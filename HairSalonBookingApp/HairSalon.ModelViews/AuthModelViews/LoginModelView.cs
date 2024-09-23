@@ -1,4 +1,4 @@
-﻿namespace XuongMay.ModelViews.AuthModelViews
+﻿namespace HairSalon.ModelViews.AuthModelViews
 {
     public class LoginModelView
     {

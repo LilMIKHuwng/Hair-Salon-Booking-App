@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\XuongMay.Contract.Services\HairSalon.Contract.Services.csproj" />
+    <ProjectReference Include="..\HairSalon.Contract.Services\HairSalon.Contract.Services.csproj" />
   </ItemGroup>
 
 </Project>

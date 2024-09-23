@@ -1,6 +1,6 @@
-﻿using XuongMay.Core.Constants;
+﻿using HairSalon.Core.Constants;
 
-namespace XuongMay.Core.Base
+namespace HairSalon.Core.Base
 {
     public class BaseException : Exception
     {

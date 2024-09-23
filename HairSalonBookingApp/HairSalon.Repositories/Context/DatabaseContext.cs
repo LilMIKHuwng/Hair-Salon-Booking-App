@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using XuongMay.Contract.Repositories.Entity;
-using XuongMay.Repositories.Entity;
+using HairSalon.Contract.Repositories.Entity;
+using HairSalon.Repositories.Entity;
 
-namespace XuongMay.Repositories.Context
+namespace HairSalon.Repositories.Context
 {
     public class DatabaseContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid, ApplicationUserClaims, ApplicationUserRoles, ApplicationUserLogins, ApplicationRoleClaims, ApplicationUserTokens>
     {

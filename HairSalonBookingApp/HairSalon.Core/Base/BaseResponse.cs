@@ -1,7 +1,7 @@
-﻿using XuongMay.Core.Constants;
-using XuongMay.Core.Utils;
+﻿using HairSalon.Core.Constants;
+using HairSalon.Core.Utils;
 
-namespace XuongMay.Core.Base
+namespace HairSalon.Core.Base
 {
     public class BaseResponse<T>
     {

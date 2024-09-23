@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using XuongMay.Core.Utils;
+﻿using HairSalon.Core.Utils;
+using System.ComponentModel.DataAnnotations;
 
-namespace XuongMay.Core.Base
+namespace HairSalon.Core.Base
 {
     public abstract class BaseEntity
     {

@@ -1,4 +1,4 @@
-using XuongMayBE.API;
+using HairSalonBE.API;
 
 var builder = WebApplication.CreateBuilder(args);
 

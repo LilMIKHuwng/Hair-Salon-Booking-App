@@ -22,8 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\XuongMay.Contract.Repositories\HairSalon.Contract.Repositories.csproj" />
-    <ProjectReference Include="..\XuongMay.ModelViews\HairSalon.ModelViews.csproj" />
+    <ProjectReference Include="..\HairSalon.Contract.Repositories\HairSalon.Contract.Repositories.csproj" />
+    <ProjectReference Include="..\HairSalon.ModelViews\HairSalon.ModelViews.csproj" />
   </ItemGroup>
 
 </Project>

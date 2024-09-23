@@ -1,4 +1,4 @@
-﻿namespace XuongMay.Core.Utils
+﻿namespace HairSalon.Core.Utils
 {
     public static class TimeHelper
     {

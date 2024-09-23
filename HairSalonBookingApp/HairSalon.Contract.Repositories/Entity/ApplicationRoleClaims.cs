@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
-using XuongMay.Core.Utils;
+﻿using HairSalon.Core.Utils;
+using Microsoft.AspNetCore.Identity;
 
-namespace XuongMay.Contract.Repositories.Entity
+namespace HairSalon.Contract.Repositories.Entity
 {
     public class ApplicationRoleClaims : IdentityRoleClaim<Guid>
     {

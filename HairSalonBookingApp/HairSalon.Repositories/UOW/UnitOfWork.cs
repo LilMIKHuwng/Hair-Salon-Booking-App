@@ -1,7 +1,7 @@
-﻿using XuongMay.Contract.Repositories.Interface;
-using XuongMay.Repositories.Context;
+﻿using HairSalon.Contract.Repositories.Interface;
+using HairSalon.Repositories.Context;
 
-namespace XuongMay.Repositories.UOW
+namespace HairSalon.Repositories.UOW
 {
     public class UnitOfWork(DatabaseContext dbContext) : IUnitOfWork
     {

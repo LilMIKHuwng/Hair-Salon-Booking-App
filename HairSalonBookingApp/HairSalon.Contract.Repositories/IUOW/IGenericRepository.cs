@@ -1,6 +1,6 @@
-﻿using XuongMay.Core;
+﻿using HairSalon.Core;
 
-namespace XuongMay.Contract.Repositories.Interface
+namespace HairSalon.Contract.Repositories.Interface
 {
     public interface IGenericRepository<T> where T : class
     {

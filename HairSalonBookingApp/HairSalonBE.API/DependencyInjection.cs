@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using HairSalon.Contract.Repositories.Entity;
+using HairSalon.Contract.Services.Interface;
+using HairSalon.Repositories.Context;
+using HairSalon.Repositories.Entity;
+using HairSalon.Services;
+using HairSalon.Services.Service;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using XuongMay.Contract.Repositories.Entity;
-using XuongMay.Contract.Services.Interface;
-using XuongMay.Repositories.Context;
-using XuongMay.Repositories.Entity;
-using XuongMay.Services;
-using XuongMay.Services.Service;
 
-namespace XuongMayBE.API
+namespace HairSalonBE.API
 {
     public static class DependencyInjection
     {
@@ -16,8 +16,8 @@ namespace XuongMayBE.API
             services.ConfigRoute();
             services.AddDatabase(configuration);
             services.AddIdentity();
-            services.AddInfrastructure(configuration);
-            services.AddServices();
+			services.AddInfrastructure(configuration);
+			services.AddServices();
         }
         public static void ConfigRoute(this IServiceCollection services)
         {

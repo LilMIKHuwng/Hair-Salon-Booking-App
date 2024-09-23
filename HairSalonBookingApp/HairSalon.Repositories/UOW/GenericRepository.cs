@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using XuongMay.Contract.Repositories.Interface;
-using XuongMay.Core;
-using XuongMay.Repositories.Context;
+﻿using HairSalon.Contract.Repositories.Interface;
+using HairSalon.Core;
+using HairSalon.Repositories.Context;
+using Microsoft.EntityFrameworkCore;
 
-namespace XuongMay.Repositories.UOW
+namespace HairSalon.Repositories.UOW
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {

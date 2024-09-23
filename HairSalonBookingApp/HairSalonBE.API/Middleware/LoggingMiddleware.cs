@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Http.Features;
+﻿using HairSalon.Contract.Repositories.Entity;
+using Microsoft.AspNetCore.Http.Features;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
-using XuongMay.Contract.Repositories.Entity;
 
-namespace XuongMayBE.API.Middleware
+namespace HairSalonBE.API.Middleware
 {
     public class LoggingMiddleware
     {

@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using HairSalon.Contract.Repositories.Interface;
+using HairSalon.Repositories.UOW;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using XuongMay.Contract.Repositories.Interface;
-using XuongMay.Repositories.UOW;
 
-namespace XuongMay.Services
+namespace HairSalon.Services
 {
     public static class DependencyInjection
     {

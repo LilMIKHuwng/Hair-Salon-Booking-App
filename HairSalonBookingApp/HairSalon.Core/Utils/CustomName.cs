@@ -1,4 +1,4 @@
-﻿namespace XuongMay.Core.Utils
+﻿namespace HairSalon.Core.Utils
 {
     [AttributeUsage(AttributeTargets.All)]
     public class CustomName : Attribute

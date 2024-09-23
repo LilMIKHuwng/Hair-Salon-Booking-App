@@ -1,4 +1,4 @@
-﻿namespace XuongMay.Core
+﻿namespace HairSalon.Core
 {
     public class BasePaginatedList<T>
     {

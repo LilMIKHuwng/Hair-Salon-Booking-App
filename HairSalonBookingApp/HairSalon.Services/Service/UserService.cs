@@ -1,8 +1,8 @@
-﻿using XuongMay.Contract.Repositories.Interface;
-using XuongMay.Contract.Services.Interface;
-using XuongMay.ModelViews.UserModelViews;
+﻿using HairSalon.Contract.Repositories.Interface;
+using HairSalon.Contract.Services.Interface;
+using HairSalon.ModelViews.UserModelViews;
 
-namespace XuongMay.Services.Service
+namespace HairSalon.Services.Service
 {
     public class UserService : IUserService
     {

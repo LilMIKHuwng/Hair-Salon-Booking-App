@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using XuongMay.Contract.Services.Interface;
-using XuongMay.Core.Base;
-using XuongMay.ModelViews.UserModelViews;
+using HairSalon.ModelViews.UserModelViews;
+using HairSalon.Contract.Services.Interface;
+using HairSalon.Core.Base;
 
-namespace XuongMayBE.API.Controllers
+namespace HairSalonBE.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

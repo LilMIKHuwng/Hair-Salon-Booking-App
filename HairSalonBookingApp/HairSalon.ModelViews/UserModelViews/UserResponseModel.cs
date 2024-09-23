@@ -1,4 +1,4 @@
-﻿namespace XuongMay.ModelViews.UserModelViews
+﻿namespace HairSalon.ModelViews.UserModelViews
 {
     public class UserResponseModel
     {

@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace XuongMayBE.API.Middleware
+namespace HairSalonBE.API.Middleware
 {
     public class ExceptionMiddleware
     {

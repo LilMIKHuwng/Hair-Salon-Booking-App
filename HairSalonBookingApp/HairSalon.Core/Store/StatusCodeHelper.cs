@@ -1,6 +1,6 @@
-﻿using XuongMay.Core.Utils;
+﻿using HairSalon.Core.Utils;
 
-namespace XuongMay.Core.Constants
+namespace HairSalon.Core.Constants
 {
     public enum StatusCodeHelper
     {

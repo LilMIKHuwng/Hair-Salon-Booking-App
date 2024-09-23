@@ -1,6 +1,6 @@
-﻿using XuongMay.Core.Base;
+﻿using HairSalon.Core.Base;
 
-namespace XuongMay.Contract.Repositories.Entity
+namespace HairSalon.Contract.Repositories.Entity
 {
     public class AuditLog : BaseEntity
     {

@@ -11,7 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\XuongMay.Services\HairSalon.Services.csproj" />
+    <ProjectReference Include="..\HairSalon.Contract.Services\HairSalon.Contract.Services.csproj" />
+    <ProjectReference Include="..\HairSalon.ModelViews\HairSalon.ModelViews.csproj" />
+    <ProjectReference Include="..\HairSalon.Repositories\HairSalon.Repositories.csproj" />
+    <ProjectReference Include="..\HairSalon.Services\HairSalon.Services.csproj" />
   </ItemGroup>
 
 </Project>

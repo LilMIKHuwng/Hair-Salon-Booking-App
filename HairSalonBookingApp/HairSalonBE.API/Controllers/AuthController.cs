@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using XuongMay.ModelViews.AuthModelViews;
+﻿using HairSalon.ModelViews.AuthModelViews;
+using Microsoft.AspNetCore.Mvc;
 
-namespace XuongMayBE.API.Controllers
+namespace HairSalonBE.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
