@@ -19,13 +19,11 @@ namespace HairSalon.Contract.Repositories.Entity
 		public string Type { get; set; }
 
 		[Required]
+		[Column(TypeName = "decimal(10, 2)")]
 		public decimal Price { get; set; }
 
 		[MaxLength(255)]
 		public string Description { get; set; }
-
-		[Required]
-		public bool Status { get; set; }
 
 		public string ShopId { get; set; }
 

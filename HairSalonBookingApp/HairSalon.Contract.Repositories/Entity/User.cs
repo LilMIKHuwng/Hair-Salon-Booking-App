@@ -24,8 +24,6 @@ namespace HairSalon.Contract.Repositories.Entity
 		[MaxLength(100)]
 		public string LastName { get; set; }
 
-		public DateTime DateCreate { get; set; } = DateTime.Now;
-
 		[Required]
 		[MaxLength(100)]
 		public string Email { get; set; }
@@ -38,9 +36,6 @@ namespace HairSalon.Contract.Repositories.Entity
 
 		[MaxLength(20)]
 		public string PhoneNumber { get; set; }
-
-		[Required]
-		public bool Status { get; set; }
 
 		public virtual ICollection<Appointment> Appointments { get; set; }
 

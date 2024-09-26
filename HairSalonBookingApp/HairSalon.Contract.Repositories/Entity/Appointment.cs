@@ -31,9 +31,6 @@ namespace HairSalon.Contract.Repositories.Entity
 		[Required]
 		public DateTime AppointmentDate { get; set; }
 
-		[Required]
-		public bool Status { get; set; }
-
-		public ICollection<ServiceAppointment> ServiceAppointments { get; set; }
+		public virtual ICollection<ServiceAppointment> ServiceAppointments { get; set; }
 	}
 }

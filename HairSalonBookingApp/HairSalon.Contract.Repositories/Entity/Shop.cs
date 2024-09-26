@@ -35,9 +35,6 @@ namespace HairSalon.Contract.Repositories.Entity
 		[MaxLength(100)]
 		public string Title { get; set; }
 
-		[Required]
-		public bool Status { get; set; }
-
 		public virtual ICollection<Service> Services { get; set; }
 	}
 }
