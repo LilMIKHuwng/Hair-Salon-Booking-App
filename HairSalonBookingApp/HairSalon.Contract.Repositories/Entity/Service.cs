@@ -28,7 +28,7 @@ namespace HairSalon.Contract.Repositories.Entity
 		public string ShopId { get; set; }
 
 		[ForeignKey("ShopId")]
-		public Shop Shop { get; set; }
+		public virtual Shop Shop { get; set; }
 
 		public virtual ICollection<ServiceAppointment> ServiceAppointments { get; set; }
 	}

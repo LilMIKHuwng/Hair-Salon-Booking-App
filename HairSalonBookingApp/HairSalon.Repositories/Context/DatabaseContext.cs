@@ -5,11 +5,11 @@ using HairSalon.Repositories.Entity;
 
 namespace HairSalon.Repositories.Context
 {
-    public class DatabaseContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid, ApplicationUserClaims, ApplicationUserRoles, ApplicationUserLogins, ApplicationRoleClaims, ApplicationUserTokens>
+    public class DatabaseContext : DbContext
     {
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
 
-        // user
+        /*// user
         public virtual DbSet<ApplicationUser> ApplicationUsers => Set<ApplicationUser>();
         public virtual DbSet<ApplicationRole> ApplicationRoles => Set<ApplicationRole>();
         public virtual DbSet<ApplicationUserClaims> ApplicationUserClaims => Set<ApplicationUserClaims>();
@@ -18,7 +18,7 @@ namespace HairSalon.Repositories.Context
         public virtual DbSet<ApplicationRoleClaims> ApplicationRoleClaims => Set<ApplicationRoleClaims>();
         public virtual DbSet<ApplicationUserTokens> ApplicationUserTokens => Set<ApplicationUserTokens>();
 
-        public virtual DbSet<UserInfo> UserInfos => Set<UserInfo>();
+        public virtual DbSet<UserInfo> UserInfos => Set<UserInfo>();*/
 
 		public virtual DbSet<Role> Roles { get; set; }
 		public virtual DbSet<User> Users { get; set; }
@@ -47,7 +47,7 @@ namespace HairSalon.Repositories.Context
 				.HasForeignKey(a => a.StylistId)
 				.OnDelete(DeleteBehavior.Restrict); // Hoặc bạn có thể chọn hành vi khác như Cascade hoặc SetNull
 
-			// Định nghĩa khóa chính cho ApplicationUserLogins
+			/*// Định nghĩa khóa chính cho ApplicationUserLogins
 			modelBuilder.Entity<ApplicationUserLogins>()
 				.HasKey(login => new { login.UserId, login.LoginProvider, login.ProviderKey });
 
@@ -57,7 +57,7 @@ namespace HairSalon.Repositories.Context
 
 			// Định nghĩa khóa chính cho ApplicationUserTokens
 			modelBuilder.Entity<ApplicationUserTokens>()
-				.HasKey(token => new { token.UserId, token.LoginProvider, token.Name });
+				.HasKey(token => new { token.UserId, token.LoginProvider, token.Name });*/
 		}
 
 

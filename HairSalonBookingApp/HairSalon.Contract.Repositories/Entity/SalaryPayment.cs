@@ -15,7 +15,7 @@ namespace HairSalon.Contract.Repositories.Entity
 		public string UserId { get; set; }
 
 		[ForeignKey("UserId")]
-		public User User { get; set; }
+		public virtual User User { get; set; }
 
 		[Required]
 		[Column(TypeName = "decimal(10, 2)")]

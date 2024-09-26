@@ -15,7 +15,7 @@ namespace HairSalon.Contract.Repositories.Entity
 		public string RoleId { get; set; }
 
 		[ForeignKey("RoleId")]
-		public Role Role { get; set; }
+		public virtual Role Role { get; set; }
 
 		[Required]
 		[MaxLength(100)]

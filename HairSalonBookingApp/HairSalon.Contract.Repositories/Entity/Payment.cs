@@ -15,7 +15,7 @@ namespace HairSalon.Contract.Repositories.Entity
 		public string AppointmentId { get; set; }
 
 		[ForeignKey("AppointmentId")]
-		public Appointment Appointment { get; set; }
+		public virtual Appointment Appointment { get; set; }
 
 		[Required]
 		[Column(TypeName = "decimal(10, 2)")]
