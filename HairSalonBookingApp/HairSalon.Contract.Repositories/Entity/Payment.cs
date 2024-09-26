@@ -18,6 +18,7 @@ namespace HairSalon.Contract.Repositories.Entity
 		public Appointment Appointment { get; set; }
 
 		[Required]
+		[Column(TypeName = "decimal(10, 2)")]
 		public decimal TotalAmount { get; set; }
 
 		public DateTime PaymentTime { get; set; } = DateTime.Now;
@@ -26,7 +27,5 @@ namespace HairSalon.Contract.Repositories.Entity
 		[MaxLength(50)]
 		public string PaymentMethod { get; set; }
 
-		[Required]
-		public bool Status { get; set; }
 	}
 }

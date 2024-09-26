@@ -21,12 +21,8 @@ namespace HairSalon.Contract.Repositories.Entity
 		[Range(1, 5)]
 		public int Rate { get; set; }
 
-		public DateTime DateCreate { get; set; } = DateTime.Now;
-
 		[MaxLength(255)]
 		public string Comment { get; set; }
 
-		[Required]
-		public bool Status { get; set; }
 	}
 }

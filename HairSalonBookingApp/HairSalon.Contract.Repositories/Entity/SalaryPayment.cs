@@ -18,12 +18,11 @@ namespace HairSalon.Contract.Repositories.Entity
 		public User User { get; set; }
 
 		[Required]
+		[Column(TypeName = "decimal(10, 2)")]
 		public decimal BaseSalary { get; set; }
 
 		[Required]
 		public DateTime PaymentDate { get; set; }
 
-		[Required]
-		public bool Status { get; set; }
 	}
 }
