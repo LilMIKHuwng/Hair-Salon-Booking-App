@@ -1,4 +1,8 @@
+using HairSalon.Contract.Repositories.Interface;
+using HairSalon.Contract.Services.Interface;
 using HairSalon.Repositories.Context;
+using HairSalon.Repositories.UOW;
+using HairSalon.Services.Service;
 using HairSalonBE.API;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,7 +25,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddConfig(builder.Configuration);
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddScoped<IShopService, ShopService>();
 
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
