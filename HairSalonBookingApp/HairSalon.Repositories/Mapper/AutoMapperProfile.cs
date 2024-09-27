@@ -16,7 +16,8 @@ namespace HairSalon.Repositories.Mapper
             CreateMap<Shop, ShopModelView>();
             CreateMap<Shop, CreateShopModelView>();
             CreateMap<Shop, UpdatedShopModelView>();
-            
-        }
+            CreateMap<UpdatedShopModelView, Shop>();
+            CreateMap<CreateShopModelView, Shop>();
+		}
     }
 }

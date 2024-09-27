@@ -52,7 +52,7 @@ namespace HairSalonBE.API.Controllers
 
         // POST: api/Shop
         [HttpPost()]
-        public async Task<ActionResult<ShopModelView>> CreateShop([FromBody] CreateShopModelView model)
+        public async Task<ActionResult<ShopModelView>> CreateShop([FromQuery] CreateShopModelView model)
         {
             try
             {
@@ -67,7 +67,7 @@ namespace HairSalonBE.API.Controllers
 
         // PUT: api/Shop/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateShop(string id, [FromBody] UpdatedShopModelView model)
+        public async Task<IActionResult> UpdateShop(string id, [FromQuery] UpdatedShopModelView model)
         {
             try
             {

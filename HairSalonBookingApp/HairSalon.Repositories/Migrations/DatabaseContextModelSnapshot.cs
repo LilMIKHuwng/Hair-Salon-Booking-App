@@ -611,9 +611,6 @@ namespace HairSalon.Repositories.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("TotalServices")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("Shops");

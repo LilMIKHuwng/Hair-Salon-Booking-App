@@ -23,7 +23,5 @@ namespace HairSalon.ModelViews.ShopModelViews
 
         public string Title { get; set; }
 
-        public int TotalServices { get; set; }
-
     }
 }
