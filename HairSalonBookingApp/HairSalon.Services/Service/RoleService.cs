@@ -20,15 +20,15 @@ namespace HairSalon.Services.Service
 
         public async Task<BasePaginatedList<RoleModelView>> GetAllRoleAsync(int pageNumber, int pageSize)
         {
-            IQueryable<Role> shopQuery = _unitOfWork.GetRepository<Role>().Entities
+            IQueryable<Role> roleQuery = _unitOfWork.GetRepository<Role>().Entities
                 .Where(p => !p.DeletedTime.HasValue)
                 .OrderByDescending(s => s.CreatedTime);
 
             // Count the total number of matching records
-            int totalCount = await shopQuery.CountAsync();
+            int totalCount = await roleQuery.CountAsync();
 
             // Apply pagination
-            List<Role> paginatedShops = await shopQuery
+            List<Role> paginatedShops = await roleQuery
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
