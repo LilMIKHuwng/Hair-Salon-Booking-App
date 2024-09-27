@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HairSalon.Repositories.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240927012702_InitDB")]
-    partial class InitDB
+    [Migration("20240927015918_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
