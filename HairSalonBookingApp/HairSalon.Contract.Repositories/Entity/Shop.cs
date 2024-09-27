@@ -30,8 +30,6 @@ namespace HairSalon.Contract.Repositories.Entity
 		[Required]
 		public TimeSpan CloseTime { get; set; }
 
-		public int TotalServices { get; set; } = 0;
-
 		[MaxLength(100)]
 		public string Title { get; set; }
 
