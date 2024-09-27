@@ -27,6 +27,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddConfig(builder.Configuration);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IShopService, ShopService>();
+builder.Services.AddScoped<IServiceAppointment, ServiceAppointmentService>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 var app = builder.Build();

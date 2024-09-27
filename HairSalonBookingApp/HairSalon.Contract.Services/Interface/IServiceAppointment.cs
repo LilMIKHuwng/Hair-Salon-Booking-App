@@ -6,11 +6,11 @@ namespace HairSalon.Contract.Services.Interface;
 public interface IServiceAppointment
 {
     Task<IList<ServiceAppointmentModelView>> GetAllServiceAppointment();
-    Task<IList<ServiceAppointmentModelView>> GetAllServiceAppointmentByServiceEntity(Service service);
-    Task<IList<ServiceAppointmentModelView>> GetAllServiceAppointmentByAppointmentEntity(Appointment appointment);
-    Task<Boolean> DeleteServiceAppointment(String id);
-    Task<List<ServiceAppointmentModelView>> GetAllServiceAppointmentByUserEntity(User user);
-    Task<Boolean> EditServiceAppointment();
-    Task<ServiceAppointment> CreateServiceAppointment(ServiceAppointmentModelView serviceAppointmentModelView);
+    Task<IList<ServiceAppointmentModelView>> GetAllServiceAppointmentByServiceId(string serviceId);
+    Task<IList<ServiceAppointmentModelView>> GetAllServiceAppointmentByAppointmentID(string appointmentId);
+    Task<Boolean> DeleteServiceAppointment(DeleteServiceAppointmentModelView deleteServiceAppointmentModelView);
+    Task<List<ServiceAppointmentModelView>> GetAllServiceAppointmentByUserId(string userId);
+    Task<Boolean> EditServiceAppointment(EditServiceAppointmentModelView editServiceAppointmentModelView);
+    Task<ServiceAppointment> CreateServiceAppointment(CreatServiceAppointmentModelView creatServiceAppointmentModelView);
     Task<ServiceAppointmentModelView> GetServiceAppointmentById(String id);
 }

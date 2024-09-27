@@ -40,63 +40,81 @@ public class ServiceAppointmentService : IServiceAppointment
     }
 
 
-    public async Task<IList<ServiceAppointmentModelView>> GetAllServiceAppointmentByServiceEntity(
-        Contract.Repositories.Entity.Service service)
+    public async Task<IList<ServiceAppointmentModelView>> GetAllServiceAppointmentByServiceId(
+        string serviceId)
     {
         // check service entity exists
-        if (service.DeletedTime.HasValue)
+        if (serviceId.IsNullOrEmpty())
         {
-            throw new Exception();
+            throw new Exception("service Id null: ");
         }
-
+        
         IQueryable<ServiceAppointment> serviceAppointments = _unitOfWork.GetRepository<ServiceAppointment>()
-            .Entities.Where(entity => entity.Service == service)
+            .Entities.Where(entity => entity.Service.Id == serviceId)
             .OrderByDescending(entity => entity.CreatedTime);
 
+        if (serviceAppointments == null)
+        {
+            throw new Exception("service not found: ");
+        }
+        
         IList<ServiceAppointment> appointments = await serviceAppointments.ToListAsync();
         return _mapper.Map<List<ServiceAppointmentModelView>>(appointments);
     }
 
-    public async Task<IList<ServiceAppointmentModelView>> GetAllServiceAppointmentByAppointmentEntity
-        (Appointment appointment)
+    public async Task<IList<ServiceAppointmentModelView>> GetAllServiceAppointmentByAppointmentID
+        (string appointmentId)
     {
-        if (appointment.DeletedTime.HasValue)
+        if (appointmentId.IsNullOrEmpty())
         {
-            throw new Exception();
+            throw new Exception("appointment Id null:");
         }
 
         IQueryable<ServiceAppointment> serviceAppointments = _unitOfWork.GetRepository<ServiceAppointment>()
-            .Entities.Where(entity => entity.Appointment == appointment)
+            .Entities.Where(entity => entity.Appointment.Id == appointmentId)
             .OrderByDescending(entity => entity.CreatedTime);
+        
+        if (serviceAppointments == null)
+        {
+            throw new Exception("appointment not found:");
+        }
         IList<ServiceAppointment> appointments = await serviceAppointments.ToListAsync();
         return _mapper.Map<List<ServiceAppointmentModelView>>(appointments);
     }
 
 
-    public async Task<Boolean> DeleteServiceAppointment(string id)
+    public async Task<Boolean> DeleteServiceAppointment(DeleteServiceAppointmentModelView deleteServiceAppointmentModelView)
     {
+        if (deleteServiceAppointmentModelView.Id.IsNullOrEmpty())
+        {
+            throw new Exception("id null");
+        }
         ServiceAppointment? serviceAppointment = await _unitOfWork.GetRepository<ServiceAppointment>()
-            .GetByIdAsync(id);
+            .GetByIdAsync(deleteServiceAppointmentModelView.Id);
 
         if (serviceAppointment == null)
         {
-            throw new NotImplementedException();
+            throw new Exception("appointment not found:");
         }
 
-        await _unitOfWork.GetRepository<ServiceAppointment>().DeleteAsync(serviceAppointment);
+        serviceAppointment.DeletedBy = deleteServiceAppointmentModelView.DeletedBy;
+        serviceAppointment.DeletedTime = DateTimeOffset.UtcNow;
+
+        await _unitOfWork.GetRepository<ServiceAppointment>().UpdateAsync(serviceAppointment);
+        await _unitOfWork.SaveAsync(); 
         return true;
     }
 
 
-    public async Task<List<ServiceAppointmentModelView>> GetAllServiceAppointmentByUserEntity(User user)
+    public async Task<List<ServiceAppointmentModelView>> GetAllServiceAppointmentByUserId(string userId)
     {
-        if (user.DeletedTime.HasValue)
+        if (userId.IsNullOrEmpty())
         {
-            throw new Exception();
+            throw new Exception("id User null:");
         }
 
         IQueryable<ServiceAppointment> serviceAppointments = _unitOfWork.GetRepository<ServiceAppointment>()
-            .Entities.Where(entity => entity.Appointment.User == user)
+            .Entities.Where(entity => entity.Appointment.User != null && entity.Appointment.User.Id == userId)
             .OrderByDescending(entity => !entity.DeletedTime.HasValue)
             .ThenByDescending(entity => entity.CreatedTime);
 
@@ -105,50 +123,98 @@ public class ServiceAppointmentService : IServiceAppointment
         return _mapper.Map<List<ServiceAppointmentModelView>>(appointments);
     }
 
-    public Task<bool> EditServiceAppointment()
+    public async Task<Boolean> EditServiceAppointment(EditServiceAppointmentModelView editServiceAppointmentModelView)
     {
-        throw new NotImplementedException();
+        if (editServiceAppointmentModelView == null)
+        {
+            throw new Exception("serviceAppointmentModelView must not be null");
+        }
+        
+        if ( editServiceAppointmentModelView.Id.IsNullOrEmpty() &&
+            editServiceAppointmentModelView.AppointmentId.IsNullOrEmpty() &&
+            editServiceAppointmentModelView.ServiceId.IsNullOrEmpty())
+        {
+            throw new Exception("Id,AppointmentId or ServiceId null");
+        }
+
+        Contract.Repositories.Entity.Service? service = _unitOfWork
+            .GetRepository<Contract.Repositories.Entity.Service>()
+            .GetById(editServiceAppointmentModelView.ServiceId);
+
+        Appointment? appointment =
+            _unitOfWork.GetRepository<Appointment>().GetById(editServiceAppointmentModelView.AppointmentId);
+        
+        
+        ServiceAppointment? serviceAppointment = await _unitOfWork.GetRepository<ServiceAppointment>()
+           .GetByIdAsync(editServiceAppointmentModelView.Id);
+
+        if (serviceAppointment == null)
+        {
+            throw new Exception("service not found");
+        }
+        if (service == null)
+        {
+            throw new Exception("service not found");
+        }
+
+        if (appointment == null)
+        {
+            throw new Exception("appointment not found");
+        }
+
+        serviceAppointment.AppointmentId = editServiceAppointmentModelView.AppointmentId;
+        serviceAppointment.Appointment = appointment;
+        serviceAppointment.Service = service;
+        serviceAppointment.ServiceId = editServiceAppointmentModelView.ServiceId;
+        serviceAppointment.LastUpdatedTime = DateTimeOffset.UtcNow;
+        serviceAppointment.LastUpdatedBy = editServiceAppointmentModelView.LastUpdatedBy;
+        serviceAppointment.Description = editServiceAppointmentModelView.Description;
+        
+        await _unitOfWork.GetRepository<ServiceAppointment>().UpdateAsync(serviceAppointment);
+        await _unitOfWork.GetRepository<ServiceAppointment>().SaveAsync();
+        return true;
     }
 
     public async Task<ServiceAppointment> CreateServiceAppointment(
-        ServiceAppointmentModelView serviceAppointmentModelView)
+        CreatServiceAppointmentModelView creatServiceAppointmentModelView)
     {
-        if (serviceAppointmentModelView == null)
+        if (creatServiceAppointmentModelView == null)
         {
-            throw new ArgumentNullException(nameof(serviceAppointmentModelView));
+            throw new Exception("Entity is null");
         }
 
-        if (serviceAppointmentModelView.AppointmentId.IsNullOrEmpty() &&
-            serviceAppointmentModelView.ServiceId.IsNullOrEmpty())
+        if (creatServiceAppointmentModelView.AppointmentId.IsNullOrEmpty() &&
+            creatServiceAppointmentModelView.ServiceId.IsNullOrEmpty())
         {
             throw new Exception("AppointmentId or ServiceId null");
         }
 
         Contract.Repositories.Entity.Service? service = _unitOfWork
             .GetRepository<Contract.Repositories.Entity.Service>()
-            .GetById(serviceAppointmentModelView.ServiceId);
+            .GetById(creatServiceAppointmentModelView.ServiceId);
 
         Appointment? appointment =
-            _unitOfWork.GetRepository<Appointment>().GetById(serviceAppointmentModelView.AppointmentId);
+            _unitOfWork.GetRepository<Appointment>().GetById(creatServiceAppointmentModelView.AppointmentId);
 
         if (service == null)
         {
-            throw new KeyNotFoundException($"Service not found with {serviceAppointmentModelView.ServiceId}");
+            throw new KeyNotFoundException($"Service not found with {creatServiceAppointmentModelView.ServiceId}");
         }
 
         if (appointment == null)
         {
-            throw new KeyNotFoundException($"Service not found with {serviceAppointmentModelView.AppointmentId}");
+            throw new KeyNotFoundException($"Service not found with {creatServiceAppointmentModelView.AppointmentId}");
         }
 
         ServiceAppointment serviceAppointment = new ServiceAppointment()
         {
-            ServiceId = serviceAppointmentModelView.ServiceId,
-            AppointmentId = serviceAppointmentModelView.AppointmentId,
+            ServiceId = creatServiceAppointmentModelView.ServiceId,
+            AppointmentId = creatServiceAppointmentModelView.AppointmentId,
             Appointment = appointment,
             Service = service,
-            CreatedTime = serviceAppointmentModelView.CreatedTime,
-            CreatedBy = serviceAppointmentModelView.CreatedBy
+            CreatedTime = DateTimeOffset.UtcNow,
+            CreatedBy = creatServiceAppointmentModelView.CreatedBy,
+            Description = creatServiceAppointmentModelView.Description
         };
         await _unitOfWork.GetRepository<ServiceAppointment>().InsertAsync(serviceAppointment);
         await _unitOfWork.GetRepository<ServiceAppointment>().SaveAsync();
