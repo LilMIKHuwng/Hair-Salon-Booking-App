@@ -23,5 +23,10 @@ namespace HairSalon.Services.Service
 
             return Task.FromResult(users);
         }
+
+        public Task<IList<UserResponseModel>> GetById(string id)
+        {
+            return null!;
+        }
     }
 }
