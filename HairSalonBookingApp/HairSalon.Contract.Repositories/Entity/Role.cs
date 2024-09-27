@@ -12,11 +12,11 @@ namespace HairSalon.Contract.Repositories.Entity
 	{
 		[Required]
 		[MaxLength(100)]
-		public string RoleName { get; set; }
+		public string? RoleName { get; set; }
 
 		[MaxLength(255)]
-		public string Description { get; set; }
+		public string? Description { get; set; }
 
-		public virtual ICollection<User> Users { get; set; }
+		public virtual ICollection<User>? Users { get; set; }
 	}
 }

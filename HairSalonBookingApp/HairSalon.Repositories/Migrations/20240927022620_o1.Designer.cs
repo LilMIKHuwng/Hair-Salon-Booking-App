@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HairSalon.Repositories.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240926014931_Initial")]
-    partial class Initial
+    [Migration("20240927022620_o1")]
+    partial class o1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -278,7 +278,6 @@ namespace HairSalon.Repositories.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("StatusForAppointment")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -304,7 +303,6 @@ namespace HairSalon.Repositories.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Comment")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -403,7 +401,6 @@ namespace HairSalon.Repositories.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -481,7 +478,6 @@ namespace HairSalon.Repositories.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -500,11 +496,9 @@ namespace HairSalon.Repositories.Migrations
                         .HasColumnType("decimal(10, 2)");
 
                     b.Property<string>("ShopId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Type")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -521,7 +515,6 @@ namespace HairSalon.Repositories.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("AppointmentId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CreatedBy")
@@ -537,7 +530,6 @@ namespace HairSalon.Repositories.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -548,7 +540,6 @@ namespace HairSalon.Repositories.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("ServiceId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -613,9 +604,6 @@ namespace HairSalon.Repositories.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("TotalServices")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -860,9 +848,7 @@ namespace HairSalon.Repositories.Migrations
                 {
                     b.HasOne("HairSalon.Contract.Repositories.Entity.Shop", "Shop")
                         .WithMany("Services")
-                        .HasForeignKey("ShopId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ShopId");
 
                     b.Navigation("Shop");
                 });
@@ -871,15 +857,11 @@ namespace HairSalon.Repositories.Migrations
                 {
                     b.HasOne("HairSalon.Contract.Repositories.Entity.Appointment", "Appointment")
                         .WithMany("ServiceAppointments")
-                        .HasForeignKey("AppointmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AppointmentId");
 
                     b.HasOne("HairSalon.Contract.Repositories.Entity.Service", "Service")
                         .WithMany("ServiceAppointments")
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ServiceId");
 
                     b.Navigation("Appointment");
 

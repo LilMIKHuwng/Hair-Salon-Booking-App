@@ -12,10 +12,10 @@ namespace HairSalon.Contract.Repositories.Entity
 	public class SalaryPayment : BaseEntity
 	{
 		[Required]
-		public string UserId { get; set; }
+		public string? UserId { get; set; }
 
 		[ForeignKey("UserId")]
-		public User User { get; set; }
+		public User? User { get; set; }
 
 		[Required]
 		[Column(TypeName = "decimal(10, 2)")]

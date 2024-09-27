@@ -12,10 +12,10 @@ namespace HairSalon.Contract.Repositories.Entity
 	public class Payment : BaseEntity
 	{
 		[Required]
-		public string AppointmentId { get; set; }
+		public string? AppointmentId { get; set; }
 
 		[ForeignKey("AppointmentId")]
-		public Appointment Appointment { get; set; }
+		public Appointment? Appointment { get; set; }
 
 		[Required]
 		[Column(TypeName = "decimal(10, 2)")]
@@ -25,7 +25,7 @@ namespace HairSalon.Contract.Repositories.Entity
 
 		[Required]
 		[MaxLength(50)]
-		public string PaymentMethod { get; set; }
+		public string? PaymentMethod { get; set; }
 
 	}
 }
