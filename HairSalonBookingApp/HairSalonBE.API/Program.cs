@@ -1,3 +1,4 @@
+using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Repositories.Context;
@@ -27,6 +28,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddConfig(builder.Configuration);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IShopService, ShopService>();
+builder.Services.AddScoped<IServiceService, ServiceService>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 var app = builder.Build();
