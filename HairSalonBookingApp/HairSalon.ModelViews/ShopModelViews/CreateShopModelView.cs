@@ -34,7 +34,6 @@ namespace HairSalon.ModelViews.ShopModelViews
         [StringLength(100, ErrorMessage = "Title cannot be longer than 100 characters.")]
         public string Title { get; set; }
 
-        public int TotalServices { get; set; } 
 
 
         //public string? CreatedBy { get; set; }

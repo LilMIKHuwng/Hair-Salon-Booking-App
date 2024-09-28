@@ -13,5 +13,9 @@ namespace HairSalon.Contract.Repositories.Entity
 		public string? BankAccount { get; set; }
 		public string? BankAccountName { get; set; }
 		public string? Bank { get; set; }
-	}
+
+        public int Point { get; set; } = 0;
+        public virtual ICollection<Appointment> Appointments { get; set; }
+        public virtual ICollection<SalaryPayment> SalaryPayments { get; set; }
+    }
 }
