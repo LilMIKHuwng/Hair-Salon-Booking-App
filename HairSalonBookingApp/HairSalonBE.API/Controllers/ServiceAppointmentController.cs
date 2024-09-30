@@ -80,7 +80,7 @@ public class ServiceAppointmentController : ControllerBase
         }
     }
 
-    [HttpGet("/services/{id}")]
+    [HttpGet("/services/{service}")]
     public async Task<ActionResult<BasePaginatedList<ServiceAppointmentModelView>>>
         GetAllServiceAppointmentByServiceEntity(string service)
     {

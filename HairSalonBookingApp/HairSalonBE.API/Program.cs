@@ -1,17 +1,7 @@
-using HairSalon.Contract.Repositories.Interface;
-using HairSalon.Contract.Services.Interface;
-using HairSalon.Repositories.Context;
-using HairSalon.Repositories.UOW;
-using HairSalon.Services.Service;
 using HairSalonBE.API;
-using Microsoft.EntityFrameworkCore;
+
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddDbContext<DatabaseContext>(options =>
-{
-	options.UseSqlServer(builder.Configuration.GetConnectionString("HairSalonDb"));
-});
 
 // config appsettings by env
 builder.Configuration
@@ -26,10 +16,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddConfig(builder.Configuration);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddScoped<IShopService, ShopService>();
-builder.Services.AddScoped<IServiceAppointment, ServiceAppointmentService>();
 
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

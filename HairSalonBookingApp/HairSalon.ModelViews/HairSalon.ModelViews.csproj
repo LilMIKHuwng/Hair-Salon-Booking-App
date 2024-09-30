@@ -27,4 +27,8 @@
     <ProjectReference Include="..\HairSalon.Core\HairSalon.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\HairSalon.Contract.Repositories\HairSalon.Contract.Repositories.csproj" />
+  </ItemGroup>
+
 </Project>
