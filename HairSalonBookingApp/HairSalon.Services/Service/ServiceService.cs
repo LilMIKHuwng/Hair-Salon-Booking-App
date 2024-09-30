@@ -33,16 +33,13 @@ namespace HairSalon.Services.Service
                .Where(p => !p.DeletedTime.HasValue)
                .OrderByDescending(s => s.CreatedTime);
 
-            // Count the total number of matching records
             int totalCount = await serviceQuery.CountAsync();
 
-            // Apply pagination
             List<ServiceEntity> paginatedShops = await serviceQuery
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            // Map to ShopModelView
             List<ServiceModelView> serviceModelViews = _mapper.Map<List<ServiceModelView>>(paginatedShops);
 
             return new BasePaginatedList<ServiceModelView>(serviceModelViews, totalCount, pageNumber, pageSize);
@@ -55,19 +52,17 @@ namespace HairSalon.Services.Service
             {
                 throw new Exception("Service name cannot be empty.");
             }
-            // Mapping from CreateServiceModelView to Shop entity
+
             ServiceEntity newService = _mapper.Map<ServiceEntity>(model);
             
-            //Set additional properties
             newService.Id = Guid.NewGuid().ToString("N");
-            newService.CreatedBy = "claim account";  // Replace with actual authenticated user
+            newService.CreatedBy = "claim account";  
             newService.CreatedTime = DateTimeOffset.UtcNow;
             newService.LastUpdatedTime = DateTimeOffset.UtcNow;
 
             await _unitOfWork.GetRepository<ServiceEntity>().InsertAsync(newService);
             await _unitOfWork.SaveAsync();
 
-            // Map back to ServiceModelView and return
             return _mapper.Map<ServiceModelView>(model);
 
         }
@@ -78,14 +73,13 @@ namespace HairSalon.Services.Service
             {
                 throw new Exception("Please provide a valid Service ID.");
             }
-            //Find the service with its Id
+
             ServiceEntity existingService = await _unitOfWork.GetRepository<ServiceEntity>().Entities
                 .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
                 ?? throw new Exception("The Service cannot be found or has been deleted!");
 
-            //Perform soft delete
             existingService.DeletedTime = DateTimeOffset.Now;
-            existingService.DeletedBy = "claim account"; //Replace with actual authenticated user
+            existingService.DeletedBy = "claim account"; 
 
             _unitOfWork.GetRepository<ServiceEntity>().Update(existingService);
             await _unitOfWork.SaveAsync();
@@ -100,12 +94,11 @@ namespace HairSalon.Services.Service
             {
                 throw new Exception("Please provide a valid Shop ID.");
             }
-            //Find the existing service
+
             ServiceEntity existingService = await _unitOfWork.GetRepository<ServiceEntity>().Entities
                 .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
                 ?? throw new Exception("The Service cannot be found or has been deleted!");
 
-            // Map to ShopModelView and return
             return _mapper.Map<ServiceModelView>(existingService);
         }
 
@@ -115,22 +108,19 @@ namespace HairSalon.Services.Service
             {
                 throw new Exception("Please provide a valid Service ID.");
             }
-            //Find the existing service
+
             ServiceEntity existingService = await _unitOfWork.GetRepository<ServiceEntity>().Entities
                .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
                ?? throw new Exception("The Service cannot be found or has been deleted!");
             
-            //Mapping from UpdatedServiceModel to existing Service entity
             _mapper.Map(model, existingService);
 
-            // Set additional properties
-            existingService.LastUpdatedBy = "claim account";  // Replace with actual authenticated user
+            existingService.LastUpdatedBy = "claim account";  
             existingService.LastUpdatedTime = DateTimeOffset.UtcNow;
 
             _unitOfWork.GetRepository<ServiceEntity>().Update(existingService);
             await _unitOfWork.SaveAsync();
 
-            // Map back to ServiceModelView and return
             return _mapper.Map<ServiceModelView>(existingService);
         }
     }
