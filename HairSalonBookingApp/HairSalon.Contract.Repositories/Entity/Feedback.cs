@@ -1,11 +1,6 @@
 ﻿using HairSalon.Core.Base;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HairSalon.Contract.Repositories.Entity
 {
@@ -15,7 +10,7 @@ namespace HairSalon.Contract.Repositories.Entity
 		public string ServiceId { get; set; }
 
 		[ForeignKey("ServiceId")]
-		public Service Service { get; set; }
+		public virtual Service Service { get; set; }
 
 		[Required]
 		[Range(1, 5)]
