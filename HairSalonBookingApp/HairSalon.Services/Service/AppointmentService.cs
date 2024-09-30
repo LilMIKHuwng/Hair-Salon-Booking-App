@@ -74,7 +74,6 @@ namespace HairSalon.Services.Service
                 .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
                 ?? throw new Exception("The Appointment cannot be found or has been deleted!");
 
-            // Map to ShopModelView and return
             return _mapper.Map<AppointmentModelView>(existingAppointment);
         }
 
@@ -90,7 +89,6 @@ namespace HairSalon.Services.Service
                 .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
                 ?? throw new Exception("The Appointment cannot be found or has been deleted!");
 
-            // Mapping from UpdatedShopModel to existing Appointment entity
             _mapper.Map(model, existingAppointment);
 
             // Set additional properties

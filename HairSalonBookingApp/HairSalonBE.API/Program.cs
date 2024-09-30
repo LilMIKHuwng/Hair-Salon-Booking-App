@@ -1,13 +1,5 @@
-using HairSalon.Contract.Repositories.Interface;
-using HairSalon.Contract.Repositories.Entity;
-using HairSalon.Contract.Repositories.Interface;
-using HairSalon.Contract.Services.Interface;
-using HairSalon.Repositories.Context;
-using HairSalon.Repositories.UOW;
-using HairSalon.Services.Service;
 using HairSalonBE.API;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
+
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -17,7 +17,9 @@ namespace HairSalon.ModelViews.PaymentModelViews
         [Range(0.01, double.MaxValue, ErrorMessage = "TotalAmount must be greater than 0.")]
         public decimal TotalAmount { get; set; }
 
-        [Required(ErrorMessage = "PaymentMethod is required.")]
+		public DateTime PaymentTime { get; set; } = DateTime.Now;
+
+		[Required(ErrorMessage = "PaymentMethod is required.")]
         public string PaymentMethod { get; set; }
 
     }

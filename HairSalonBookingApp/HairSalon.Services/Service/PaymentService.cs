@@ -32,7 +32,7 @@ namespace HairSalon.Services.Service
             Payment newPayment = _mapper.Map<Payment>(model);
 
             // Set additional properties
-            newPayment.Id = Guid.NewGuid().ToString("P");
+            newPayment.Id = Guid.NewGuid().ToString("N");
             newPayment.CreatedBy = "claim account";  // Replace with actual authenticated user
             newPayment.CreatedTime = DateTimeOffset.UtcNow;
             newPayment.LastUpdatedTime = DateTimeOffset.UtcNow;
