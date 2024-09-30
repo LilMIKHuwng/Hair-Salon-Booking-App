@@ -3,6 +3,8 @@ using HairSalon.Core.Base;
 using HairSalon.Core;
 using Microsoft.AspNetCore.Mvc;
 using HairSalon.ModelViews.SalaryPaymentModelViews;
+using HairSalon.ModelViews.RoleModelViews;
+using HairSalon.Services.Service;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -19,37 +21,74 @@ namespace HairSalonBE.API.Controllers
             _salaryPaymentService = salaryPaymentService;
         }
 
-        // Get All Roles
-        [HttpGet("get_all_roles")]
-        public async Task<ActionResult<BasePaginatedList<SalaryPaymentModelView>>> GetAllRoles(int pageNumber = 1, int pageSize = 5)
-        {
-            var paginatedRoles = await _salaryPaymentService.GetAllSalaryPaymentAsync(pageNumber, pageSize);
-            return Ok(BaseResponse<BasePaginatedList<SalaryPaymentModelView>>.OkResponse(paginatedRoles));
-        }
+		[HttpGet()]
+		public async Task<ActionResult<BasePaginatedList<SalaryPaymentModelView>>> GetAllSalaryPayments(int pageNumber = 1, int pageSize = 5)
+		{
+			try
+			{
+				var result = await _salaryPaymentService.GetAllSalaryPaymentAsync(pageNumber, pageSize);
+				return Ok(result);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(new { Message = ex.Message });
+			}
+		}
 
-        // Create New Role
-        [HttpPost("create_role")]
-        public async Task<ActionResult<SalaryPaymentModelView>> CreateRole([FromQuery] CreateSalaryPaymentModelView model, string createdBy, string lastUpdatedBy)
-        {
-            
-            var newSalaryPayment = await _salaryPaymentService.AddSalaryPaymentAsync(model, createdBy, lastUpdatedBy);
-            return Ok(BaseResponse<SalaryPaymentModelView>.OkResponse(newSalaryPayment));
-        }
+		[HttpGet("{id}")]
+		public async Task<ActionResult<SalaryPaymentModelView>> GetSalaryPaymentById(string id)
+		{
+			try
+			{
+				var result = await _salaryPaymentService.GetSalaryPaymentAsync(id);
+				return Ok(result);
+			}
+			catch (Exception ex)
+			{
+				return NotFound(new { Message = ex.Message });
+			}
+		}
 
-        // POST api/<Role>
-        [HttpPost("update_role")]
-        public async Task<ActionResult<SalaryPaymentModelView>> UpdateRoleAsync(string id, [FromQuery] UpdatedSalaryPaymentModelView model, string lastUpdatedBy)
-        {
-            var updatedSalaryPayment = await _salaryPaymentService.UpdateSalaryPaymentAsync(id, model, lastUpdatedBy);
-            return Ok(BaseResponse<SalaryPaymentModelView>.OkResponse(updatedSalaryPayment));
-        }
+		[HttpPost()]
+		public async Task<ActionResult<SalaryPaymentModelView>> CreateSalaryPayment([FromQuery] CreateSalaryPaymentModelView model)
+		{
+			try
+			{
+				SalaryPaymentModelView result = await _salaryPaymentService.AddSalaryPaymentAsync(model);
+				return Ok(result);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(new { Message = ex.Message });
+			}
+		}
 
-        // PUT api/<Role>/5
-        [HttpPut("delete_role")]
-        public async Task<ActionResult<string>> DeleteRoleAsync([FromQuery] string id, string lastUpdatedBy)
-        {
-            string deleteMessage = await _salaryPaymentService.DeleteSalaryPaymentAsync(id, lastUpdatedBy);
-            return Ok(BaseResponse<SalaryPaymentModelView>.OkResponse(deleteMessage));
-        }
-    }
+		[HttpPut("{id}")]
+		public async Task<IActionResult> UpdateSalaryPayment(string id, [FromQuery] UpdatedSalaryPaymentModelView model)
+		{
+			try
+			{
+				SalaryPaymentModelView result = await _salaryPaymentService.UpdateSalaryPaymentAsync(id, model);
+				return Ok(result);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(new { Message = ex.Message });
+			}
+		}
+
+		[HttpDelete("{id}")]
+		public async Task<IActionResult> DeleteSalaryPayment(string id)
+		{
+			try
+			{
+				string result = await _salaryPaymentService.DeleteSalaryPaymentAsync(id);
+				return Ok(result);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(new { Message = ex.Message });
+			}
+		}
+	}
 }

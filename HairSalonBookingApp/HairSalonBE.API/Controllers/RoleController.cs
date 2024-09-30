@@ -3,6 +3,8 @@ using HairSalon.Core.Base;
 using HairSalon.Core;
 using HairSalon.ModelViews.RoleModelViews;
 using Microsoft.AspNetCore.Mvc;
+using HairSalon.ModelViews.ShopModelViews;
+using HairSalon.Services.Service;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -19,36 +21,74 @@ namespace HairSalonBE.API.Controllers
             _roleService = roleService;
         }
 
-        // Get All Roles
-        [HttpGet("get_all_roles")]
-        public async Task<ActionResult<BasePaginatedList<RoleModelView>>> GetAllRoles(int pageNumber = 1, int pageSize = 5)
-        {
-            var paginatedRoles = await _roleService.GetAllRoleAsync(pageNumber, pageSize);
-            return Ok(BaseResponse<BasePaginatedList<RoleModelView>>.OkResponse(paginatedRoles));
-        }
+		[HttpGet()]
+		public async Task<ActionResult<BasePaginatedList<RoleModelView>>> GetAllRoles(int pageNumber = 1, int pageSize = 5)
+		{
+			try
+			{
+				var result = await _roleService.GetAllRoleAsync(pageNumber, pageSize);
+				return Ok(result);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(new { Message = ex.Message });
+			}
+		}
 
-        // Create New Role
-        [HttpPost("create_role")]
-        public async Task<ActionResult<RoleModelView>> CreateRole([FromQuery] CreateRoleModelView model, string createdBy, string lastUpdatedBy)
-        {
-            var newRole = await _roleService.AddRoleAsync(model, createdBy, lastUpdatedBy);
-            return Ok(BaseResponse<RoleModelView>.OkResponse(newRole));
-        }
+		[HttpGet("{id}")]
+		public async Task<ActionResult<RoleModelView>> GetRoleById(string id)
+		{
+			try
+			{
+				var result = await _roleService.GetRoleAsync(id);
+				return Ok(result);
+			}
+			catch (Exception ex)
+			{
+				return NotFound(new { Message = ex.Message });
+			}
+		}
 
-        // POST api/<Role>
-        [HttpPost("update_role")]
-        public async Task<ActionResult<RoleModelView>> UpdateRoleAsync(string id, [FromQuery] UpdatedRoleModelView model, string lastUpdatedBy)
-        {
-            var newRole = await _roleService.UpdateRoleAsync(id, model, lastUpdatedBy);
-            return Ok(BaseResponse<RoleModelView>.OkResponse(newRole));
-        }
+		[HttpPost()]
+		public async Task<ActionResult<RoleModelView>> CreateRole([FromQuery] CreateRoleModelView model)
+		{
+			try
+			{
+				RoleModelView result = await _roleService.AddRoleAsync(model);
+				return Ok(result);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(new { Message = ex.Message });
+			}
+		}
 
-        // PUT api/<Role>/5
-        [HttpPut("delete_role")]
-        public async Task<ActionResult<string>> DeleteRoleAsync([FromQuery] string id, string lastUpdatedBy)
-        {
-            string newRole = await _roleService.DeleteRoleAsync(id, lastUpdatedBy);
-            return Ok(BaseResponse<RoleModelView>.OkResponse(newRole));
-        }
-    }
+		[HttpPut("{id}")]
+		public async Task<IActionResult> UpdateRole(string id, [FromQuery] UpdatedRoleModelView model)
+		{
+			try
+			{
+				RoleModelView result = await _roleService.UpdateRoleAsync(id, model);
+				return Ok(result);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(new { Message = ex.Message });
+			}
+		}
+
+		[HttpDelete("{id}")]
+		public async Task<IActionResult> DeleteRole(string id)
+		{
+			try
+			{
+				string result = await _roleService.DeleteRoleAsync(id);
+				return Ok(result);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(new { Message = ex.Message });
+			}
+		}
+	}
 }

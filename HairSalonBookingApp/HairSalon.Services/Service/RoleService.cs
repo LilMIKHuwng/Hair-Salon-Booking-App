@@ -3,7 +3,9 @@ using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
+using HairSalon.Core.Utils;
 using HairSalon.ModelViews.RoleModelViews;
+using HairSalon.ModelViews.ShopModelViews;
 using Microsoft.EntityFrameworkCore;
 namespace HairSalon.Services.Service
 {
@@ -39,62 +41,80 @@ namespace HairSalon.Services.Service
             return new BasePaginatedList<RoleModelView>(shopModelViews, totalCount, pageNumber, pageSize);
         }
 
-        public async Task<RoleModelView> AddRoleAsync(CreateRoleModelView model, string createdBy, string lastUpdatedBy)
-        {
-            IGenericRepository<Role> roleRepository = _unitOfWork.GetRepository<Role>();
+		public async Task<RoleModelView> AddRoleAsync(CreateRoleModelView model)
+		{
+			if (string.IsNullOrWhiteSpace(model.RoleName))
+			{
+				throw new Exception("Role name cannot be empty.");
+			}
 
-            Role newRole = _mapper.Map<Role>(model);
+			Role newRole = _mapper.Map<Role>(model);
 
-            //Tracking create
-            newRole.CreatedBy = createdBy;
-            newRole.LastUpdatedBy = lastUpdatedBy;
+			newRole.Id = Guid.NewGuid().ToString("N");
+			newRole.CreatedBy = "claim account";  
+			newRole.CreatedTime = DateTimeOffset.UtcNow;
+			newRole.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-            //Insert new role to DB
-            await _unitOfWork.GetRepository<Role>().InsertAsync(newRole);
-            await _unitOfWork.SaveAsync();
+			await _unitOfWork.GetRepository<Role>().InsertAsync(newRole);
+			await _unitOfWork.SaveAsync();
 
-            return _mapper.Map<RoleModelView>(newRole);
-        }
+			return _mapper.Map<RoleModelView>(newRole);
+		}
 
-        public async Task<string> DeleteRoleAsync(string id, string deletedBy)
-        {
-            IGenericRepository<Role> roleRepository = _unitOfWork.GetRepository<Role>();
+		public async Task<RoleModelView> UpdateRoleAsync(string id, UpdatedRoleModelView model)
+		{
+			if (string.IsNullOrWhiteSpace(id))
+			{
+				throw new Exception("Please provide a valid Role ID.");
+			}
 
-            Role deleteRole = await roleRepository.Entities
-                                        .FirstOrDefaultAsync(role => role.Id == id && !role.DeletedTime.HasValue)
-                                        ?? throw new Exception("The Role cannot be found or has been deleted!");
+			Role existingRole = await _unitOfWork.GetRepository<Role>().Entities
+				.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
+				?? throw new Exception("The Role cannot be found or has been deleted!");
 
-            //Tracking delete
-            deleteRole.DeletedBy = deletedBy;
-            deleteRole.LastUpdatedBy = deletedBy;
-            deleteRole.DeletedTime = DateTime.UtcNow;
+			_mapper.Map(model, existingRole);
 
-            //Update role for delete
-            roleRepository.Update(deleteRole);
-            await _unitOfWork.SaveAsync();
+			// Set additional properties
+			existingRole.LastUpdatedBy = "claim account";  
+			existingRole.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-            return "Delete";
-        }
+			_unitOfWork.GetRepository<Role>().Update(existingRole);
+			await _unitOfWork.SaveAsync();
 
-        public async Task<RoleModelView> UpdateRoleAsync(string id, UpdatedRoleModelView model, string lastUpdatedBy)
-        {
-            IGenericRepository<Role> roleRepository = _unitOfWork.GetRepository<Role>();
+			return _mapper.Map<RoleModelView>(existingRole);
+		}
 
-            Role updateRole = await roleRepository.Entities
-                                        .FirstOrDefaultAsync(role => role.Id == id && !role.DeletedTime.HasValue)
-                                        ?? throw new Exception("The Role cannot be found or has been deleted!");
+		public async Task<string> DeleteRoleAsync(string id)
+		{
+			if (string.IsNullOrWhiteSpace(id))
+			{
+				throw new Exception("Please provide a valid Role ID.");
+			}
 
-            _mapper.Map(model, updateRole);
+			Role existingRole = await _unitOfWork.GetRepository<Role>().Entities
+				.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
+				?? throw new Exception("The Role cannot be found or has been deleted!");
 
-            //Tracking update
-            updateRole.LastUpdatedBy = lastUpdatedBy;
-            updateRole.LastUpdatedTime = DateTime.UtcNow;
+			existingRole.DeletedTime = DateTimeOffset.UtcNow;
+			existingRole.DeletedBy = "claim account"; 
 
-            //Update role
-            await roleRepository.UpdateAsync(updateRole);
-            await _unitOfWork.SaveAsync();
+			_unitOfWork.GetRepository<Role>().Update(existingRole);
+			await _unitOfWork.SaveAsync();
+			return "Deleted";
+		}
 
-            return _mapper.Map<RoleModelView>(updateRole);
-        }
-    }
+		public async Task<RoleModelView> GetRoleAsync(string id)
+		{
+			if (string.IsNullOrWhiteSpace(id))
+			{
+				throw new Exception("Please provide a valid Role ID.");
+			}
+
+			Role existingRole = await _unitOfWork.GetRepository<Role>().Entities
+				.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
+				?? throw new Exception("The Role cannot be found or has been deleted!");
+
+			return _mapper.Map<RoleModelView>(existingRole);
+		}
+	}
 }

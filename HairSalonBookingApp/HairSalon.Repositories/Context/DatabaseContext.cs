@@ -9,16 +9,16 @@ namespace HairSalon.Repositories.Context
     {
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
 
-        /*// user
-        public virtual DbSet<ApplicationUser> ApplicationUsers => Set<ApplicationUser>();
-        public virtual DbSet<ApplicationRole> ApplicationRoles => Set<ApplicationRole>();
-        public virtual DbSet<ApplicationUserClaims> ApplicationUserClaims => Set<ApplicationUserClaims>();
-        public virtual DbSet<ApplicationUserRoles> ApplicationUserRoles => Set<ApplicationUserRoles>();
-        public virtual DbSet<ApplicationUserLogins> ApplicationUserLogins => Set<ApplicationUserLogins>();
-        public virtual DbSet<ApplicationRoleClaims> ApplicationRoleClaims => Set<ApplicationRoleClaims>();
-        public virtual DbSet<ApplicationUserTokens> ApplicationUserTokens => Set<ApplicationUserTokens>();
+		// user
+		public virtual DbSet<ApplicationUser> ApplicationUsers => Set<ApplicationUser>();
+		public virtual DbSet<ApplicationRole> ApplicationRoles => Set<ApplicationRole>();
+		public virtual DbSet<ApplicationUserClaims> ApplicationUserClaims => Set<ApplicationUserClaims>();
+		public virtual DbSet<ApplicationUserRoles> ApplicationUserRoles => Set<ApplicationUserRoles>();
+		public virtual DbSet<ApplicationUserLogins> ApplicationUserLogins => Set<ApplicationUserLogins>();
+		public virtual DbSet<ApplicationRoleClaims> ApplicationRoleClaims => Set<ApplicationRoleClaims>();
+		public virtual DbSet<ApplicationUserTokens> ApplicationUserTokens => Set<ApplicationUserTokens>();
 
-        public virtual DbSet<UserInfo> UserInfos => Set<UserInfo>();*/
+		public virtual DbSet<UserInfo> UserInfos => Set<UserInfo>();
 
 		public virtual DbSet<Role> Roles { get; set; }
 		public virtual DbSet<User> Users { get; set; }
@@ -27,7 +27,6 @@ namespace HairSalon.Repositories.Context
 		public virtual DbSet<Appointment> Appointments { get; set; }
 		public virtual DbSet<SalaryPayment> SalaryPayments { get; set; }
 		public virtual DbSet<ServiceAppointment> ServiceAppointments { get; set; }
-		public virtual DbSet<Feedback> Feedbacks { get; set; }
 		public virtual DbSet<Payment> Payments { get; set; }
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -47,7 +46,7 @@ namespace HairSalon.Repositories.Context
 				.HasForeignKey(a => a.StylistId)
 				.OnDelete(DeleteBehavior.Restrict); // Hoặc bạn có thể chọn hành vi khác như Cascade hoặc SetNull
 
-			/*// Định nghĩa khóa chính cho ApplicationUserLogins
+			// Định nghĩa khóa chính cho ApplicationUserLogins
 			modelBuilder.Entity<ApplicationUserLogins>()
 				.HasKey(login => new { login.UserId, login.LoginProvider, login.ProviderKey });
 
@@ -57,7 +56,7 @@ namespace HairSalon.Repositories.Context
 
 			// Định nghĩa khóa chính cho ApplicationUserTokens
 			modelBuilder.Entity<ApplicationUserTokens>()
-				.HasKey(token => new { token.UserId, token.LoginProvider, token.Name });*/
+				.HasKey(token => new { token.UserId, token.LoginProvider, token.Name });
 		}
 
 

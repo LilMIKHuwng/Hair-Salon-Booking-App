@@ -3,7 +3,10 @@ using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
+using HairSalon.Core.Utils;
+using HairSalon.ModelViews.RoleModelViews;
 using HairSalon.ModelViews.SalaryPaymentModelViews;
+using HairSalon.ModelViews.ShopModelViews;
 using Microsoft.EntityFrameworkCore;
 
 namespace HairSalon.Services.Service
@@ -39,70 +42,80 @@ namespace HairSalon.Services.Service
             return new BasePaginatedList<SalaryPaymentModelView>(salaryPaymentModelViews, totalCount, pageNumber, pageSize);
         }
 
-        public async Task<SalaryPaymentModelView> AddSalaryPaymentAsync(CreateSalaryPaymentModelView model, string createdBy, string lastUpdatedBy)
-        {
-            IGenericRepository<SalaryPayment> salaryPaymentRepository = _unitOfWork.GetRepository<SalaryPayment>();
-            IGenericRepository<User> userRepository = _unitOfWork.GetRepository<User>();
-            User existedUser = await userRepository.GetByIdAsync(model.UserId);
+		public async Task<SalaryPaymentModelView> AddSalaryPaymentAsync(CreateSalaryPaymentModelView model)
+		{
+			if (string.IsNullOrWhiteSpace(model.UserId))
+			{
+				throw new Exception("User ID cannot be empty.");
+			}
 
-            if (existedUser == null)
-            {
-                throw new Exception("User not found.");
-            }
+			SalaryPayment newSalaryPayment = _mapper.Map<SalaryPayment>(model);
 
-            SalaryPayment newSalary = _mapper.Map<SalaryPayment>(model);
+			newSalaryPayment.Id = Guid.NewGuid().ToString("N");
+			newSalaryPayment.CreatedBy = "claim account";
+			newSalaryPayment.CreatedTime = DateTimeOffset.UtcNow;
+			newSalaryPayment.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-            //Tracking create
-            newSalary.CreatedBy = createdBy;
-            newSalary.LastUpdatedBy = lastUpdatedBy;
+			await _unitOfWork.GetRepository<SalaryPayment>().InsertAsync(newSalaryPayment);
+			await _unitOfWork.SaveAsync();
 
-            //Insert new role to DB
-            await _unitOfWork.GetRepository<SalaryPayment>().InsertAsync(newSalary);
-            await _unitOfWork.SaveAsync();
+			return _mapper.Map<SalaryPaymentModelView>(newSalaryPayment);
+		}
 
-            return _mapper.Map<SalaryPaymentModelView>(newSalary);
-        }
+		public async Task<SalaryPaymentModelView> UpdateSalaryPaymentAsync(string id, UpdatedSalaryPaymentModelView model)
+		{
+			if (string.IsNullOrWhiteSpace(id))
+			{
+				throw new Exception("Please provide a valid Salary Payment ID.");
+			}
 
-        public async Task<string> DeleteSalaryPaymentAsync(string id, string deletedBy)
-        {
-            IGenericRepository<SalaryPayment> salaryPaymentRepository = _unitOfWork.GetRepository<SalaryPayment>();
+			SalaryPayment existingSalary = await _unitOfWork.GetRepository<SalaryPayment>().Entities
+				.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
+				?? throw new Exception("The Salary Payment cannot be found or has been deleted!");
 
-            SalaryPayment deleteRole = await salaryPaymentRepository.Entities
-                                        .FirstOrDefaultAsync(role => role.Id == id && !role.DeletedTime.HasValue)
-                                        ?? throw new Exception("The Role cannot be found or has been deleted!");
+			_mapper.Map(model, existingSalary);
 
-            //Tracking delete
-            deleteRole.DeletedBy = deletedBy;
-            deleteRole.LastUpdatedBy = deletedBy;
-            deleteRole.DeletedTime = DateTime.UtcNow;
+			// Set additional properties
+			existingSalary.LastUpdatedBy = "claim account";
+			existingSalary.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-            //Update role for delete
-            salaryPaymentRepository.Update(deleteRole);
-            await _unitOfWork.SaveAsync();
+			_unitOfWork.GetRepository<SalaryPayment>().Update(existingSalary);
+			await _unitOfWork.SaveAsync();
 
-            return "Delete";
-        }
+			return _mapper.Map<SalaryPaymentModelView>(existingSalary);
+		}
 
+		public async Task<string> DeleteSalaryPaymentAsync(string id)
+		{
+			if (string.IsNullOrWhiteSpace(id))
+			{
+				throw new Exception("Please provide a valid Salary Payment ID.");
+			}
 
-        public async Task<SalaryPaymentModelView> UpdateSalaryPaymentAsync(string id, UpdatedSalaryPaymentModelView model, string lastUpdatedBy)
-        {
-            IGenericRepository<SalaryPayment> salaryPaymentRepository = _unitOfWork.GetRepository<SalaryPayment>();
+			SalaryPayment existingSalary = await _unitOfWork.GetRepository<SalaryPayment>().Entities
+				.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
+				?? throw new Exception("The Salary Payment cannot be found or has been deleted!");
 
-            SalaryPayment updateSalaryPayment = await salaryPaymentRepository.Entities
-                                        .FirstOrDefaultAsync(role => role.Id == id && !role.DeletedTime.HasValue)
-                                        ?? throw new Exception("The Role cannot be found or has been deleted!");
+			existingSalary.DeletedTime = DateTimeOffset.UtcNow;
+			existingSalary.DeletedBy = "claim account";
 
-            _mapper.Map(model, updateSalaryPayment);
+			_unitOfWork.GetRepository<SalaryPayment>().Update(existingSalary);
+			await _unitOfWork.SaveAsync();
+			return "Deleted";
+		}
 
-            //Tracking update
-            updateSalaryPayment.LastUpdatedBy = lastUpdatedBy;
-            updateSalaryPayment.LastUpdatedTime = DateTime.UtcNow;
+		public async Task<SalaryPaymentModelView> GetSalaryPaymentAsync(string id)
+		{
+			if (string.IsNullOrWhiteSpace(id))
+			{
+				throw new Exception("Please provide a valid Salary Payment ID.");
+			}
 
-            //Update role
-            await salaryPaymentRepository.UpdateAsync(updateSalaryPayment);
-            await _unitOfWork.SaveAsync();
+			SalaryPayment existingSalary = await _unitOfWork.GetRepository<SalaryPayment>().Entities
+				.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
+				?? throw new Exception("The Salary Payment cannot be found or has been deleted!");
 
-            return _mapper.Map<SalaryPaymentModelView>(updateSalaryPayment);
-        }
-    }
+			return _mapper.Map<SalaryPaymentModelView>(existingSalary);
+		}
+	}
 }
