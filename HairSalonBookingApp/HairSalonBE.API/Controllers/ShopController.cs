@@ -1,7 +1,5 @@
-﻿using HairSalon.Contract.Repositories.Entity;
-using HairSalon.Contract.Services.Interface;
+﻿using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
-using HairSalon.Core.Base;
 using HairSalon.ModelViews.ShopModelViews;
 using Microsoft.AspNetCore.Mvc;
 
