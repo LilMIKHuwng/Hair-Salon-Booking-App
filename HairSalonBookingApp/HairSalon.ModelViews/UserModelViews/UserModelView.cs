@@ -17,7 +17,6 @@ namespace HairSalon.ModelViews.UserModelViews
 		public string Password { get; set; }
 		public int Point { get; set; } = 0;
 		public string PhoneNumber { get; set; }
-
-		//public virtual RoleViewModel RoleVm { get; set; }
+		public string RoleId { get; set; }
 	}
 }

@@ -17,31 +17,32 @@ namespace HairSalon.Repositories.Mapper
         public AutoMapperProfile()
         {
             CreateMap<Shop, ShopModelView>();
-            CreateMap<Role, RoleModelView>();
-            CreateMap<SalaryPayment, SalaryPaymentModelView>();
+			CreateMap<Shop, CreateShopModelView>();
+			CreateMap<Shop, UpdatedShopModelView>();
+			CreateMap<CreateShopModelView, Shop>();
+			CreateMap<UpdatedShopModelView, Shop>();
 
-            CreateMap<Shop, CreateShopModelView>();
-            CreateMap<Shop, UpdatedShopModelView>();
-            CreateMap<Role, CreateRoleModelView>();
-            CreateMap<Role, UpdatedRoleModelView>();
+			CreateMap<Role, RoleModelView>();
+			CreateMap<Role, CreateRoleModelView>();
+			CreateMap<Role, UpdatedRoleModelView>();
+			CreateMap<CreateRoleModelView, Role>();
+			CreateMap<UpdatedRoleModelView, Role>();
+
+            CreateMap<SalaryPayment, SalaryPaymentModelView>();    
             CreateMap<SalaryPayment, CreateSalaryPaymentModelView>();
             CreateMap<SalaryPayment, UpdatedSalaryPaymentModelView>();
+			CreateMap<CreateSalaryPaymentModelView, SalaryPayment>();
+			CreateMap<UpdatedSalaryPaymentModelView, SalaryPayment>();
 
-            CreateMap<CreateRoleModelView, Role>();
-            CreateMap<UpdatedRoleModelView, Role>();
-
-            CreateMap<CreateShopModelView, Shop>();
-
-            CreateMap<User, UserModelView>();
-            CreateMap<User,  CreateUserModelView>();
-            CreateMap<User,  UpdateUserModelView>();
+			CreateMap<User, UserModelView>();
+            CreateMap<User, CreateUserModelView>();
+            CreateMap<User, UpdateUserModelView>();
             CreateMap<CreateUserModelView, User>();
             CreateMap<UpdateUserModelView, User>();
-            CreateMap<UserModelView, User>();
 
-            CreateMap<UpdatedShopModelView, Shop>();
+            
 
-            CreateMap<CreateSalaryPaymentModelView, SalaryPayment>();
-            CreateMap<UpdatedShopModelView, SalaryPayment>();
+            
+        }
     }
 }
