@@ -1,7 +1,5 @@
-﻿using HairSalon.Contract.Repositories.Entity;
-using HairSalon.Contract.Services.Interface;
+﻿using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
-using HairSalon.Core.Base;
 using HairSalon.ModelViews.ShopModelViews;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,7 +17,7 @@ namespace HairSalonBE.API.Controllers
         }
 
         // GET: api/Shop
-        [HttpGet()]
+        [HttpGet("all")]
         public async Task<ActionResult<BasePaginatedList<ShopModelView>>> GetAllShops(int pageNumber = 1, int pageSize = 5)
         {
             try
