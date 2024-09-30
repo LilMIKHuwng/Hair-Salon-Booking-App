@@ -25,7 +25,7 @@ namespace HairSalon.Services.Service
             _mapper = mapper;
         }
 
-        public async Task<AppointmentModelView> AddAppointmentAsync(AppointmentCreateModel model)
+        public async Task<AppointmentModelView> AddAppointmentAsync(CreateAppointmentModelView model)
         {
             Appointment newAppointment = _mapper.Map<Appointment>(model);
 
@@ -78,7 +78,7 @@ namespace HairSalon.Services.Service
             return _mapper.Map<AppointmentModelView>(existingAppointment);
         }
 
-        public async Task<AppointmentModelView> UpdateAppointmentAsync(string id, UpdateAppointmentModel model)
+        public async Task<AppointmentModelView> UpdateAppointmentAsync(string id, UpdateAppointmentModelView model)
         {
             if (string.IsNullOrWhiteSpace(id))
             {

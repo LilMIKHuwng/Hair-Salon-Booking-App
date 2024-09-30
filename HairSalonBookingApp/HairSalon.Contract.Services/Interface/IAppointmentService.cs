@@ -11,10 +11,10 @@ namespace HairSalon.Contract.Services.Interface
 {
     public interface IAppointmentService
     {
-        Task<AppointmentModelView> AddAppointmentAsync(AppointmentCreateModel model);
+        Task<AppointmentModelView> AddAppointmentAsync(CreateAppointmentModelView model);
         Task<BasePaginatedList<AppointmentModelView>> GetAllAppointmentAsync(int pageNumber, int pageSize);
         Task<AppointmentModelView> GetAppointmentAsync(string id);
-        Task<AppointmentModelView> UpdateAppointmentAsync(string id, UpdateAppointmentModel model);
+        Task<AppointmentModelView> UpdateAppointmentAsync(string id, UpdateAppointmentModelView model);
         Task<string> DeleteAppointmentAsync(string id);
     }
 }

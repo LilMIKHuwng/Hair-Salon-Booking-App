@@ -21,7 +21,7 @@ namespace HairSalonBE.API.Controllers
             _salaryPaymentService = salaryPaymentService;
         }
 
-		[HttpGet()]
+		[HttpGet("all")]
 		public async Task<ActionResult<BasePaginatedList<SalaryPaymentModelView>>> GetAllSalaryPayments(int pageNumber = 1, int pageSize = 5)
 		{
 			try

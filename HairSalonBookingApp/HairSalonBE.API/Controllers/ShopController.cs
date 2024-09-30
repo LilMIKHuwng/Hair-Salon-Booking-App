@@ -17,7 +17,7 @@ namespace HairSalonBE.API.Controllers
         }
 
         // GET: api/Shop
-        [HttpGet()]
+        [HttpGet("all")]
         public async Task<ActionResult<BasePaginatedList<ShopModelView>>> GetAllShops(int pageNumber = 1, int pageSize = 5)
         {
             try

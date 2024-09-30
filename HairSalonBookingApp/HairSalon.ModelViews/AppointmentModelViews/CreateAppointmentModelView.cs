@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace HairSalon.ModelViews.AppointmentModelViews
 {
-    public class AppointmentCreateModel
+    public class CreateAppointmentModelView
     {
         [Required(ErrorMessage = "UserId is required.")]
         public string UserId { get; set; }

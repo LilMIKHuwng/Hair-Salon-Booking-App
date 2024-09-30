@@ -24,20 +24,18 @@ namespace HairSalon.Repositories.Mapper
             CreateMap<UpdatedShopModelView, Shop>();
             CreateMap<CreateShopModelView, Shop>();
 
-            CreateMap<Appointment, AppointmentCreateModel>();
-            CreateMap<AppointmentCreateModel, Appointment>();
             CreateMap<Appointment, AppointmentModelView>();
-            CreateMap<Appointment, UpdateAppointmentModel>();
-            CreateMap<UpdateAppointmentModel, Appointment>();
+            CreateMap<Appointment, CreateAppointmentModelView>();
+            CreateMap<Appointment, UpdateAppointmentModelView>();
+            CreateMap<CreateAppointmentModelView, Appointment>();
+            CreateMap<UpdateAppointmentModelView, Appointment>();
             
             CreateMap<Service, ServiceModelView>();
             CreateMap<Service, CreateServiceModelView>();
             CreateMap<Service, UpdatedServiceModelView>();
             CreateMap<UpdatedServiceModelView, Service>();
             CreateMap<CreateServiceModelView, Service>();
-            CreateMap<CreateServiceModelView, ServiceModelView>();
             
-
 			CreateMap<Role, RoleModelView>();
 			CreateMap<Role, CreateRoleModelView>();
 			CreateMap<Role, UpdatedRoleModelView>();

@@ -21,7 +21,7 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpPost()]
-        public async Task<ActionResult<AppointmentModelView>> CreateAppointment([FromQuery] AppointmentCreateModel model)
+        public async Task<ActionResult<AppointmentModelView>> CreateAppointment([FromQuery] CreateAppointmentModelView model)
         {
             try
             {
@@ -65,7 +65,7 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAppointment(string id, [FromQuery] UpdateAppointmentModel model)
+        public async Task<IActionResult> UpdateAppointment(string id, [FromQuery] UpdateAppointmentModelView model)
         {
             try
             {

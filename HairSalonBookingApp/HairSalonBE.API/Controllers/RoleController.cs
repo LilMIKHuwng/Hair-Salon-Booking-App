@@ -21,7 +21,7 @@ namespace HairSalonBE.API.Controllers
             _roleService = roleService;
         }
 
-		[HttpGet()]
+		[HttpGet("all")]
 		public async Task<ActionResult<BasePaginatedList<RoleModelView>>> GetAllRoles(int pageNumber = 1, int pageSize = 5)
 		{
 			try

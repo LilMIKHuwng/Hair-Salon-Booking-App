@@ -19,7 +19,7 @@ namespace HairSalonBE.API.Controllers
             _serviceService = serviceService;
         }
 
-        [HttpGet()]
+        [HttpGet("all")]
         public async Task<ActionResult<BasePaginatedList<ServiceModelView>>> GetAllServices(int pageNumber = 1, int pageSize = 5)
         {
             try
