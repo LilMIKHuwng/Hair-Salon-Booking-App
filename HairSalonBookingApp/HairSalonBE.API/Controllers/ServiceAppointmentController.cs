@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HairSalonBE.API.Controllers;
 
-[Route("api/[controller]/service_appoiment")]
+[Route("api/[controller]")]
 [ApiController]
 public class ServiceAppointmentController : ControllerBase
 {
@@ -67,7 +67,7 @@ public class ServiceAppointmentController : ControllerBase
 
     [HttpPut]
     public async Task<ActionResult<Boolean>> UpdateServiceAppointment(
-        [FromQuery] EditServiceAppointmentModelView editServiceAppointmentModelView)
+         EditServiceAppointmentModelView editServiceAppointmentModelView)
     {
         try
         {
@@ -80,13 +80,13 @@ public class ServiceAppointmentController : ControllerBase
         }
     }
 
-    [HttpGet("/services/{service}")]
+    [HttpGet("/services/{serviceID}")]
     public async Task<ActionResult<BasePaginatedList<ServiceAppointmentModelView>>>
-        GetAllServiceAppointmentByServiceEntity(string service)
+        GetAllServiceAppointmentByServiceEntity(string serviceID)
     {
         try
         {
-            var result = await _serviceAppointment.GetAllServiceAppointmentByServiceId(service);
+            var result = await _serviceAppointment.GetAllServiceAppointmentByServiceId(serviceID);
             return Ok(result);
         }
         catch (Exception e)
@@ -96,13 +96,13 @@ public class ServiceAppointmentController : ControllerBase
     }
 
 
-    [HttpGet("/appointments/{id}")]
+    [HttpGet("/appointments/{appointmentsId}")]
     public async Task<ActionResult<BasePaginatedList<ServiceAppointmentModelView>>>
-        GetServiceAppointmentByAppointmentId(string id)
+        GetServiceAppointmentByAppointmentId(string appointmentsId)
     {
         try
         {
-            var result = await _serviceAppointment.GetAllServiceAppointmentByAppointmentID(id);
+            var result = await _serviceAppointment.GetAllServiceAppointmentByAppointmentID(appointmentsId);
             return Ok(result);
         }
         catch (Exception e)
@@ -111,13 +111,13 @@ public class ServiceAppointmentController : ControllerBase
         }
     }
 
-    [HttpGet("/userid/{id}")]
+    [HttpGet("/userid/{userid}")]
     public async Task<ActionResult<BasePaginatedList<ServiceAppointmentModelView>>>
-        GetServiceAppointmentByUserId(string id)
+        GetServiceAppointmentByUserId(string userid)
     {
         try
         {
-            var result = await _serviceAppointment.GetAllServiceAppointmentByUserId(id);
+            var result = await _serviceAppointment.GetAllServiceAppointmentByUserId(userid);
             return Ok(result);
         }
         catch (Exception e)
