@@ -1,29 +1,31 @@
 ﻿using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
+using HairSalon.ModelViews.ServiceModelViews;
 using HairSalon.ModelViews.ShopModelViews;
+using HairSalon.Services.Service;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairSalonBE.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ShopController : ControllerBase
+    public class ServiceController : ControllerBase
     {
-        private readonly IShopService _shopService;
+        private readonly IServiceService _serviceService;
 
-        public ShopController(IShopService shopService)
+        public ServiceController(IServiceService serviceService)
         {
-            _shopService = shopService;
+            _serviceService = serviceService;
         }
 
-        // GET: api/Shop
         [HttpGet()]
-        public async Task<ActionResult<BasePaginatedList<ShopModelView>>> GetAllShops(int pageNumber = 1, int pageSize = 5)
+        public async Task<ActionResult<BasePaginatedList<ServiceModelView>>> GetAllServices(int pageNumber = 1, int pageSize = 5)
         {
             try
             {
                 // Call service to get paginated list of shops
-                var result = await _shopService.GetAllShopAsync(pageNumber, pageSize);
+                var result = await _serviceService.GetAllServiceAsync(pageNumber, pageSize);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -32,14 +34,15 @@ namespace HairSalonBE.API.Controllers
             }
         }
 
+
         // GET: api/Shop/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<ShopModelView>> GetShopById(string id)
+        public async Task<ActionResult<ServiceModelView>> GetServiceById(string id)
         {
             try
             {
                 // Call service to get shop by ID
-                var result = await _shopService.GetShopAsync(id);
+                var result = await _serviceService.GetServiceAsync(id);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -48,28 +51,31 @@ namespace HairSalonBE.API.Controllers
             }
         }
 
-        // POST: api/Shop
+        // POST: api/service
         [HttpPost()]
-        public async Task<ActionResult<ShopModelView>> CreateShop([FromQuery] CreateShopModelView model)
+        public async Task<ActionResult<ServiceModelView>> CreateService([FromQuery] CreateServiceModelView model)
         {
             try
             {
-                ShopModelView result = await _shopService.AddShopAsync(model);
+                ServiceModelView result = await _serviceService.AddServiceAsync(model);
                 return Ok(result);
             }
             catch (Exception ex)
             {
                 return BadRequest(new { Message = ex.Message });
+
+
+
             }
         }
 
-        // PUT: api/Shop/{id}
+        // PUT: api/service/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateShop(string id, [FromQuery] UpdatedShopModelView model)
+        public async Task<IActionResult> UpdateService(string id, [FromQuery] UpdatedServiceModelView model)
         {
             try
             {
-                ShopModelView result = await _shopService.UpdateShopAsync(id, model);
+                ServiceModelView result = await _serviceService.UpdateServiceAsync(id, model);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -78,13 +84,14 @@ namespace HairSalonBE.API.Controllers
             }
         }
 
-        // DELETE: api/Shop/{id}
+
+        // DELETE: api/service/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteShop(string id)
+        public async Task<IActionResult> DeleteService(string id)
         {
             try
             {
-                string result = await _shopService.DeleteShopAsync(id);
+                string result = await _serviceService.DeleteServiceAsync(id);
                 return Ok(result);
             }
             catch (Exception ex)
