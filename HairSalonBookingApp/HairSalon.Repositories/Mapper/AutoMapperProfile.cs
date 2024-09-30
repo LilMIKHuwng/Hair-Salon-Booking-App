@@ -1,5 +1,6 @@
 using AutoMapper;
 using HairSalon.Contract.Repositories.Entity;
+using HairSalon.ModelViews.ServiceModelViews;
 using HairSalon.ModelViews.RoleModelViews;
 using HairSalon.ModelViews.SalaryPaymentModelViews;
 using HairSalon.ModelViews.ShopModelViews;
@@ -17,10 +18,18 @@ namespace HairSalon.Repositories.Mapper
         public AutoMapperProfile()
         {
             CreateMap<Shop, ShopModelView>();
-			CreateMap<Shop, CreateShopModelView>();
-			CreateMap<Shop, UpdatedShopModelView>();
-			CreateMap<CreateShopModelView, Shop>();
-			CreateMap<UpdatedShopModelView, Shop>();
+            CreateMap<Shop, CreateShopModelView>();
+            CreateMap<Shop, UpdatedShopModelView>();
+            CreateMap<UpdatedShopModelView, Shop>();
+            CreateMap<CreateShopModelView, Shop>();
+
+            CreateMap<Service, ServiceModelView>();
+            CreateMap<Service, CreateServiceModelView>();
+            CreateMap<Service, UpdatedServiceModelView>();
+            CreateMap<UpdatedServiceModelView, Service>();
+            CreateMap<CreateServiceModelView, Service>();
+            CreateMap<CreateServiceModelView, ServiceModelView>();
+            
 
 			CreateMap<Role, RoleModelView>();
 			CreateMap<Role, CreateRoleModelView>();
