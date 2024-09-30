@@ -4,7 +4,7 @@ using HairSalon.Repositories.Context;
 
 namespace HairSalon.Repositories.UOW
 {
-    public class RoleRepository : GenericRepository<Role>, IRoleRepository
+    public class RoleRepository : GenericRepository<ApplicationRole>, IRoleRepository
     {
         private readonly DatabaseContext _dbContext;
 

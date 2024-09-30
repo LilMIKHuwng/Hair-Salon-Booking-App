@@ -20,8 +20,6 @@ namespace HairSalon.Repositories.Context
 
 		public virtual DbSet<UserInfo> UserInfos => Set<UserInfo>();
 
-		public virtual DbSet<Role> Roles { get; set; }
-		public virtual DbSet<User> Users { get; set; }
 		public virtual DbSet<Shop> Shops { get; set; }
 		public virtual DbSet<Service> Services { get; set; }
 		public virtual DbSet<Appointment> Appointments { get; set; }

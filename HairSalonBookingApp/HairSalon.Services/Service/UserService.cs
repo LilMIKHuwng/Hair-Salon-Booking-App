@@ -34,7 +34,7 @@ namespace HairSalon.Services.Service
 			}
 
 			// Mapping from CreateShopModelView to Shop entity
-			User newUser = _mapper.Map<User>(model);
+			UserInfo newUser = _mapper.Map<UserInfo>(model);
 
 			// Set additional properties
 			newUser.Id = Guid.NewGuid().ToString("N");
@@ -42,7 +42,7 @@ namespace HairSalon.Services.Service
 			newUser.CreatedTime = DateTimeOffset.UtcNow;
 			newUser.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-			await _unitOfWork.GetRepository<User>().InsertAsync(newUser);
+			await _unitOfWork.GetRepository<UserInfo>().InsertAsync(newUser);
 			await _unitOfWork.SaveAsync();
 
 			// Map back to ShopModelView and return
@@ -57,7 +57,7 @@ namespace HairSalon.Services.Service
 			}
 
 			// Find the shop
-			User existingShop = await _unitOfWork.GetRepository<User>().Entities
+			UserInfo existingShop = await _unitOfWork.GetRepository<UserInfo>().Entities
 				.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
 				?? throw new Exception("The User cannot be found or has been deleted!");
 
@@ -65,7 +65,7 @@ namespace HairSalon.Services.Service
 			existingShop.DeletedTime = DateTimeOffset.UtcNow;
 			existingShop.DeletedBy = "claim account";  // Replace with actual authenticated user
 
-			_unitOfWork.GetRepository<User>().Update(existingShop);
+			_unitOfWork.GetRepository<UserInfo>().Update(existingShop);
 			await _unitOfWork.SaveAsync();
 			return "Deleted";
 		}
@@ -84,7 +84,7 @@ namespace HairSalon.Services.Service
 
 		public async Task<BasePaginatedList<UserModelView>> GetAllUserAsync(int pageNumber, int pageSize)
 		{
-			IQueryable<User> userQuery = _unitOfWork.GetRepository<User>().Entities
+			IQueryable<UserInfo> userQuery = _unitOfWork.GetRepository<UserInfo>().Entities
 				.Where(p => !p.DeletedTime.HasValue)
 				.OrderByDescending(s => s.CreatedTime);
 
@@ -92,7 +92,7 @@ namespace HairSalon.Services.Service
 			int totalCount = await userQuery.CountAsync();
 
 			// Apply pagination
-			List<User> paginatedShops = await userQuery
+			List<UserInfo> paginatedShops = await userQuery
 				.Skip((pageNumber - 1) * pageSize)
 				.Take(pageSize)
 				.ToListAsync();
@@ -111,7 +111,7 @@ namespace HairSalon.Services.Service
 			}
 
 			// Find the shop
-			User existingUser = await _unitOfWork.GetRepository<User>().Entities
+			UserInfo existingUser = await _unitOfWork.GetRepository<UserInfo>().Entities
 				.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
 				?? throw new Exception("The User cannot be found or has been deleted!");
 
@@ -127,7 +127,7 @@ namespace HairSalon.Services.Service
 			}
 
 			// Find the existing shop
-			User existingUser = await _unitOfWork.GetRepository<User>().Entities
+			UserInfo existingUser = await _unitOfWork.GetRepository<UserInfo>().Entities
 				.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
 				?? throw new Exception("The User cannot be found or has been deleted!");
 
@@ -138,7 +138,7 @@ namespace HairSalon.Services.Service
 			existingUser.LastUpdatedBy = "claim account";  // Replace with actual authenticated user
 			existingUser.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-			_unitOfWork.GetRepository<User>().Update(existingUser);
+			_unitOfWork.GetRepository<UserInfo>().Update(existingUser);
 			await _unitOfWork.SaveAsync();
 
 			// Map back to ShopModelView and return
