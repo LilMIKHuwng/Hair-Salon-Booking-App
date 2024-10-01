@@ -48,7 +48,7 @@ namespace HairSalonBE.API
                 .AddScoped<IAppointmentService, AppointmentService>()
                 .AddScoped<IPaymentService, PaymentService>()
                 .AddScoped<IAppUserRoleService, AppUserRoleService>()
-                .AddScoped<IAppUserService, AppUserService>();
+                .AddScoped<IAppUserService, AppUserService>()
                 .AddScoped<IServiceAppointment, ServiceAppointmentService>();
 
         }
