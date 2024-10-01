@@ -37,12 +37,11 @@ namespace HairSalon.Repositories.Context
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
-			// Cấu hình mối quan hệ giữa Appointment và User cho Stylist
 			modelBuilder.Entity<Appointment>()
 				.HasOne(a => a.Stylist)
-				.WithMany() // Stylist không cần danh sách các Appointment
+				.WithMany() 
 				.HasForeignKey(a => a.StylistId)
-				.OnDelete(DeleteBehavior.Restrict); // Hoặc bạn có thể chọn hành vi khác như Cascade hoặc SetNull
+				.OnDelete(DeleteBehavior.Restrict); 
 
 			// Định nghĩa khóa chính cho ApplicationUserLogins
 			modelBuilder.Entity<ApplicationUserLogins>()

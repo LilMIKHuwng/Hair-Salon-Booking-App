@@ -4,19 +4,16 @@ using HairSalon.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace HairSalon.Repositories.Migrations
+namespace HairSalon.Repositories.data_access.migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240930051605_InitDB")]
-    partial class InitDB
+    partial class DatabaseContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -346,44 +343,6 @@ namespace HairSalon.Repositories.Migrations
                     b.ToTable("Payments");
                 });
 
-            modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.Role", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("CreatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset?>("DeletedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("LastUpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("LastUpdatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("RoleName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Roles");
-                });
-
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.SalaryPayment", b =>
                 {
                     b.Property<string>("Id")
@@ -580,68 +539,6 @@ namespace HairSalon.Repositories.Migrations
                     b.ToTable("Shops");
                 });
 
-            modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.User", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("CreatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset?>("DeletedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("LastUpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("LastUpdatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<int>("Point")
-                        .HasColumnType("int");
-
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("Users");
-                });
-
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.UserInfo", b =>
                 {
                     b.Property<string>("Id")
@@ -677,6 +574,9 @@ namespace HairSalon.Repositories.Migrations
 
                     b.Property<DateTimeOffset>("LastUpdatedTime")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Point")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -765,12 +665,12 @@ namespace HairSalon.Repositories.Migrations
 
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.Appointment", b =>
                 {
-                    b.HasOne("HairSalon.Contract.Repositories.Entity.User", "Stylist")
+                    b.HasOne("HairSalon.Contract.Repositories.Entity.UserInfo", "Stylist")
                         .WithMany()
                         .HasForeignKey("StylistId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("HairSalon.Contract.Repositories.Entity.User", "User")
+                    b.HasOne("HairSalon.Contract.Repositories.Entity.UserInfo", "User")
                         .WithMany("Appointments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -794,7 +694,7 @@ namespace HairSalon.Repositories.Migrations
 
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.SalaryPayment", b =>
                 {
-                    b.HasOne("HairSalon.Contract.Repositories.Entity.User", "User")
+                    b.HasOne("HairSalon.Contract.Repositories.Entity.UserInfo", "User")
                         .WithMany("SalaryPayments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -833,17 +733,6 @@ namespace HairSalon.Repositories.Migrations
                     b.Navigation("Service");
                 });
 
-            modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.User", b =>
-                {
-                    b.HasOne("HairSalon.Contract.Repositories.Entity.Role", "Role")
-                        .WithMany("Users")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Role");
-                });
-
             modelBuilder.Entity("HairSalon.Repositories.Entity.ApplicationUser", b =>
                 {
                     b.HasOne("HairSalon.Contract.Repositories.Entity.UserInfo", "UserInfo")
@@ -858,11 +747,6 @@ namespace HairSalon.Repositories.Migrations
                     b.Navigation("ServiceAppointments");
                 });
 
-            modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.Role", b =>
-                {
-                    b.Navigation("Users");
-                });
-
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.Service", b =>
                 {
                     b.Navigation("ServiceAppointments");
@@ -873,7 +757,7 @@ namespace HairSalon.Repositories.Migrations
                     b.Navigation("Services");
                 });
 
-            modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.User", b =>
+            modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.UserInfo", b =>
                 {
                     b.Navigation("Appointments");
 
