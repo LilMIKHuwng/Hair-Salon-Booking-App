@@ -1,4 +1,5 @@
-﻿using HairSalon.Contract.Services.Interface;
+﻿using HairSalon.Contract.Repositories.Entity;
+using HairSalon.Contract.Services.Interface;
 using HairSalon.Repositories.Context;
 using HairSalon.Services;
 using HairSalon.Services.Service;
@@ -45,7 +46,10 @@ namespace HairSalonBE.API
                 .AddScoped<ISalaryPaymentService, SalaryPaymentService>()
                 .AddScoped<IServiceService, ServiceService>()
                 .AddScoped<IAppointmentService, AppointmentService>()
-                .AddScoped<IPaymentService, PaymentService>();
+                .AddScoped<IPaymentService, PaymentService>()
+                .AddScoped<IServiceAppointment, ServiceAppointmentService>();
         }
+        
+        
     }
 }

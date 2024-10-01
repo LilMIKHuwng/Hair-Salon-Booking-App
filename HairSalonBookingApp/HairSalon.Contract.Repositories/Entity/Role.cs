@@ -12,6 +12,6 @@ namespace HairSalon.Contract.Repositories.Entity
 		[MaxLength(255)]
 		public string? Description { get; set; }
 
-		public virtual ICollection<User>? Users { get; set; }
+		public virtual ICollection<UserInfo>? Users { get; set; }
 	}
 }

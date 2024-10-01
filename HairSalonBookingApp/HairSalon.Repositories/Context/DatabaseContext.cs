@@ -22,10 +22,6 @@ namespace HairSalon.Repositories.Context
 		public virtual DbSet<ApplicationUserTokens> ApplicationUserTokens => Set<ApplicationUserTokens>();
 
 		public virtual DbSet<UserInfo> UserInfos => Set<UserInfo>();
-
-
-		public virtual DbSet<Role> Roles { get; set; }
-		public virtual DbSet<User> Users { get; set; }
 		public virtual DbSet<Shop> Shops { get; set; }
 		public virtual DbSet<Service> Services { get; set; }
 		public virtual DbSet<Appointment> Appointments { get; set; }
@@ -41,14 +37,14 @@ namespace HairSalon.Repositories.Context
             }
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            // Cấu hình mối quan hệ giữa Appointment và User cho Stylist
-            modelBuilder.Entity<Appointment>()
-                .HasOne(a => a.Stylist)
-                .WithMany() // Stylist không cần danh sách các Appointment
-                .HasForeignKey(a => a.StylistId)
-                .OnDelete(DeleteBehavior.Restrict); // Hoặc bạn có thể chọn hành vi khác như Cascade hoặc SetNull
+
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
+		{
+			modelBuilder.Entity<Appointment>()
+				.HasOne(a => a.Stylist)
+				.WithMany() 
+				.HasForeignKey(a => a.StylistId)
+				.OnDelete(DeleteBehavior.Restrict); 
 
             // Định nghĩa khóa chính cho ApplicationUserLogins
             modelBuilder.Entity<ApplicationUserLogins>()

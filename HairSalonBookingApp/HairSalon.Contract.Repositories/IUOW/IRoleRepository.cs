@@ -3,7 +3,7 @@ using HairSalon.Contract.Repositories.Interface;
 
 namespace HairSalon.Contract.Repositories.IUOW
 {
-    public interface IRoleRepository: IGenericRepository<Role>
+    public interface IRoleRepository: IGenericRepository<ApplicationRole>
     {
     }
 }

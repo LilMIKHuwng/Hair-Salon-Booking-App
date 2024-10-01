@@ -239,7 +239,7 @@ public class ServiceAppointmentService : IServiceAppointment
             throw new Exception("ServiceAppointment not found: " + id);
         }
 
-        if (!serviceAppointment.DeletedTime.HasValue)
+        if (serviceAppointment.DeletedTime.HasValue)
         {
             throw new Exception("ServiceAppointment not Exist: " + id);
         }

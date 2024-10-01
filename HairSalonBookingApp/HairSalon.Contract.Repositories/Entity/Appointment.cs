@@ -11,7 +11,7 @@ namespace HairSalon.Contract.Repositories.Entity
 
 		[ForeignKey("UserId")]
 
-		public virtual User User { get; set; }
+		public virtual UserInfo User { get; set; }
 
 
 		// StylistId là một khóa ngoại tham chiếu đến bảng User
@@ -19,7 +19,7 @@ namespace HairSalon.Contract.Repositories.Entity
 
 		// Tham chiếu đến Stylist trong bảng User
 
-		public virtual User Stylist { get; set; } // Mối quan hệ sẽ được cấu hình trong OnModelCreating
+		public virtual UserInfo Stylist { get; set; } // Mối quan hệ sẽ được cấu hình trong OnModelCreating
 
 		[MaxLength(50)]
 		public string? StatusForAppointment { get; set; }

@@ -22,7 +22,7 @@ namespace HairSalon.Services.Service
 
         public async Task<BasePaginatedList<RoleModelView>> GetAllRoleAsync(int pageNumber, int pageSize)
         {
-            IQueryable<Role> roleQuery = _unitOfWork.GetRepository<Role>().Entities
+            IQueryable<ApplicationRole> roleQuery = _unitOfWork.GetRepository<ApplicationRole>().Entities
                 .Where(p => !p.DeletedTime.HasValue)
                 .OrderByDescending(s => s.CreatedTime);
 
@@ -30,7 +30,7 @@ namespace HairSalon.Services.Service
             int totalCount = await roleQuery.CountAsync();
 
             // Apply pagination
-            List<Role> paginatedShops = await roleQuery
+            List<ApplicationRole> paginatedShops = await roleQuery
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
@@ -43,19 +43,18 @@ namespace HairSalon.Services.Service
 
 		public async Task<RoleModelView> AddRoleAsync(CreateRoleModelView model)
 		{
-			if (string.IsNullOrWhiteSpace(model.RoleName))
+			if (string.IsNullOrWhiteSpace(model.Name))
 			{
 				throw new Exception("Role name cannot be empty.");
 			}
 
-			Role newRole = _mapper.Map<Role>(model);
+			ApplicationRole newRole = _mapper.Map<ApplicationRole>(model);
 
-			newRole.Id = Guid.NewGuid().ToString("N");
 			newRole.CreatedBy = "claim account";  
 			newRole.CreatedTime = DateTimeOffset.UtcNow;
 			newRole.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-			await _unitOfWork.GetRepository<Role>().InsertAsync(newRole);
+			await _unitOfWork.GetRepository<ApplicationRole>().InsertAsync(newRole);
 			await _unitOfWork.SaveAsync();
 
 			return _mapper.Map<RoleModelView>(newRole);
@@ -68,8 +67,8 @@ namespace HairSalon.Services.Service
 				throw new Exception("Please provide a valid Role ID.");
 			}
 
-			Role existingRole = await _unitOfWork.GetRepository<Role>().Entities
-				.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
+			ApplicationRole existingRole = await _unitOfWork.GetRepository<ApplicationRole>().Entities
+				.FirstOrDefaultAsync(s => s.Id == Guid.Parse(id) && !s.DeletedTime.HasValue)
 				?? throw new Exception("The Role cannot be found or has been deleted!");
 
 			_mapper.Map(model, existingRole);
@@ -78,7 +77,7 @@ namespace HairSalon.Services.Service
 			existingRole.LastUpdatedBy = "claim account";  
 			existingRole.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-			_unitOfWork.GetRepository<Role>().Update(existingRole);
+			_unitOfWork.GetRepository<ApplicationRole>().Update(existingRole);
 			await _unitOfWork.SaveAsync();
 
 			return _mapper.Map<RoleModelView>(existingRole);
@@ -91,14 +90,14 @@ namespace HairSalon.Services.Service
 				throw new Exception("Please provide a valid Role ID.");
 			}
 
-			Role existingRole = await _unitOfWork.GetRepository<Role>().Entities
-				.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
+			ApplicationRole existingRole = await _unitOfWork.GetRepository<ApplicationRole>().Entities
+				.FirstOrDefaultAsync(s => s.Id == Guid.Parse(id) && !s.DeletedTime.HasValue)
 				?? throw new Exception("The Role cannot be found or has been deleted!");
 
 			existingRole.DeletedTime = DateTimeOffset.UtcNow;
 			existingRole.DeletedBy = "claim account"; 
 
-			_unitOfWork.GetRepository<Role>().Update(existingRole);
+			_unitOfWork.GetRepository<ApplicationRole>().Update(existingRole);
 			await _unitOfWork.SaveAsync();
 			return "Deleted";
 		}
@@ -110,8 +109,8 @@ namespace HairSalon.Services.Service
 				throw new Exception("Please provide a valid Role ID.");
 			}
 
-			Role existingRole = await _unitOfWork.GetRepository<Role>().Entities
-				.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
+			ApplicationRole existingRole = await _unitOfWork.GetRepository<ApplicationRole>().Entities
+				.FirstOrDefaultAsync(s => s.Id == Guid.Parse(id) && !s.DeletedTime.HasValue)
 				?? throw new Exception("The Role cannot be found or has been deleted!");
 
 			return _mapper.Map<RoleModelView>(existingRole);

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HairSalon.Repositories.Migrations
 {
     /// <inheritdoc />
-    public partial class InitDB : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -94,24 +94,6 @@ namespace HairSalon.Repositories.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ApplicationUserRoles",
-                columns: table => new
-                {
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    LastUpdatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    DeletedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ApplicationUserRoles", x => new { x.UserId, x.RoleId });
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ApplicationUserTokens",
                 columns: table => new
                 {
@@ -129,25 +111,6 @@ namespace HairSalon.Repositories.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ApplicationUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Roles",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    RoleName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    LastUpdatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    DeletedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Roles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -183,6 +146,7 @@ namespace HairSalon.Repositories.Migrations
                     BankAccount = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BankAccountName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Bank = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Point = table.Column<int>(type: "int", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -196,45 +160,15 @@ namespace HairSalon.Repositories.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Point = table.Column<int>(type: "int", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    LastUpdatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    DeletedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Users_Roles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Roles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Services",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     Price = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    ShopId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    ShopId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -249,8 +183,7 @@ namespace HairSalon.Repositories.Migrations
                         name: "FK_Services_Shops_ShopId",
                         column: x => x.ShopId,
                         principalTable: "Shops",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -298,7 +231,7 @@ namespace HairSalon.Repositories.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     StylistId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    StatusForAppointment = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    StatusForAppointment = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     PointsEarned = table.Column<int>(type: "int", nullable: false),
                     AppointmentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -312,15 +245,15 @@ namespace HairSalon.Repositories.Migrations
                 {
                     table.PrimaryKey("PK_Appointments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Appointments_Users_StylistId",
+                        name: "FK_Appointments_UserInfos_StylistId",
                         column: x => x.StylistId,
-                        principalTable: "Users",
+                        principalTable: "UserInfos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Appointments_Users_UserId",
+                        name: "FK_Appointments_UserInfos_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
+                        principalTable: "UserInfos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -344,9 +277,39 @@ namespace HairSalon.Repositories.Migrations
                 {
                     table.PrimaryKey("PK_SalaryPayments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SalaryPayments_Users_UserId",
+                        name: "FK_SalaryPayments_UserInfos_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
+                        principalTable: "UserInfos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ApplicationUserRoles",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    LastUpdatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    DeletedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ApplicationUserRoles", x => new { x.UserId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_ApplicationUserRoles_ApplicationRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "ApplicationRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ApplicationUserRoles_ApplicationUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "ApplicationUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -385,7 +348,7 @@ namespace HairSalon.Repositories.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ServiceId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     AppointmentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -409,6 +372,11 @@ namespace HairSalon.Repositories.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ApplicationUserRoles_RoleId",
+                table: "ApplicationUserRoles",
+                column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ApplicationUsers_UserInfoId",
@@ -449,11 +417,6 @@ namespace HairSalon.Repositories.Migrations
                 name: "IX_Services_ShopId",
                 table: "Services",
                 column: "ShopId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_RoleId",
-                table: "Users",
-                column: "RoleId");
         }
 
         /// <inheritdoc />
@@ -463,9 +426,6 @@ namespace HairSalon.Repositories.Migrations
                 name: "ApplicationRoleClaims");
 
             migrationBuilder.DropTable(
-                name: "ApplicationRoles");
-
-            migrationBuilder.DropTable(
                 name: "ApplicationUserClaims");
 
             migrationBuilder.DropTable(
@@ -473,9 +433,6 @@ namespace HairSalon.Repositories.Migrations
 
             migrationBuilder.DropTable(
                 name: "ApplicationUserRoles");
-
-            migrationBuilder.DropTable(
-                name: "ApplicationUsers");
 
             migrationBuilder.DropTable(
                 name: "ApplicationUserTokens");
@@ -490,7 +447,10 @@ namespace HairSalon.Repositories.Migrations
                 name: "ServiceAppointments");
 
             migrationBuilder.DropTable(
-                name: "UserInfos");
+                name: "ApplicationRoles");
+
+            migrationBuilder.DropTable(
+                name: "ApplicationUsers");
 
             migrationBuilder.DropTable(
                 name: "Appointments");
@@ -499,13 +459,10 @@ namespace HairSalon.Repositories.Migrations
                 name: "Services");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "UserInfos");
 
             migrationBuilder.DropTable(
                 name: "Shops");
-
-            migrationBuilder.DropTable(
-                name: "Roles");
         }
     }
 }

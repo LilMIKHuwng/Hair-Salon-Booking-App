@@ -208,6 +208,8 @@ namespace HairSalon.Repositories.Migrations
 
                     b.HasKey("UserId", "RoleId");
 
+                    b.HasIndex("RoleId");
+
                     b.ToTable("ApplicationUserRoles");
                 });
 
@@ -297,7 +299,6 @@ namespace HairSalon.Repositories.Migrations
                     b.ToTable("Appointments");
                 });
 
-
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.Payment", b =>
                 {
                     b.Property<string>("Id")
@@ -341,43 +342,6 @@ namespace HairSalon.Repositories.Migrations
                     b.HasIndex("AppointmentId");
 
                     b.ToTable("Payments");
-                });
-
-            modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.Role", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("CreatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset?>("DeletedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("LastUpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("LastUpdatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("RoleName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.SalaryPayment", b =>
@@ -475,6 +439,7 @@ namespace HairSalon.Repositories.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("AppointmentId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CreatedBy")
@@ -500,6 +465,7 @@ namespace HairSalon.Repositories.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("ServiceId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -570,68 +536,6 @@ namespace HairSalon.Repositories.Migrations
                     b.ToTable("Shops");
                 });
 
-            modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.User", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("CreatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset?>("DeletedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("LastUpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("LastUpdatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<int>("Point")
-                        .HasColumnType("int");
-
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("Users");
-                });
-
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.UserInfo", b =>
                 {
                     b.Property<string>("Id")
@@ -667,6 +571,9 @@ namespace HairSalon.Repositories.Migrations
 
                     b.Property<DateTimeOffset>("LastUpdatedTime")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Point")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -753,14 +660,33 @@ namespace HairSalon.Repositories.Migrations
                     b.ToTable("ApplicationUsers");
                 });
 
+            modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.ApplicationUserRoles", b =>
+                {
+                    b.HasOne("HairSalon.Contract.Repositories.Entity.ApplicationRole", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HairSalon.Repositories.Entity.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.Appointment", b =>
                 {
-                    b.HasOne("HairSalon.Contract.Repositories.Entity.User", "Stylist")
+                    b.HasOne("HairSalon.Contract.Repositories.Entity.UserInfo", "Stylist")
                         .WithMany()
                         .HasForeignKey("StylistId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("HairSalon.Contract.Repositories.Entity.User", "User")
+                    b.HasOne("HairSalon.Contract.Repositories.Entity.UserInfo", "User")
                         .WithMany("Appointments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -784,7 +710,7 @@ namespace HairSalon.Repositories.Migrations
 
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.SalaryPayment", b =>
                 {
-                    b.HasOne("HairSalon.Contract.Repositories.Entity.User", "User")
+                    b.HasOne("HairSalon.Contract.Repositories.Entity.UserInfo", "User")
                         .WithMany("SalaryPayments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -806,26 +732,19 @@ namespace HairSalon.Repositories.Migrations
                 {
                     b.HasOne("HairSalon.Contract.Repositories.Entity.Appointment", "Appointment")
                         .WithMany("ServiceAppointments")
-                        .HasForeignKey("AppointmentId");
+                        .HasForeignKey("AppointmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("HairSalon.Contract.Repositories.Entity.Service", "Service")
                         .WithMany("ServiceAppointments")
-                        .HasForeignKey("ServiceId");
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Appointment");
 
                     b.Navigation("Service");
-                });
-
-            modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.User", b =>
-                {
-                    b.HasOne("HairSalon.Contract.Repositories.Entity.Role", "Role")
-                        .WithMany("Users")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("HairSalon.Repositories.Entity.ApplicationUser", b =>
@@ -842,11 +761,6 @@ namespace HairSalon.Repositories.Migrations
                     b.Navigation("ServiceAppointments");
                 });
 
-            modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.Role", b =>
-                {
-                    b.Navigation("Users");
-                });
-
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.Service", b =>
                 {
                     b.Navigation("ServiceAppointments");
@@ -857,7 +771,7 @@ namespace HairSalon.Repositories.Migrations
                     b.Navigation("Services");
                 });
 
-            modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.User", b =>
+            modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.UserInfo", b =>
                 {
                     b.Navigation("Appointments");
 

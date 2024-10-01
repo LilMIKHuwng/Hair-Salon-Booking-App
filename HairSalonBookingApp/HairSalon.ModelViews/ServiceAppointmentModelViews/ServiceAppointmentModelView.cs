@@ -4,6 +4,7 @@ namespace HairSalon.ModelViews.ServiceAppointmentModelViews;
 
 public class ServiceAppointmentModelView
 {
+    public string? Id { get; set; }
     public string? ServiceId { get; set; }
     public string? AppointmentId { get; set; }
     public string? Description { get; set; }
@@ -14,6 +15,7 @@ public class ServiceAppointmentModelView
 
     public ServiceAppointmentModelView(ServiceAppointment serviceAppointment)
     {
+        Id = serviceAppointment.Id;
         ServiceId = serviceAppointment.ServiceId;
         AppointmentId = serviceAppointment.AppointmentId;
         Description = serviceAppointment.Description;
