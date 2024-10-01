@@ -23,15 +23,11 @@ namespace HairSalon.Services.Service
 
 		public async Task<UserModelView> AddUserAsync(CreateUserModelView model)
 		{
-			if (string.IsNullOrWhiteSpace(model.FirstName))
+			if (string.IsNullOrWhiteSpace(model.FullName))
 			{
 				throw new Exception("First Name cannot be empty.");
 			}
 
-			if (string.IsNullOrWhiteSpace(model.LastName))
-			{
-				throw new Exception("Last Name cannot be empty.");
-			}
 
 			// Mapping from CreateShopModelView to Shop entity
 			UserInfo newUser = _mapper.Map<UserInfo>(model);
