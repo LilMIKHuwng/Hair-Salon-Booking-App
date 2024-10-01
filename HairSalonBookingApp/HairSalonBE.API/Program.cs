@@ -1,7 +1,21 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using HairSalon.Contract.Repositories.Entity;
+using HairSalon.Services.Service;
 using HairSalonBE.API;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+// var options = new JsonSerializerOptions
+// {
+//     ReferenceHandler = ReferenceHandler.Preserve,
+//     WriteIndented = true
+// };
+//
+// var json = JsonSerializer.Serialize(typeof(ServiceAppointment), options);
+
+
 
 // config appsettings by env
 builder.Configuration
@@ -16,7 +30,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddConfig(builder.Configuration);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+    options.JsonSerializerOptions.WriteIndented = true;
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

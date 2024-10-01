@@ -77,7 +77,7 @@ namespace HairSalon.Services.Service
 
             return Task.FromResult(users);
         }
-
+		
 		public async Task<BasePaginatedList<UserModelView>> GetAllUserAsync(int pageNumber, int pageSize)
 		{
 			IQueryable<UserInfo> userQuery = _unitOfWork.GetRepository<UserInfo>().Entities

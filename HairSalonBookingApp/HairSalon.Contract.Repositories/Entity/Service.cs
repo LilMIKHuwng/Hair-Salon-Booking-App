@@ -8,23 +8,24 @@ namespace HairSalon.Contract.Repositories.Entity
 	{
 		[Required]
 		[MaxLength(100)]
-		public string Name { get; set; }
+		public string? Name { get; set; }
 
 		[MaxLength(50)]
-		public string Type { get; set; }
+		public string? Type { get; set; }
 
 		[Required]
 		[Column(TypeName = "decimal(10, 2)")]
 		public decimal Price { get; set; }
 
 		[MaxLength(255)]
-		public string Description { get; set; }
+		public string? Description { get; set; }
 
-		public string ShopId { get; set; }
+		public string? ShopId { get; set; }
 
 		[ForeignKey("ShopId")]
+
 		public virtual Shop Shop { get; set; }
 
-		public virtual ICollection<ServiceAppointment> ServiceAppointments { get; set; }
+		public virtual ICollection<ServiceAppointment>? ServiceAppointments { get; set; }
 	}
 }
