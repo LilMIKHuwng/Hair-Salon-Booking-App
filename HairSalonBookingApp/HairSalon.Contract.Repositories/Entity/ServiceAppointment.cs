@@ -17,6 +17,6 @@ namespace HairSalon.Contract.Repositories.Entity
 		public virtual Appointment Appointment { get; set; }
 
 		[MaxLength(255)]
-		public string Description { get; set; }
+		public string? Description { get; set; }
 	}
 }

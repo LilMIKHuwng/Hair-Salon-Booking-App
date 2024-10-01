@@ -7,9 +7,10 @@ namespace HairSalon.Contract.Repositories.Entity
 	public class SalaryPayment : BaseEntity
 	{
 		[Required]
-		public string UserId { get; set; }
+		public string? UserId { get; set; }
 
 		[ForeignKey("UserId")]
+
 		public virtual UserInfo User { get; set; }
 
 		[Required]

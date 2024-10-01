@@ -9,6 +9,7 @@ namespace HairSalon.Repositories.UOW
     {
         protected readonly DatabaseContext _context;
 
+
         protected readonly DbSet<Shop> _dbSet;
 
         public ShopRepository(DatabaseContext dbContext) : base(dbContext)

@@ -1,10 +1,8 @@
 ﻿using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Repositories.Context;
-using HairSalon.Repositories.Entity;
 using HairSalon.Services;
 using HairSalon.Services.Service;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace HairSalonBE.API
@@ -36,11 +34,7 @@ namespace HairSalonBE.API
 
         public static void AddIdentity(this IServiceCollection services)
         {
-            services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
-            {
-            })
-             .AddEntityFrameworkStores<DatabaseContext>()
-             .AddDefaultTokenProviders();
+            
         }
         public static void AddServices(this IServiceCollection services)
         {
@@ -52,7 +46,10 @@ namespace HairSalonBE.API
                 .AddScoped<ISalaryPaymentService, SalaryPaymentService>()
                 .AddScoped<IServiceService, ServiceService>()
                 .AddScoped<IAppointmentService, AppointmentService>()
-                .AddScoped<IPaymentService, PaymentService>();
+                .AddScoped<IPaymentService, PaymentService>()
+                .AddScoped<IServiceAppointment, ServiceAppointmentService>();
         }
+        
+        
     }
 }

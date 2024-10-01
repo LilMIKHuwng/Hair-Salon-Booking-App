@@ -7,9 +7,10 @@ namespace HairSalon.Contract.Repositories.Entity
 	public class Payment : BaseEntity
 	{
 		[Required]
-		public string AppointmentId { get; set; }
+		public string? AppointmentId { get; set; }
 
 		[ForeignKey("AppointmentId")]
+
 		public virtual Appointment Appointment { get; set; }
 
 		[Required]
@@ -20,7 +21,7 @@ namespace HairSalon.Contract.Repositories.Entity
 
 		[Required]
 		[MaxLength(50)]
-		public string PaymentMethod { get; set; }
+		public string? PaymentMethod { get; set; }
 
 	}
 }

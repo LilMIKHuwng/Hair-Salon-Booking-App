@@ -7,7 +7,7 @@ namespace HairSalon.Contract.Services.Interface
     public interface IUserService
     {
         Task<IList<UserResponseModel>> GetAll();
-
+        
 		Task<BasePaginatedList<UserModelView>> GetAllUserAsync(int pageNumber, int pageSize);
 
 		Task<UserModelView> AddUserAsync(CreateUserModelView model);
