@@ -7,6 +7,7 @@ namespace HairSalon.Repositories.Entity
     public class ApplicationUser : IdentityUser<Guid>
     {
         public string Password {  get; set; } = string.Empty;
+        public string UserInfoId { get; set; }
         public virtual UserInfo? UserInfo { get; set; }
         public string? CreatedBy { get; set; }
         public string? LastUpdatedBy { get; set; }

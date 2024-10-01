@@ -9,27 +9,17 @@ namespace HairSalon.ModelViews.UserModelViews
 {
 	public class UpdateUserModelView
 	{
-		[Required(ErrorMessage = "Role is required.")]
-		public string RoleId { get; set; }
+		[Required(ErrorMessage = "Fullname is required.")]
+		public string FullName { get; set; }
 
-		[Required(ErrorMessage = "First Name is required.")]
-		public string FirstName { get; set; }
+		[Required(ErrorMessage = "Bank Account is required.")]
+		public string BankAccount { get; set; }
 
-		[Required(ErrorMessage = "Last Name is required.")]
-		public string LastName { get; set; }
+		[Required(ErrorMessage = "Bank Account Name is required.")]
+		public string BankAccountName { get; set; }
 
-		[Required(ErrorMessage = "Email is required.")]
-		[EmailAddress(ErrorMessage = "Invalid Email Address.")]
-		public string Email { get; set; }
-
-		[Required(ErrorMessage = "Password is required.")]
-		public string Password { get; set; }
-
+		[Required(ErrorMessage = "Bank is required.")]
+		public string Bank { get; set; }
 		public int Point { get; set; } = 0;
-
-		[Required(ErrorMessage = "Phone number is required.")]
-		[Phone(ErrorMessage = "Invalid Phone Number.")]
-		[StringLength(20, ErrorMessage = "Phone number cannot be longer than 20 characters.")]
-		public string PhoneNumber { get; set; }
 	}
 }

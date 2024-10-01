@@ -12,6 +12,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HairSalon.Repositories.Entity;
+using HairSalon.ModelViews.ApplicationUserModelViews;
+using HairSalon.ModelViews.AppUserRoleViewModels;
 
 namespace HairSalon.Repositories.Mapper
 {
@@ -61,9 +64,17 @@ namespace HairSalon.Repositories.Mapper
             CreateMap<CreateUserModelView, UserInfo>();
             CreateMap<UpdateUserModelView, UserInfo>();
 
-            
+			CreateMap<ApplicationUser, AppUserModelView>();
+			CreateMap<ApplicationUser, CreateAppUserModelView>();
+			CreateMap<ApplicationUser, UpdateAppUserModelView>();
+			CreateMap<CreateAppUserModelView, ApplicationUser>();
+			CreateMap<UpdateAppUserModelView, ApplicationUser>();
 
-           
-        }
+			CreateMap<ApplicationUserRoles, AppUserRoleModelView>();
+			CreateMap<ApplicationUserRoles, CreateAppUserRoleModelView>();
+			CreateMap<ApplicationUserRoles, UpdateAppUserRoleModelView>();
+			CreateMap<CreateAppUserRoleModelView, ApplicationUserRoles>();
+			CreateMap<UpdateAppUserRoleModelView, ApplicationUserRoles>();
+		}
     }
 }
