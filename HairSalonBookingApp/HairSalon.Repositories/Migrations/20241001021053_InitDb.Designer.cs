@@ -9,10 +9,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace HairSalon.Repositories.data_access.migrations
+namespace HairSalon.Repositories.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20241001014403_InitDb")]
+    [Migration("20241001021053_InitDb")]
     partial class InitDb
     {
         /// <inheritdoc />
@@ -210,6 +210,8 @@ namespace HairSalon.Repositories.data_access.migrations
                         .HasColumnType("datetimeoffset");
 
                     b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
 
                     b.ToTable("ApplicationUserRoles");
                 });
@@ -664,6 +666,25 @@ namespace HairSalon.Repositories.data_access.migrations
                     b.HasIndex("UserInfoId");
 
                     b.ToTable("ApplicationUsers");
+                });
+
+            modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.ApplicationUserRoles", b =>
+                {
+                    b.HasOne("HairSalon.Contract.Repositories.Entity.ApplicationRole", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HairSalon.Repositories.Entity.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.Appointment", b =>

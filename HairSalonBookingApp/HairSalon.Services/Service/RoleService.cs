@@ -43,7 +43,7 @@ namespace HairSalon.Services.Service
 
 		public async Task<RoleModelView> AddRoleAsync(CreateRoleModelView model)
 		{
-			if (string.IsNullOrWhiteSpace(model.RoleName))
+			if (string.IsNullOrWhiteSpace(model.Name))
 			{
 				throw new Exception("Role name cannot be empty.");
 			}

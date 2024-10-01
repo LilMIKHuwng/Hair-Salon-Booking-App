@@ -28,4 +28,8 @@
     <ProjectReference Include="..\HairSalon.ModelViews\HairSalon.ModelViews.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="data_access\" />
+  </ItemGroup>
+
 </Project>
