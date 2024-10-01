@@ -29,26 +29,60 @@ namespace HairSalon.Services.Service
 
 		public async Task<AppUserModelView> AddAppUserAsync(CreateAppUserModelView model)
 		{
-			if (string.IsNullOrWhiteSpace(model.UserInfoId))
-			{
-				throw new Exception("User ID cannot be empty.");
-			}
+			var userInfo = new UserInfo
+            {
+                Firstname = model.FirstName,
+				Lastname = model.LastName
+            };
 
-			UserInfo existingUser = await _unitOfWork.GetRepository<UserInfo>().Entities
-				.FirstOrDefaultAsync(s => s.Id == model.UserInfoId && !s.DeletedTime.HasValue)
-				?? throw new Exception("The User cannot be found or has been deleted!");
+            var newAccount = new ApplicationUser
+            {
+				Id = Guid.NewGuid(),
+                UserName = model.UserName,
+                Email = model.Email,
+				PhoneNumber = model.PhoneNumber,
+                PasswordHash = model.Password,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserInfo = userInfo
+            };
 
-			ApplicationUser newUser = _mapper.Map<ApplicationUser>(model);
+            var accountRepositoryCheck = _unitOfWork.GetRepository<ApplicationUser>();
 
-			newUser.UserName = existingUser.FullName;
-			newUser.CreatedBy = "claim account";
-			newUser.CreatedTime = DateTimeOffset.UtcNow;
-			newUser.LastUpdatedTime = DateTimeOffset.UtcNow;
+            // Kiểm tra xem username đã tồn tại chưa
+            var user = await accountRepositoryCheck.Entities.FirstOrDefaultAsync(x => x.UserName == model.UserName);
+            if (user != null)
+            {
+                throw new Exception("Duplicate");
+            }
 
-			await _unitOfWork.GetRepository<ApplicationUser>().InsertAsync(newUser);
-			await _unitOfWork.SaveAsync();
+            var accountRepository = _unitOfWork.GetRepository<ApplicationUser>();
+            await accountRepository.InsertAsync(newAccount);
+            await _unitOfWork.SaveAsync();
 
-			return _mapper.Map<AppUserModelView>(newUser);
+            // Sau khi tài khoản được tạo thành công, thêm vai trò mặc định "User"
+            var roleRepository = _unitOfWork.GetRepository<ApplicationRole>();
+            var userRole = await roleRepository.Entities.FirstOrDefaultAsync(r => r.Name == "User");
+            if (userRole == null)
+            {
+                throw new Exception("The 'User' role does not exist. Please make sure to create it first.");
+            }
+
+            var userRoleRepository = _unitOfWork.GetRepository<ApplicationUserRoles>();
+            var applicationUserRole = new ApplicationUserRoles
+            {
+                UserId = newAccount.Id,    // ID của tài khoản vừa tạo
+                RoleId = userRole.Id,      // ID của vai trò "User"
+                CreatedBy = model.UserName,
+                CreatedTime = DateTime.UtcNow,
+                LastUpdatedBy = model.UserName,
+                LastUpdatedTime = DateTime.UtcNow
+            };
+
+            // Lưu vai trò mặc định "User" cho tài khoản mới
+            await userRoleRepository.InsertAsync(applicationUserRole);
+            await _unitOfWork.SaveAsync();
+
+            return _mapper.Map<AppUserModelView>(newAccount);
 		}
 
 		public async Task<string> DeleteAppUserAsync(string id)
@@ -107,30 +141,31 @@ namespace HairSalon.Services.Service
 
 		public async Task<AppUserModelView> UpdateAppUserAsync(string id, UpdateAppUserModelView model)
 		{
-			if (string.IsNullOrWhiteSpace(id))
-			{
-				throw new Exception("Please provide a valid Application User ID.");
-			}
+			throw new NotImplementedException();
+			// if (string.IsNullOrWhiteSpace(id))
+			// {
+			// 	throw new Exception("Please provide a valid Application User ID.");
+			// }
 
-			ApplicationUser existingUser = await _unitOfWork.GetRepository<ApplicationUser>().Entities
-				.FirstOrDefaultAsync(s => s.Id == Guid.Parse(id) && !s.DeletedTime.HasValue)
-				?? throw new Exception("The Application User cannot be found or has been deleted!");
+			// ApplicationUser existingUser = await _unitOfWork.GetRepository<ApplicationUser>().Entities
+			// 	.FirstOrDefaultAsync(s => s.Id == Guid.Parse(id) && !s.DeletedTime.HasValue)
+			// 	?? throw new Exception("The Application User cannot be found or has been deleted!");
 
-			UserInfo existingUserInfo = await _unitOfWork.GetRepository<UserInfo>().Entities
-				.FirstOrDefaultAsync(s => s.Id == model.UserInfoId && !s.DeletedTime.HasValue)
-				?? throw new Exception("The User cannot be found or has been deleted!");
+			// UserInfo existingUserInfo = await _unitOfWork.GetRepository<UserInfo>().Entities
+			// 	.FirstOrDefaultAsync(s => s.Id == model.UserInfoId && !s.DeletedTime.HasValue)
+			// 	?? throw new Exception("The User cannot be found or has been deleted!");
 
-			_mapper.Map(model, existingUser);
+			// _mapper.Map(model, existingUser);
 
-			// Set additional properties
-			existingUser.UserName = existingUserInfo.FullName;
-			existingUser.LastUpdatedBy = "claim account";
-			existingUser.LastUpdatedTime = DateTimeOffset.UtcNow;
+			// // Set additional properties
+			// existingUser.UserName = existingUserInfo.;
+			// existingUser.LastUpdatedBy = "claim account";
+			// existingUser.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-			_unitOfWork.GetRepository<ApplicationUser>().Update(existingUser);
-			await _unitOfWork.SaveAsync();
+			// _unitOfWork.GetRepository<ApplicationUser>().Update(existingUser);
+			// await _unitOfWork.SaveAsync();
 
-			return _mapper.Map<AppUserModelView>(existingUser);
+			// return _mapper.Map<AppUserModelView>(existingUser);
 		}
 	}
 }

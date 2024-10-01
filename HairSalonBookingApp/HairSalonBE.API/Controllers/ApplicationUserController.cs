@@ -18,7 +18,7 @@ namespace HairSalonBE.API.Controllers
 			_appUserService = appUserService;
 		}
 
-		[HttpPost()]
+		[HttpPost("register")]
 		public async Task<ActionResult<AppUserModelView>> CreateAppUser([FromQuery] CreateAppUserModelView model)
 		{
 			try

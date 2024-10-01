@@ -14,16 +14,5 @@ namespace HairSalonBE.API.Controllers
         {
             return Ok(); 
         }
-
-        [HttpPost("new_account")]
-        public async Task<IActionResult> Register()
-        {
-            return Ok();
-        }
-
     }
-    
-    
-    
-    // test
 }

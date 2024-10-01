@@ -20,5 +20,7 @@ namespace HairSalon.Repositories.Entity
             CreatedTime = CoreHelper.SystemTimeNow;
             LastUpdatedTime = CreatedTime;
         }
+        public virtual ICollection<Appointment> Appointments { get; set; }
+        public virtual ICollection<SalaryPayment> SalaryPayments { get; set; }
     }
 }

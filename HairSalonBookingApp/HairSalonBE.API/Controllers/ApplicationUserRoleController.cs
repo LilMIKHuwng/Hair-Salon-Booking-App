@@ -18,7 +18,7 @@ namespace HairSalonBE.API.Controllers
 			_appUserRoleService = appUserRoleService;
 		}
 
-		[HttpPost()]
+		[HttpPost]
 		public async Task<ActionResult<AppUserRoleModelView>> CreateAppUserRole([FromQuery] CreateAppUserRoleModelView model)
 		{
 			try

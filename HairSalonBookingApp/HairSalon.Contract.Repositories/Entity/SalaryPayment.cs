@@ -1,4 +1,5 @@
 ﻿using HairSalon.Core.Base;
+using HairSalon.Repositories.Entity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,11 +8,11 @@ namespace HairSalon.Contract.Repositories.Entity
 	public class SalaryPayment : BaseEntity
 	{
 		[Required]
-		public string? UserId { get; set; }
+		public Guid? UserId { get; set; }
 
 		[ForeignKey("UserId")]
 
-		public virtual UserInfo User { get; set; }
+		public virtual ApplicationUser User { get; set; }
 
 		[Required]
 		[Column(TypeName = "decimal(10, 2)")]

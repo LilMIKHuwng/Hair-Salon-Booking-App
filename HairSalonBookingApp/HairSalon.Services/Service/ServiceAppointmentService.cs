@@ -116,8 +116,12 @@ public class ServiceAppointmentService : IServiceAppointment
             throw new Exception("id User null:");
         }
 
+        //IQueryable<ServiceAppointment> serviceAppointments = _unitOfWork.GetRepository<ServiceAppointment>()
+        //    .Entities.Where(entity => entity.Appointment.User != null && entity.Appointment.User.Id == userId)
+        //    .OrderByDescending(entity => !entity.DeletedTime.HasValue)
+        //    .ThenByDescending(entity => entity.CreatedTime);
         IQueryable<ServiceAppointment> serviceAppointments = _unitOfWork.GetRepository<ServiceAppointment>()
-            .Entities.Where(entity => entity.Appointment.User != null && entity.Appointment.User.Id == userId)
+            .Entities.Where(entity => entity.Appointment.User != null )
             .OrderByDescending(entity => !entity.DeletedTime.HasValue)
             .ThenByDescending(entity => entity.CreatedTime);
 
