@@ -3,6 +3,7 @@ using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
+using HairSalon.Core.Utils;
 using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalon.ModelViews.AuthModelViews;
 using HairSalon.ModelViews.RoleModelViews;
