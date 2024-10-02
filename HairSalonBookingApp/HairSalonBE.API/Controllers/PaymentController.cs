@@ -24,7 +24,6 @@ namespace HairSalonBE.API.Controllers
         {
             try
             {
-                // Call service to get paginated list of shops
                 var result = await _paymentService.GetAllPaymentAsync(pageNumber, pageSize);
                 return Ok(result);
             }
@@ -40,7 +39,6 @@ namespace HairSalonBE.API.Controllers
         {
             try
             {
-                // Call service to get payment by ID
                 var result = await _paymentService.GetPaymentAsync(id);
                 return Ok(result);
             }

@@ -28,20 +28,50 @@ namespace HairSalon.Services.Service
         }
         public async Task<PaymentModelView> AddPaymentAsync(CreatePaymentModelView model)
         {
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model), "The payment model cannot be null.");
+            }
 
-            Payment newPayment = _mapper.Map<Payment>(model);
+            var appointment = await _unitOfWork.GetRepository<Appointment>()
+                .Entities.Include(a => a.ServiceAppointments)
+                         .ThenInclude(sa => sa.Service)
+                .FirstOrDefaultAsync(a => a.Id == model.AppointmentId && !a.DeletedTime.HasValue)
+                ?? throw new Exception("The Appointment cannot be found or has been deleted!");
 
-            // Set additional properties
-            newPayment.Id = Guid.NewGuid().ToString("N");
-            newPayment.CreatedBy = "claim account";  // Replace with actual authenticated user
-            newPayment.CreatedTime = DateTimeOffset.UtcNow;
-            newPayment.LastUpdatedTime = DateTimeOffset.UtcNow;
+            if (appointment.ServiceAppointments == null || !appointment.ServiceAppointments.Any())
+            {
+                throw new Exception("No services found for this appointment.");
+            }
 
-            await _unitOfWork.GetRepository<Payment>().InsertAsync(newPayment);
+            decimal totalAmount = appointment.ServiceAppointments.Sum(sa => sa.Service.Price);
+
+            var existingPayment = await _unitOfWork.GetRepository<Payment>().Entities
+                .FirstOrDefaultAsync(p => p.AppointmentId == model.AppointmentId && !p.DeletedTime.HasValue);
+
+            if (existingPayment != null)
+            {
+                throw new Exception("A payment has already been made for this appointment.");
+            }
+
+            var payment = new Payment
+            {
+                AppointmentId = model.AppointmentId,
+                TotalAmount = totalAmount,
+                PaymentMethod = model.PaymentMethod,
+                PaymentTime = DateTime.UtcNow,
+                CreatedBy = "claim account",
+                CreatedTime = DateTime.UtcNow,
+                LastUpdatedBy = "claim account",
+                LastUpdatedTime = DateTime.UtcNow
+            };
+
+            await _unitOfWork.GetRepository<Payment>().InsertAsync(payment);
             await _unitOfWork.SaveAsync();
 
-            // Map back to ShopModelView and return
-            return _mapper.Map<PaymentModelView>(newPayment);
+            var paymentModelView = _mapper.Map<PaymentModelView>(payment);
+
+            return paymentModelView;
         }
 
         public async Task<string> DeletePaymentpAsync(string id)
@@ -71,13 +101,11 @@ namespace HairSalon.Services.Service
 
             int totalCount = await paymentQuery.CountAsync();
 
-            // Apply pagination
             List<Payment> paginatedPayment = await paymentQuery
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            // Map to ShopModelView
             List<PaymentModelView> paymentModelViews = _mapper.Map<List<PaymentModelView>>(paginatedPayment);
 
             return new BasePaginatedList<PaymentModelView>(paymentModelViews, totalCount, pageNumber, pageSize);

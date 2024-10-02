@@ -1,7 +1,10 @@
 ﻿using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Core.Utils;
+using HairSalon.Repositories.Entity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -16,10 +19,10 @@ namespace HairSalon.Services.Service
     public class TokenService
     {
         private readonly IConfiguration _configuration;
-        private readonly UserManager<Accounts> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUnitOfWork _unitOfWork;
 
-        public TokenService(IConfiguration configuration, UserManager<Accounts> userManager, IUnitOfWork unitOfWork)
+        public TokenService(IConfiguration configuration, UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork)
         {
             _configuration = configuration;
             _userManager = userManager;

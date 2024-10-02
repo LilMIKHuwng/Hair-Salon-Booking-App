@@ -32,7 +32,6 @@
 
   <ItemGroup>
     <Folder Include="data_access\" />
-    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>
