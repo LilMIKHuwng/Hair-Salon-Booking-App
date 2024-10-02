@@ -16,13 +16,11 @@ namespace HairSalonBE.API.Controllers
             _shopService = shopService;
         }
 
-        // GET: api/Shop
         [HttpGet("all")]
         public async Task<ActionResult<BasePaginatedList<ShopModelView>>> GetAllShops(int pageNumber = 1, int pageSize = 5)
         {
             try
             {
-                // Call service to get paginated list of shops
                 var result = await _shopService.GetAllShopAsync(pageNumber, pageSize);
                 return Ok(result);
             }
@@ -32,13 +30,11 @@ namespace HairSalonBE.API.Controllers
             }
         }
 
-        // GET: api/Shop/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<ShopModelView>> GetShopById(string id)
         {
             try
             {
-                // Call service to get shop by ID
                 var result = await _shopService.GetShopAsync(id);
                 return Ok(result);
             }
@@ -48,7 +44,6 @@ namespace HairSalonBE.API.Controllers
             }
         }
 
-        // POST: api/Shop
         [HttpPost()]
         public async Task<ActionResult<ShopModelView>> CreateShop([FromQuery] CreateShopModelView model)
         {
@@ -63,7 +58,6 @@ namespace HairSalonBE.API.Controllers
             }
         }
 
-        // PUT: api/Shop/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateShop(string id, [FromQuery] UpdatedShopModelView model)
         {
@@ -78,7 +72,6 @@ namespace HairSalonBE.API.Controllers
             }
         }
 
-        // DELETE: api/Shop/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteShop(string id)
         {

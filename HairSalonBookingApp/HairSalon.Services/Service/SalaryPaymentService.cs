@@ -3,10 +3,7 @@ using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
-using HairSalon.Core.Utils;
-using HairSalon.ModelViews.RoleModelViews;
 using HairSalon.ModelViews.SalaryPaymentModelViews;
-using HairSalon.ModelViews.ShopModelViews;
 using Microsoft.EntityFrameworkCore;
 
 namespace HairSalon.Services.Service
@@ -27,16 +24,13 @@ namespace HairSalon.Services.Service
                                                         .Where(p => !p.DeletedTime.HasValue)
                                                         .OrderByDescending(s => s.CreatedTime);
 
-            // Count the total number of matching records
             int totalCount = await salaryPaymentQuery.CountAsync();
 
-            // Apply pagination
             List<SalaryPayment> paginatedSalaryPayment = await salaryPaymentQuery
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            // Map to RoleModelView
             List<SalaryPaymentModelView> salaryPaymentModelViews = _mapper.Map<List<SalaryPaymentModelView>>(paginatedSalaryPayment); ;
 
             return new BasePaginatedList<SalaryPaymentModelView>(salaryPaymentModelViews, totalCount, pageNumber, pageSize);

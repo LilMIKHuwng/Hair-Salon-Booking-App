@@ -31,8 +31,4 @@
     <ProjectReference Include="..\HairSalon.Services\HairSalon.Services.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Remove="appsettings.Development.json" />
-  </ItemGroup>
-
 </Project>

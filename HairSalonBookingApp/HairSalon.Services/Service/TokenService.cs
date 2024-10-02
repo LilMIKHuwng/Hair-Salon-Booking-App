@@ -2,6 +2,7 @@
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Core.Utils;
 using HairSalon.Repositories.Entity;
+using HairSalon.Repositories.Entity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;

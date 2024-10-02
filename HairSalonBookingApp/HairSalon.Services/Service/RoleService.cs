@@ -3,9 +3,7 @@ using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
-using HairSalon.Core.Utils;
 using HairSalon.ModelViews.RoleModelViews;
-using HairSalon.ModelViews.ShopModelViews;
 using Microsoft.EntityFrameworkCore;
 namespace HairSalon.Services.Service
 {
@@ -26,16 +24,13 @@ namespace HairSalon.Services.Service
                 .Where(p => !p.DeletedTime.HasValue)
                 .OrderByDescending(s => s.CreatedTime);
 
-            // Count the total number of matching records
             int totalCount = await roleQuery.CountAsync();
 
-            // Apply pagination
             List<ApplicationRole> paginatedShops = await roleQuery
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            // Map to RoleModelView
             List<RoleModelView> shopModelViews = _mapper.Map<List<RoleModelView>>(paginatedShops);
 
             return new BasePaginatedList<RoleModelView>(shopModelViews, totalCount, pageNumber, pageSize);
@@ -73,7 +68,6 @@ namespace HairSalon.Services.Service
 
 			_mapper.Map(model, existingRole);
 
-			// Set additional properties
 			existingRole.LastUpdatedBy = "claim account";  
 			existingRole.LastUpdatedTime = DateTimeOffset.UtcNow;
 

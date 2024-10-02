@@ -1,11 +1,12 @@
-﻿using HairSalon.Contract.Repositories.Entity;
-using HairSalon.Contract.Services.Interface;
+﻿using HairSalon.Contract.Services.Interface;
 using HairSalon.Repositories.Context;
 using HairSalon.Repositories.Entity;
 using HairSalon.Services;
 using HairSalon.Services.Service;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace HairSalonBE.API
 {
@@ -16,9 +17,10 @@ namespace HairSalonBE.API
             services.ConfigRoute();
             services.AddDatabase(configuration);
             services.AddIdentity();
-			services.AddInfrastructure(configuration);
-			services.AddServices();
+            services.AddInfrastructure(configuration);
+            services.AddServices();
         }
+
         public static void ConfigRoute(this IServiceCollection services)
         {
             services.Configure<RouteOptions>(options =>
@@ -42,6 +44,7 @@ namespace HairSalonBE.API
              .AddEntityFrameworkStores<DatabaseContext>()
              .AddDefaultTokenProviders();
         }
+
         public static void AddServices(this IServiceCollection services)
         {
             services

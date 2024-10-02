@@ -1,9 +1,6 @@
 ﻿using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
 using HairSalon.ModelViews.ServiceModelViews;
-using HairSalon.ModelViews.ShopModelViews;
-using HairSalon.Services.Service;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairSalonBE.API.Controllers
@@ -24,7 +21,6 @@ namespace HairSalonBE.API.Controllers
         {
             try
             {
-                // Call service to get paginated list of shops
                 var result = await _serviceService.GetAllServiceAsync(pageNumber, pageSize);
                 return Ok(result);
             }
@@ -34,14 +30,11 @@ namespace HairSalonBE.API.Controllers
             }
         }
 
-
-        // GET: api/Shop/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<ServiceModelView>> GetServiceById(string id)
         {
             try
             {
-                // Call service to get shop by ID
                 var result = await _serviceService.GetServiceAsync(id);
                 return Ok(result);
             }
@@ -51,7 +44,6 @@ namespace HairSalonBE.API.Controllers
             }
         }
 
-        // POST: api/service
         [HttpPost()]
         public async Task<ActionResult<ServiceModelView>> CreateService([FromQuery] CreateServiceModelView model)
         {
@@ -69,7 +61,6 @@ namespace HairSalonBE.API.Controllers
             }
         }
 
-        // PUT: api/service/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateService(string id, [FromQuery] UpdatedServiceModelView model)
         {
@@ -85,7 +76,6 @@ namespace HairSalonBE.API.Controllers
         }
 
 
-        // DELETE: api/service/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteService(string id)
         {

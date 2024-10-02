@@ -4,14 +4,7 @@ using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.ServiceModelViews;
 using ServiceEntity = HairSalon.Contract.Repositories.Entity.Service;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.InteropServices;
-using HairSalon.ModelViews.ShopModelViews;
 using HairSalon.Core;
 
 namespace HairSalon.Services.Service

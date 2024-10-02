@@ -1,8 +1,6 @@
 ﻿using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
 using HairSalon.ModelViews.PaymentModelViews;
-using HairSalon.ModelViews.ShopModelViews;
-using HairSalon.Services.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairSalonBE.API.Controllers
@@ -18,13 +16,11 @@ namespace HairSalonBE.API.Controllers
             _paymentService = paymentService;
         }
 
-        // GET: api/AllPayments
         [HttpGet("All")]
         public async Task<ActionResult<BasePaginatedList<PaymentModelView>>> GetAllPayments(int pageNumber = 1, int pageSize = 5)
         {
             try
             {
-                // Call service to get paginated list of shops
                 var result = await _paymentService.GetAllPaymentAsync(pageNumber, pageSize);
                 return Ok(result);
             }
@@ -34,13 +30,11 @@ namespace HairSalonBE.API.Controllers
             }
         }
 
-        // GET: api/Payment/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<PaymentModelView>> GetPaymentById(string id)
         {
             try
             {
-                // Call service to get payment by ID
                 var result = await _paymentService.GetPaymentAsync(id);
                 return Ok(result);
             }
@@ -50,7 +44,6 @@ namespace HairSalonBE.API.Controllers
             }
         }
 
-        // POST: api/Payment
         [HttpPost()]
         public async Task<ActionResult<PaymentModelView>> CreatePayment([FromQuery] CreatePaymentModelView model)
         {
@@ -65,7 +58,6 @@ namespace HairSalonBE.API.Controllers
             }
         }
 
-        // PUT: api/Payment/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePayment(string id, [FromQuery] UpdatedPaymentModelView model)
         {
@@ -80,7 +72,6 @@ namespace HairSalonBE.API.Controllers
             }
         }
 
-        // DELETE: api/Payment/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePayment(string id)
         {

@@ -1,6 +1,4 @@
-﻿using HairSalon.Contract.Repositories.Entity;
-
-namespace HairSalon.ModelViews.ServiceAppointmentModelViews;
+﻿namespace HairSalon.ModelViews.ServiceAppointmentModelViews;
 
 public class EditServiceAppointmentModelView
 {

@@ -1,11 +1,5 @@
-﻿using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using HairSalon.Contract.Repositories.Entity;
-using HairSalon.Services.Service;
+﻿using System.Text.Json.Serialization;
 using HairSalonBE.API;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 
 
 var builder = WebApplication.CreateBuilder(args);
