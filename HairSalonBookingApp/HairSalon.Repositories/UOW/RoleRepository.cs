@@ -1,6 +1,7 @@
 ﻿using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.IUOW;
 using HairSalon.Repositories.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace HairSalon.Repositories.UOW
 {
@@ -8,9 +9,13 @@ namespace HairSalon.Repositories.UOW
     {
         private readonly DatabaseContext _dbContext;
 
-        public RoleRepository(DatabaseContext context) : base(context)
+		protected readonly DbSet<ApplicationRole> _dbSet;
+
+		public RoleRepository(DatabaseContext context) : base(context)
         {
             _dbContext = context;
-        }
+
+			_dbSet = _context.Set<ApplicationRole>();
+		}
     }
 }

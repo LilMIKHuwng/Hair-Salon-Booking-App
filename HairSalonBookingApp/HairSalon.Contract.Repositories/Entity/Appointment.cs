@@ -14,13 +14,9 @@ namespace HairSalon.Contract.Repositories.Entity
 
 		public virtual ApplicationUser User { get; set; }
 
-
-		// StylistId là một khóa ngoại tham chiếu đến bảng User
 		public Guid? StylistId { get; set; }
 
-		// Tham chiếu đến Stylist trong bảng User
-
-		public virtual ApplicationUser Stylist { get; set; } // Mối quan hệ sẽ được cấu hình trong OnModelCreating
+		public virtual ApplicationUser Stylist { get; set; } 
 
 		[MaxLength(50)]
 		public string? StatusForAppointment { get; set; }

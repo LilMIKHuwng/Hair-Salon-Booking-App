@@ -1,10 +1,16 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="data_access\**" />
+    <EmbeddedResource Remove="data_access\**" />
+    <None Remove="data_access\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
@@ -28,10 +34,6 @@
   <ItemGroup>
     <ProjectReference Include="..\HairSalon.Contract.Repositories\HairSalon.Contract.Repositories.csproj" />
     <ProjectReference Include="..\HairSalon.ModelViews\HairSalon.ModelViews.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="data_access\" />
   </ItemGroup>
 
 </Project>

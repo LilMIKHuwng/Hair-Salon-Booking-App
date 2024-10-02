@@ -3,16 +3,9 @@ using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
-using HairSalon.Core.Utils;
 using HairSalon.ModelViews.ApplicationUserModelViews;
-using HairSalon.ModelViews.RoleModelViews;
 using HairSalon.Repositories.Entity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HairSalon.Services.Service
 {
@@ -48,7 +41,6 @@ namespace HairSalon.Services.Service
 
             var accountRepositoryCheck = _unitOfWork.GetRepository<ApplicationUser>();
 
-            // Kiểm tra xem username đã tồn tại chưa
             var user = await accountRepositoryCheck.Entities.FirstOrDefaultAsync(x => x.UserName == model.UserName);
             if (user != null)
             {
@@ -59,7 +51,6 @@ namespace HairSalon.Services.Service
             await accountRepository.InsertAsync(newAccount);
             await _unitOfWork.SaveAsync();
 
-            // Sau khi tài khoản được tạo thành công, thêm vai trò mặc định "User"
             var roleRepository = _unitOfWork.GetRepository<ApplicationRole>();
             var userRole = await roleRepository.Entities.FirstOrDefaultAsync(r => r.Name == "User");
             if (userRole == null)
@@ -70,15 +61,14 @@ namespace HairSalon.Services.Service
             var userRoleRepository = _unitOfWork.GetRepository<ApplicationUserRoles>();
             var applicationUserRole = new ApplicationUserRoles
             {
-                UserId = newAccount.Id,    // ID của tài khoản vừa tạo
-                RoleId = userRole.Id,      // ID của vai trò "User"
+                UserId = newAccount.Id,    
+                RoleId = userRole.Id,      
                 CreatedBy = model.UserName,
                 CreatedTime = DateTime.UtcNow,
                 LastUpdatedBy = model.UserName,
                 LastUpdatedTime = DateTime.UtcNow
             };
 
-            // Lưu vai trò mặc định "User" cho tài khoản mới
             await userRoleRepository.InsertAsync(applicationUserRole);
             await _unitOfWork.SaveAsync();
 
@@ -110,16 +100,13 @@ namespace HairSalon.Services.Service
 				.Where(p => !p.DeletedTime.HasValue)
 				.OrderByDescending(s => s.CreatedTime);
 
-			// Count the total number of matching records
 			int totalCount = await roleQuery.CountAsync();
 
-			// Apply pagination
 			List<ApplicationUser> paginatedShops = await roleQuery
 				.Skip((pageNumber - 1) * pageSize)
 				.Take(pageSize)
 				.ToListAsync();
 
-			// Map to RoleModelView
 			List<AppUserModelView> appUserModelViews = _mapper.Map<List<AppUserModelView>>(paginatedShops);
 
 			return new BasePaginatedList<AppUserModelView>(appUserModelViews, totalCount, pageNumber, pageSize);

@@ -1,5 +1,4 @@
 ﻿using HairSalon.Core;
-using HairSalon.ModelViews.RoleModelViews;
 using HairSalon.ModelViews.SalaryPaymentModelViews;
 
 namespace HairSalon.Contract.Services.Interface

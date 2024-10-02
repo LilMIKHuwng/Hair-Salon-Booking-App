@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Repositories.Entity;
 
@@ -46,15 +45,12 @@ namespace HairSalon.Repositories.Context
 				.HasForeignKey(a => a.StylistId)
 				.OnDelete(DeleteBehavior.Restrict); 
 
-            // Định nghĩa khóa chính cho ApplicationUserLogins
             modelBuilder.Entity<ApplicationUserLogins>()
                 .HasKey(login => new { login.UserId, login.LoginProvider, login.ProviderKey });
 
-            // Định nghĩa khóa chính cho ApplicationUserRoles
             modelBuilder.Entity<ApplicationUserRoles>()
                 .HasKey(role => new { role.UserId, role.RoleId });
 
-            // Định nghĩa khóa chính cho ApplicationUserTokens
             modelBuilder.Entity<ApplicationUserTokens>()
                 .HasKey(token => new { token.UserId, token.LoginProvider, token.Name });
         }
