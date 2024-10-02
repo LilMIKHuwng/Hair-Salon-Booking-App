@@ -1,10 +1,7 @@
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
 using HairSalon.ModelViews.AppointmentModelViews;
-using HairSalon.ModelViews.ShopModelViews;
-using HairSalon.Services.Service;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.InteropServices;
 
 namespace HairSalonBE.API.Controllers
 {
@@ -39,7 +36,6 @@ namespace HairSalonBE.API.Controllers
         {
             try
             {
-                // Call service to get paginated list of appointments
                 var result = await _appointmentService.GetAllAppointmentAsync(pageNumber, pageSize);
                 return Ok(result);
             }
@@ -54,7 +50,6 @@ namespace HairSalonBE.API.Controllers
         {
             try
             {
-                // Call service to get appointment by ID
                 var result = await _appointmentService.GetAppointmentAsync(id);
                 return Ok(result);
             }

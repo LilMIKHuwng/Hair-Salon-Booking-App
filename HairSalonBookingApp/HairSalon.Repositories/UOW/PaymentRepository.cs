@@ -9,13 +9,13 @@ namespace HairSalon.Repositories.UOW
     { 
         protected readonly DatabaseContext _context;
 
-        protected readonly DbSet<Shop> _dbSet;
+        protected readonly DbSet<Payment> _dbSet;
 
         public PaymentRepository(DatabaseContext dbContext) : base(dbContext)
         {
             _context = dbContext;
 
-            _dbSet = _context.Set<Shop>();
+            _dbSet = _context.Set<Payment>();
         }
     }
 }

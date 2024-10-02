@@ -17,10 +17,6 @@ public class ServiceAppointmentController : ControllerBase
         _serviceAppointment = serviceAppointment;
     }
 
-
-    /*
-     * get all services appointment exits in database
-     */
     [HttpGet]
     public async Task<ActionResult<BasePaginatedList<ServiceAppointmentModelView>>> GetAllServicesAppointments()
     {

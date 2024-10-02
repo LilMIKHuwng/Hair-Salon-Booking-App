@@ -3,16 +3,8 @@ using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
-using HairSalon.Core.Utils;
 using HairSalon.ModelViews.PaymentModelViews;
-using HairSalon.ModelViews.ShopModelViews;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HairSalon.Services.Service
 {
@@ -31,16 +23,14 @@ namespace HairSalon.Services.Service
 
             Payment newPayment = _mapper.Map<Payment>(model);
 
-            // Set additional properties
             newPayment.Id = Guid.NewGuid().ToString("N");
-            newPayment.CreatedBy = "claim account";  // Replace with actual authenticated user
+            newPayment.CreatedBy = "claim account"; 
             newPayment.CreatedTime = DateTimeOffset.UtcNow;
             newPayment.LastUpdatedTime = DateTimeOffset.UtcNow;
 
             await _unitOfWork.GetRepository<Payment>().InsertAsync(newPayment);
             await _unitOfWork.SaveAsync();
 
-            // Map back to ShopModelView and return
             return _mapper.Map<PaymentModelView>(newPayment);
         }
 
@@ -71,13 +61,11 @@ namespace HairSalon.Services.Service
 
             int totalCount = await paymentQuery.CountAsync();
 
-            // Apply pagination
             List<Payment> paginatedPayment = await paymentQuery
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            // Map to ShopModelView
             List<PaymentModelView> paymentModelViews = _mapper.Map<List<PaymentModelView>>(paginatedPayment);
 
             return new BasePaginatedList<PaymentModelView>(paymentModelViews, totalCount, pageNumber, pageSize);

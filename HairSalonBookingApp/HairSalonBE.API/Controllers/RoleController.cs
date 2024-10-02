@@ -1,12 +1,7 @@
 ﻿using HairSalon.Contract.Services.Interface;
-using HairSalon.Core.Base;
 using HairSalon.Core;
 using HairSalon.ModelViews.RoleModelViews;
 using Microsoft.AspNetCore.Mvc;
-using HairSalon.ModelViews.ShopModelViews;
-using HairSalon.Services.Service;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace HairSalonBE.API.Controllers
 {
