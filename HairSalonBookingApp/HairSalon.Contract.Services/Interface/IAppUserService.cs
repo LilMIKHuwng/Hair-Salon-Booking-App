@@ -1,6 +1,8 @@
 ﻿using HairSalon.Core;
 using HairSalon.ModelViews.ApplicationUserModelViews;
+using HairSalon.ModelViews.AuthModelViews;
 using HairSalon.ModelViews.ShopModelViews;
+using HairSalon.Repositories.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +18,6 @@ namespace HairSalon.Contract.Services.Interface
 		Task<AppUserModelView> UpdateAppUserAsync(string id, UpdateAppUserModelView model);
 		Task<string> DeleteAppUserAsync(string id);
 		Task<AppUserModelView> GetAppUserAsync(string id);
+		Task<ApplicationUser> AuthenticateAsync(LoginModelView model);
 	}
 }

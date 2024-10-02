@@ -52,7 +52,9 @@ namespace HairSalon.Repositories.Context
 
             // Định nghĩa khóa chính cho ApplicationUserRoles
             modelBuilder.Entity<ApplicationUserRoles>()
-                .HasKey(role => new { role.UserId, role.RoleId });
+                .HasKey(role => new { role.UserId, role.RoleId })
+                ;
+
 
             // Định nghĩa khóa chính cho ApplicationUserTokens
             modelBuilder.Entity<ApplicationUserTokens>()

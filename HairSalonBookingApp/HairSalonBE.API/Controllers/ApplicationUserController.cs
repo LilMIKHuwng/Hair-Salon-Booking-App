@@ -2,11 +2,13 @@
 using HairSalon.Core;
 using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalon.ModelViews.AppointmentModelViews;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairSalonBE.API.Controllers
 {
+	[Authorize(Roles = "User")]
 	[Route("api/[controller]")]
 	[ApiController]
 	public class ApplicationUserController : ControllerBase
