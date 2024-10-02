@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HairSalon.Repositories.Entity
 {
-    public class ApplicationUser : IdentityUser<Guid>
+    public class ApplicationUsers : IdentityUser<Guid>
     {
         public string Password {  get; set; } = string.Empty;
         public string UserInfoId { get; set; }
@@ -15,11 +15,12 @@ namespace HairSalon.Repositories.Entity
         public DateTimeOffset CreatedTime { get; set; }
         public DateTimeOffset LastUpdatedTime { get; set; }
         public DateTimeOffset? DeletedTime { get; set; }
-        public ApplicationUser()
+        public ApplicationUsers()
         {
             CreatedTime = CoreHelper.SystemTimeNow;
             LastUpdatedTime = CreatedTime;
         }
+        public virtual ICollection<ApplicationUserRoles> UserRoles { get; set; }
         public virtual ICollection<Appointment> Appointments { get; set; }
         public virtual ICollection<SalaryPayment> SalaryPayments { get; set; }
     }

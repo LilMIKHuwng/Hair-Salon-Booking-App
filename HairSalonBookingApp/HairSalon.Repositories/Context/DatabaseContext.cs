@@ -1,19 +1,21 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Repositories.Entity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace HairSalon.Repositories.Context
 {
 
-    public class DatabaseContext : DbContext
+    public class DatabaseContext : IdentityDbContext<ApplicationUsers, ApplicationRoles, Guid,
+        ApplicationUserClaims, ApplicationUserRoles, ApplicationUserLogins, ApplicationRoleClaims, ApplicationUserTokens>
     {
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
         {
         }
 
 		// user
-		public virtual DbSet<ApplicationUser> ApplicationUsers => Set<ApplicationUser>();
-		public virtual DbSet<ApplicationRole> ApplicationRoles => Set<ApplicationRole>();
+		public virtual DbSet<ApplicationUsers> ApplicationUsers => Set<ApplicationUsers>();
+		public virtual DbSet<ApplicationRoles> ApplicationRoles => Set<ApplicationRoles>();
 		public virtual DbSet<ApplicationUserClaims> ApplicationUserClaims => Set<ApplicationUserClaims>();
 		public virtual DbSet<ApplicationUserRoles> ApplicationUserRoles => Set<ApplicationUserRoles>();
 		public virtual DbSet<ApplicationUserLogins> ApplicationUserLogins => Set<ApplicationUserLogins>();
@@ -48,10 +50,18 @@ namespace HairSalon.Repositories.Context
             modelBuilder.Entity<ApplicationUserLogins>()
                 .HasKey(login => new { login.UserId, login.LoginProvider, login.ProviderKey });
 
-            modelBuilder.Entity<ApplicationUserRoles>()
-                .HasKey(role => new { role.UserId, role.RoleId })
-                ;
-
+            modelBuilder.Entity<ApplicationUserRoles>(userRole =>
+            {
+                userRole.HasKey(ur => new { ur.UserId, ur.RoleId });
+                userRole.HasOne(ur => ur.User)
+                    .WithMany(u => u.UserRoles)
+                    .HasForeignKey(ur => ur.UserId)
+                    .IsRequired();
+                userRole.HasOne(ur => ur.Role)
+                    .WithMany(r => r.UserRoles)
+                    .HasForeignKey(ur => ur.RoleId)
+                    .IsRequired();
+            });
 
             modelBuilder.Entity<ApplicationUserTokens>()
                 .HasKey(token => new { token.UserId, token.LoginProvider, token.Name });

@@ -12,11 +12,11 @@ namespace HairSalon.Contract.Repositories.Entity
 
 		[ForeignKey("UserId")]
 
-		public virtual ApplicationUser User { get; set; }
+		public virtual ApplicationUsers User { get; set; }
 
 		public Guid? StylistId { get; set; }
 
-		public virtual ApplicationUser Stylist { get; set; } 
+		public virtual ApplicationUsers Stylist { get; set; } 
 
 		[MaxLength(50)]
 		public string? StatusForAppointment { get; set; }

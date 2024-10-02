@@ -13,8 +13,8 @@ namespace HairSalon.Contract.Repositories.Entity
         public DateTimeOffset CreatedTime { get; set; }
         public DateTimeOffset LastUpdatedTime { get; set; }
         public DateTimeOffset? DeletedTime { get; set; }
-        public virtual ApplicationRole Role { get; set; }
-        public virtual ApplicationUser User { get; set; }
+        public virtual ApplicationRoles Role { get; set; }
+        public virtual ApplicationUsers User { get; set; }
 
         public ApplicationUserRoles()
         {

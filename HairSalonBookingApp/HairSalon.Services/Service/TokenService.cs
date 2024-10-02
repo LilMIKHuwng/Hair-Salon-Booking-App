@@ -16,11 +16,11 @@ namespace HairSalon.Services.Service
     public class TokenService
     {
         private readonly IConfiguration _configuration;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly UserManager<ApplicationUsers> _userManager;
+        private readonly RoleManager<ApplicationRoles> _roleManager;
         private readonly IUnitOfWork _unitOfWork;
 
-        public TokenService(IConfiguration configuration, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IUnitOfWork unitOfWork)
+        public TokenService(IConfiguration configuration, UserManager<ApplicationUsers> userManager, RoleManager<ApplicationRoles> roleManager, IUnitOfWork unitOfWork)
         {
             _configuration = configuration;
             _userManager = userManager;
@@ -30,7 +30,7 @@ namespace HairSalon.Services.Service
         public async Task<string> GenerateJwtTokenAsync(string userId, string userName)
         {
             var user = await _userManager.FindByIdAsync(userId);
-            // var roles = await _userManager.GetRolesAsync(user ?? throw new Exception("User not found"));
+            var roles = await _userManager.GetRolesAsync(user ?? throw new Exception("User not found"));
             
             // Các claims của token
             var claims = new List<Claim>
@@ -40,7 +40,9 @@ namespace HairSalon.Services.Service
                 new Claim("userId", userId)
             };
 
-            claims.Add(new Claim(ClaimTypes.Role, "User"));
+            foreach (var role in roles) {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             // Tạo khóa bí mật để ký token
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));

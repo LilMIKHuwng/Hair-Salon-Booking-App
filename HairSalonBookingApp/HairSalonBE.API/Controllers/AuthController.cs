@@ -28,7 +28,7 @@ namespace HairSalonBE.API.Controllers
             }
 
             // Authenticate user
-            ApplicationUser account = await _appUserService.AuthenticateAsync(model);
+            ApplicationUsers account = await _appUserService.AuthenticateAsync(model);
             if (account == null)
             {
                 return Unauthorized("Invalid credentials");

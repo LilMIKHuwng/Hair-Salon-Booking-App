@@ -4,6 +4,7 @@ using HairSalon.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HairSalon.Repositories.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20241002151757_update-relationship")]
+    partial class updaterelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,7 +63,7 @@ namespace HairSalon.Repositories.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ApplicationRole");
+                    b.ToTable("ApplicationRoles");
                 });
 
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.ApplicationRoleClaims", b =>
@@ -662,7 +665,7 @@ namespace HairSalon.Repositories.Migrations
 
                     b.HasIndex("UserInfoId");
 
-                    b.ToTable("ApplicationUser");
+                    b.ToTable("ApplicationUsers");
                 });
 
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.ApplicationUserRoles", b =>

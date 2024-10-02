@@ -39,7 +39,7 @@ namespace HairSalonBE.API
 
         public static void AddIdentity(this IServiceCollection services)
         {
-            services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+            services.AddIdentity<ApplicationUsers, ApplicationRoles>(options =>
             {
             })
              .AddEntityFrameworkStores<DatabaseContext>()

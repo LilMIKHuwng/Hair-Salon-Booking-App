@@ -31,7 +31,7 @@ namespace HairSalon.Services.Service
 				Lastname = model.LastName
             };
 
-            var newAccount = new ApplicationUser
+            var newAccount = new ApplicationUsers
             {
 				Id = Guid.NewGuid(),
                 UserName = model.UserName,
@@ -42,7 +42,7 @@ namespace HairSalon.Services.Service
                 UserInfo = userInfo
             };
 
-            var accountRepositoryCheck = _unitOfWork.GetRepository<ApplicationUser>();
+            var accountRepositoryCheck = _unitOfWork.GetRepository<ApplicationUsers>();
 
             var user = await accountRepositoryCheck.Entities.FirstOrDefaultAsync(x => x.UserName == model.UserName);
             if (user != null)
@@ -50,11 +50,11 @@ namespace HairSalon.Services.Service
                 throw new Exception("Duplicate");
             }
 
-            var accountRepository = _unitOfWork.GetRepository<ApplicationUser>();
+            var accountRepository = _unitOfWork.GetRepository<ApplicationUsers>();
             await accountRepository.InsertAsync(newAccount);
             await _unitOfWork.SaveAsync();
 
-            var roleRepository = _unitOfWork.GetRepository<ApplicationRole>();
+            var roleRepository = _unitOfWork.GetRepository<ApplicationRoles>();
             var userRole = await roleRepository.Entities.FirstOrDefaultAsync(r => r.Name == "User");
             if (userRole == null)
             {
@@ -85,27 +85,27 @@ namespace HairSalon.Services.Service
 				throw new Exception("Please provide a valid Application User ID.");
 			}
 
-			ApplicationUser existingUser = await _unitOfWork.GetRepository<ApplicationUser>().Entities
+			ApplicationUsers existingUser = await _unitOfWork.GetRepository<ApplicationUsers>().Entities
 				.FirstOrDefaultAsync(s => s.Id == Guid.Parse(id) && !s.DeletedTime.HasValue)
 				?? throw new Exception("The Application User cannot be found or has been deleted!");
 
 			existingUser.DeletedTime = DateTimeOffset.UtcNow;
 			existingUser.DeletedBy = "claim account";
 
-			_unitOfWork.GetRepository<ApplicationUser>().Update(existingUser);
+			_unitOfWork.GetRepository<ApplicationUsers>().Update(existingUser);
 			await _unitOfWork.SaveAsync();
 			return "Deleted";
 		}
 
 		public async Task<BasePaginatedList<AppUserModelView>> GetAllAppUserAsync(int pageNumber, int pageSize)
 		{
-			IQueryable<ApplicationUser> roleQuery = _unitOfWork.GetRepository<ApplicationUser>().Entities
+			IQueryable<ApplicationUsers> roleQuery = _unitOfWork.GetRepository<ApplicationUsers>().Entities
 				.Where(p => !p.DeletedTime.HasValue)
 				.OrderByDescending(s => s.CreatedTime);
 
 			int totalCount = await roleQuery.CountAsync();
 
-			List<ApplicationUser> paginatedShops = await roleQuery
+			List<ApplicationUsers> paginatedShops = await roleQuery
 				.Skip((pageNumber - 1) * pageSize)
 				.Take(pageSize)
 				.ToListAsync();
@@ -122,7 +122,7 @@ namespace HairSalon.Services.Service
 				throw new Exception("Please provide a valid Application User ID.");
 			}
 
-			ApplicationUser existingUser = await _unitOfWork.GetRepository<ApplicationUser>().Entities
+			ApplicationUsers existingUser = await _unitOfWork.GetRepository<ApplicationUsers>().Entities
 				.FirstOrDefaultAsync(s => s.Id == Guid.Parse(id) && !s.DeletedTime.HasValue)
 				?? throw new Exception("The Application User cannot be found or has been deleted!");
 
@@ -158,9 +158,9 @@ namespace HairSalon.Services.Service
 			// return _mapper.Map<AppUserModelView>(existingUser);
 		}
 
-		public async Task<ApplicationUser> AuthenticateAsync(LoginModelView model)
+		public async Task<ApplicationUsers> AuthenticateAsync(LoginModelView model)
         {
-            var accountRepository = _unitOfWork.GetRepository<ApplicationUser>();
+            var accountRepository = _unitOfWork.GetRepository<ApplicationUsers>();
 
             // Tìm người dùng theo Username
             var user = await accountRepository.Entities
