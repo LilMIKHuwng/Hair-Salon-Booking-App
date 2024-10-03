@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using HairSalonBE.API;
-
+﻿using HairSalonBE.API;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,8 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 // };
 //
 // var json = JsonSerializer.Serialize(typeof(ServiceAppointment), options);
-
-
 
 // config appsettings by env
 builder.Configuration
@@ -29,7 +25,6 @@ builder.Services.AddConfig(builder.Configuration);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
-    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
     options.JsonSerializerOptions.WriteIndented = true;
 });
 

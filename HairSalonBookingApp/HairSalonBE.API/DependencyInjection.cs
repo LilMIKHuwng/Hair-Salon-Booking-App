@@ -18,6 +18,7 @@ namespace HairSalonBE.API
             services.AddIdentity();
             services.AddInfrastructure(configuration);
             services.AddServices();
+            services.ConfigJwt(configuration);
         }
 
         public static void ConfigRoute(this IServiceCollection services)
@@ -55,6 +56,7 @@ namespace HairSalonBE.API
                 .AddScoped<IAppUserService, AppUserService>()
                 .AddScoped<IServiceAppointment, ServiceAppointmentService>();
         }
+
         public static void ConfigJwt(this IServiceCollection services, IConfiguration configuration)
         {
             // Config JWT Authentication

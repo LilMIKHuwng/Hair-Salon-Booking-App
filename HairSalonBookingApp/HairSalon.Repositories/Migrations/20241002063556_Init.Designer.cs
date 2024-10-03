@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HairSalon.Repositories.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20241002022622_Init")]
+    [Migration("20241002063556_Init")]
     partial class Init
     {
         /// <inheritdoc />
