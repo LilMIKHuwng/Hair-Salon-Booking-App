@@ -3,9 +3,7 @@ using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
-using HairSalon.Core.Utils;
 using HairSalon.ModelViews.RoleModelViews;
-using HairSalon.ModelViews.ShopModelViews;
 using Microsoft.EntityFrameworkCore;
 namespace HairSalon.Services.Service
 {
@@ -22,20 +20,17 @@ namespace HairSalon.Services.Service
 
         public async Task<BasePaginatedList<RoleModelView>> GetAllRoleAsync(int pageNumber, int pageSize)
         {
-            IQueryable<ApplicationRole> roleQuery = _unitOfWork.GetRepository<ApplicationRole>().Entities
+            IQueryable<ApplicationRoles> roleQuery = _unitOfWork.GetRepository<ApplicationRoles>().Entities
                 .Where(p => !p.DeletedTime.HasValue)
                 .OrderByDescending(s => s.CreatedTime);
 
-            // Count the total number of matching records
             int totalCount = await roleQuery.CountAsync();
 
-            // Apply pagination
-            List<ApplicationRole> paginatedShops = await roleQuery
+            List<ApplicationRoles> paginatedShops = await roleQuery
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            // Map to RoleModelView
             List<RoleModelView> shopModelViews = _mapper.Map<List<RoleModelView>>(paginatedShops);
 
             return new BasePaginatedList<RoleModelView>(shopModelViews, totalCount, pageNumber, pageSize);
@@ -48,13 +43,13 @@ namespace HairSalon.Services.Service
 				throw new Exception("Role name cannot be empty.");
 			}
 
-			ApplicationRole newRole = _mapper.Map<ApplicationRole>(model);
+			ApplicationRoles newRole = _mapper.Map<ApplicationRoles>(model);
 
 			newRole.CreatedBy = "claim account";  
 			newRole.CreatedTime = DateTimeOffset.UtcNow;
 			newRole.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-			await _unitOfWork.GetRepository<ApplicationRole>().InsertAsync(newRole);
+			await _unitOfWork.GetRepository<ApplicationRoles>().InsertAsync(newRole);
 			await _unitOfWork.SaveAsync();
 
 			return _mapper.Map<RoleModelView>(newRole);
@@ -67,17 +62,16 @@ namespace HairSalon.Services.Service
 				throw new Exception("Please provide a valid Role ID.");
 			}
 
-			ApplicationRole existingRole = await _unitOfWork.GetRepository<ApplicationRole>().Entities
+			ApplicationRoles existingRole = await _unitOfWork.GetRepository<ApplicationRoles>().Entities
 				.FirstOrDefaultAsync(s => s.Id == Guid.Parse(id) && !s.DeletedTime.HasValue)
 				?? throw new Exception("The Role cannot be found or has been deleted!");
 
 			_mapper.Map(model, existingRole);
 
-			// Set additional properties
 			existingRole.LastUpdatedBy = "claim account";  
 			existingRole.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-			_unitOfWork.GetRepository<ApplicationRole>().Update(existingRole);
+			_unitOfWork.GetRepository<ApplicationRoles>().Update(existingRole);
 			await _unitOfWork.SaveAsync();
 
 			return _mapper.Map<RoleModelView>(existingRole);
@@ -90,14 +84,14 @@ namespace HairSalon.Services.Service
 				throw new Exception("Please provide a valid Role ID.");
 			}
 
-			ApplicationRole existingRole = await _unitOfWork.GetRepository<ApplicationRole>().Entities
+			ApplicationRoles existingRole = await _unitOfWork.GetRepository<ApplicationRoles>().Entities
 				.FirstOrDefaultAsync(s => s.Id == Guid.Parse(id) && !s.DeletedTime.HasValue)
 				?? throw new Exception("The Role cannot be found or has been deleted!");
 
 			existingRole.DeletedTime = DateTimeOffset.UtcNow;
 			existingRole.DeletedBy = "claim account"; 
 
-			_unitOfWork.GetRepository<ApplicationRole>().Update(existingRole);
+			_unitOfWork.GetRepository<ApplicationRoles>().Update(existingRole);
 			await _unitOfWork.SaveAsync();
 			return "Deleted";
 		}
@@ -109,7 +103,7 @@ namespace HairSalon.Services.Service
 				throw new Exception("Please provide a valid Role ID.");
 			}
 
-			ApplicationRole existingRole = await _unitOfWork.GetRepository<ApplicationRole>().Entities
+			ApplicationRoles existingRole = await _unitOfWork.GetRepository<ApplicationRoles>().Entities
 				.FirstOrDefaultAsync(s => s.Id == Guid.Parse(id) && !s.DeletedTime.HasValue)
 				?? throw new Exception("The Role cannot be found or has been deleted!");
 

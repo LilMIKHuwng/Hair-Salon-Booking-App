@@ -6,16 +6,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HairSalon.Repositories.UOW
 {
-	public class UserRepository : GenericRepository<ApplicationUser>, IUserRepository
+	public class UserRepository : GenericRepository<ApplicationUsers>, IUserRepository
 	{
 		protected readonly DatabaseContext _context;
 
-		protected readonly DbSet<ApplicationUser> _dbSet;
+		protected readonly DbSet<ApplicationUsers> _dbSet;
 
 		public UserRepository(DatabaseContext dbContext) : base(dbContext)
 		{
 			_context = dbContext;
-			_dbSet = _context.Set<ApplicationUser>();
+			_dbSet = _context.Set<ApplicationUsers>();
 		}
 	}
 }

@@ -4,16 +4,19 @@ using HairSalon.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace HairSalon.Repositories.Migrations
+namespace HairSalon.Repositories.data_access.migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20241002014040_initial")]
+    partial class initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,7 +63,7 @@ namespace HairSalon.Repositories.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ApplicationRole");
+                    b.ToTable("ApplicationRoles");
                 });
 
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.ApplicationRoleClaims", b =>
@@ -662,19 +665,19 @@ namespace HairSalon.Repositories.Migrations
 
                     b.HasIndex("UserInfoId");
 
-                    b.ToTable("ApplicationUser");
+                    b.ToTable("ApplicationUsers");
                 });
 
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.ApplicationUserRoles", b =>
                 {
                     b.HasOne("HairSalon.Contract.Repositories.Entity.ApplicationRole", "Role")
-                        .WithMany("UserRoles")
+                        .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("HairSalon.Repositories.Entity.ApplicationUser", "User")
-                        .WithMany("UserRoles")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -763,11 +766,6 @@ namespace HairSalon.Repositories.Migrations
                     b.Navigation("UserInfo");
                 });
 
-            modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.ApplicationRole", b =>
-                {
-                    b.Navigation("UserRoles");
-                });
-
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.Appointment", b =>
                 {
                     b.Navigation("ServiceAppointments");
@@ -788,8 +786,6 @@ namespace HairSalon.Repositories.Migrations
                     b.Navigation("Appointments");
 
                     b.Navigation("SalaryPayments");
-
-                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }

@@ -12,7 +12,7 @@ namespace HairSalon.Contract.Repositories.Entity
 
 		[ForeignKey("UserId")]
 
-		public virtual ApplicationUser User { get; set; }
+		public virtual ApplicationUsers User { get; set; }
 
 		[Required]
 		[Column(TypeName = "decimal(10, 2)")]

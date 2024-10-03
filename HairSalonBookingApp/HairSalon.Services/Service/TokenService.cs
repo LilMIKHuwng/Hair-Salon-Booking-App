@@ -2,42 +2,47 @@
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Core.Utils;
 using HairSalon.Repositories.Entity;
+using HairSalon.Repositories.Entity;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace HairSalon.Services.Service
 {
     public class TokenService
     {
         private readonly IConfiguration _configuration;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<ApplicationUsers> _userManager;
+        private readonly RoleManager<ApplicationRoles> _roleManager;
         private readonly IUnitOfWork _unitOfWork;
 
-        public TokenService(IConfiguration configuration, UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork)
+        public TokenService(IConfiguration configuration, UserManager<ApplicationUsers> userManager, RoleManager<ApplicationRoles> roleManager, IUnitOfWork unitOfWork)
         {
             _configuration = configuration;
             _userManager = userManager;
+            _roleManager = roleManager;
             _unitOfWork = unitOfWork;
         }
-
         public async Task<string> GenerateJwtTokenAsync(string userId, string userName)
         {
+            var user = await _userManager.FindByIdAsync(userId);
+            var roles = await _userManager.GetRolesAsync(user ?? throw new Exception("User not found"));
+            
             // Các claims của token
-            var claims = new[]
+            var claims = new List<Claim>
             {
-            new Claim(JwtRegisteredClaimNames.Sub, userName),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim("userId", userId)
-        };
+                new Claim(JwtRegisteredClaimNames.Sub, userName),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim("userId", userId)
+            };
+
+            foreach (var role in roles) {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             // Tạo khóa bí mật để ký token
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
@@ -71,8 +76,8 @@ namespace HairSalon.Services.Service
                     // Bắt đầu giao dịch
                     _unitOfWork.BeginTransaction();
 
-                    var existingToken = await tokenRepository.Entities
-                        .FirstOrDefaultAsync(t => t.UserId == Guid.Parse(userId) && t.LoginProvider == "CustomLoginProvider");
+                    var existingToken = tokenRepository.Entities
+                        .FirstOrDefault(t => t.UserId == Guid.Parse(userId) && t.LoginProvider == "CustomLoginProvider");
 
                     if (existingToken != null)
                     {

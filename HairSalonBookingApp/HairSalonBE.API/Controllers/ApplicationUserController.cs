@@ -2,11 +2,13 @@
 using HairSalon.Core;
 using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalon.ModelViews.AppointmentModelViews;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairSalonBE.API.Controllers
 {
+	[Authorize(Roles = "User")]
 	[Route("api/[controller]")]
 	[ApiController]
 	public class ApplicationUserController : ControllerBase
@@ -37,7 +39,6 @@ namespace HairSalonBE.API.Controllers
 		{
 			try
 			{
-				// Call service to get paginated list of appointments
 				var result = await _appUserService.GetAllAppUserAsync(pageNumber, pageSize);
 				return Ok(result);
 			}
@@ -52,7 +53,6 @@ namespace HairSalonBE.API.Controllers
 		{
 			try
 			{
-				// Call service to get appointment by ID
 				var result = await _appUserService.GetAppUserAsync(id);
 				return Ok(result);
 			}

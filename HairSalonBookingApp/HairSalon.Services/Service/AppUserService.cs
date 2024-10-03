@@ -5,14 +5,10 @@ using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
 using HairSalon.Core.Utils;
 using HairSalon.ModelViews.ApplicationUserModelViews;
+using HairSalon.ModelViews.AuthModelViews;
 using HairSalon.ModelViews.RoleModelViews;
 using HairSalon.Repositories.Entity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HairSalon.Services.Service
 {
@@ -35,7 +31,7 @@ namespace HairSalon.Services.Service
 				Lastname = model.LastName
             };
 
-            var newAccount = new ApplicationUser
+            var newAccount = new ApplicationUsers
             {
 				Id = Guid.NewGuid(),
                 UserName = model.UserName,
@@ -46,21 +42,19 @@ namespace HairSalon.Services.Service
                 UserInfo = userInfo
             };
 
-            var accountRepositoryCheck = _unitOfWork.GetRepository<ApplicationUser>();
+            var accountRepositoryCheck = _unitOfWork.GetRepository<ApplicationUsers>();
 
-            // Kiểm tra xem username đã tồn tại chưa
             var user = await accountRepositoryCheck.Entities.FirstOrDefaultAsync(x => x.UserName == model.UserName);
             if (user != null)
             {
                 throw new Exception("Duplicate");
             }
 
-            var accountRepository = _unitOfWork.GetRepository<ApplicationUser>();
+            var accountRepository = _unitOfWork.GetRepository<ApplicationUsers>();
             await accountRepository.InsertAsync(newAccount);
             await _unitOfWork.SaveAsync();
 
-            // Sau khi tài khoản được tạo thành công, thêm vai trò mặc định "User"
-            var roleRepository = _unitOfWork.GetRepository<ApplicationRole>();
+            var roleRepository = _unitOfWork.GetRepository<ApplicationRoles>();
             var userRole = await roleRepository.Entities.FirstOrDefaultAsync(r => r.Name == "User");
             if (userRole == null)
             {
@@ -70,15 +64,14 @@ namespace HairSalon.Services.Service
             var userRoleRepository = _unitOfWork.GetRepository<ApplicationUserRoles>();
             var applicationUserRole = new ApplicationUserRoles
             {
-                UserId = newAccount.Id,    // ID của tài khoản vừa tạo
-                RoleId = userRole.Id,      // ID của vai trò "User"
+                UserId = newAccount.Id,    
+                RoleId = userRole.Id,      
                 CreatedBy = model.UserName,
                 CreatedTime = DateTime.UtcNow,
                 LastUpdatedBy = model.UserName,
                 LastUpdatedTime = DateTime.UtcNow
             };
 
-            // Lưu vai trò mặc định "User" cho tài khoản mới
             await userRoleRepository.InsertAsync(applicationUserRole);
             await _unitOfWork.SaveAsync();
 
@@ -92,34 +85,31 @@ namespace HairSalon.Services.Service
 				throw new Exception("Please provide a valid Application User ID.");
 			}
 
-			ApplicationUser existingUser = await _unitOfWork.GetRepository<ApplicationUser>().Entities
+			ApplicationUsers existingUser = await _unitOfWork.GetRepository<ApplicationUsers>().Entities
 				.FirstOrDefaultAsync(s => s.Id == Guid.Parse(id) && !s.DeletedTime.HasValue)
 				?? throw new Exception("The Application User cannot be found or has been deleted!");
 
 			existingUser.DeletedTime = DateTimeOffset.UtcNow;
 			existingUser.DeletedBy = "claim account";
 
-			_unitOfWork.GetRepository<ApplicationUser>().Update(existingUser);
+			_unitOfWork.GetRepository<ApplicationUsers>().Update(existingUser);
 			await _unitOfWork.SaveAsync();
 			return "Deleted";
 		}
 
 		public async Task<BasePaginatedList<AppUserModelView>> GetAllAppUserAsync(int pageNumber, int pageSize)
 		{
-			IQueryable<ApplicationUser> roleQuery = _unitOfWork.GetRepository<ApplicationUser>().Entities
+			IQueryable<ApplicationUsers> roleQuery = _unitOfWork.GetRepository<ApplicationUsers>().Entities
 				.Where(p => !p.DeletedTime.HasValue)
 				.OrderByDescending(s => s.CreatedTime);
 
-			// Count the total number of matching records
 			int totalCount = await roleQuery.CountAsync();
 
-			// Apply pagination
-			List<ApplicationUser> paginatedShops = await roleQuery
+			List<ApplicationUsers> paginatedShops = await roleQuery
 				.Skip((pageNumber - 1) * pageSize)
 				.Take(pageSize)
 				.ToListAsync();
 
-			// Map to RoleModelView
 			List<AppUserModelView> appUserModelViews = _mapper.Map<List<AppUserModelView>>(paginatedShops);
 
 			return new BasePaginatedList<AppUserModelView>(appUserModelViews, totalCount, pageNumber, pageSize);
@@ -132,7 +122,7 @@ namespace HairSalon.Services.Service
 				throw new Exception("Please provide a valid Application User ID.");
 			}
 
-			ApplicationUser existingUser = await _unitOfWork.GetRepository<ApplicationUser>().Entities
+			ApplicationUsers existingUser = await _unitOfWork.GetRepository<ApplicationUsers>().Entities
 				.FirstOrDefaultAsync(s => s.Id == Guid.Parse(id) && !s.DeletedTime.HasValue)
 				?? throw new Exception("The Application User cannot be found or has been deleted!");
 
@@ -167,5 +157,60 @@ namespace HairSalon.Services.Service
 
 			// return _mapper.Map<AppUserModelView>(existingUser);
 		}
-	}
+
+		public async Task<ApplicationUsers> AuthenticateAsync(LoginModelView model)
+        {
+            var accountRepository = _unitOfWork.GetRepository<ApplicationUsers>();
+
+            // Tìm người dùng theo Username
+            var user = await accountRepository.Entities
+                .FirstOrDefaultAsync(x => x.UserName == model.Username);
+
+            if (user == null)
+            {
+                return null; // Người dùng không tồn tại
+            }
+
+            // So sánh mật khẩu (bạn có thể sử dụng cơ chế mã hóa mật khẩu)
+            if (model.Password != user.PasswordHash)
+            {
+                return null; // Mật khẩu không khớp
+            }
+            // Kiểm tra xem đã tồn tại bản ghi đăng nhập chưa
+            var loginRepository = _unitOfWork.GetRepository<ApplicationUserLogins>();
+            var existingLogin = await loginRepository.Entities
+                .FirstOrDefaultAsync(x => x.UserId == user.Id && x.LoginProvider == "CustomLoginProvider");
+
+            if (existingLogin == null)
+            {
+                // Nếu chưa có bản ghi đăng nhập, thêm mới
+                var loginInfo = new ApplicationUserLogins
+                {
+                    UserId = user.Id, // UserId từ người dùng đã đăng nhập
+                    ProviderKey = user.Id.ToString(),
+                    LoginProvider = "CustomLoginProvider", // Hoặc có thể là tên provider khác
+                    ProviderDisplayName = "Standard Login",
+                    CreatedBy = user.UserName, // Ghi lại ai đã thực hiện đăng nhập
+                    CreatedTime = CoreHelper.SystemTimeNow,
+                    LastUpdatedBy = user.UserName,
+                    LastUpdatedTime = CoreHelper.SystemTimeNow
+                };
+
+                await loginRepository.InsertAsync(loginInfo);
+                await _unitOfWork.SaveAsync(); // Lưu thay đổi vào cơ sở dữ liệu
+            }
+            else
+            {
+                // Nếu bản ghi đăng nhập đã tồn tại, có thể cập nhật thông tin nếu cần
+                existingLogin.LastUpdatedBy = user.UserName;
+                existingLogin.LastUpdatedTime = CoreHelper.SystemTimeNow;
+
+                await loginRepository.UpdateAsync(existingLogin);
+                await _unitOfWork.SaveAsync(); // Lưu thay đổi vào cơ sở dữ liệu
+            }
+
+            return user; // Trả về người dùng đã xác thực
+        }
+
+    }
 }

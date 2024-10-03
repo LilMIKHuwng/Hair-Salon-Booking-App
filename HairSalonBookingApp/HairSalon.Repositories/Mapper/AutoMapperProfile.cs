@@ -41,11 +41,11 @@ namespace HairSalon.Repositories.Mapper
             CreateMap<UpdatedServiceModelView, Service>();
             CreateMap<CreateServiceModelView, Service>();
             
-			CreateMap<ApplicationRole, RoleModelView>();
-			CreateMap<ApplicationRole, CreateRoleModelView>();
-			CreateMap<ApplicationRole, UpdatedRoleModelView>();
-			CreateMap<CreateRoleModelView, ApplicationRole>();
-			CreateMap<UpdatedRoleModelView, ApplicationRole>();
+			CreateMap<ApplicationRoles, RoleModelView>();
+			CreateMap<ApplicationRoles, CreateRoleModelView>();
+			CreateMap<ApplicationRoles, UpdatedRoleModelView>();
+			CreateMap<CreateRoleModelView, ApplicationRoles>();
+			CreateMap<UpdatedRoleModelView, ApplicationRoles>();
 
             CreateMap<SalaryPayment, SalaryPaymentModelView>();    
             CreateMap<SalaryPayment, CreateSalaryPaymentModelView>();
@@ -53,17 +53,17 @@ namespace HairSalon.Repositories.Mapper
 			CreateMap<CreateSalaryPaymentModelView, SalaryPayment>();
 			CreateMap<UpdatedSalaryPaymentModelView, SalaryPayment>();
 
-			CreateMap<ApplicationUser, UserModelView>();
-            CreateMap<ApplicationUser, CreateUserModelView>();
-            CreateMap<ApplicationUser, UpdateUserModelView>();
-            CreateMap<CreateUserModelView, ApplicationUser>();
-            CreateMap<UpdateUserModelView, ApplicationUser>();
+			CreateMap<ApplicationUsers, UserModelView>();
+            CreateMap<ApplicationUsers, CreateUserModelView>();
+            CreateMap<ApplicationUsers, UpdateUserModelView>();
+            CreateMap<CreateUserModelView, ApplicationUsers>();
+            CreateMap<UpdateUserModelView, ApplicationUsers>();
 
-			CreateMap<ApplicationUser, AppUserModelView>();
-			CreateMap<ApplicationUser, CreateAppUserModelView>();
-			CreateMap<ApplicationUser, UpdateAppUserModelView>();
-			CreateMap<CreateAppUserModelView, ApplicationUser>();
-			CreateMap<UpdateAppUserModelView, ApplicationUser>();
+			CreateMap<ApplicationUsers, AppUserModelView>();
+			CreateMap<ApplicationUsers, CreateAppUserModelView>();
+			CreateMap<ApplicationUsers, UpdateAppUserModelView>();
+			CreateMap<CreateAppUserModelView, ApplicationUsers>();
+			CreateMap<UpdateAppUserModelView, ApplicationUsers>();
 
 			CreateMap<ApplicationUserRoles, AppUserRoleModelView>();
 			CreateMap<ApplicationUserRoles, CreateAppUserRoleModelView>();

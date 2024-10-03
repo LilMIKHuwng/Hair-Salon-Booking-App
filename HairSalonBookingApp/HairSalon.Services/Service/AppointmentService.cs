@@ -4,13 +4,7 @@ using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
 using HairSalon.ModelViews.AppointmentModelViews;
-using HairSalon.ModelViews.ShopModelViews;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HairSalon.Services.Service
 {
@@ -30,14 +24,13 @@ namespace HairSalon.Services.Service
             Appointment newAppointment = _mapper.Map<Appointment>(model);
 
             newAppointment.Id = Guid.NewGuid().ToString("N");
-            newAppointment.CreatedBy = "claim account";  // Replace with actual authenticated user
+            newAppointment.CreatedBy = "claim account";  
             newAppointment.CreatedTime = DateTimeOffset.UtcNow;
             newAppointment.LastUpdatedTime = DateTimeOffset.UtcNow;
 
             await _unitOfWork.GetRepository<Appointment>().InsertAsync(newAppointment);
             await _unitOfWork.SaveAsync();
 
-            // Map back to AppointmentModelView and return
             return _mapper.Map<AppointmentModelView>(newAppointment);
         }
 
@@ -47,16 +40,13 @@ namespace HairSalon.Services.Service
                 .Where(p => !p.DeletedTime.HasValue)
                 .OrderByDescending(s => s.CreatedTime);
 
-            // Count the total number of matching records
             int totalCount = await appointmentQuery.CountAsync();
 
-            // Apply pagination
             List<Appointment> paginatedAppointments = await appointmentQuery
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            // Map to AppointmentModelView
             List<AppointmentModelView> appointmentModelViews = _mapper.Map<List<AppointmentModelView>>(paginatedAppointments);
 
             return new BasePaginatedList<AppointmentModelView>(appointmentModelViews, totalCount, pageNumber, pageSize);
@@ -69,7 +59,6 @@ namespace HairSalon.Services.Service
                 throw new Exception("Please provide a valid Appointment ID.");
             }
 
-            // Find the appointment
             Appointment existingAppointment = await _unitOfWork.GetRepository<Appointment>().Entities
                 .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
                 ?? throw new Exception("The Appointment cannot be found or has been deleted!");
@@ -84,21 +73,18 @@ namespace HairSalon.Services.Service
                 throw new Exception("Please provide a valid Appointment ID.");
             }
 
-            // Find the existing appointment
             Appointment existingAppointment = await _unitOfWork.GetRepository<Appointment>().Entities
                 .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
                 ?? throw new Exception("The Appointment cannot be found or has been deleted!");
 
             _mapper.Map(model, existingAppointment);
 
-            // Set additional properties
-            existingAppointment.LastUpdatedBy = "claim account";  // Replace with actual authenticated user
+            existingAppointment.LastUpdatedBy = "claim account"; 
             existingAppointment.LastUpdatedTime = DateTimeOffset.UtcNow;
 
             _unitOfWork.GetRepository<Appointment>().Update(existingAppointment);
             await _unitOfWork.SaveAsync();
 
-            // Map back to AppointmentModelView and return
             return _mapper.Map<AppointmentModelView>(existingAppointment);
         }
 
@@ -110,14 +96,12 @@ namespace HairSalon.Services.Service
                 throw new Exception("Please provide a valid Appointment ID.");
             }
 
-            // Find the Appointment
             Appointment existingAppointment = await _unitOfWork.GetRepository<Appointment>().Entities
                 .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
                 ?? throw new Exception("The Appointment cannot be found or has been deleted!");
 
-            // Perform soft delete
             existingAppointment.DeletedTime = DateTimeOffset.UtcNow;
-            existingAppointment.DeletedBy = "claim account";  // Replace with actual authenticated user
+            existingAppointment.DeletedBy = "claim account"; 
 
             _unitOfWork.GetRepository<Appointment>().Update(existingAppointment);
             await _unitOfWork.SaveAsync();

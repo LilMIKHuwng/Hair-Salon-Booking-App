@@ -12,8 +12,13 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HairSalon.Repositories.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
+<<<<<<<< HEAD:HairSalonBookingApp/HairSalon.Repositories/Migrations/20241002063556_Init.Designer.cs
     [Migration("20241002063556_Init")]
     partial class Init
+========
+    [Migration("20241002063743_InitDb")]
+    partial class InitDb
+>>>>>>>> 1b8fb9ea7a6a772bb0179eb18d414ed4cb1ac80f:HairSalonBookingApp/HairSalon.Repositories/Migrations/20241002063743_InitDb.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
