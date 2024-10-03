@@ -163,7 +163,7 @@ public class ServiceAppointmentService : IServiceAppointment
         serviceAppointment.Service = service;
         serviceAppointment.ServiceId = editServiceAppointmentModelView.ServiceId;
         serviceAppointment.LastUpdatedTime = DateTimeOffset.UtcNow;
-        serviceAppointment.LastUpdatedBy = editServiceAppointmentModelView.LastUpdatedBy;
+        serviceAppointment.LastUpdatedBy = service.ShopId;
         serviceAppointment.Description = editServiceAppointmentModelView.Description;
 
         await _unitOfWork.GetRepository<ServiceAppointment>().UpdateAsync(serviceAppointment);
@@ -209,7 +209,7 @@ public class ServiceAppointmentService : IServiceAppointment
             Appointment = appointment,
             Service = service,
             CreatedTime = DateTimeOffset.UtcNow,
-            CreatedBy = creatServiceAppointmentModelView.CreatedBy,
+            CreatedBy = service.ShopId,
             Description = creatServiceAppointmentModelView.Description
         };
         await _unitOfWork.GetRepository<ServiceAppointment>().InsertAsync(serviceAppointment);
