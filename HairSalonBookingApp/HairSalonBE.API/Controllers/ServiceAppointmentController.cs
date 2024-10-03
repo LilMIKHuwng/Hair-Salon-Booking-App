@@ -47,8 +47,8 @@ public class ServiceAppointmentController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<ServiceAppointment>> CreateServiceAppointment(
-        CreatServiceAppointmentModelView creatServiceAppointmentModelView)
+    public async Task<ActionResult<ServiceAppointment>> CreateServiceAppointment([FromQuery]
+		CreatServiceAppointmentModelView creatServiceAppointmentModelView)
     {
         try
         {
@@ -62,8 +62,8 @@ public class ServiceAppointmentController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<ActionResult<Boolean>> UpdateServiceAppointment(
-         EditServiceAppointmentModelView editServiceAppointmentModelView)
+    public async Task<ActionResult<Boolean>> UpdateServiceAppointment([FromQuery]
+		 EditServiceAppointmentModelView editServiceAppointmentModelView)
     {
         try
         {

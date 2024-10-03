@@ -44,7 +44,7 @@ namespace HairSalonBE.API.Controllers
 			}
 		}
 
-		[HttpGet("{id}")]
+		[HttpGet()]
 		public async Task<ActionResult<AppUserRoleModelView>> GetApplicationUserRoleById(string UserId, string RoleId)
 		{
 			try
@@ -58,7 +58,7 @@ namespace HairSalonBE.API.Controllers
 			}
 		}
 
-		[HttpPut("{id}")]
+		[HttpPut()]
 		public async Task<IActionResult> UpdateApplicationUserRole(string UserId, string RoleId, [FromQuery] UpdateAppUserRoleModelView model)
 		{
 			try
@@ -72,7 +72,7 @@ namespace HairSalonBE.API.Controllers
 			}
 		}
 
-		[HttpDelete("{id}")]
+		[HttpDelete()]
 		public async Task<IActionResult> DeleteApplicationUserRole(string UserId, string RoleId)
 		{
 			try

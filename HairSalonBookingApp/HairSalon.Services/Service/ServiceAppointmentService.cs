@@ -109,7 +109,7 @@ public class ServiceAppointmentService : IServiceAppointment
         }
 
         IQueryable<ServiceAppointment> serviceAppointments = _unitOfWork.GetRepository<ServiceAppointment>()
-            .Entities.Where(entity => entity.Appointment.User != null )
+            .Entities.Where(entity => entity.Appointment.UserId.Equals(userId) )
             .OrderByDescending(entity => !entity.DeletedTime.HasValue)
             .ThenByDescending(entity => entity.CreatedTime);
 

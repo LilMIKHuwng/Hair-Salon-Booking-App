@@ -21,11 +21,6 @@ namespace HairSalon.Services.Service
 
 		public async Task<UserModelView> AddUserAsync(CreateUserModelView model)
 		{
-			if (string.IsNullOrWhiteSpace(model.FullName))
-			{
-				throw new Exception("First Name cannot be empty.");
-			}
-
 
 			UserInfo newUser = _mapper.Map<UserInfo>(model);
 
