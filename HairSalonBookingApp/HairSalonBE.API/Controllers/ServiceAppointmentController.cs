@@ -2,10 +2,11 @@
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
 using HairSalon.ModelViews.ServiceAppointmentModelViews;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairSalonBE.API.Controllers;
-
+[Authorize(Roles = "User")]
 [Route("api/[controller]")]
 [ApiController]
 public class ServiceAppointmentController : ControllerBase
