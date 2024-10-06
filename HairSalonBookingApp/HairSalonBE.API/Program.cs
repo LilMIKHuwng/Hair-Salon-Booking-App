@@ -1,5 +1,8 @@
 ﻿using System.Text;
 using System.Text.Json.Serialization;
+using HairSalon.Contract.Repositories.Interface;
+using HairSalon.Contract.Repositories.SeedData;
+using HairSalon.Repositories.Context;
 using HairSalonBE.API;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -102,6 +105,24 @@ builder.Services.AddAuthentication(x =>
     };
 });
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<DatabaseContext>();
+        var unitOfWork = services.GetRequiredService<IUnitOfWork>();
+
+        // Seed roles
+        await RoleSeeder.SeedRoles(unitOfWork);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding the database.");
+    }
+}
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();
