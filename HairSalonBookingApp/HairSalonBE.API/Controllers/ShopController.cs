@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HairSalonBE.API.Controllers
 {
-	[Authorize(Roles = "User")]
-	[Route("api/[controller]")]
+    [Authorize(Roles = "User")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ShopController : ControllerBase
     {
@@ -19,73 +19,41 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpGet("all")]
-        public async Task<ActionResult<BasePaginatedList<ShopModelView>>> GetAllShops(int pageNumber = 1, int pageSize = 5)
+        public async Task<ActionResult<BasePaginatedList<ShopModelView>>> GetAllShops(int pageNumber = 1, int pageSize = 5, string searchName = null, string searchId = null)
         {
-            try
-            {
-                var result = await _shopService.GetAllShopAsync(pageNumber, pageSize);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
+            var result = await _shopService.GetAllShopAsync(pageNumber, pageSize, searchName, searchId);
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ShopModelView>> GetShopById(string id)
         {
-            try
-            {
-                var result = await _shopService.GetShopAsync(id);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return NotFound(new { Message = ex.Message });
-            }
+            var result = await _shopService.GetShopAsync(id);
+            return Ok(result);
+
         }
 
         [HttpPost()]
         public async Task<ActionResult<ShopModelView>> CreateShop([FromQuery] CreateShopModelView model)
         {
-            try
-            {
-                ShopModelView result = await _shopService.AddShopAsync(model);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
+            ShopModelView result = await _shopService.AddShopAsync(model);
+            return Ok("Add new shop successfully!");
+
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateShop(string id, [FromQuery] UpdatedShopModelView model)
         {
-            try
-            {
-                ShopModelView result = await _shopService.UpdateShopAsync(id, model);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
+            ShopModelView result = await _shopService.UpdateShopAsync(id, model);
+            return Ok("Update shop sucessfully!");
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteShop(string id)
         {
-            try
-            {
-                string result = await _shopService.DeleteShopAsync(id);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
+            string result = await _shopService.DeleteShopAsync(id);
+            return Ok("Delete shop sucessfully");
+
         }
     }
 }
