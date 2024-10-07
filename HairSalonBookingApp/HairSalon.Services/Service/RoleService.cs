@@ -75,6 +75,12 @@ namespace HairSalon.Services.Service
 				return "The Role cannot be found or has been deleted!";
 			}
 
+			// Check if the model is null or if there are no changes to apply
+			if (model.Name == null || existingRole.Name == model.Name) 
+			{
+				return "No changes detected, update skipped.";
+			}
+
 			_mapper.Map(model, existingRole);
 			existingRole.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 			existingRole.LastUpdatedTime = DateTimeOffset.UtcNow;
@@ -84,6 +90,7 @@ namespace HairSalon.Services.Service
 
 			return "Role successfully updated";
 		}
+
 
 		// Soft delete a role
 		public async Task<string> DeleteRoleAsync(string id)
