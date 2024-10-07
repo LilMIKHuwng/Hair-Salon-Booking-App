@@ -117,6 +117,9 @@ using (var scope = app.Services.CreateScope())
 
         // Seed roles
         await RoleSeeder.SeedRoles(unitOfWork);
+
+        //seed account admin
+        await RoleSeeder.SeedAdminUser(unitOfWork);
     }
     catch (Exception ex)
     {
