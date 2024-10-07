@@ -9,6 +9,6 @@ namespace HairSalon.Contract.Services.Interface
 		Task<SalaryPaymentModelView> AddSalaryPaymentAsync(CreateSalaryPaymentModelView model);
 		Task<SalaryPaymentModelView> UpdateSalaryPaymentAsync(string id, UpdatedSalaryPaymentModelView model);
 		Task<string> DeleteSalaryPaymentAsync(string id);
-		Task<SalaryPaymentModelView> GetSalaryPaymentAsync(string id);
+		Task<SalaryPaymentModelView> GetSalaryPaymentByIdAsync(string id);
 	}
 }

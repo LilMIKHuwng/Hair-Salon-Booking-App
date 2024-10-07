@@ -4,6 +4,7 @@ using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
 using HairSalon.ModelViews.RoleModelViews;
+using HairSalon.Repositories.UOW;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 namespace HairSalon.Services.Service
@@ -46,21 +47,42 @@ namespace HairSalon.Services.Service
 			return new BasePaginatedList<RoleModelView>(roleModelViews, totalCount, pageNumber, pageSize);
 		}
 
-		// Add a new role
-		public async Task<string> AddRoleAsync(CreateRoleModelView model)
-		{
-			ApplicationRoles newRole = _mapper.Map<ApplicationRoles>(model);
-			newRole.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-			newRole.CreatedTime = DateTimeOffset.UtcNow;
+        // Add a new role
+        public async Task<string> AddRoleAsync(CreateRoleModelView model)
+        {
+            // Ensure role query has a type
+            IQueryable<ApplicationRoles> roleQuery = (IQueryable<ApplicationRoles>)_unitOfWork.GetRepository<RoleRepository>()
+																					.Entities.AsQueryable();
 
-			await _unitOfWork.GetRepository<ApplicationRoles>().InsertAsync(newRole);
-			await _unitOfWork.SaveAsync();
+            // Check if the role already exists
+            if (roleQuery.Any(role => role.Name == model.Name))
+            {
+                throw new Exception("The role already exists.");
+            }
 
-			return "Role successfully added";
-		}
+            // Map the model to the ApplicationRoles entity
+            ApplicationRoles newRole = _mapper.Map<ApplicationRoles>(model);
 
-		// Update an existing role
-		public async Task<string> UpdateRoleAsync(string id, UpdatedRoleModelView model)
+            // Safely access userId from HttpContext and set CreatedBy
+            var userId = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new Exception("User context is not available.");
+            }
+
+            newRole.CreatedBy = userId;
+            newRole.CreatedTime = DateTimeOffset.UtcNow;
+
+            // Insert new role into the repository
+            await _unitOfWork.GetRepository<ApplicationRoles>().InsertAsync(newRole);
+            await _unitOfWork.SaveAsync();
+
+            return "Role successfully added";
+        }
+
+
+        // Update an existing role
+        public async Task<string> UpdateRoleAsync(string id, UpdatedRoleModelView model)
 		{
 			if (string.IsNullOrWhiteSpace(id))
 			{
