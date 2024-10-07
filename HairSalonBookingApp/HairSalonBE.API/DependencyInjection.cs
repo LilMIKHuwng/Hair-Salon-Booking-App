@@ -4,6 +4,7 @@ using HairSalon.Repositories.Context;
 using HairSalon.Repositories.Entity;
 using HairSalon.Services;
 using HairSalon.Services.Service;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;

@@ -16,7 +16,7 @@ namespace HairSalonBE.API.Controllers
             _roleService = roleService;
         }
 
-		[HttpGet("all")]
+		[HttpGet("get-all")]
 		public async Task<ActionResult<BasePaginatedList<RoleModelView>>> GetAllRoles(int pageNumber = 1, int pageSize = 5)
 		{
 			try
@@ -30,7 +30,7 @@ namespace HairSalonBE.API.Controllers
 			}
 		}
 
-		[HttpGet("{id}")]
+		[HttpGet("get-by-id")]
 		public async Task<ActionResult<RoleModelView>> GetRoleById(string id)
 		{
 			try
@@ -44,7 +44,7 @@ namespace HairSalonBE.API.Controllers
 			}
 		}
 
-		[HttpPost()]
+		[HttpPost("create")]
 		public async Task<ActionResult<RoleModelView>> CreateRole([FromQuery] CreateRoleModelView model)
 		{
 			try
@@ -58,7 +58,7 @@ namespace HairSalonBE.API.Controllers
 			}
 		}
 
-		[HttpPut("{id}")]
+		[HttpPut("update")]
 		public async Task<IActionResult> UpdateRole(string id, [FromQuery] UpdatedRoleModelView model)
 		{
 			try
@@ -72,7 +72,7 @@ namespace HairSalonBE.API.Controllers
 			}
 		}
 
-		[HttpDelete("{id}")]
+		[HttpDelete("delete")]
 		public async Task<IActionResult> DeleteRole(string id)
 		{
 			try

@@ -15,7 +15,7 @@ namespace HairSalonBE.API.Controllers
             _userService = userService;
         }
 
-		[HttpGet("all")]
+		[HttpGet("get-all")]
 		public async Task<ActionResult<BasePaginatedList<UserModelView>>> GetAllUsers(int pageNumber = 1, int pageSize = 5)
 		{
 			try
@@ -29,7 +29,7 @@ namespace HairSalonBE.API.Controllers
 			}
 		}
 
-		[HttpGet("{id}")]
+		[HttpGet("get-by-id")]
 		public async Task<ActionResult<UserModelView>> GetUserById(string id)
 		{
 			try
@@ -43,7 +43,7 @@ namespace HairSalonBE.API.Controllers
 			}
 		}
 
-		[HttpPost()]
+		[HttpPost("create")]
 		public async Task<ActionResult<UserModelView>> CreateUser([FromQuery] CreateUserModelView model)
 		{
 			try
@@ -57,7 +57,7 @@ namespace HairSalonBE.API.Controllers
 			}
 		}
 
-		[HttpPut("{id}")]
+		[HttpPut("update")]
 		public async Task<IActionResult> UpdateUser(string id, [FromQuery] UpdateUserModelView model)
 		{
 			try
@@ -71,7 +71,7 @@ namespace HairSalonBE.API.Controllers
 			}
 		}
 
-		[HttpDelete("{id}")]
+		[HttpDelete("delete")]
 		public async Task<IActionResult> DeleteUser(string id)
 		{
 			try

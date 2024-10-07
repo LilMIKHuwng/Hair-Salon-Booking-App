@@ -31,7 +31,7 @@ public class ServiceAppointmentController : ControllerBase
         }
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("get-by-id")]
     public async Task<ActionResult<ServiceAppointmentModelView>>
         GetAllServicesAppointmentsById(string id)
     {
@@ -46,7 +46,7 @@ public class ServiceAppointmentController : ControllerBase
         }
     }
 
-    [HttpPost]
+    [HttpPost("create")]
     public async Task<ActionResult<ServiceAppointment>> CreateServiceAppointment(
         CreatServiceAppointmentModelView creatServiceAppointmentModelView)
     {
@@ -61,7 +61,7 @@ public class ServiceAppointmentController : ControllerBase
         }
     }
 
-    [HttpPut]
+    [HttpPut("update")]
     public async Task<ActionResult<Boolean>> UpdateServiceAppointment(
          EditServiceAppointmentModelView editServiceAppointmentModelView)
     {
@@ -76,7 +76,7 @@ public class ServiceAppointmentController : ControllerBase
         }
     }
 
-    [HttpGet("/services/{serviceID}")]
+    [HttpGet("get-all-by-service/{serviceID}")]
     public async Task<ActionResult<BasePaginatedList<ServiceAppointmentModelView>>>
         GetAllServiceAppointmentByServiceEntity(string serviceID)
     {
@@ -92,7 +92,7 @@ public class ServiceAppointmentController : ControllerBase
     }
 
 
-    [HttpGet("/appointments/{appointmentsId}")]
+    [HttpGet("/get-by-appointment-id/{appointmentsId}")]
     public async Task<ActionResult<BasePaginatedList<ServiceAppointmentModelView>>>
         GetServiceAppointmentByAppointmentId(string appointmentsId)
     {
@@ -107,7 +107,7 @@ public class ServiceAppointmentController : ControllerBase
         }
     }
 
-    [HttpGet("/userid/{userid}")]
+    [HttpGet("/get-by-user-id/{userid}")]
     public async Task<ActionResult<BasePaginatedList<ServiceAppointmentModelView>>>
         GetServiceAppointmentByUserId(string userid)
     {
@@ -122,7 +122,7 @@ public class ServiceAppointmentController : ControllerBase
         }
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("delete")]
     public async Task<ActionResult<Boolean>> DeleteServiceAppointment(
         DeleteServiceAppointmentModelView deleteServiceAppointmentModelView)
     {

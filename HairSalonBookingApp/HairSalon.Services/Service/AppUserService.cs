@@ -6,7 +6,6 @@ using HairSalon.Core;
 using HairSalon.Core.Utils;
 using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalon.ModelViews.AuthModelViews;
-using HairSalon.ModelViews.RoleModelViews;
 using HairSalon.Repositories.Entity;
 using Microsoft.EntityFrameworkCore;
 

@@ -12,13 +12,13 @@ namespace HairSalonBE.API.Controllers
     {
         private readonly IAppUserService _appUserService;
         private readonly TokenService _tokenService;
+
         public AuthController(TokenService tokenService, IAppUserService userService) {
             _tokenService = tokenService;
             _appUserService = userService;
         } 
 
-
-        [HttpPost("auth_account")]
+        [HttpPost("auth-account")]
         public async Task<IActionResult> Login(LoginModelView model)
         {
 

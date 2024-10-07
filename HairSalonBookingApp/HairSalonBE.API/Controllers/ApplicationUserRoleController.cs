@@ -30,7 +30,7 @@ namespace HairSalonBE.API.Controllers
 			}
 		}
 
-		[HttpGet("all")]
+		[HttpGet("get-all")]
 		public async Task<ActionResult<BasePaginatedList<AppUserRoleModelView>>> GetAllApplicationUserRoles(int pageNumber = 1, int pageSize = 5)
 		{
 			try
@@ -44,7 +44,7 @@ namespace HairSalonBE.API.Controllers
 			}
 		}
 
-		[HttpGet("{id}")]
+		[HttpGet("get-by-id")]
 		public async Task<ActionResult<AppUserRoleModelView>> GetApplicationUserRoleById(string UserId, string RoleId)
 		{
 			try
@@ -58,7 +58,7 @@ namespace HairSalonBE.API.Controllers
 			}
 		}
 
-		[HttpPut("{id}")]
+		[HttpPut("update")]
 		public async Task<IActionResult> UpdateApplicationUserRole(string UserId, string RoleId, [FromQuery] UpdateAppUserRoleModelView model)
 		{
 			try
@@ -72,7 +72,7 @@ namespace HairSalonBE.API.Controllers
 			}
 		}
 
-		[HttpDelete("{id}")]
+		[HttpDelete("delete")]
 		public async Task<IActionResult> DeleteApplicationUserRole(string UserId, string RoleId)
 		{
 			try
