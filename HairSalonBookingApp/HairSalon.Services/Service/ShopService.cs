@@ -64,7 +64,7 @@ namespace HairSalon.Services.Service
             }
         }
 
-        public async Task<ShopModelView> AddShopAsync(CreateShopModelView model)
+        public async Task<string> AddShopAsync(CreateShopModelView model)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace HairSalon.Services.Service
                 await _unitOfWork.GetRepository<Shop>().InsertAsync(newShop);
                 await _unitOfWork.SaveAsync();
 
-                return _mapper.Map<ShopModelView>(newShop);
+                return "Add new shop successfully!";
             }
             catch (BaseException.BadRequestException)
             {
@@ -95,7 +95,7 @@ namespace HairSalon.Services.Service
             }
         }
 
-        public async Task<ShopModelView> UpdateShopAsync(string id, UpdatedShopModelView model)
+        public async Task<string> UpdateShopAsync(string id, UpdatedShopModelView model)
         {
             try
             {
@@ -156,7 +156,7 @@ namespace HairSalon.Services.Service
                     await _unitOfWork.SaveAsync();
                 }
 
-                return _mapper.Map<ShopModelView>(existingShop);
+                return "Updated shop successfully";
             }
             catch (BaseException.BadRequestException)
             {
@@ -188,7 +188,7 @@ namespace HairSalon.Services.Service
 
                 _unitOfWork.GetRepository<Shop>().Update(existingShop);
                 await _unitOfWork.SaveAsync();
-                return "Deleted";
+                return "Deleted shop successfully!";
             }
             catch (BaseException.BadRequestException)
             {
