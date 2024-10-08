@@ -66,6 +66,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 var app = builder.Build();
 
+//add configue for seed data
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -76,6 +77,9 @@ using (var scope = app.Services.CreateScope())
 
         // Seed roles
         await RoleSeeder.SeedRoles(unitOfWork);
+
+        //seed account admin
+        await RoleSeeder.SeedAdminUser(unitOfWork);
     }
     catch (Exception ex)
     {
