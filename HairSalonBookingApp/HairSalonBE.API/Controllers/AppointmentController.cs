@@ -3,6 +3,7 @@ using HairSalon.Core;
 using HairSalon.ModelViews.AppointmentModelViews;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace HairSalonBE.API.Controllers
 {
@@ -19,74 +20,35 @@ namespace HairSalonBE.API.Controllers
             _appointmentService = appointmentService;
         }
 
-        [HttpPost("create")]
-        public async Task<ActionResult<AppointmentModelView>> CreateAppointment([FromQuery] CreateAppointmentModelView model)
+        [HttpPost()]
+        public async Task<IActionResult> CreateAppointment([FromQuery] CreateAppointmentModelView model)
         {
-            try
-            {
-                AppointmentModelView result = await _appointmentService.AddAppointmentAsync(model);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
+            var result = await _appointmentService.AddAppointmentAsync(model);
+
+            return Ok(result);
         }
 
-        [HttpGet("get-all")]
-        public async Task<ActionResult<BasePaginatedList<AppointmentModelView>>> GetAllAppointments(int pageNumber = 1, int pageSize = 5)
+        [HttpGet("all")]
+        public async Task<ActionResult<BasePaginatedList<AppointmentModelView>>> GetAllAppointments(int pageNumber = 1, int pageSize = 5,
+            [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null, [FromQuery] string? id = null)
         {
-            try
-            {
-                var result = await _appointmentService.GetAllAppointmentAsync(pageNumber, pageSize);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
+            var result = await _appointmentService.GetAllAppointmentAsync(pageNumber, pageSize, startDate, endDate, id);
+            return Ok(result);
         }
 
-        [HttpGet("get-by-id")]
-        public async Task<ActionResult<AppointmentModelView>> GetAppointmentById(string id)
-        {
-            try
-            {
-                var result = await _appointmentService.GetAppointmentAsync(id);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return NotFound(new { Message = ex.Message });
-            }
-        }
 
-        [HttpPut("update")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAppointment(string id, [FromQuery] UpdateAppointmentModelView model)
         {
-            try
-            {
-                AppointmentModelView result = await _appointmentService.UpdateAppointmentAsync(id, model);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
+            var result = await _appointmentService.UpdateAppointmentAsync(id, model);
+            return Ok(result);
         }
 
         [HttpDelete("delete")]
         public async Task<IActionResult> DeleteAppointment(string id)
         {
-            try
-            {
-                string result = await _appointmentService.DeleteAppointmentAsync(id);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
+            var result = await _appointmentService.DeleteAppointmentAsync(id);
+            return Ok(result);
         }
     }
 }
