@@ -4,108 +4,187 @@ using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
 using HairSalon.ModelViews.AppointmentModelViews;
+using HairSalon.Repositories.Entity;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace HairSalon.Services.Service
 {
-    public class AppointmentService : IAppointmentService
-    {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+	public class AppointmentService : IAppointmentService
+	{
+		private readonly IUnitOfWork _unitOfWork;
+		private readonly IMapper _mapper;
+		private readonly IHttpContextAccessor _contextAccessor;
 
-        public AppointmentService(IUnitOfWork unitOfWork, IMapper mapper)
-        {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-        }
+		public AppointmentService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor contextAccessor)
+		{
+			_unitOfWork = unitOfWork;
+			_mapper = mapper;
+			_contextAccessor = contextAccessor;
+		}
 
-        public async Task<AppointmentModelView> AddAppointmentAsync(CreateAppointmentModelView model)
-        {
-            Appointment newAppointment = _mapper.Map<Appointment>(model);
+		// Add a new appointment
+		public async Task<string> AddAppointmentAsync(CreateAppointmentModelView model)
+		{
+			// Validate appointment date
+			if (model.AppointmentDate < DateTime.Now || model.AppointmentDate > DateTime.Now.AddMonths(1))
+			{
+				return "Invalid appointment date. The date must be within one month from today.";
+			}
 
-            newAppointment.Id = Guid.NewGuid().ToString("N");
-            newAppointment.CreatedBy = "claim account";  
-            newAppointment.CreatedTime = DateTimeOffset.UtcNow;
-            newAppointment.LastUpdatedTime = DateTimeOffset.UtcNow;
+			// Get the user by userId
+			ApplicationUsers user = await _unitOfWork.GetRepository<ApplicationUsers>().GetByIdAsync(Guid.Parse(model.UserId));
 
-            await _unitOfWork.GetRepository<Appointment>().InsertAsync(newAppointment);
-            await _unitOfWork.SaveAsync();
+			// Check if user has enough points
+			if (model.PointsEarned > user.UserInfo.Point)
+			{
+				return "Insufficient points. The user does not have enough points for this appointment.";
+			}
 
-            return _mapper.Map<AppointmentModelView>(newAppointment);
-        }
+			// Map data model to entity
+			Appointment newAppointment = _mapper.Map<Appointment>(model);
+			newAppointment.Id = Guid.NewGuid().ToString("N");
+			newAppointment.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+			newAppointment.CreatedTime = DateTimeOffset.UtcNow;
+			newAppointment.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-        public async Task<BasePaginatedList<AppointmentModelView>> GetAllAppointmentAsync(int pageNumber, int pageSize)
-        {
-            IQueryable<Appointment> appointmentQuery = _unitOfWork.GetRepository<Appointment>().Entities
-                .Where(p => !p.DeletedTime.HasValue)
-                .OrderByDescending(s => s.CreatedTime);
+			// Add new appointment
+			await _unitOfWork.GetRepository<Appointment>().InsertAsync(newAppointment);
+			await _unitOfWork.SaveAsync();
 
-            int totalCount = await appointmentQuery.CountAsync();
+			return "Appointment successfully created.";
+		}
 
-            List<Appointment> paginatedAppointments = await appointmentQuery
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+		// Get all appointments by startEndDay, id
+		public async Task<BasePaginatedList<AppointmentModelView>> GetAllAppointmentAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? endDate, string? id)
+		{
+			// Get appointments from database
+			IQueryable<Appointment> appointmentQuery = _unitOfWork.GetRepository<Appointment>().Entities
+				.Where(p => !p.DeletedTime.HasValue)
+				.OrderByDescending(s => s.CreatedTime);
 
-            List<AppointmentModelView> appointmentModelViews = _mapper.Map<List<AppointmentModelView>>(paginatedAppointments);
+			// Filter by date range if provided
+			if (startDate.HasValue && endDate.HasValue)
+			{
+				appointmentQuery = appointmentQuery.Where(a => a.AppointmentDate >= startDate.Value && a.AppointmentDate <= endDate.Value);
+			}
 
-            return new BasePaginatedList<AppointmentModelView>(appointmentModelViews, totalCount, pageNumber, pageSize);
-        }
+			// Filter by ID if provided
+			if (!string.IsNullOrEmpty(id))
+			{
+				appointmentQuery = appointmentQuery.Where(a => a.Id.Equals(id));
+			}
 
-        public async Task<AppointmentModelView> GetAppointmentAsync(string id)
-        {
-            if (string.IsNullOrWhiteSpace(id))
-            {
-                throw new Exception("Please provide a valid Appointment ID.");
-            }
+			int totalCount = await appointmentQuery.CountAsync();
 
-            Appointment existingAppointment = await _unitOfWork.GetRepository<Appointment>().Entities
-                .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
-                ?? throw new Exception("The Appointment cannot be found or has been deleted!");
+			// Apply pagination
+			List<Appointment> paginatedAppointments = await appointmentQuery
+				.Skip((pageNumber - 1) * pageSize)
+				.Take(pageSize)
+				.ToListAsync();
 
-            return _mapper.Map<AppointmentModelView>(existingAppointment);
-        }
+			// Map data to model
+			List<AppointmentModelView> appointmentModelViews = _mapper.Map<List<AppointmentModelView>>(paginatedAppointments);
 
-        public async Task<AppointmentModelView> UpdateAppointmentAsync(string id, UpdateAppointmentModelView model)
-        {
-            if (string.IsNullOrWhiteSpace(id))
-            {
-                throw new Exception("Please provide a valid Appointment ID.");
-            }
+			return new BasePaginatedList<AppointmentModelView>(appointmentModelViews, totalCount, pageNumber, pageSize);
+		}
 
-            Appointment existingAppointment = await _unitOfWork.GetRepository<Appointment>().Entities
-                .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
-                ?? throw new Exception("The Appointment cannot be found or has been deleted!");
+		public async Task<string> UpdateAppointmentAsync(string id, UpdateAppointmentModelView model)
+		{
+			// Validate appointment ID
+			if (string.IsNullOrWhiteSpace(id))
+			{
+				return "Invalid appointment ID. Please provide a valid ID.";
+			}
 
-            _mapper.Map(model, existingAppointment);
+			// Get the existing appointment by ID and ensure it's not deleted
+			Appointment existingAppointment = await _unitOfWork.GetRepository<Appointment>().Entities
+				.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
 
-            existingAppointment.LastUpdatedBy = "claim account"; 
-            existingAppointment.LastUpdatedTime = DateTimeOffset.UtcNow;
+			if (existingAppointment == null)
+			{
+				return "Appointment not found or has already been deleted.";
+			}
 
-            _unitOfWork.GetRepository<Appointment>().Update(existingAppointment);
-            await _unitOfWork.SaveAsync();
+			// If UserId is not null, validate user and points
+			if (!string.IsNullOrWhiteSpace(model.UserId))
+			{
+				ApplicationUsers user = await _unitOfWork.GetRepository<ApplicationUsers>().GetByIdAsync(Guid.Parse(model.UserId));
 
-            return _mapper.Map<AppointmentModelView>(existingAppointment);
-        }
+				existingAppointment.UserId = user.Id;
+			}
+			
+			if (model.PointsEarned.HasValue) 
+			{
+				// Check if the user has enough points, if PointsEarned is being updated
+				if (model.PointsEarned > existingAppointment.User.UserInfo.Point)
+				{
+					return "Insufficient points. The user does not have enough points for this appointment.";
+				}
+				existingAppointment.PointsEarned = model.PointsEarned.Value;
+			}		
+
+			// Update the StylistId if provided
+			if (!string.IsNullOrWhiteSpace(model.StylistId) && Guid.TryParse(model.StylistId, out Guid newStylistId))
+			{
+				existingAppointment.StylistId = newStylistId;
+			}
+
+			// Update the StatusForAppointment if provided
+			if (!string.IsNullOrWhiteSpace(model.StatusForAppointment))
+			{
+				existingAppointment.StatusForAppointment = model.StatusForAppointment;
+			}
+
+			// Update AppointmentDate if provided and valid
+			if (model.AppointmentDate.HasValue)
+			{
+				if (model.AppointmentDate < DateTime.Now || model.AppointmentDate > DateTime.Now.AddMonths(1))
+				{
+					return "Invalid appointment date. The date must be within one month from today.";
+				}
+				existingAppointment.AppointmentDate = model.AppointmentDate.Value;
+			}
+
+			// Update LastUpdatedBy and LastUpdatedTime
+			existingAppointment.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+			existingAppointment.LastUpdatedTime = DateTimeOffset.UtcNow;
+
+			// Save changes
+			await _unitOfWork.GetRepository<Appointment>().UpdateAsync(existingAppointment);
+			await _unitOfWork.SaveAsync();
+
+			return "Appointment updated successfully.";
+		}
 
 
-        public async Task<string> DeleteAppointmentAsync(string id)
-        {
-            if (string.IsNullOrWhiteSpace(id))
-            {
-                throw new Exception("Please provide a valid Appointment ID.");
-            }
+		// Delete an appointment
+		public async Task<string> DeleteAppointmentAsync(string id)
+		{
+			// Validate appointment ID
+			if (string.IsNullOrWhiteSpace(id))
+			{
+				return "Invalid appointment ID. Please provide a valid ID.";
+			}
 
-            Appointment existingAppointment = await _unitOfWork.GetRepository<Appointment>().Entities
-                .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
-                ?? throw new Exception("The Appointment cannot be found or has been deleted!");
+			// Get appointment by ID and ensure it's not deleted
+			Appointment existingAppointment = await _unitOfWork.GetRepository<Appointment>().Entities
+				.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
 
-            existingAppointment.DeletedTime = DateTimeOffset.UtcNow;
-            existingAppointment.DeletedBy = "claim account"; 
+			if (existingAppointment == null)
+			{
+				return "Appointment not found or has already been deleted.";
+			}
 
-            _unitOfWork.GetRepository<Appointment>().Update(existingAppointment);
-            await _unitOfWork.SaveAsync();
-            return "Deleted";
-        }
-    }
+			// Soft delete appointment
+			existingAppointment.DeletedTime = DateTimeOffset.UtcNow;
+			existingAppointment.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+
+			// Save changes
+			await _unitOfWork.GetRepository<Appointment>().UpdateAsync(existingAppointment);
+			await _unitOfWork.SaveAsync();
+
+			return "Appointment deleted successfully.";
+		}
+	}
 }

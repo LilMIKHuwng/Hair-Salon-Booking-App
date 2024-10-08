@@ -5,7 +5,7 @@ namespace HairSalon.ModelViews.SalaryPaymentModelViews
     public class CreateSalaryPaymentModelView
     {
         [Required(ErrorMessage = "User ID is required.")]
-        public string UserId { get; set; }
+        public Guid UserId { get; set; }
         [Required(ErrorMessage = "BaseSalary is required.")]
         public decimal BaseSalary { get; set; }
         [Required(ErrorMessage = "PaymentDate is required.")]

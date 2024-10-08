@@ -4,6 +4,7 @@ using HairSalon.Repositories.Context;
 using HairSalon.Repositories.Entity;
 using HairSalon.Services;
 using HairSalon.Services.Service;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -20,6 +21,7 @@ namespace HairSalonBE.API
             services.AddIdentity();
             services.AddInfrastructure(configuration);
             services.AddServices();
+            services.ConfigJwt(configuration);
         }
 
         public static void ConfigRoute(this IServiceCollection services)
@@ -63,7 +65,48 @@ namespace HairSalonBE.API
                 ;
 
         }
-        
-        
+
+        public static void ConfigJwt(this IServiceCollection services, IConfiguration configuration)
+        {
+            // Config JWT Authentication
+            var jwtSettings = configuration.GetSection("Jwt");
+            var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]);
+
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidIssuer = jwtSettings["Issuer"],
+                    ValidAudience = jwtSettings["Audience"],
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+
+                x.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = context =>
+                    {
+                        Console.WriteLine("OnAuthenticationFailed: " + context.Exception.Message);
+                        return Task.CompletedTask;
+                    },
+                    OnTokenValidated = context =>
+                    {
+                        Console.WriteLine("OnTokenValidated: " + context.SecurityToken);
+                        return Task.CompletedTask;
+                    }
+                };
+            });
+        }
     }
 }

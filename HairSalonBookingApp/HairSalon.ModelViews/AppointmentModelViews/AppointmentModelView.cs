@@ -8,7 +8,5 @@
         public string StatusForAppointment { get; set; }
         public int PointsEarned { get; set; }
         public DateTime AppointmentDate { get; set; }
-
-
     }
 }

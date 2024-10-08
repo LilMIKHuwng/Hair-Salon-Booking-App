@@ -1,9 +1,6 @@
 ﻿using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
 using HairSalon.ModelViews.ApplicationUserModelViews;
-using HairSalon.ModelViews.AppointmentModelViews;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairSalonBE.API.Controllers
@@ -34,7 +31,7 @@ namespace HairSalonBE.API.Controllers
 			}
 		}
 
-		[HttpGet("all")]
+        [HttpGet("get-all")]
 		public async Task<ActionResult<BasePaginatedList<AppUserModelView>>> GetAllApplicationUsers(int pageNumber = 1, int pageSize = 5)
 		{
 			try
@@ -48,7 +45,7 @@ namespace HairSalonBE.API.Controllers
 			}
 		}
 
-		[HttpGet("{id}")]
+		[HttpGet("get-by-id")]
 		public async Task<ActionResult<AppUserModelView>> GetApplicationUserById(string id)
 		{
 			try
@@ -62,7 +59,7 @@ namespace HairSalonBE.API.Controllers
 			}
 		}
 
-		[HttpPut("{id}")]
+		[HttpPut("update")]
 		public async Task<IActionResult> UpdateApplicationUser(string id, [FromQuery] UpdateAppUserModelView model)
 		{
 			try
@@ -76,7 +73,7 @@ namespace HairSalonBE.API.Controllers
 			}
 		}
 
-		[HttpDelete("{id}")]
+		[HttpDelete("delete")]
 		public async Task<IActionResult> DeleteApplicationUser(string id)
 		{
 			try

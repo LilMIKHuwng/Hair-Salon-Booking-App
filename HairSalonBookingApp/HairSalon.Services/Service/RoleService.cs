@@ -1,17 +1,19 @@
-﻿using AutoMapper;
+using AutoMapper;
 using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
+using HairSalon.Core.Base;
+using HairSalon.Core.Constants;
 using HairSalon.ModelViews.RoleModelViews;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 namespace HairSalon.Services.Service
 {
-    public class RoleService: IRoleService
-    {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+	public class RoleService : IRoleService
+	{
+		private readonly IUnitOfWork _unitOfWork;
+		private readonly IMapper _mapper;
 		private readonly IHttpContextAccessor _contextAccessor;
 
 		public RoleService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor contextAccessor)
@@ -21,7 +23,7 @@ namespace HairSalon.Services.Service
 			_contextAccessor = contextAccessor;
 		}
 
-		// Get all roles with optional filters for ID and name, and support pagination
+		// Get all roles with pagination and optional filters for name and ID
 		public async Task<BasePaginatedList<RoleModelView>> GetAllRoleAsync(int pageNumber, int pageSize, string? id, string? name)
 		{
 			IQueryable<ApplicationRoles> roleQuery = _unitOfWork.GetRepository<ApplicationRoles>().Entities
@@ -29,20 +31,22 @@ namespace HairSalon.Services.Service
 
 			// Apply filters if provided
 			if (!string.IsNullOrWhiteSpace(id))
-				roleQuery = roleQuery.Where(p => p.Id == Guid.Parse(id));
+				roleQuery = roleQuery.Where(p => p.Id.ToString() == id);
 
 			if (!string.IsNullOrWhiteSpace(name))
 				roleQuery = roleQuery.Where(p => p.Name.Contains(name));
 
-			// Paginate and return the result
+			roleQuery = roleQuery.OrderByDescending(r => r.CreatedTime);
+
 			int totalCount = await roleQuery.CountAsync();
+
 			List<ApplicationRoles> paginatedRoles = await roleQuery
-				.OrderByDescending(s => s.CreatedTime)
 				.Skip((pageNumber - 1) * pageSize)
 				.Take(pageSize)
 				.ToListAsync();
 
 			List<RoleModelView> roleModelViews = _mapper.Map<List<RoleModelView>>(paginatedRoles);
+
 			return new BasePaginatedList<RoleModelView>(roleModelViews, totalCount, pageNumber, pageSize);
 		}
 
@@ -75,15 +79,26 @@ namespace HairSalon.Services.Service
 				return "The Role cannot be found or has been deleted!";
 			}
 
-			_mapper.Map(model, existingRole);
-			existingRole.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-			existingRole.LastUpdatedTime = DateTimeOffset.UtcNow;
+			bool isUpdated = false;
 
-			_unitOfWork.GetRepository<ApplicationRoles>().Update(existingRole);
-			await _unitOfWork.SaveAsync();
+			if (!string.IsNullOrWhiteSpace(model.Name) && model.Name != existingRole.Name)
+			{
+				existingRole.Name = model.Name;
+				isUpdated = true;
+			}
+
+			if (isUpdated)
+			{
+				existingRole.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+				existingRole.LastUpdatedTime = DateTimeOffset.UtcNow;
+
+				_unitOfWork.GetRepository<ApplicationRoles>().Update(existingRole);
+				await _unitOfWork.SaveAsync();
+			}
 
 			return "Role successfully updated";
 		}
+
 
 		// Soft delete a role
 		public async Task<string> DeleteRoleAsync(string id)
@@ -110,4 +125,5 @@ namespace HairSalon.Services.Service
 			return "Role successfully deleted";
 		}
 	}
+
 }
