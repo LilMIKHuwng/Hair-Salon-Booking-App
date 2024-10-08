@@ -76,7 +76,7 @@ namespace HairSalon.Services.Service
                 Shop newShop = _mapper.Map<Shop>(model);
 
                 newShop.Id = Guid.NewGuid().ToString("N");
-                newShop.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value; ;
+                newShop.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
                 newShop.CreatedTime = DateTimeOffset.UtcNow;
                 newShop.LastUpdatedTime = DateTimeOffset.UtcNow;
 
