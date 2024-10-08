@@ -4,8 +4,10 @@ using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
 using HairSalon.ModelViews.AppointmentModelViews;
+using HairSalon.Repositories.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace HairSalon.Services.Service
 {
@@ -32,6 +34,14 @@ namespace HairSalon.Services.Service
                 {
                     throw new Exception("Appointment date cannot be in the past or more than 1 month in the future");
                 }
+
+                ApplicationUsers user = await _unitOfWork.GetRepository<ApplicationUsers>().GetByIdAsync(Guid.Parse(model.UserId));
+                if (model.PointsEarned > user.UserInfo.Point)
+                {
+                    throw new Exception("User point not enough");
+                }
+                user.UserInfo.Point -= model.PointsEarned;
+
                 Appointment newAppointment = _mapper.Map<Appointment>(model);
 
                 newAppointment.Id = Guid.NewGuid().ToString("N");
@@ -51,8 +61,8 @@ namespace HairSalon.Services.Service
             }
         }
 
-        //find all appointment by startEndDay
-        public async Task<BasePaginatedList<AppointmentModelView>> GetAllAppointmentAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? endDate)
+        //find all appointment by startEndDay, id 
+        public async Task<BasePaginatedList<AppointmentModelView>> GetAllAppointmentAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? endDate, string? id)
         {
             try
             {
@@ -66,6 +76,12 @@ namespace HairSalon.Services.Service
                 {
                     appointmentQuery = appointmentQuery.Where(a => a.AppointmentDate >= startDate.Value);
                     appointmentQuery = appointmentQuery.Where(a => a.AppointmentDate <= endDate.Value);
+                }
+
+                // check id
+                if (!string.IsNullOrEmpty(id))
+                {
+                    appointmentQuery = appointmentQuery.Where(a => a.Id.Equals(id));
                 }
 
                 int totalCount = await appointmentQuery.CountAsync();
@@ -87,29 +103,6 @@ namespace HairSalon.Services.Service
             }
         }
 
-        //find appointment by id
-        public async Task<AppointmentModelView> GetAppointmentAsync(string id)
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(id))
-                {
-                    throw new Exception("Please provide a valid Appointment ID.");
-                }
-
-                //get appointment by id and not deleted 
-                Appointment existingAppointment = await _unitOfWork.GetRepository<Appointment>().Entities
-                    .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
-                    ?? throw new Exception("The Appointment cannot be found or has been deleted!");
-
-                return _mapper.Map<AppointmentModelView>(existingAppointment);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"An error occurred while get appointment by id.: {ex.Message}", ex);
-            }
-        }
-
         //update appointment
         public async Task<string> UpdateAppointmentAsync(string id, UpdateAppointmentModelView model)
         {
@@ -124,6 +117,14 @@ namespace HairSalon.Services.Service
                 Appointment existingAppointment = await _unitOfWork.GetRepository<Appointment>().Entities
                     .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
                     ?? throw new Exception("The Appointment cannot be found or has been deleted!");
+
+                // check point
+                ApplicationUsers user = await _unitOfWork.GetRepository<ApplicationUsers>().GetByIdAsync(Guid.Parse(model.UserId));
+                if (model.PointsEarned > user.UserInfo.Point)
+                {
+                    throw new Exception("User point not enough");
+                }
+                user.UserInfo.Point -= model.PointsEarned;
 
                 //Map new data 
                 if (model.AppointmentDate < DateTime.Now || model.AppointmentDate > DateTime.Now.AddMonths(1))

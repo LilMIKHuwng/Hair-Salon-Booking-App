@@ -30,20 +30,13 @@ namespace HairSalonBE.API.Controllers
 
         [HttpGet("all")]
         public async Task<ActionResult<BasePaginatedList<AppointmentModelView>>> GetAllAppointments(int pageNumber = 1, int pageSize = 5,
-            [FromQuery] DateTime? startDate = null,[FromQuery] DateTime? endDate = null)
+            [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null, [FromQuery] string? id = null)
         {
-            var result = await _appointmentService.GetAllAppointmentAsync(pageNumber, pageSize, startDate, endDate);
+            var result = await _appointmentService.GetAllAppointmentAsync(pageNumber, pageSize, startDate, endDate, id);
 
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<AppointmentModelView>> GetAppointmentById(string id)
-        {
-            var result = await _appointmentService.GetAppointmentAsync(id);
-            
-            return Ok(result);
-        }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAppointment(string id, [FromQuery] UpdateAppointmentModelView model)
