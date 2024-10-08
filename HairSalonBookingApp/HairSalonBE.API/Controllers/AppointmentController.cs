@@ -33,7 +33,6 @@ namespace HairSalonBE.API.Controllers
             [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null, [FromQuery] string? id = null)
         {
             var result = await _appointmentService.GetAllAppointmentAsync(pageNumber, pageSize, startDate, endDate, id);
-
             return Ok(result);
         }
 
@@ -42,15 +41,13 @@ namespace HairSalonBE.API.Controllers
         public async Task<IActionResult> UpdateAppointment(string id, [FromQuery] UpdateAppointmentModelView model)
         {
             var result = await _appointmentService.UpdateAppointmentAsync(id, model);
-            
             return Ok(result);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("delete")]
         public async Task<IActionResult> DeleteAppointment(string id)
         {
             var result = await _appointmentService.DeleteAppointmentAsync(id);
-
             return Ok(result);
         }
     }

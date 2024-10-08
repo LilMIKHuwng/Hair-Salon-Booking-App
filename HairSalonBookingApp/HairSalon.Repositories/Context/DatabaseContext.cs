@@ -38,7 +38,6 @@ namespace HairSalon.Repositories.Context
             }
         }
 
-
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			modelBuilder.Entity<Appointment>()
