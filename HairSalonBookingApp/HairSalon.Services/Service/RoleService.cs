@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
@@ -6,6 +6,7 @@ using HairSalon.Core;
 using HairSalon.Core.Base;
 using HairSalon.Core.Constants;
 using HairSalon.ModelViews.RoleModelViews;
+using HairSalon.Repositories.UOW;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 namespace HairSalon.Services.Service
@@ -87,8 +88,8 @@ namespace HairSalon.Services.Service
 			}
 		}
 
-		// Update an existing role
-		public async Task<string> UpdateRoleAsync(string id, UpdatedRoleModelView model)
+        // Update an existing role
+        public async Task<string> UpdateRoleAsync(string id, UpdatedRoleModelView model)
 		{
 			try
 			{

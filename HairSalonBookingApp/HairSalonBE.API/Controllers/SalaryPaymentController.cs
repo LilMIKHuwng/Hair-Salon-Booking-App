@@ -1,13 +1,14 @@
 ﻿using HairSalon.Contract.Services.Interface;
-using HairSalon.Core;
 using Microsoft.AspNetCore.Mvc;
 using HairSalon.ModelViews.SalaryPaymentModelViews;
 using Microsoft.AspNetCore.Authorization;
+using HairSalon.Core.Constants;
+using HairSalon.Core.Base;
+using HairSalon.Core;
 
 namespace HairSalonBE.API.Controllers
 {
-	[Authorize(Roles = "User")]
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class SalaryPaymentController : ControllerBase
     {
@@ -18,74 +19,39 @@ namespace HairSalonBE.API.Controllers
             _salaryPaymentService = salaryPaymentService;
         }
 
-		[HttpGet("all")]
-		public async Task<ActionResult<BasePaginatedList<SalaryPaymentModelView>>> GetAllSalaryPayments(int pageNumber = 1, int pageSize = 5)
-		{
-			try
-			{
-				var result = await _salaryPaymentService.GetAllSalaryPaymentAsync(pageNumber, pageSize);
-				return Ok(result);
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(new { Message = ex.Message });
-			}
-		}
+        [HttpGet("all")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllSalaryPayments(string? id, DateTime? paymentDate, int pageNumber = 1, int pageSize = 5)
+        {
+            var result = await _salaryPaymentService.GetAllSalaryPaymentAsync(id, paymentDate, pageNumber, pageSize);
+            return Ok(new BaseResponse<BasePaginatedList<SalaryPaymentModelView>>(StatusCodeHelper.OK,
+                                                                                 "Loaded data successfully!", result));
+        }
 
-		[HttpGet("{id}")]
-		public async Task<ActionResult<SalaryPaymentModelView>> GetSalaryPaymentById(string id)
-		{
-			try
-			{
-				var result = await _salaryPaymentService.GetSalaryPaymentAsync(id);
-				return Ok(result);
-			}
-			catch (Exception ex)
-			{
-				return NotFound(new { Message = ex.Message });
-			}
-		}
 
-		[HttpPost()]
-		public async Task<ActionResult<SalaryPaymentModelView>> CreateSalaryPayment([FromQuery] CreateSalaryPaymentModelView model)
-		{
-			try
-			{
-				SalaryPaymentModelView result = await _salaryPaymentService.AddSalaryPaymentAsync(model);
-				return Ok(result);
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(new { Message = ex.Message });
-			}
-		}
+        [HttpPost("create")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<SalaryPaymentModelView>> CreateSalaryPayment
+                                    ([FromQuery] CreateSalaryPaymentModelView model)
+        {
+            SalaryPaymentModelView result = await _salaryPaymentService.AddSalaryPaymentAsync(model);
+            return Ok(new BaseResponse<SalaryPaymentModelView>(StatusCodeHelper.OK, "Created data succesfully!", result));
+        }
 
-		[HttpPut("{id}")]
-		public async Task<IActionResult> UpdateSalaryPayment(string id, [FromQuery] UpdatedSalaryPaymentModelView model)
-		{
-			try
-			{
-				SalaryPaymentModelView result = await _salaryPaymentService.UpdateSalaryPaymentAsync(id, model);
-				return Ok(result);
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(new { Message = ex.Message });
-			}
-		}
+        [HttpPut("update/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateSalaryPayment(string id, [FromQuery] UpdatedSalaryPaymentModelView model)
+        {
+            SalaryPaymentModelView result = await _salaryPaymentService.UpdateSalaryPaymentAsync(id, model);
+            return Ok(new BaseResponse<SalaryPaymentModelView>(StatusCodeHelper.OK, "Updated data succesfully!", result));
+        }
 
-		[HttpDelete("{id}")]
-		public async Task<IActionResult> DeleteSalaryPayment(string id)
-		{
-			try
-			{
-				string result = await _salaryPaymentService.DeleteSalaryPaymentAsync(id);
-				return Ok(result);
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(new { Message = ex.Message });
-			}
-		}
-	}
+        [HttpDelete("delete")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteSalaryPayment(string id)
+        {
+            string result = await _salaryPaymentService.DeleteSalaryPaymentAsync(id);
+            return Ok(new BaseResponse<SalaryPaymentModelView>(StatusCodeHelper.OK, "Deleted data succesfully!", result));
+        }
+    }
 }

@@ -19,7 +19,7 @@ namespace HairSalonBE.API.Controllers
             _appointmentService = appointmentService;
         }
 
-        [HttpPost()]
+        [HttpPost("create")]
         public async Task<ActionResult<AppointmentModelView>> CreateAppointment([FromQuery] CreateAppointmentModelView model)
         {
             try
@@ -33,7 +33,7 @@ namespace HairSalonBE.API.Controllers
             }
         }
 
-        [HttpGet("all")]
+        [HttpGet("get-all")]
         public async Task<ActionResult<BasePaginatedList<AppointmentModelView>>> GetAllAppointments(int pageNumber = 1, int pageSize = 5)
         {
             try
@@ -47,7 +47,7 @@ namespace HairSalonBE.API.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("get-by-id")]
         public async Task<ActionResult<AppointmentModelView>> GetAppointmentById(string id)
         {
             try
@@ -61,7 +61,7 @@ namespace HairSalonBE.API.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("update")]
         public async Task<IActionResult> UpdateAppointment(string id, [FromQuery] UpdateAppointmentModelView model)
         {
             try
@@ -75,7 +75,7 @@ namespace HairSalonBE.API.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("delete")]
         public async Task<IActionResult> DeleteAppointment(string id)
         {
             try

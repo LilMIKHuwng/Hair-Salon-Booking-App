@@ -2,14 +2,12 @@
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Core.Utils;
 using HairSalon.Repositories.Entity;
-using HairSalon.Repositories.Entity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.EntityFrameworkCore;
 
 namespace HairSalon.Services.Service
 {
@@ -27,6 +25,7 @@ namespace HairSalon.Services.Service
             _roleManager = roleManager;
             _unitOfWork = unitOfWork;
         }
+
         public async Task<string> GenerateJwtTokenAsync(string userId, string userName)
         {
             var user = await _userManager.FindByIdAsync(userId);
