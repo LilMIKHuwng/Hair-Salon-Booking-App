@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using HairSalon.Core.Constants;
 using HairSalon.Core.Base;
 using HairSalon.Core;
+using HairSalon.Services.Service;
 
 namespace HairSalonBE.API.Controllers
 {
@@ -24,26 +25,24 @@ namespace HairSalonBE.API.Controllers
         public async Task<IActionResult> GetAllSalaryPayments(string? id, DateTime? paymentDate, int pageNumber = 1, int pageSize = 5)
         {
             var result = await _salaryPaymentService.GetAllSalaryPaymentAsync(id, paymentDate, pageNumber, pageSize);
-            return Ok(new BaseResponse<BasePaginatedList<SalaryPaymentModelView>>(StatusCodeHelper.OK,
-                                                                                 "Loaded data successfully!", result));
+            return Ok(result);
         }
-
 
         [HttpPost("create")]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<SalaryPaymentModelView>> CreateSalaryPayment
+        public async Task<IActionResult> CreateSalaryPayment
                                     ([FromQuery] CreateSalaryPaymentModelView model)
         {
-            SalaryPaymentModelView result = await _salaryPaymentService.AddSalaryPaymentAsync(model);
-            return Ok(new BaseResponse<SalaryPaymentModelView>(StatusCodeHelper.OK, "Created data succesfully!", result));
+            string result = await _salaryPaymentService.CreateSalaryPaymentAsync(model);
+            return Ok(result);
         }
 
         [HttpPut("update/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateSalaryPayment(string id, [FromQuery] UpdatedSalaryPaymentModelView model)
         {
-            SalaryPaymentModelView result = await _salaryPaymentService.UpdateSalaryPaymentAsync(id, model);
-            return Ok(new BaseResponse<SalaryPaymentModelView>(StatusCodeHelper.OK, "Updated data succesfully!", result));
+            string result = await _salaryPaymentService.UpdateSalaryPaymentAsync(id, model);
+            return Ok(result);
         }
 
         [HttpDelete("delete")]
@@ -51,7 +50,7 @@ namespace HairSalonBE.API.Controllers
         public async Task<IActionResult> DeleteSalaryPayment(string id)
         {
             string result = await _salaryPaymentService.DeleteSalaryPaymentAsync(id);
-            return Ok(new BaseResponse<SalaryPaymentModelView>(StatusCodeHelper.OK, "Deleted data succesfully!", result));
+            return Ok(result);
         }
     }
 }
