@@ -19,77 +19,35 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpGet("all")]
-        public async Task<ActionResult<BasePaginatedList<ServiceModelView>>> GetAllServices(int pageNumber = 1, int pageSize = 5)
+        public async Task<ActionResult<BasePaginatedList<ServiceModelView>>> GetAllServices(int pageNumber = 1,
+                                                                                            int pageSize = 5,
+                                                                                            [FromQuery] string? id = null,
+                                                                                            [FromQuery] string? name = null,
+                                                                                            [FromQuery] string? type = null)
         {
-            try
-            {
-                var result = await _serviceService.GetAllServiceAsync(pageNumber, pageSize);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ServiceModelView>> GetServiceById(string id)
-        {
-            try
-            {
-                var result = await _serviceService.GetServiceAsync(id);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return NotFound(new { Message = ex.Message });
-            }
+            var result = await _serviceService.GetAllServiceAsync(pageNumber, pageSize, id, name, type);
+            return Ok(result);
         }
 
         [HttpPost()]
-        public async Task<ActionResult<ServiceModelView>> CreateService([FromQuery] CreateServiceModelView model)
+        public async Task<ActionResult<string>> CreateService([FromQuery] CreateServiceModelView model)
         {
-            try
-            {
-                ServiceModelView result = await _serviceService.AddServiceAsync(model);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-
-
-
-            }
+            string result = await _serviceService.AddServiceAsync(model);
+            return Ok(new { Message = result });
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateService(string id, [FromQuery] UpdatedServiceModelView model)
+        public async Task<ActionResult<string>> UpdateService(string id, [FromQuery] UpdatedServiceModelView model)
         {
-            try
-            {
-                ServiceModelView result = await _serviceService.UpdateServiceAsync(id, model);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
+            string result = await _serviceService.UpdateServiceAsync(id, model);
+            return Ok(new { Message = result }); 
         }
 
-
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteService(string id)
+        public async Task<ActionResult<string>> DeleteService(string id)
         {
-            try
-            {
-                string result = await _serviceService.DeleteServiceAsync(id);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
+            string result = await _serviceService.DeleteServiceAsync(id);
+            return Ok(new { Message = result });
         }
     }
 }

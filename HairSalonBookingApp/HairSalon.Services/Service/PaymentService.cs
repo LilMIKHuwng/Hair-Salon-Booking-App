@@ -23,7 +23,7 @@ namespace HairSalon.Services.Service
             _contextAccessor = contextAccessor;
         }
 
-        // Get all payments with optional filters for ID and support pagination
+        // Get all payments with optional filters for id, ... and support pagination
         public async Task<BasePaginatedList<PaymentModelView>> GetAllPaymentAsync(int pageNumber, int pageSize, string id, string appointmentId, string paymentMethod)
         {
             IQueryable<Payment> paymentQuery = _unitOfWork.GetRepository<Payment>().Entities
@@ -48,19 +48,15 @@ namespace HairSalon.Services.Service
                 paymentQuery = paymentQuery.Where(p => p.PaymentMethod == paymentMethod);
             }
 
-            // Get total count before pagination
             int totalCount = await paymentQuery.CountAsync();
 
-            // Apply pagination
             List<Payment> paginatedPayments = await paymentQuery
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            // Map to PaymentModelView
             List<PaymentModelView> paymentModelViews = _mapper.Map<List<PaymentModelView>>(paginatedPayments);
 
-            // Return paginated list with total count
             return new BasePaginatedList<PaymentModelView>(paymentModelViews, totalCount, pageNumber, pageSize);
         }
 
@@ -70,13 +66,13 @@ namespace HairSalon.Services.Service
             // Validate the payment model
             if (model == null)
             {
-                throw new ArgumentNullException(nameof(model), "The payment model cannot be null.");
+                return "The payment model cannot be null.";
             }
 
             // Validate the payment method
             if (string.IsNullOrEmpty(model.PaymentMethod))
             {
-                throw new ArgumentException("Payment method must be provided.", nameof(model.PaymentMethod));
+                return "Payment method must be provided.";
             }
 
             // Check if an active (non-deleted) payment already exists for the given appointment
@@ -85,20 +81,24 @@ namespace HairSalon.Services.Service
 
             if (existingPayment != null)
             {
-                throw new Exception("An active payment has already been made for this appointment.");
+                return "An payment has already been made for this appointment.";
             }
 
             // Fetch the appointment with services and PointsEarned
             var appointment = await _unitOfWork.GetRepository<Appointment>()
-                .Entities.Include(a => a.ServiceAppointments)
-                         .ThenInclude(sa => sa.Service)
-                .FirstOrDefaultAsync(a => a.Id == model.AppointmentId && !a.DeletedTime.HasValue)
-                ?? throw new Exception("The appointment cannot be found or has been deleted!");
+                                .Entities.Include(a => a.ServiceAppointments)
+                                .ThenInclude(sa => sa.Service)
+            .FirstOrDefaultAsync(a => a.Id == model.AppointmentId && !a.DeletedTime.HasValue);
+
+            if (appointment == null)
+            {
+                return "The appointment cannot be found or has been deleted!";
+            }
 
             // Check if there are any services for the appointment
             if (appointment.ServiceAppointments == null || !appointment.ServiceAppointments.Any())
             {
-                throw new Exception("No services found for this appointment.");
+               return "No services found for this appointment.";
             }
 
             // Calculate the total amount from the services and ensure prices are valid
@@ -109,26 +109,30 @@ namespace HairSalon.Services.Service
 
             if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out Guid userId))
             {
-                throw new Exception("User ID is not valid or not provided.");
+                return "User ID is not valid or not provided.";
             }
 
             // Fetch user from ApplicationUsers
-            var applicationUser = await _unitOfWork.GetRepository<ApplicationUsers>().Entities
-                .FirstOrDefaultAsync(u => u.Id == userId)
-                ?? throw new Exception("User not found in ApplicationUsers.");
+            var applicationUser = await _unitOfWork.GetRepository<ApplicationUsers>()
+                .Entities.FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (applicationUser == null)
+            {
+                return "User not found in ApplicationUsers.";
+            }
 
             // Fetch user info to get available points
-            var userInfo = await _unitOfWork.GetRepository<UserInfo>().Entities
-                .FirstOrDefaultAsync(ui => ui.Id == applicationUser.UserInfo.Id)
-                ?? throw new Exception("User info not found.");
+            var userInfo = await _unitOfWork.GetRepository<UserInfo>()
+                .Entities.FirstOrDefaultAsync(ui => ui.Id == applicationUser.UserInfo.Id);
+
+            if (userInfo == null)
+            {
+                return "User info not found.";
+            }
 
             // Deduct points used in the appointment from UserInfo.Point if they have enough
             if (appointment.PointsEarned > 0)
             {
-                if (userInfo.Point < appointment.PointsEarned)
-                {
-                    throw new Exception("User does not have enough points to apply this discount.");
-                }
                 userInfo.Point -= appointment.PointsEarned;
             }
 
@@ -140,7 +144,6 @@ namespace HairSalon.Services.Service
             userInfo.Point += pointsToAdd;
             _unitOfWork.GetRepository<UserInfo>().Update(userInfo);
 
-            // Create the payment record
             var payment = new Payment
             {
                 AppointmentId = model.AppointmentId,
@@ -150,7 +153,6 @@ namespace HairSalon.Services.Service
                 CreatedBy = userIdString
             };
 
-            // Insert payment and save changes
             await _unitOfWork.GetRepository<Payment>().InsertAsync(payment);
             await _unitOfWork.SaveAsync();
 
@@ -163,24 +165,28 @@ namespace HairSalon.Services.Service
             // Validate Payment ID
             if (string.IsNullOrWhiteSpace(id))
             {
-                throw new ArgumentException("Please provide a valid Payment ID.", nameof(id));
+               return "Please provide a valid Payment ID.";
             }
 
             // Validate the updated payment model
             if (model == null)
             {
-                throw new ArgumentNullException(nameof(model), "The updated payment model cannot be null.");
+                return "The updated payment model cannot be null.";
             }
 
             // Check for existing payment
-            Payment existingPayment = await _unitOfWork.GetRepository<Payment>().Entities
-                .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
-                ?? throw new Exception("The Payment cannot be found or has been deleted!");
+            Payment existingPayment = await _unitOfWork.GetRepository<Payment>()
+         .Entities.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
+
+            if (existingPayment == null)
+            {
+                return "The Payment cannot be found or has been deleted!";
+            }
 
             // Validate payment method, if applicable
             if (string.IsNullOrEmpty(model.PaymentMethod))
             {
-                throw new ArgumentException("Payment method must be provided.", nameof(model.PaymentMethod));
+                return "Payment method must be provided.";
             }
 
             // Map the updated model to the existing payment
@@ -190,7 +196,7 @@ namespace HairSalon.Services.Service
             var userId = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
             if (string.IsNullOrEmpty(userId))
             {
-                throw new Exception("User ID is not valid or not provided.");
+                return "User ID is not valid or not provided.";
             }
 
             existingPayment.LastUpdatedBy = userId;
@@ -209,19 +215,23 @@ namespace HairSalon.Services.Service
             // Validate Payment ID
             if (string.IsNullOrWhiteSpace(id))
             {
-                throw new ArgumentException("Please provide a valid Payment ID.", nameof(id));
+                return "Please provide a valid Payment ID.";
             }
 
             // Check for existing payment
-            Payment existingPayment = await _unitOfWork.GetRepository<Payment>().Entities
-                .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
-                ?? throw new Exception("The Payment cannot be found or has already been deleted!");
+            var existingPayment = await _unitOfWork.GetRepository<Payment>()
+                .Entities.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
+
+            if (existingPayment == null)
+            {
+                return "The Payment cannot be found or has already been deleted!";
+            }
 
             // Validate user ID
             var userId = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
             if (string.IsNullOrEmpty(userId))
             {
-                throw new Exception("User ID is not valid or not provided.");
+               return "User ID is not valid or not provided.";
             }
 
             existingPayment.DeletedTime = DateTimeOffset.UtcNow;
