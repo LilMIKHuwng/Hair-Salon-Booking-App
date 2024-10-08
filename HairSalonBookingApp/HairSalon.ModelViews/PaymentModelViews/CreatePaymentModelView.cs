@@ -10,6 +10,5 @@ namespace HairSalon.ModelViews.PaymentModelViews
         [Required(ErrorMessage = "PaymentMethod is required.")]
         public string PaymentMethod { get; set; }
 
-        public int PointsToUse { get; set; } = 0;
     }
 }

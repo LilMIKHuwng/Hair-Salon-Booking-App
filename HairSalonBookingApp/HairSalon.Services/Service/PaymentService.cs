@@ -79,7 +79,16 @@ namespace HairSalon.Services.Service
                 throw new ArgumentException("Payment method must be provided.", nameof(model.PaymentMethod));
             }
 
-            // Fetch the appointment with services
+            // Check if an active (non-deleted) payment already exists for the given appointment
+            var existingPayment = await _unitOfWork.GetRepository<Payment>().Entities
+                .FirstOrDefaultAsync(p => p.AppointmentId == model.AppointmentId && !p.DeletedTime.HasValue);
+
+            if (existingPayment != null)
+            {
+                throw new Exception("An active payment has already been made for this appointment.");
+            }
+
+            // Fetch the appointment with services and PointsEarned
             var appointment = await _unitOfWork.GetRepository<Appointment>()
                 .Entities.Include(a => a.ServiceAppointments)
                          .ThenInclude(sa => sa.Service)
@@ -93,23 +102,7 @@ namespace HairSalon.Services.Service
             }
 
             // Calculate the total amount from the services and ensure prices are valid
-            decimal totalAmount = appointment.ServiceAppointments.Sum(sa =>
-            {
-                if (sa.Service.Price <= 0)
-                {
-                    throw new Exception("Service price must be greater than zero.");
-                }
-                return sa.Service.Price;
-            });
-
-            // Check for existing payments
-            var existingPayment = await _unitOfWork.GetRepository<Payment>().Entities
-                .FirstOrDefaultAsync(p => p.AppointmentId == model.AppointmentId && !p.DeletedTime.HasValue);
-
-            if (existingPayment != null)
-            {
-                throw new Exception("A payment has already been made for this appointment.");
-            }
+            decimal originalTotalAmount = appointment.ServiceAppointments.Sum(sa => sa.Service.Price);
 
             // Fetch user ID from the HttpContext
             var userIdString = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
@@ -119,53 +112,32 @@ namespace HairSalon.Services.Service
                 throw new Exception("User ID is not valid or not provided.");
             }
 
-            // Fetch user from ApplicationUsers using the parsed Guid
+            // Fetch user from ApplicationUsers
             var applicationUser = await _unitOfWork.GetRepository<ApplicationUsers>().Entities
-                .FirstOrDefaultAsync(u => u.Id == userId);
-
-            if (applicationUser == null)
-            {
-                throw new Exception("User not found in ApplicationUsers.");
-            }
+                .FirstOrDefaultAsync(u => u.Id == userId)
+                ?? throw new Exception("User not found in ApplicationUsers.");
 
             // Fetch user info to get available points
             var userInfo = await _unitOfWork.GetRepository<UserInfo>().Entities
-                .FirstOrDefaultAsync(ui => ui.Id == applicationUser.UserInfo.Id);
+                .FirstOrDefaultAsync(ui => ui.Id == applicationUser.UserInfo.Id)
+                ?? throw new Exception("User info not found.");
 
-            if (userInfo == null)
+            // Deduct points used in the appointment from UserInfo.Point if they have enough
+            if (appointment.PointsEarned > 0)
             {
-                throw new Exception("User info not found.");
+                if (userInfo.Point < appointment.PointsEarned)
+                {
+                    throw new Exception("User does not have enough points to apply this discount.");
+                }
+                userInfo.Point -= appointment.PointsEarned;
             }
 
-            // Validate points to use
-            if (model.PointsToUse < 0)
-            {
-                throw new ArgumentException("Points to use cannot be negative.", nameof(model.PointsToUse));
-            }
+            // Apply discount using points from Appointment.PointsEarned
+            decimal totalAmount = Math.Max(0, originalTotalAmount - appointment.PointsEarned);
 
-            // Check if the user has enough points to use
-            if (model.PointsToUse > userInfo.Point)
-            {
-                throw new Exception("Insufficient points. You cannot use more points than you have.");
-            }
-
-            // Calculate discount based on available points
-            int pointsToUse = Math.Min(model.PointsToUse, userInfo.Point); // Ensure not exceeding available points
-
-            // Calculate the discount
-            decimal discount = pointsToUse; // Each point = 1,000 VND
-
-            // Ensure that discount does not exceed total amount
-            if (discount > totalAmount)
-            {
-                throw new Exception("The discount cannot exceed the total amount.");
-            }
-
-            // Apply discount to total amount
-            totalAmount = Math.Max(0, totalAmount - discount); // Ensure total does not go below 0
-
-            // Update user's points
-            userInfo.Point -= pointsToUse;
+            // Add points based on the **original total amount** of the services (e.g., 1000 VND equals 100 points)
+            int pointsToAdd = (int)(originalTotalAmount / 1000) * 100;
+            userInfo.Point += pointsToAdd;
             _unitOfWork.GetRepository<UserInfo>().Update(userInfo);
 
             // Create the payment record
@@ -175,7 +147,7 @@ namespace HairSalon.Services.Service
                 TotalAmount = totalAmount,
                 PaymentMethod = model.PaymentMethod,
                 PaymentTime = DateTime.UtcNow,
-                CreatedBy = userIdString // or userId.ToString() if you want to store Guid as string
+                CreatedBy = userIdString
             };
 
             // Insert payment and save changes
