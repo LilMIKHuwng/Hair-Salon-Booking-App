@@ -9,7 +9,6 @@ namespace HairSalon.Contract.Services.Interface
         Task<string> AddShopAsync(CreateShopModelView model);
         Task<string> UpdateShopAsync(string id, UpdatedShopModelView model);
         Task<string> DeleteShopAsync(string id);
-        Task<ShopModelView> GetShopAsync(string id);
 
     }
 }

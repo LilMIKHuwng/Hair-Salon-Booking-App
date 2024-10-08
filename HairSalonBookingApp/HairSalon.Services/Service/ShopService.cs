@@ -200,29 +200,6 @@ namespace HairSalon.Services.Service
             }
         }
 
-        public async Task<ShopModelView> GetShopAsync(string id)
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(id))
-                {
-                    throw new BaseException.BadRequestException("INVALID_SHOP_ID", "Please provide a valid Shop ID.");
-                }
-
-                Shop existingShop = await _unitOfWork.GetRepository<Shop>().Entities
-                    .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
-                    ?? throw new BaseException.BadRequestException("SHOP_NOT_FOUND", "The Shop cannot be found or has been deleted!");
-
-                return _mapper.Map<ShopModelView>(existingShop);
-            }
-            catch (BaseException.BadRequestException)
-            {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                throw new BaseException.CoreException("GET_SHOP_ERROR", "An error occurred while retrieving the shop.", (int)StatusCodeHelper.ServerError);
-            }
-        }
+        
     }
 }

@@ -25,13 +25,6 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ShopModelView>> GetShopById(string id)
-        {
-            var result = await _shopService.GetShopAsync(id);
-            return Ok(result);
-
-        }
 
         [HttpPost()]
         public async Task<ActionResult<ShopModelView>> CreateShop([FromQuery] CreateShopModelView model)
