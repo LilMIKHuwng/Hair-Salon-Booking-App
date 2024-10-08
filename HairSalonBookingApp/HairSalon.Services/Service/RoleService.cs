@@ -6,7 +6,6 @@ using HairSalon.Core;
 using HairSalon.Core.Base;
 using HairSalon.Core.Constants;
 using HairSalon.ModelViews.RoleModelViews;
-using HairSalon.Repositories.UOW;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 namespace HairSalon.Services.Service
