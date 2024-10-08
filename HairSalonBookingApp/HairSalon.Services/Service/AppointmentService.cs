@@ -111,15 +111,18 @@ namespace HairSalon.Services.Service
 			{
 				ApplicationUsers user = await _unitOfWork.GetRepository<ApplicationUsers>().GetByIdAsync(Guid.Parse(model.UserId));
 
-				// Check if the user has enough points, if PointsEarned is being updated
-				if (model.PointsEarned.HasValue && model.PointsEarned > user.UserInfo.Point)
-				{
-					return "User points are insufficient for this appointment.";
-				}
-
-				// Update the UserId in the appointment
 				existingAppointment.UserId = user.Id;
 			}
+			
+			if (model.PointsEarned.HasValue) 
+			{
+				// Check if the user has enough points, if PointsEarned is being updated
+				if (model.PointsEarned > existingAppointment.User.UserInfo.Point)
+				{
+					return "Insufficient points. The user does not have enough points for this appointment.";
+				}
+				existingAppointment.PointsEarned = model.PointsEarned.Value;
+			}		
 
 			// Update the StylistId if provided
 			if (!string.IsNullOrWhiteSpace(model.StylistId) && Guid.TryParse(model.StylistId, out Guid newStylistId))
@@ -131,12 +134,6 @@ namespace HairSalon.Services.Service
 			if (!string.IsNullOrWhiteSpace(model.StatusForAppointment))
 			{
 				existingAppointment.StatusForAppointment = model.StatusForAppointment;
-			}
-
-			// Update PointsEarned if provided
-			if (model.PointsEarned.HasValue)
-			{
-				existingAppointment.PointsEarned = model.PointsEarned.Value;
 			}
 
 			// Update AppointmentDate if provided and valid
