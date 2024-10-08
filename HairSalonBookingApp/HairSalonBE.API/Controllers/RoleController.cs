@@ -26,21 +26,21 @@ namespace HairSalonBE.API.Controllers
 			return Ok(result);
 		}
 
-		[HttpPost()]
+		[HttpPost("create")]
 		public async Task<ActionResult<string>> CreateRole([FromQuery] CreateRoleModelView model)
 		{
 			string result = await _roleService.AddRoleAsync(model);
 			return Ok(new { Message = result });
 		}
 
-		[HttpPut("{id}")]
+		[HttpPut("update/{id}")]
 		public async Task<ActionResult<string>> UpdateRole(string id, [FromQuery] UpdatedRoleModelView model)
 		{
 			string result = await _roleService.UpdateRoleAsync(id, model);
 			return Ok(new { Message = result });
 		}
 
-		[HttpDelete("{id}")]
+		[HttpDelete("delete/{id}")]
 		public async Task<ActionResult<string>> DeleteRole(string id)
 		{
 			string result = await _roleService.DeleteRoleAsync(id);

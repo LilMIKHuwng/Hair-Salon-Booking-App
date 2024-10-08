@@ -9,6 +9,7 @@ using HairSalon.Services.Service;
 
 namespace HairSalonBE.API.Controllers
 {
+    [Authorize(Roles = "Admin,Staff")]
     [Route("api/[controller]")]
     [ApiController]
     public class SalaryPaymentController : ControllerBase
@@ -21,7 +22,6 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpGet("all")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllSalaryPayments(string? id, DateTime? paymentDate, int pageNumber = 1, int pageSize = 5)
         {
             var result = await _salaryPaymentService.GetAllSalaryPaymentAsync(id, paymentDate, pageNumber, pageSize);
@@ -29,7 +29,6 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpPost("create")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateSalaryPayment
                                     ([FromQuery] CreateSalaryPaymentModelView model)
         {
@@ -38,15 +37,13 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpPut("update/{id}")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateSalaryPayment(string id, [FromQuery] UpdatedSalaryPaymentModelView model)
         {
             string result = await _salaryPaymentService.UpdateSalaryPaymentAsync(id, model);
             return Ok(result);
         }
 
-        [HttpDelete("delete")]
-        [Authorize(Roles = "Admin")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteSalaryPayment(string id)
         {
             string result = await _salaryPaymentService.DeleteSalaryPaymentAsync(id);
