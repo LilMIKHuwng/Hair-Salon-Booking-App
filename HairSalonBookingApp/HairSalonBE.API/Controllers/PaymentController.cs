@@ -1,6 +1,8 @@
 ﻿using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
 using HairSalon.ModelViews.PaymentModelViews;
+using HairSalon.ModelViews.RoleModelViews;
+using HairSalon.Services.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,74 +20,37 @@ namespace HairSalonBE.API.Controllers
             _paymentService = paymentService;
         }
 
-        [HttpGet("All")]
-        public async Task<ActionResult<BasePaginatedList<PaymentModelView>>> GetAllPayments(int pageNumber = 1, int pageSize = 5)
+        [HttpGet("all")]
+        public async Task<ActionResult<BasePaginatedList<PaymentModelView>>> GetAllPayments(
+                                                                                    int pageNumber = 1,
+                                                                                    int pageSize = 5,
+                                                                                    [FromQuery] string? id = null,
+                                                                                    [FromQuery] string? appointmentId = null,
+                                                                                    [FromQuery] string? paymentMethod = null)
         {
-            try
-            {
-                var result = await _paymentService.GetAllPaymentAsync(pageNumber, pageSize);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<PaymentModelView>> GetPaymentById(string id)
-        {
-            try
-            {
-                var result = await _paymentService.GetPaymentAsync(id);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return NotFound(new { Message = ex.Message });
-            }
+            var result = await _paymentService.GetAllPaymentAsync(pageNumber, pageSize, id, appointmentId, paymentMethod);
+            return Ok(result);
         }
 
         [HttpPost()]
-        public async Task<ActionResult<PaymentModelView>> CreatePayment([FromQuery] CreatePaymentModelView model)
+        public async Task<ActionResult<string>> CreatePayment([FromQuery] CreatePaymentModelView model)
         {
-            try
-            {
-                PaymentModelView result = await _paymentService.AddPaymentAsync(model);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
+            string result = await _paymentService.AddPaymentAsync(model);
+            return Ok(new { Message = result });
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePayment(string id, [FromQuery] UpdatedPaymentModelView model)
+        public async Task<ActionResult<string>> UpdatePayment(string id, [FromQuery] UpdatedPaymentModelView model)
         {
-            try
-            {
-                PaymentModelView result = await _paymentService.UpdatePaymentAsync(id, model);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
+            string result = await _paymentService.UpdatePaymentAsync(id, model);
+            return Ok(new { Message = result });
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePayment(string id)
+        public async Task<ActionResult<string>> DeletePayment(string id)
         {
-            try
-            {
-                string result = await _paymentService.DeletePaymentpAsync(id);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
+            string result = await _paymentService.DeletePaymentpAsync(id);
+            return Ok(new { Message = result });
         }
     }
 }
