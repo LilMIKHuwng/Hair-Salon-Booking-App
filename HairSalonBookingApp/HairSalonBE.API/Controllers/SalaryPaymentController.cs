@@ -19,22 +19,15 @@ namespace HairSalonBE.API.Controllers
             _salaryPaymentService = salaryPaymentService;
         }
 
-        [HttpGet("get-all")]
+        [HttpGet("all")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetAllSalaryPayments(int pageNumber = 1, int pageSize = 5)
+        public async Task<IActionResult> GetAllSalaryPayments(string? id, DateTime? paymentDate, int pageNumber = 1, int pageSize = 5)
         {
-            var result = await _salaryPaymentService.GetAllSalaryPaymentAsync(pageNumber, pageSize);
+            var result = await _salaryPaymentService.GetAllSalaryPaymentAsync(id, paymentDate, pageNumber, pageSize);
             return Ok(new BaseResponse<BasePaginatedList<SalaryPaymentModelView>>(StatusCodeHelper.OK,
-                                                                                    "Loaded data succesfully!", result));
+                                                                                 "Loaded data successfully!", result));
         }
 
-        [HttpGet("get-by-id/{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetSalaryPaymentById(string id)
-        {
-            var result = await _salaryPaymentService.GetSalaryPaymentByIdAsync(id);
-            return Ok(new BaseResponse<SalaryPaymentModelView>(StatusCodeHelper.OK, "Loaded data succesfully!", result));
-        }
 
         [HttpPost("create")]
         [Authorize(Roles = "Admin")]

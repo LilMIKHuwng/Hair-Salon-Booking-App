@@ -23,76 +23,91 @@ namespace HairSalon.Services.Service
         }
 
         #region GetAllSalaryPaymentAsync
-        public async Task<BasePaginatedList<SalaryPaymentModelView>> GetAllSalaryPaymentAsync(int pageNumber, int pageSize)
+        public async Task<BasePaginatedList<SalaryPaymentModelView>> GetAllSalaryPaymentAsync
+                    (string? id, DateTime? paymentDate, int pageNumber, int pageSize)
         {
-            // Get SalaryPayment list
+            // Get SalaryPayment list with optional filters for id and paymentDate
             IQueryable<SalaryPayment> salaryPaymentQuery = _unitOfWork.GetRepository<SalaryPayment>().Entities
-                                                        .Where(p => !p.DeletedTime.HasValue)
-                                                        .OrderByDescending(s => s.CreatedTime);
+                .Where(p => !p.DeletedTime.HasValue);
 
-            // Check if salaryPaymentQuery is empty
-            if (salaryPaymentQuery.Any() == false)
-			{
-				throw new Exception("Salary Payment list not found");
-			}
+            // Apply filtering by id if provided
+            if (!string.IsNullOrEmpty(id))
+            {
+                salaryPaymentQuery = salaryPaymentQuery.Where(p => p.Id == id);
+            }
 
-            //Count total item for paginating
+            // Apply filtering by paymentDate if provided
+            if (paymentDate.HasValue)
+            {
+                salaryPaymentQuery = salaryPaymentQuery.Where(p => p.PaymentDate.Date == paymentDate.Value.Date);
+            }
+
+            // Order by CreatedTime descending
+            salaryPaymentQuery = salaryPaymentQuery.OrderByDescending(s => s.CreatedTime);
+
+            // Count total items for paginating
             int totalCount = await salaryPaymentQuery.CountAsync();
 
-            //Paginate SalaryPayment
+            // If there are no items, throw an exception
+            if (totalCount == 0)
+            {
+                throw new Exception("Salary Payment list not found");
+            }
+
+            // Paginate SalaryPayment
             List<SalaryPayment> paginatedSalaryPayment = await salaryPaymentQuery
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            //Map paginatedSalaryPayment to SalaryPaymentModelView for display
+            // Map paginatedSalaryPayment to SalaryPaymentModelView for display
             List<SalaryPaymentModelView> salaryPaymentModelViews = _mapper.Map<List<SalaryPaymentModelView>>(paginatedSalaryPayment);
-			;
-            //Return paginated list of SalaryPaymentModelView
+
+            // Return paginated list of SalaryPaymentModelView
             return new BasePaginatedList<SalaryPaymentModelView>(salaryPaymentModelViews, totalCount, pageNumber, pageSize);
         }
         #endregion
 
         #region AddSalaryPaymentAsync
         public async Task<SalaryPaymentModelView> AddSalaryPaymentAsync(CreateSalaryPaymentModelView model)
-		{
-			//Check userId is not empty
-			if (model.UserId == Guid.Empty)
-			{
-				throw new Exception("User ID cannot be empty.");
-			}
+        {
+            //Check userId is not empty
+            if (model.UserId == Guid.Empty)
+            {
+                throw new Exception("User ID cannot be empty.");
+            }
 
             //Map CreateSalaryPaymentModelView to SalaryPayment
             SalaryPayment newSalaryPayment = _mapper.Map<SalaryPayment>(model);
 
-			//Create new data for tracking 
-			newSalaryPayment.Id = Guid.NewGuid().ToString("N");
-			newSalaryPayment.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            //Create new data for tracking 
+            newSalaryPayment.Id = Guid.NewGuid().ToString("N");
+            newSalaryPayment.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
             newSalaryPayment.CreatedTime = DateTimeOffset.UtcNow;
-			newSalaryPayment.LastUpdatedTime = DateTimeOffset.UtcNow;
+            newSalaryPayment.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-			//Insert to DB and Save
-			await _unitOfWork.GetRepository<SalaryPayment>().InsertAsync(newSalaryPayment);
-			await _unitOfWork.SaveAsync();
+            //Insert to DB and Save
+            await _unitOfWork.GetRepository<SalaryPayment>().InsertAsync(newSalaryPayment);
+            await _unitOfWork.SaveAsync();
 
             //Map newSalaryPayment to SalaryPaymentModelView
             return _mapper.Map<SalaryPaymentModelView>(newSalaryPayment);
-		}
+        }
         #endregion
 
         #region UpdateSalaryPaymentAsync
         public async Task<SalaryPaymentModelView> UpdateSalaryPaymentAsync(string id, UpdatedSalaryPaymentModelView model)
-		{
+        {
             //Check id is not null
             if (string.IsNullOrWhiteSpace(id))
-			{
-				throw new Exception("Please provide a valid Salary Payment ID.");
-			}
+            {
+                throw new Exception("Please provide a valid Salary Payment ID.");
+            }
 
             //Find existingSalary to update
             SalaryPayment existingSalary = await _unitOfWork.GetRepository<SalaryPayment>().Entities
-				.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
-				?? throw new Exception("The Salary Payment cannot be found or has been deleted!");
+                .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
+                ?? throw new Exception("The Salary Payment cannot be found or has been deleted!");
 
             // If model properties have data then assign to existingSalary properties
             existingSalary.UserId = model.UserId ?? existingSalary.UserId;
@@ -101,60 +116,42 @@ namespace HairSalon.Services.Service
 
             // Set additional properties
             existingSalary.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-			existingSalary.LastUpdatedTime = DateTimeOffset.UtcNow;
+            existingSalary.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-			//Update to DB and save
-			_unitOfWork.GetRepository<SalaryPayment>().Update(existingSalary);
-			await _unitOfWork.SaveAsync();
+            //Update to DB and save
+            _unitOfWork.GetRepository<SalaryPayment>().Update(existingSalary);
+            await _unitOfWork.SaveAsync();
 
             //Map SalaryPayment to SalaryPaymentModelView and return to show the changes
             return _mapper.Map<SalaryPaymentModelView>(existingSalary);
-		}
+        }
         #endregion
 
         #region DeleteSalaryPaymentAsync
         public async Task<string> DeleteSalaryPaymentAsync(string id)
-		{
+        {
             //Check id is not null
-			if (string.IsNullOrWhiteSpace(id))
-			{
-				throw new Exception("Please provide a valid Salary Payment ID.");
-			}
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                throw new Exception("Please provide a valid Salary Payment ID.");
+            }
 
             //Get existed salary
             SalaryPayment existingSalary = await _unitOfWork.GetRepository<SalaryPayment>().Entities
-				.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
-				?? throw new Exception("The Salary Payment cannot be found or has been deleted!");
+                .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
+                ?? throw new Exception("The Salary Payment cannot be found or has been deleted!");
 
             //Tracking changes
-			existingSalary.DeletedTime = DateTimeOffset.UtcNow;
-			existingSalary.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            existingSalary.DeletedTime = DateTimeOffset.UtcNow;
+            existingSalary.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 
             //Update delete properties and save
-			_unitOfWork.GetRepository<SalaryPayment>().Update(existingSalary);
-			await _unitOfWork.SaveAsync();
+            _unitOfWork.GetRepository<SalaryPayment>().Update(existingSalary);
+            await _unitOfWork.SaveAsync();
 
-			return "Salary Payment has been deleted";
-		}
+            return "Salary Payment has been deleted";
+        }
         #endregion
 
-        #region GetSalaryPaymentByIdAsync
-        public async Task<SalaryPaymentModelView> GetSalaryPaymentByIdAsync(string id)
-		{
-            //Check id is not null
-            if (string.IsNullOrWhiteSpace(id))
-			{
-				throw new Exception("Please provide a valid Salary Payment ID.");
-			}
-
-            //Get existed salary by id
-            SalaryPayment existingSalary = await _unitOfWork.GetRepository<SalaryPayment>().Entities
-				.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
-				?? throw new Exception("The Salary Payment cannot be found or has been deleted!");
-
-            //Map SalaryPayment to SalaryPaymentModelView
-            return _mapper.Map<SalaryPaymentModelView>(existingSalary);
-		}
-        #endregion
     }
 }
