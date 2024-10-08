@@ -35,12 +35,11 @@ namespace HairSalon.Services.Service
                     throw new Exception("Appointment date cannot be in the past or more than 1 month in the future");
                 }
 
-                ApplicationUsers user = await _unitOfWork.GetRepository<ApplicationUsers>().GetByIdAsync(Guid.Parse(model.UserId));
+                var user = await _unitOfWork.GetRepository<ApplicationUsers>().GetByIdAsync(Guid.Parse(model.UserId));
                 if (model.PointsEarned > user.UserInfo.Point)
                 {
                     throw new Exception("User point not enough");
                 }
-                user.UserInfo.Point -= model.PointsEarned;
 
                 Appointment newAppointment = _mapper.Map<Appointment>(model);
 
@@ -119,12 +118,11 @@ namespace HairSalon.Services.Service
                     ?? throw new Exception("The Appointment cannot be found or has been deleted!");
 
                 // check point
-                ApplicationUsers user = await _unitOfWork.GetRepository<ApplicationUsers>().GetByIdAsync(Guid.Parse(model.UserId));
+                var user = await _unitOfWork.GetRepository<ApplicationUsers>().GetByIdAsync(Guid.Parse(model.UserId));
                 if (model.PointsEarned > user.UserInfo.Point)
                 {
                     throw new Exception("User point not enough");
                 }
-                user.UserInfo.Point -= model.PointsEarned;
 
                 //Map new data 
                 if (model.AppointmentDate < DateTime.Now || model.AppointmentDate > DateTime.Now.AddMonths(1))
