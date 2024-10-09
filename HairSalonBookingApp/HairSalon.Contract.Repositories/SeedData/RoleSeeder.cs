@@ -1,6 +1,7 @@
 ﻿using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Repositories.Entity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -69,12 +70,11 @@ namespace HairSalon.Contract.Repositories.SeedData
             await unitOfWork.SaveAsync();
         }
 
-        public static async Task SeedAdminUser(IUnitOfWork unitOfWork)
+        public static async Task SeedAdminUser(IUnitOfWork unitOfWork, IPasswordHasher<ApplicationUsers> passwordHasher)
         {
             var accountRepository = unitOfWork.GetRepository<ApplicationUsers>();
             var roleRepository = unitOfWork.GetRepository<ApplicationRoles>();
             var userRoleRepository = unitOfWork.GetRepository<ApplicationUserRoles>();
-
             // Check if the admin user already exists
             var existingAdminUser = await accountRepository.Entities.FirstOrDefaultAsync(x => x.UserName == "admin");
             if (existingAdminUser != null)
@@ -93,7 +93,7 @@ namespace HairSalon.Contract.Repositories.SeedData
             // Create user information
             var userInfo = new UserInfo
             {
-                Firstname = "Admin",
+                Firstname = "Super Admin",
                 Lastname = "User"
             };
 
@@ -101,16 +101,17 @@ namespace HairSalon.Contract.Repositories.SeedData
             var adminUser = new ApplicationUsers
             {
                 Id = Guid.NewGuid(),
-                UserName = "admin",
-                Email = "admin@example.com",
+                UserName = "superadmin",
+                Email = "superadmin@example.com",
                 PhoneNumber = "123456789",
-                PasswordHash = "123", // Ideally, hash the password here
                 SecurityStamp = Guid.NewGuid().ToString(),
                 UserInfo = userInfo,
                 CreatedBy = "System",
                 CreatedTime = DateTimeOffset.UtcNow,
                 LastUpdatedTime = DateTimeOffset.UtcNow
             };
+
+            adminUser.PasswordHash = passwordHasher.HashPassword(adminUser, "123");
 
             // Insert the admin user into the database
             await accountRepository.InsertAsync(adminUser);

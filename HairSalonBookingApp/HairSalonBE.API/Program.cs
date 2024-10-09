@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
+using HairSalon.Repositories.Entity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -75,12 +77,12 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<DatabaseContext>();
         var unitOfWork = services.GetRequiredService<IUnitOfWork>();
-
+        var passwordHasher = services.GetRequiredService<IPasswordHasher<ApplicationUsers>>();
         // Seed roles
         await RoleSeeder.SeedRoles(unitOfWork);
 
         //seed account admin
-        await RoleSeeder.SeedAdminUser(unitOfWork);
+        await RoleSeeder.SeedAdminUser(unitOfWork, passwordHasher);
     }
     catch (Exception ex)
     {
