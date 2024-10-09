@@ -20,6 +20,5 @@ namespace HairSalon.Contract.Repositories.Entity
             LastUpdatedTime = CreatedTime;
         }
 
-
     }
 }

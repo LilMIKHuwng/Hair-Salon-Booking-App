@@ -35,7 +35,7 @@ namespace HairSalon.Services.Service
                                                     .FirstOrDefaultAsync(x => x.UserName == model.UserName);
             if (existingUser != null)
             {
-                throw new InvalidOperationException("UserName is already existed!");
+                return "UserName is already existed!";
             }
 
             // Create new user info and account
@@ -64,7 +64,7 @@ namespace HairSalon.Services.Service
             var userRole = await roleRepository.Entities.FirstOrDefaultAsync(r => r.Name == model.RoleName);
             if (userRole == null)
             {
-                throw new InvalidOperationException("The 'User' role does not exist. Please make sure to create it first.");
+                return "The 'User' role does not exist. Please make sure to create it first.";
             }
 
             // Create and insert user role mapping
@@ -170,7 +170,7 @@ namespace HairSalon.Services.Service
             }
 
             // Retrieve associated UserInfo if available
-            UserInfo existingUserInfo = await _unitOfWork.GetRepository<UserInfo>().Entities
+            UserInfo? existingUserInfo = await _unitOfWork.GetRepository<UserInfo>().Entities
                 .FirstOrDefaultAsync(u => u.Id == existingUser.UserInfo.Id);
 
             if (existingUserInfo != null)
