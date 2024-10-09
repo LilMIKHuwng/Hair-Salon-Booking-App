@@ -10,9 +10,9 @@
 
         public string? ShopPhone { get; set; }
 
-        public TimeSpan OpenTime { get; set; }
+        public TimeSpan? OpenTime { get; set; }
 
-        public TimeSpan CloseTime { get; set; }
+        public TimeSpan? CloseTime { get; set; }
 
         public string? Title { get; set; }
 

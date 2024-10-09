@@ -32,21 +32,21 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
-        [HttpPost()]
+        [HttpPost("create")]
         public async Task<ActionResult<string>> CreatePayment([FromQuery] CreatePaymentModelView model)
         {
             string result = await _paymentService.AddPaymentAsync(model);
             return Ok(new { Message = result });
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("update/{id}")]
         public async Task<ActionResult<string>> UpdatePayment(string id, [FromQuery] UpdatedPaymentModelView model)
         {
             string result = await _paymentService.UpdatePaymentAsync(id, model);
             return Ok(new { Message = result });
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<ActionResult<string>> DeletePayment(string id)
         {
             string result = await _paymentService.DeletePaymentpAsync(id);

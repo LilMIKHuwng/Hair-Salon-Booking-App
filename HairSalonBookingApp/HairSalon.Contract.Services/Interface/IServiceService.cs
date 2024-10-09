@@ -5,7 +5,7 @@ namespace HairSalon.Contract.Services.Interface
 {
     public interface IServiceService
     {
-        Task<BasePaginatedList<ServiceModelView>> GetAllServiceAsync(int pageNumber, int pageSize, string id, string name, string type);
+        Task<BasePaginatedList<ServiceModelView>> GetAllServiceAsync(int pageNumber, int pageSize, string? id, string? name, string? type);
 
         Task<string> AddServiceAsync(CreateServiceModelView model);
 

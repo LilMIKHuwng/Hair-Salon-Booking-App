@@ -19,7 +19,7 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpGet("all")]
-        public async Task<ActionResult<BasePaginatedList<ShopModelView>>> GetAllShops(int pageNumber = 1, int pageSize = 5, string searchName = null, string searchId = null)
+        public async Task<ActionResult<BasePaginatedList<ShopModelView>>> GetAllShops(string? searchName, string? searchId, int pageNumber = 1, int pageSize = 5)
         {
             var result = await _shopService.GetAllShopAsync(pageNumber, pageSize, searchName, searchId);
             return Ok(result);
@@ -33,14 +33,14 @@ namespace HairSalonBE.API.Controllers
 
         }
 
-        [HttpPut("update")]
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateShop(string id, [FromQuery] UpdatedShopModelView model)
         {
             string result = await _shopService.UpdateShopAsync(id, model);
             return Ok(result);
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteShop(string id)
         {
             string result = await _shopService.DeleteShopAsync(id);

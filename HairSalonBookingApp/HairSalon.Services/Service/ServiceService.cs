@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.ServiceModelViews;
@@ -25,7 +24,7 @@ namespace HairSalon.Services.Service
         }
 
         // Get all services with optional filters for id, ... and support pagination
-        public async Task<BasePaginatedList<ServiceModelView>> GetAllServiceAsync(int pageNumber, int pageSize, string id, string name, string type)
+        public async Task<BasePaginatedList<ServiceModelView>> GetAllServiceAsync(int pageNumber, int pageSize, string? id, string? name, string? type)
         {
             IQueryable<ServiceEntity> serviceQuery = _unitOfWork.GetRepository<ServiceEntity>().Entities
                 .Where(p => !p.DeletedTime.HasValue) // Ensure not deleted
@@ -64,18 +63,6 @@ namespace HairSalon.Services.Service
         // Add a new service
         public async Task<string> AddServiceAsync(CreateServiceModelView model)
         {
-            // Validate the input name model
-            if (string.IsNullOrWhiteSpace(model.Name))
-            {
-               return "Service name cannot be empty.";
-            }
-
-            // Validate the input type model
-            if (string.IsNullOrWhiteSpace(model.Type))
-            {
-                return "Service type cannot be empty.";
-            }
-
             ServiceEntity newService = _mapper.Map<ServiceEntity>(model);
             
             newService.Id = Guid.NewGuid().ToString("N");
@@ -106,9 +93,33 @@ namespace HairSalon.Services.Service
                 return "The Service cannot be found or has been deleted!";
             }
 
-            _mapper.Map(model, existingService);
+			// Update the service fields only if they are not null
+			if (!string.IsNullOrWhiteSpace(model.Name))
+			{
+				existingService.Name = model.Name;
+			}
 
-            existingService.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+			if (!string.IsNullOrWhiteSpace(model.Type))
+			{
+				existingService.Type = model.Type;
+			}
+
+			if (model.Price.HasValue)
+			{
+				existingService.Price = model.Price.Value;
+			}
+
+			if (!string.IsNullOrWhiteSpace(model.Description))
+			{
+				existingService.Description = model.Description;
+			}
+
+			if (!string.IsNullOrWhiteSpace(model.ShopId))
+			{
+				existingService.ShopId = model.ShopId;
+			}
+
+			existingService.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
             existingService.LastUpdatedTime = DateTimeOffset.UtcNow;
 
             _unitOfWork.GetRepository<ServiceEntity>().Update(existingService);
