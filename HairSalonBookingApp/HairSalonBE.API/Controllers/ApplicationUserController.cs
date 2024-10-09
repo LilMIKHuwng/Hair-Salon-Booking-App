@@ -25,38 +25,23 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpGet("all")]
-        public async Task<ActionResult<BasePaginatedList<AppUserModelView>>> GetAllApplicationUsers(int pageNumber = 1, int pageSize = 5)
+        public async Task<ActionResult<BasePaginatedList<AppUserModelView>>> GetAllApplicationUsers(string? userId, int pageNumber = 1, int pageSize = 5)
         {
-            var result = await _appUserService.GetAllAppUserAsync(pageNumber, pageSize);
+            var result = await _appUserService.GetAllAppUserAsync(userId, pageNumber, pageSize);
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<AppUserModelView>> GetApplicationUserById(string id)
+        [HttpPut("update/{userId}")]
+        public async Task<IActionResult> UpdateApplicationUser(string userId, [FromQuery] UpdateAppUserModelView model)
         {
-            try
-            {
-                var result = await _appUserService.GetAppUserAsync(id);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return NotFound(new { Message = ex.Message });
-            }
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateApplicationUser(string id, [FromQuery] UpdateAppUserModelView model)
-        {
-            string result = await _appUserService.UpdateAppUserAsync(id, model);
+            string result = await _appUserService.UpdateAppUserAsync(userId, model);
             return Ok(result);
-
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteApplicationUser(string id)
+        [HttpDelete("delete/{userId}")]
+        public async Task<IActionResult> DeleteApplicationUser(string userId)
         {
-            string result = await _appUserService.DeleteAppUserAsync(id);
+            string result = await _appUserService.DeleteAppUserAsync(userId);
             return Ok(result);
         }
     }
