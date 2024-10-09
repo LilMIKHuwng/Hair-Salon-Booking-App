@@ -79,7 +79,7 @@ namespace HairSalon.Services.Service
                 throw new Exception("Duplicate");
             }
 
-            var accountRepository = _unitOfWork.GetRepository<ApplicationUsers>();
+            accountRepository = _unitOfWork.GetRepository<ApplicationUsers>();
             await accountRepository.InsertAsync(newAccount);
 
             // Check if the user role exists
@@ -235,7 +235,7 @@ namespace HairSalon.Services.Service
 
             // Find the user by Username
             var user = await accountRepository.Entities
-                .FirstOrDefaultAsync(x => x.UserName == model.Username);
+                .FirstOrDefaultAsync(x => x.UserName == model.Username && x.DeletedTime == null);
 
             if (user == null)
             {
