@@ -22,7 +22,7 @@ public class ServiceAppointmentService : IServiceAppointment
 		_contextAccessor = contextAccessor;
 	}
 
-	public async Task<BasePaginatedList<ServiceAppointmentModelView>> GetAllServiceAppointment(int pageNumber, int pageSize, string id, string? serviceId, string? appointmentId)
+	public async Task<BasePaginatedList<ServiceAppointmentModelView>> GetAllServiceAppointment(int pageNumber, int pageSize, string? id, string? serviceId, string? appointmentId)
 	{
 		//get service appointment from database 
 		IQueryable<ServiceAppointment> serviceAppointmentQuery = _unitOfWork.GetRepository<ServiceAppointment>().Entities
@@ -137,7 +137,6 @@ public class ServiceAppointmentService : IServiceAppointment
 		await _unitOfWork.SaveAsync();
 		return "Edit Service Appointment successfully";
 	}
-
 
 	public async Task<string> CreateServiceAppointment(CreatServiceAppointmentModelView creatServiceAppointmentModelView)
 	{

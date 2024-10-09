@@ -1,13 +1,11 @@
-﻿using HairSalon.Contract.Repositories.Entity;
-using HairSalon.Contract.Services.Interface;
-using HairSalon.Core;
+﻿using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.ServiceAppointmentModelViews;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairSalonBE.API.Controllers
 {
-    [Authorize(Roles = "User")]
+    [Authorize(Roles = "User, Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class ServiceAppointmentController : ControllerBase
@@ -20,12 +18,8 @@ namespace HairSalonBE.API.Controllers
         }
 
 		[HttpGet("all")]
-		public async Task<ActionResult<BasePaginatedList<ServiceAppointmentModelView>>> GetAllServicesAppointments(
-	                                                                                                int pageNumber = 1,
-	                                                                                                int pageSize = 5,
-	                                                                                                [FromQuery] string? id = null,
-	                                                                                                [FromQuery] string? serviceId = null,
-	                                                                                                [FromQuery] string? appointmentId = null)
+		public async Task<IActionResult> GetAllServicesAppointments
+            ( string? id, string? serviceId, string? appointmentId, int pageNumber = 1, int pageSize = 5)
 		{
 			var result = await _serviceAppointment.GetAllServiceAppointment(pageNumber, pageSize, id, serviceId, appointmentId);
 
@@ -33,8 +27,8 @@ namespace HairSalonBE.API.Controllers
 		}
 
 		[HttpPost("create")]
-        public async Task<ActionResult<ServiceAppointment>> CreateServiceAppointment(
-            CreatServiceAppointmentModelView creatServiceAppointmentModelView)
+        public async Task<IActionResult> CreateServiceAppointment(
+            [FromQuery]CreatServiceAppointmentModelView creatServiceAppointmentModelView)
         {
             var result = await _serviceAppointment.CreateServiceAppointment(creatServiceAppointmentModelView);
 
@@ -42,8 +36,8 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpPut("update/{id}")]
-        public async Task<ActionResult<string>> UpdateServiceAppointment(string id,
-             EditServiceAppointmentModelView editServiceAppointmentModelView)
+        public async Task<IActionResult> UpdateServiceAppointment(string id,
+             [FromQuery]EditServiceAppointmentModelView editServiceAppointmentModelView)
         {
             var result = await _serviceAppointment.EditServiceAppointment(id, editServiceAppointmentModelView);
 
@@ -52,7 +46,7 @@ namespace HairSalonBE.API.Controllers
 
 
         [HttpDelete("delete/{id}")]
-        public async Task<ActionResult<string>> DeleteServiceAppointment(string id)
+        public async Task<IActionResult> DeleteServiceAppointment(string id)
         {
             var result = await _serviceAppointment.DeleteServiceAppointment(id);
 

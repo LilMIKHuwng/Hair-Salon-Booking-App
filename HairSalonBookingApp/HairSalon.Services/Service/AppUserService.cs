@@ -10,6 +10,7 @@ using HairSalon.ModelViews.AuthModelViews;
 using HairSalon.Repositories.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 
 namespace HairSalon.Services.Service
 {
@@ -28,6 +29,18 @@ namespace HairSalon.Services.Service
 
         public async Task<string> AddAppUserAsync(CreateAppUserModelView model)
         {
+            // Check for special characters in FirstName and LastName
+            var regex = new Regex(@"^[a-zA-Z]+$");
+            if (!regex.IsMatch(model.FirstName))
+            {
+                return "FirstName cannot contains special characters!";
+            }
+
+            if (!regex.IsMatch(model.LastName))
+            {
+                return "LastName cannot contains special characters!";
+            }
+
             // Check if the username already exists
             var accountRepository = _unitOfWork.GetRepository<ApplicationUsers>();
             var existingUser = await accountRepository.Entities
@@ -73,9 +86,9 @@ namespace HairSalon.Services.Service
             {
                 UserId = newAccount.Id,
                 RoleId = userRole.Id,
-                CreatedBy = model.UserName,
+                CreatedBy = newAccount.Id.ToString(),
                 CreatedTime = DateTime.UtcNow,
-                LastUpdatedBy = model.UserName,
+                LastUpdatedBy = newAccount.Id.ToString(),
                 LastUpdatedTime = DateTime.UtcNow
             };
 
