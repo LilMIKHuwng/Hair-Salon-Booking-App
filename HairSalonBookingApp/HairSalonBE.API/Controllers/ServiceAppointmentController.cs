@@ -33,7 +33,7 @@ namespace HairSalonBE.API.Controllers
 		}
 
 		[HttpPost("create")]
-        public async Task<ActionResult<ServiceAppointment>> CreateServiceAppointment(
+        public async Task<ActionResult<string>> CreateServiceAppointment(
             CreatServiceAppointmentModelView creatServiceAppointmentModelView)
         {
             var result = await _serviceAppointment.CreateServiceAppointment(creatServiceAppointmentModelView);
