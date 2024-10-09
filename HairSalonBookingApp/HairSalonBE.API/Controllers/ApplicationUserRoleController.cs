@@ -6,86 +6,49 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HairSalonBE.API.Controllers
 {
-	[Authorize(Roles = "User")]
-	[Route("api/[controller]")]
-	[ApiController]
-	public class ApplicationUserRoleController : ControllerBase
-	{
-		private readonly IAppUserRoleService _appUserRoleService;
+    [Authorize(Roles = "User")]
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ApplicationUserRoleController : ControllerBase
+    {
+        private readonly IAppUserRoleService _appUserRoleService;
 
-		public ApplicationUserRoleController(IAppUserRoleService appUserRoleService)
-		{
-			_appUserRoleService = appUserRoleService;
-		}
+        public ApplicationUserRoleController(IAppUserRoleService appUserRoleService)
+        {
+            _appUserRoleService = appUserRoleService;
+        }
 
-		[HttpPost]
-		public async Task<ActionResult<AppUserRoleModelView>> CreateAppUserRole([FromQuery] CreateAppUserRoleModelView model)
-		{
-			try
-			{
-				AppUserRoleModelView result = await _appUserRoleService.AddAppUserRoleAsync(model);
-				return Ok(result);
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(new { Message = ex.Message });
-			}
-		}
+        [HttpPost]
+        public async Task<IActionResult> CreateAppUserRole([FromQuery] CreateAppUserRoleModelView model)
+        {
+            var result = await _appUserRoleService.AddAppUserRoleAsync(model);
 
-		[HttpGet("get-all")]
-		public async Task<ActionResult<BasePaginatedList<AppUserRoleModelView>>> GetAllApplicationUserRoles(int pageNumber = 1, int pageSize = 5)
-		{
-			try
-			{
-				var result = await _appUserRoleService.GetAllAppUserRoleAsync(pageNumber, pageSize);
-				return Ok(result);
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(new { Message = ex.Message });
-			}
-		}
+            return Ok(result);
+        }
 
-		[HttpGet("get-by-id")]
-		public async Task<ActionResult<AppUserRoleModelView>> GetApplicationUserRoleById(string UserId, string RoleId)
-		{
-			try
-			{
-				var result = await _appUserRoleService.GetAppUserRoleAsync(UserId, RoleId);
-				return Ok(result);
-			}
-			catch (Exception ex)
-			{
-				return NotFound(new { Message = ex.Message });
-			}
-		}
+        [HttpGet("get-all")]
+        public async Task<ActionResult<BasePaginatedList<AppUserRoleModelView>>> GetAllApplicationUserRoles(int pageNumber = 1, int pageSize = 5,
+            [FromQuery] string? userId = null, [FromQuery] string? roleId = null)
+        {
+            var result = await _appUserRoleService.GetAllAppUserRoleAsync(pageNumber, pageSize, userId, roleId);
 
-		[HttpPut("update")]
-		public async Task<IActionResult> UpdateApplicationUserRole(string UserId, string RoleId, [FromQuery] UpdateAppUserRoleModelView model)
-		{
-			try
-			{
-				AppUserRoleModelView result = await _appUserRoleService.UpdateAppUserRoleAsync(UserId, RoleId, model);
-				return Ok(result);
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(new { Message = ex.Message });
-			}
-		}
+            return Ok(result);
+        }
 
-		[HttpDelete("delete")]
-		public async Task<IActionResult> DeleteApplicationUserRole(string UserId, string RoleId)
-		{
-			try
-			{
-				string result = await _appUserRoleService.DeleteAppUserRoleAsync(UserId, RoleId);
-				return Ok(result);
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(new { Message = ex.Message });
-			}
-		}
-	}
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateApplicationUserRole(string UserId, string RoleId, [FromQuery] UpdateAppUserRoleModelView model)
+        {
+            var result = await _appUserRoleService.UpdateAppUserRoleAsync(UserId, RoleId, model);
+
+            return Ok(result);
+        }
+
+        [HttpDelete("delete")]
+        public async Task<IActionResult> DeleteApplicationUserRole(string UserId, string RoleId)
+        {
+            string result = await _appUserRoleService.DeleteAppUserRoleAsync(UserId, RoleId);
+
+            return Ok(result);
+        }
+    }
 }
