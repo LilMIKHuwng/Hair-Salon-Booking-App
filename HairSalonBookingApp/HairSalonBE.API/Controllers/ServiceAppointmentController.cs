@@ -19,16 +19,20 @@ namespace HairSalonBE.API.Controllers
             _serviceAppointment = serviceAppointment;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<BasePaginatedList<ServiceAppointmentModelView>>> GetAllServicesAppointments(int pageNumber = 1, int pageSize = 5,
-            [FromQuery] string? serviceId = null, [FromQuery] string? appointmentId = null)
-        {
-            var result = await _serviceAppointment.GetAllServiceAppointment(pageNumber, pageSize, serviceId, appointmentId);
+		[HttpGet("all")]
+		public async Task<ActionResult<BasePaginatedList<ServiceAppointmentModelView>>> GetAllServicesAppointments(
+	                                                                                                int pageNumber = 1,
+	                                                                                                int pageSize = 5,
+	                                                                                                [FromQuery] string? id = null,
+	                                                                                                [FromQuery] string? serviceId = null,
+	                                                                                                [FromQuery] string? appointmentId = null)
+		{
+			var result = await _serviceAppointment.GetAllServiceAppointment(pageNumber, pageSize, id, serviceId, appointmentId);
 
-            return Ok(result);
-        }
+			return Ok(result);
+		}
 
-        [HttpPost("create")]
+		[HttpPost("create")]
         public async Task<ActionResult<ServiceAppointment>> CreateServiceAppointment(
             CreatServiceAppointmentModelView creatServiceAppointmentModelView)
         {
@@ -37,18 +41,18 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
-        [HttpPut("update")]
-        public async Task<ActionResult<Boolean>> UpdateServiceAppointment(
+        [HttpPut("update/{id}")]
+        public async Task<ActionResult<string>> UpdateServiceAppointment(string id,
              EditServiceAppointmentModelView editServiceAppointmentModelView)
         {
-            var result = await _serviceAppointment.EditServiceAppointment(editServiceAppointmentModelView);
+            var result = await _serviceAppointment.EditServiceAppointment(id, editServiceAppointmentModelView);
 
             return Ok(result);
         }
 
 
-        [HttpDelete("delete")]
-        public async Task<ActionResult<Boolean>> DeleteServiceAppointment(string id)
+        [HttpDelete("delete/{id}")]
+        public async Task<ActionResult<string>> DeleteServiceAppointment(string id)
         {
             var result = await _serviceAppointment.DeleteServiceAppointment(id);
 

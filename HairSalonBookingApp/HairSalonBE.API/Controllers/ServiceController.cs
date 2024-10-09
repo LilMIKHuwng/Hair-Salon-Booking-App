@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HairSalonBE.API.Controllers
 {
-	[Authorize(Roles = "User")]
+	[Authorize(Roles = "Admin,Staff")]
 	[Route("api/[controller]")]
     [ApiController]
     public class ServiceController : ControllerBase
@@ -29,22 +29,22 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
-        [HttpPost()]
-        public async Task<ActionResult<string>> CreateService([FromQuery] CreateServiceModelView model)
+		[HttpPost("create")]
+		public async Task<ActionResult<string>> CreateService([FromQuery] CreateServiceModelView model)
         {
             string result = await _serviceService.AddServiceAsync(model);
             return Ok(new { Message = result });
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult<string>> UpdateService(string id, [FromQuery] UpdatedServiceModelView model)
+		[HttpPut("update/{id}")]
+		public async Task<ActionResult<string>> UpdateService(string id, [FromQuery] UpdatedServiceModelView model)
         {
             string result = await _serviceService.UpdateServiceAsync(id, model);
             return Ok(new { Message = result }); 
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<string>> DeleteService(string id)
+		[HttpDelete("delete/{id}")]
+		public async Task<ActionResult<string>> DeleteService(string id)
         {
             string result = await _serviceService.DeleteServiceAsync(id);
             return Ok(new { Message = result });

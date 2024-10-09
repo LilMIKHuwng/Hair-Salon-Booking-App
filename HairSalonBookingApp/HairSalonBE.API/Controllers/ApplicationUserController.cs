@@ -24,28 +24,19 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("all")]
-        public async Task<ActionResult<BasePaginatedList<AppUserModelView>>> GetAllApplicationUsers(int pageNumber = 1, int pageSize = 5)
-        {
-            var result = await _appUserService.GetAllAppUserAsync(pageNumber, pageSize);
-            return Ok(result);
-        }
+		[HttpGet("all")]
+		public async Task<ActionResult<BasePaginatedList<AppUserModelView>>> GetAllApplicationUsers(
+	                                                                                        int pageNumber = 1,
+	                                                                                        int pageSize = 5,
+	                                                                                        [FromQuery] string? id = null,
+	                                                                                        [FromQuery] string? email = null,
+	                                                                                        [FromQuery] string? phoneNumber = null)
+		{
+			var result = await _appUserService.GetAllAppUserAsync(pageNumber, pageSize, id, email, phoneNumber);
+			return Ok(result);
+		}
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<AppUserModelView>> GetApplicationUserById(string id)
-        {
-            try
-            {
-                var result = await _appUserService.GetAppUserAsync(id);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return NotFound(new { Message = ex.Message });
-            }
-        }
-
-        [HttpPut("{id}")]
+		[HttpPut("{id}")]
         public async Task<IActionResult> UpdateApplicationUser(string id, [FromQuery] UpdateAppUserModelView model)
         {
             string result = await _appUserService.UpdateAppUserAsync(id, model);

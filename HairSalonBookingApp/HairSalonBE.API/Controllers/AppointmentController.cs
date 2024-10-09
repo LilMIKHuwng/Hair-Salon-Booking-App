@@ -20,7 +20,7 @@ namespace HairSalonBE.API.Controllers
             _appointmentService = appointmentService;
         }
 
-        [HttpPost()]
+        [HttpPost("create")]
         public async Task<IActionResult> CreateAppointment([FromQuery] CreateAppointmentModelView model)
         {
             var result = await _appointmentService.AddAppointmentAsync(model);
@@ -37,14 +37,14 @@ namespace HairSalonBE.API.Controllers
         }
 
 
-        [HttpPut("{id}")]
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateAppointment(string id, [FromQuery] UpdateAppointmentModelView model)
         {
             var result = await _appointmentService.UpdateAppointmentAsync(id, model);
             return Ok(result);
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteAppointment(string id)
         {
             var result = await _appointmentService.DeleteAppointmentAsync(id);

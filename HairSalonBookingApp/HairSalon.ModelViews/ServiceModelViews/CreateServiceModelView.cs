@@ -13,8 +13,7 @@ namespace HairSalon.ModelViews.ServiceModelViews
         [Required(ErrorMessage = "Price is required.")]
         public decimal Price { get; set; }
 
-        [Required(ErrorMessage = "Description is required.")]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [Required(ErrorMessage = "Shop Id is required.")]
         public string ShopId { get; set; }

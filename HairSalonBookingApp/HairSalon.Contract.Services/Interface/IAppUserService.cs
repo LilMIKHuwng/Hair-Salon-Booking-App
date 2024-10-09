@@ -13,11 +13,10 @@ namespace HairSalon.Contract.Services.Interface
 {
 	public interface IAppUserService
 	{
-		Task<BasePaginatedList<AppUserModelView>> GetAllAppUserAsync(int pageNumber, int pageSize);
+		Task<BasePaginatedList<AppUserModelView>> GetAllAppUserAsync(int pageNumber, int pageSize, string id, string email, string phoneNumber);
 		Task<string> AddAppUserAsync(CreateAppUserModelView model);
 		Task<string> UpdateAppUserAsync(string id, UpdateAppUserModelView model);
 		Task<string> DeleteAppUserAsync(string id);
-		Task<AppUserModelView> GetAppUserAsync(string id);
 		Task<ApplicationUsers> AuthenticateAsync(LoginModelView model);
 	}
 }

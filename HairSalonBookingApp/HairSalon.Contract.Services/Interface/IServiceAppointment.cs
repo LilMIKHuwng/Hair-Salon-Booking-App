@@ -5,9 +5,9 @@ namespace HairSalon.Contract.Services.Interface
 {
     public interface IServiceAppointment
     {
-        Task<BasePaginatedList<ServiceAppointmentModelView>> GetAllServiceAppointment(int pageNumber, int pageSize, string? serviceId, string? appointmentId);
+        Task<BasePaginatedList<ServiceAppointmentModelView>> GetAllServiceAppointment(int pageNumber, int pageSize, string id, string? serviceId, string? appointmentId);
         Task<string> DeleteServiceAppointment(string id);
-        Task<string> EditServiceAppointment(EditServiceAppointmentModelView editServiceAppointmentModelView);
+        Task<string> EditServiceAppointment(string id, EditServiceAppointmentModelView editServiceAppointmentModelView);
         Task<string> CreateServiceAppointment(CreatServiceAppointmentModelView creatServiceAppointmentModelView);
     }
 }
