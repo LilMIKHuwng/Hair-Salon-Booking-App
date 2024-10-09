@@ -44,7 +44,6 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
-
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteServiceAppointment(string id)
         {

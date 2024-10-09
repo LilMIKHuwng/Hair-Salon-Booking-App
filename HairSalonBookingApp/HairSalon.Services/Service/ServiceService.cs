@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.ServiceModelViews;
@@ -25,7 +24,7 @@ namespace HairSalon.Services.Service
         }
 
         // Get all services with optional filters for id, ... and support pagination
-        public async Task<BasePaginatedList<ServiceModelView>> GetAllServiceAsync(int pageNumber, int pageSize, string id, string name, string type)
+        public async Task<BasePaginatedList<ServiceModelView>> GetAllServiceAsync(int pageNumber, int pageSize, string? id, string? name, string? type)
         {
             IQueryable<ServiceEntity> serviceQuery = _unitOfWork.GetRepository<ServiceEntity>().Entities
                 .Where(p => !p.DeletedTime.HasValue) // Ensure not deleted

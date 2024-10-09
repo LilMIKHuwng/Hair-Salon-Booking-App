@@ -3,127 +3,145 @@ using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
-using HairSalon.Core.Base;
-using HairSalon.Core.Constants;
 using HairSalon.ModelViews.RoleModelViews;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+
 namespace HairSalon.Services.Service
 {
-	public class RoleService : IRoleService
-	{
-		private readonly IUnitOfWork _unitOfWork;
-		private readonly IMapper _mapper;
-		private readonly IHttpContextAccessor _contextAccessor;
+    public class RoleService : IRoleService
+    {
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-		public RoleService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor contextAccessor)
-		{
-			_unitOfWork = unitOfWork;
-			_mapper = mapper;
-			_contextAccessor = contextAccessor;
-		}
+        public RoleService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor contextAccessor)
+        {
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _contextAccessor = contextAccessor;
+        }
 
-		// Get all roles with pagination and optional filters for name and ID
-		public async Task<BasePaginatedList<RoleModelView>> GetAllRoleAsync(int pageNumber, int pageSize, string? id, string? name)
-		{
-			IQueryable<ApplicationRoles> roleQuery = _unitOfWork.GetRepository<ApplicationRoles>().Entities
-				.Where(p => !p.DeletedTime.HasValue);
+        // Get all roles with pagination and optional filters for name and ID
+        public async Task<BasePaginatedList<RoleModelView>> GetAllRoleAsync(int pageNumber, int pageSize, string? id, string? name)
+        {
+            IQueryable<ApplicationRoles> roleQuery = _unitOfWork.GetRepository<ApplicationRoles>().Entities
+                .Where(p => !p.DeletedTime.HasValue);
 
-			// Apply filters if provided
-			if (!string.IsNullOrWhiteSpace(id))
-				roleQuery = roleQuery.Where(p => p.Id.ToString() == id);
+            // Apply filters if provided
+            if (!string.IsNullOrWhiteSpace(id))
+                roleQuery = roleQuery.Where(p => p.Id.ToString() == id);
 
-			if (!string.IsNullOrWhiteSpace(name))
-				roleQuery = roleQuery.Where(p => p.Name.Contains(name));
+            if (!string.IsNullOrWhiteSpace(name))
+                roleQuery = roleQuery.Where(p => p.Name.Contains(name));
 
-			roleQuery = roleQuery.OrderByDescending(r => r.CreatedTime);
+            roleQuery = roleQuery.OrderByDescending(r => r.CreatedTime);
 
-			int totalCount = await roleQuery.CountAsync();
+            int totalCount = await roleQuery.CountAsync();
 
-			List<ApplicationRoles> paginatedRoles = await roleQuery
-				.Skip((pageNumber - 1) * pageSize)
-				.Take(pageSize)
-				.ToListAsync();
+            List<ApplicationRoles> paginatedRoles = await roleQuery
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
 
-			List<RoleModelView> roleModelViews = _mapper.Map<List<RoleModelView>>(paginatedRoles);
+            List<RoleModelView> roleModelViews = _mapper.Map<List<RoleModelView>>(paginatedRoles);
 
-			return new BasePaginatedList<RoleModelView>(roleModelViews, totalCount, pageNumber, pageSize);
-		}
+            return new BasePaginatedList<RoleModelView>(roleModelViews, totalCount, pageNumber, pageSize);
+        }
 
-		// Add a new role
-		public async Task<string> AddRoleAsync(CreateRoleModelView model)
-		{
-			ApplicationRoles newRole = _mapper.Map<ApplicationRoles>(model);
-			newRole.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-			newRole.CreatedTime = DateTimeOffset.UtcNow;
+        // Add a new role
+        public async Task<string> AddRoleAsync(CreateRoleModelView model)
+        {
+            // Check if the role already exists
+            var existedRole = await _unitOfWork.GetRepository<ApplicationRoles>()
+                .Entities
+                .FirstOrDefaultAsync(role => role.Name.Equals(model.Name));
 
-			await _unitOfWork.GetRepository<ApplicationRoles>().InsertAsync(newRole);
-			await _unitOfWork.SaveAsync();
+            if (existedRole != null)
+            {
+                return "Role already exists"; // Return a message if the role exists
+            }
 
-			return "Role successfully added";
-		}
+            ApplicationRoles newRole = _mapper.Map<ApplicationRoles>(model);
+            newRole.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            newRole.CreatedTime = DateTimeOffset.UtcNow;
+            newRole.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 
-		// Update an existing role
-		public async Task<string> UpdateRoleAsync(string id, UpdatedRoleModelView model)
-		{
-			if (string.IsNullOrWhiteSpace(id))
-			{
-				return "Please provide a valid Role ID.";
-			}
+            await _unitOfWork.GetRepository<ApplicationRoles>().InsertAsync(newRole);
+            await _unitOfWork.SaveAsync();
 
-			var existingRole = await _unitOfWork.GetRepository<ApplicationRoles>().Entities
-				.FirstOrDefaultAsync(s => s.Id == Guid.Parse(id) && !s.DeletedTime.HasValue);
+            return "Role successfully added";
+        }
 
-			if (existingRole == null)
-			{
-				return "The Role cannot be found or has been deleted!";
-			}
+        // Update an existing role
+        public async Task<string> UpdateRoleAsync(string id, UpdatedRoleModelView model)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return "Please provide a valid Role ID.";
+            }
 
-			bool isUpdated = false;
+            var existingRole = await _unitOfWork.GetRepository<ApplicationRoles>().Entities
+                .FirstOrDefaultAsync(s => s.Id == Guid.Parse(id) && !s.DeletedTime.HasValue);
 
-			if (!string.IsNullOrWhiteSpace(model.Name) && model.Name != existingRole.Name)
-			{
-				existingRole.Name = model.Name;
-				isUpdated = true;
-			}
+            if (existingRole == null)
+            {
+                return "The Role cannot be found or has been deleted!";
+            }
 
-			if (isUpdated)
-			{
-				existingRole.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-				existingRole.LastUpdatedTime = DateTimeOffset.UtcNow;
+            bool isUpdated = false;
 
-				_unitOfWork.GetRepository<ApplicationRoles>().Update(existingRole);
-				await _unitOfWork.SaveAsync();
-			}
+            // Check for duplicate role name
+            if (!string.IsNullOrWhiteSpace(model.Name) && model.Name != existingRole.Name)
+            {
+                var roleWithSameName = await _unitOfWork.GetRepository<ApplicationRoles>().Entities
+                    .AnyAsync(s => s.Name == model.Name && !s.DeletedTime.HasValue);
 
-			return "Role successfully updated";
-		}
+                if (roleWithSameName)
+                {
+                    return "A role with the same name already exists.";
+                }
 
+                existingRole.Name = model.Name;
+                isUpdated = true;
+            }
 
-		// Soft delete a role
-		public async Task<string> DeleteRoleAsync(string id)
-		{
-			if (string.IsNullOrWhiteSpace(id))
-			{
-				return "Please provide a valid Role ID.";
-			}
+            if (isUpdated)
+            {
+                existingRole.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                existingRole.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-			var existingRole = await _unitOfWork.GetRepository<ApplicationRoles>().Entities
-				.FirstOrDefaultAsync(s => s.Id == Guid.Parse(id) && !s.DeletedTime.HasValue);
+                _unitOfWork.GetRepository<ApplicationRoles>().Update(existingRole);
+                await _unitOfWork.SaveAsync();
+            }
 
-			if (existingRole == null)
-			{
-				return "The Role cannot be found or has been deleted!";
-			}
+            return "Role successfully updated";
+        }
 
-			existingRole.DeletedTime = DateTimeOffset.UtcNow;
-			existingRole.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+        // Soft delete a role
+        public async Task<string> DeleteRoleAsync(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return "Please provide a valid Role ID.";
+            }
 
-			_unitOfWork.GetRepository<ApplicationRoles>().Update(existingRole);
-			await _unitOfWork.SaveAsync();
+            var existingRole = await _unitOfWork.GetRepository<ApplicationRoles>().Entities
+                .FirstOrDefaultAsync(s => s.Id == Guid.Parse(id) && !s.DeletedTime.HasValue);
 
-			return "Role successfully deleted";
-		}
-	}
+            if (existingRole == null)
+            {
+                return "The Role cannot be found or has been deleted!";
+            }
 
+            existingRole.DeletedTime = DateTimeOffset.UtcNow;
+            existingRole.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+
+            _unitOfWork.GetRepository<ApplicationRoles>().Update(existingRole);
+            await _unitOfWork.SaveAsync();
+
+            return "Role successfully deleted";
+        }
+    }
 }
+

@@ -19,8 +19,8 @@ namespace HairSalonBE.API.Controllers
 		}
 
 		[HttpGet("all")]
-		public async Task<ActionResult<BasePaginatedList<RoleModelView>>> GetAllRoles(int pageNumber = 1, int pageSize = 5,
-															[FromQuery] string? id = null, [FromQuery] string? name = null)
+		public async Task<ActionResult<BasePaginatedList<RoleModelView>>> GetAllRoles
+			([FromQuery] string? id, [FromQuery] string? name, int pageNumber = 1, int pageSize = 5)
 		{
 			var result = await _roleService.GetAllRoleAsync(pageNumber, pageSize, id, name);
 			return Ok(result);

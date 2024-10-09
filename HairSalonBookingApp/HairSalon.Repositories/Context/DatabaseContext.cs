@@ -69,6 +69,8 @@ namespace HairSalon.Repositories.Context
             // 1. ApplicationRoles
             var roleIdAdmin = Guid.NewGuid();
             var roleIdUser = Guid.NewGuid();
+            var roleIdStylist = Guid.NewGuid();
+            var roleIdManager = Guid.NewGuid();
 
             modelBuilder.Entity<ApplicationRoles>().HasData(
                 new ApplicationRoles
@@ -76,8 +78,25 @@ namespace HairSalon.Repositories.Context
                     Id = roleIdAdmin,
                     Name = "Admin",
                     NormalizedName = "ADMIN",
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
+                    CreatedBy = "System",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new ApplicationRoles
+                {
+                    Id = roleIdManager,
+                    Name = "Manager",
+                    NormalizedName = "MANAGER",
+                    CreatedBy = "System",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new ApplicationRoles
+                {
+                    Id = roleIdStylist,
+                    Name = "Stylist",
+                    NormalizedName = "STYLIST",
+                    CreatedBy = "System",
                     CreatedTime = DateTimeOffset.UtcNow,
                     LastUpdatedTime = DateTimeOffset.UtcNow
                 },
@@ -86,8 +105,7 @@ namespace HairSalon.Repositories.Context
                     Id = roleIdUser,
                     Name = "User",
                     NormalizedName = "USER",
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
+                    CreatedBy = "System",
                     CreatedTime = DateTimeOffset.UtcNow,
                     LastUpdatedTime = DateTimeOffset.UtcNow
                 }
