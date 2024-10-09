@@ -18,9 +18,6 @@ namespace HairSalon.ModelViews.ServiceModelViews
 
         [Required(ErrorMessage = "Shop Id is required.")]
         public string ShopId { get; set; }
-
-        
-        
     }
 
 }

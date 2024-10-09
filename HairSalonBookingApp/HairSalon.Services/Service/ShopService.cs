@@ -27,42 +27,36 @@ namespace HairSalon.Services.Service
 
         public async Task<BasePaginatedList<ShopModelView>> GetAllShopAsync(int pageNumber, int pageSize, string searchName = null, string searchId = null)
         {
-            try
+
+            IQueryable<Shop> shopQuery = _unitOfWork.GetRepository<Shop>().Entities
+                .Where(p => !p.DeletedTime.HasValue);
+
+            if (!string.IsNullOrWhiteSpace(searchName))
             {
-                IQueryable<Shop> shopQuery = _unitOfWork.GetRepository<Shop>().Entities
-                    .Where(p => !p.DeletedTime.HasValue);
-
-                if (!string.IsNullOrWhiteSpace(searchName))
-                {
-                    searchName = searchName.ToLower();
-                    shopQuery = shopQuery.Where(s =>
-                        s.Name.ToLower().Contains(searchName)
-                    );
-                }
-
-                if (!string.IsNullOrWhiteSpace(searchId))
-                {
-                    shopQuery = shopQuery.Where(s => s.Id == searchId);
-                }
-
-                shopQuery = shopQuery.OrderByDescending(s => s.CreatedTime);
-
-                int totalCount = await shopQuery.CountAsync();
-
-                List<Shop> paginatedShops = await shopQuery
-                    .Skip((pageNumber - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToListAsync();
-
-                List<ShopModelView> shopModelViews = _mapper.Map<List<ShopModelView>>(paginatedShops);
-
-                return new BasePaginatedList<ShopModelView>(shopModelViews, totalCount, pageNumber, pageSize);
+                searchName = searchName.ToLower();
+                shopQuery = shopQuery.Where(s =>
+                    s.Name.ToLower().Contains(searchName)
+                );
             }
-            catch (Exception ex)
+
+            if (!string.IsNullOrWhiteSpace(searchId))
             {
-                throw new BaseException.CoreException("GET_ALL_SHOPS_ERROR", "An error occurred while retrieving shops.", (int)StatusCodeHelper.ServerError);
+                shopQuery = shopQuery.Where(s => s.Id == searchId);
             }
+
+            shopQuery = shopQuery.OrderByDescending(s => s.CreatedTime);
+
+            int totalCount = await shopQuery.CountAsync();
+
+            List<Shop> paginatedShops = await shopQuery
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            List<ShopModelView> shopModelViews = _mapper.Map<List<ShopModelView>>(paginatedShops);
+            return new BasePaginatedList<ShopModelView>(shopModelViews, totalCount, pageNumber, pageSize);
         }
+
 
         public async Task<string> AddShopAsync(CreateShopModelView model)
         {
@@ -70,7 +64,7 @@ namespace HairSalon.Services.Service
             {
                 if (string.IsNullOrWhiteSpace(model.Name))
                 {
-                    throw new BaseException.BadRequestException("EMPTY_SHOP_NAME", "Shop name cannot be empty.");
+                    return "Shop name cannot be empty.";
                 }
 
                 Shop newShop = _mapper.Map<Shop>(model);
@@ -83,30 +77,33 @@ namespace HairSalon.Services.Service
                 await _unitOfWork.GetRepository<Shop>().InsertAsync(newShop);
                 await _unitOfWork.SaveAsync();
 
-                return "Add new shop successfully!";
+                return "Added new shop successfully!";
             }
-            catch (BaseException.BadRequestException)
+            catch (BaseException.BadRequestException ex)
             {
-                throw;
+                return ex.Message;
             }
             catch (Exception ex)
             {
-                throw new BaseException.CoreException("ADD_SHOP_ERROR", "An error occurred while adding the shop.", (int)StatusCodeHelper.ServerError);
+                return "An error occurred while adding the shop.";
             }
         }
-
         public async Task<string> UpdateShopAsync(string id, UpdatedShopModelView model)
         {
             try
             {
                 if (string.IsNullOrWhiteSpace(id))
                 {
-                    throw new BaseException.BadRequestException("INVALID_SHOP_ID", "Please provide a valid Shop ID.");
+                    return "Please provide a valid Shop ID.";
                 }
 
                 Shop existingShop = await _unitOfWork.GetRepository<Shop>().Entities
-                    .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
-                    ?? throw new BaseException.BadRequestException("SHOP_NOT_FOUND", "The Shop cannot be found or has been deleted!");
+                    .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
+
+                if (existingShop == null)
+                {
+                    return "The Shop cannot be found or has been deleted!";
+                }
 
                 bool isUpdated = false;
 
@@ -158,15 +155,16 @@ namespace HairSalon.Services.Service
 
                 return "Updated shop successfully";
             }
-            catch (BaseException.BadRequestException)
+            catch (BaseException.BadRequestException ex)
             {
-                throw;
+                return ex.Message;
             }
             catch (Exception ex)
             {
-                throw new BaseException.CoreException("UPDATE_SHOP_ERROR", "An error occurred while updating the shop.", (int)StatusCodeHelper.ServerError);
+                return "An error occurred while updating the shop.";
             }
         }
+
 
 
 
@@ -176,30 +174,32 @@ namespace HairSalon.Services.Service
             {
                 if (string.IsNullOrWhiteSpace(id))
                 {
-                    throw new BaseException.BadRequestException("INVALID_SHOP_ID", "Please provide a valid Shop ID.");
+                    return "Please provide a valid Shop ID.";
                 }
 
                 Shop existingShop = await _unitOfWork.GetRepository<Shop>().Entities
-                    .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue)
-                    ?? throw new BaseException.BadRequestException("SHOP_NOT_FOUND", "The Shop cannot be found or has been deleted!");
+                    .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
+
+                if (existingShop == null)
+                {
+                    return "The Shop cannot be found or has been deleted!";
+                }
 
                 existingShop.DeletedTime = DateTimeOffset.UtcNow;
-                existingShop.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value; ;
+                existingShop.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 
                 _unitOfWork.GetRepository<Shop>().Update(existingShop);
                 await _unitOfWork.SaveAsync();
                 return "Deleted shop successfully!";
             }
-            catch (BaseException.BadRequestException)
+            catch (BaseException.BadRequestException ex)
             {
-                throw;
+                return ex.Message;
             }
             catch (Exception ex)
             {
-                throw new BaseException.CoreException("DELETE_SHOP_ERROR", "An error occurred while deleting the shop.", (int)StatusCodeHelper.ServerError);
+                return "An error occurred while deleting the shop.";
             }
         }
-
-        
     }
 }
