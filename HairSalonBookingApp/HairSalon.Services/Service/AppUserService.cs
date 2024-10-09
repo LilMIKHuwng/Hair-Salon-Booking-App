@@ -79,29 +79,29 @@ namespace HairSalon.Services.Service
                 LastUpdatedTime = DateTime.UtcNow
             };
 
-            await userRoleRepository.InsertAsync(applicationUserRole);
-            await _unitOfWork.SaveAsync();
+			await userRoleRepository.InsertAsync(applicationUserRole);
+			await _unitOfWork.SaveAsync();
 
-            return "Add user successfully!";
-        }
+			return "User added successfully.";
+		}
 
-        public async Task<string> DeleteAppUserAsync(string id)
-        {
-            if (string.IsNullOrWhiteSpace(id))
-            {
-                return "Please input valid user id!";
-            }
+		public async Task<string> DeleteAppUserAsync(string id)
+		{
+			if (string.IsNullOrWhiteSpace(id))
+			{
+				return "Please provide a valid Application User ID.";
+			}
 
-            ApplicationUsers? existingUser = await _unitOfWork.GetRepository<ApplicationUsers>().Entities
-                .FirstOrDefaultAsync(s => s.Id == Guid.Parse(id) && !s.DeletedTime.HasValue);
+			var existingUser = await _unitOfWork.GetRepository<ApplicationUsers>().Entities
+				.FirstOrDefaultAsync(s => s.Id == Guid.Parse(id) && !s.DeletedTime.HasValue);
 
-            if (existingUser == null)
-            {
-                return "The Application User cannot be found or has been deleted!";
-            }
+			if (existingUser == null)
+			{
+				return "The Application User cannot be found or has been deleted!";
+			}
 
-            existingUser.DeletedTime = DateTimeOffset.UtcNow;
-            existingUser.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+			existingUser.DeletedTime = DateTimeOffset.UtcNow;
+			existingUser.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 
             _unitOfWork.GetRepository<ApplicationUsers>().Update(existingUser);
             await _unitOfWork.SaveAsync();
@@ -260,5 +260,44 @@ namespace HairSalon.Services.Service
             return user; // Trả về người dùng đã xác thực
         }
 
-    }
+		public async Task<BasePaginatedList<AppUserModelView>> GetAllAppUserAsync(int pageNumber, int pageSize, string id, string email, string phoneNumber)
+		{
+			// Start building the query
+			IQueryable<ApplicationUsers> userQuery = _unitOfWork.GetRepository<ApplicationUsers>().Entities
+				.Where(p => !p.DeletedTime.HasValue)
+				.OrderByDescending(s => s.CreatedTime);
+
+			// Apply filtering by Id, Email, and PhoneNumber if provided
+			if (!string.IsNullOrWhiteSpace(id))
+			{
+				userQuery = userQuery.Where(p => p.Id.ToString() == id);
+			}
+
+			if (!string.IsNullOrWhiteSpace(email))
+			{
+				userQuery = userQuery.Where(p => p.Email.Contains(email));
+			}
+
+			if (!string.IsNullOrWhiteSpace(phoneNumber))
+			{
+				userQuery = userQuery.Where(p => p.PhoneNumber.Contains(phoneNumber));
+			}
+
+			// Get total count of records after filtering
+			int totalCount = await userQuery.CountAsync();
+
+			// Apply pagination
+			List<ApplicationUsers> paginatedUsers = await userQuery
+				.Skip((pageNumber - 1) * pageSize)
+				.Take(pageSize)
+				.ToListAsync();
+
+			// Map entities to model views
+			List<AppUserModelView> appUserModelViews = _mapper.Map<List<AppUserModelView>>(paginatedUsers);
+
+			// Return the paginated list with users
+			return new BasePaginatedList<AppUserModelView>(appUserModelViews, totalCount, pageNumber, pageSize);
+		}
+
+	}
 }

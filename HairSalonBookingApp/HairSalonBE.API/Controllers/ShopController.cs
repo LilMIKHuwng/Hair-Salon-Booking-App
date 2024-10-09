@@ -33,14 +33,14 @@ namespace HairSalonBE.API.Controllers
 
         }
 
-        [HttpPut("update")]
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateShop(string id, [FromQuery] UpdatedShopModelView model)
         {
             string result = await _shopService.UpdateShopAsync(id, model);
             return Ok(result);
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteShop(string id)
         {
             string result = await _shopService.DeleteShopAsync(id);

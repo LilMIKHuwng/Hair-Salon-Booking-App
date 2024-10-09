@@ -5,17 +5,17 @@ namespace HairSalon.ModelViews.ServiceAppointmentModelViews;
 
 public class CreatServiceAppointmentModelView
 {
-    public string? ServiceId { get; set; }
-    
-    public string? AppointmentId { get; set; }
-    
-    public string? Description { get; set; }
+	[Required(ErrorMessage = "ServiceId is required.")]
+	public string ServiceId { get; set; }
 
-	[Required]
-	[Range(1, 5)]
-	public int Rate { get; set; }
+	[Required(ErrorMessage = "AppointmentId is required.")]
+	public string AppointmentId { get; set; }
 
-	[MaxLength(255)]
+	public string? Description { get; set; }
+
+	[Range(1, 5, ErrorMessage = "Rate must be between 1 and 5.")]
+	public int? Rate { get; set; }
+
+	[MaxLength(255, ErrorMessage = "Comment cannot exceed 255 characters.")]
 	public string? Comment { get; set; }
-
 }
