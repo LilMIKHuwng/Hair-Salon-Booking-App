@@ -10,6 +10,7 @@ using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalon.ModelViews.AuthModelViews;
 using HairSalon.Repositories.Entity;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace HairSalon.Services.Service
@@ -19,12 +20,13 @@ namespace HairSalon.Services.Service
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _contextAccessor;
-
-        public AppUserService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        private readonly IPasswordHasher<ApplicationUsers> _passwordHasher;
+        public AppUserService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor, IPasswordHasher<ApplicationUsers> passwordHasher)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _contextAccessor = httpContextAccessor;
+            _passwordHasher = passwordHasher;
         }
 
         public async Task<string> AddAppUserAsync(CreateAppUserModelView model)
@@ -34,17 +36,17 @@ namespace HairSalon.Services.Service
                 Firstname = model.FirstName,
                 Lastname = model.LastName,
             };
-
             var newAccount = new ApplicationUsers
             {
                 Id = Guid.NewGuid(),
                 UserName = model.UserName,
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
-                PasswordHash = model.Password,
                 SecurityStamp = Guid.NewGuid().ToString(),
                 UserInfo = userInfo
             };
+
+            newAccount.PasswordHash = _passwordHasher.HashPassword(newAccount, model.Password);
 
             var accountRepositoryCheck = _unitOfWork.GetRepository<ApplicationUsers>();
 
@@ -215,55 +217,59 @@ namespace HairSalon.Services.Service
         {
             var accountRepository = _unitOfWork.GetRepository<ApplicationUsers>();
 
-            // Tìm người dùng theo Username
+            // Find the user by Username
             var user = await accountRepository.Entities
                 .FirstOrDefaultAsync(x => x.UserName == model.Username);
 
             if (user == null)
             {
-                return null; // Người dùng không tồn tại
+                return null; // User does not exist
             }
 
-            // So sánh mật khẩu (bạn có thể sử dụng cơ chế mã hóa mật khẩu)
-            if (model.Password != user.PasswordHash)
+            // Verify the password
+            var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, model.Password);
+
+            if (passwordVerificationResult == PasswordVerificationResult.Failed)
             {
-                return null; // Mật khẩu không khớp
+                return null; // Password does not match
             }
-            // Kiểm tra xem đã tồn tại bản ghi đăng nhập chưa
+
+            // Check if a login record already exists
             var loginRepository = _unitOfWork.GetRepository<ApplicationUserLogins>();
             var existingLogin = await loginRepository.Entities
                 .FirstOrDefaultAsync(x => x.UserId == user.Id && x.LoginProvider == "CustomLoginProvider");
 
             if (existingLogin == null)
             {
-                // Nếu chưa có bản ghi đăng nhập, thêm mới
+                // If no login record exists, add a new one
                 var loginInfo = new ApplicationUserLogins
                 {
-                    UserId = user.Id, // UserId từ người dùng đã đăng nhập
+                    UserId = user.Id, // UserId from the authenticated user
                     ProviderKey = user.Id.ToString(),
-                    LoginProvider = "CustomLoginProvider", // Hoặc có thể là tên provider khác
+                    LoginProvider = "CustomLoginProvider", // Or another provider name
                     ProviderDisplayName = "Standard Login",
-                    CreatedBy = user.UserName, // Ghi lại ai đã thực hiện đăng nhập
+                    CreatedBy = user.UserName, // Record who performed the login
                     CreatedTime = CoreHelper.SystemTimeNow,
                     LastUpdatedBy = user.UserName,
                     LastUpdatedTime = CoreHelper.SystemTimeNow
                 };
 
                 await loginRepository.InsertAsync(loginInfo);
-                await _unitOfWork.SaveAsync(); // Lưu thay đổi vào cơ sở dữ liệu
+                await _unitOfWork.SaveAsync(); // Save changes to the database
             }
             else
             {
-                // Nếu bản ghi đăng nhập đã tồn tại, có thể cập nhật thông tin nếu cần
+                // If the login record already exists, update it if necessary
                 existingLogin.LastUpdatedBy = user.UserName;
                 existingLogin.LastUpdatedTime = CoreHelper.SystemTimeNow;
 
                 await loginRepository.UpdateAsync(existingLogin);
-                await _unitOfWork.SaveAsync(); // Lưu thay đổi vào cơ sở dữ liệu
+                await _unitOfWork.SaveAsync(); // Save changes to the database
             }
 
-            return user; // Trả về người dùng đã xác thực
+            return user; // Return the authenticated user
         }
+
 
     }
 }

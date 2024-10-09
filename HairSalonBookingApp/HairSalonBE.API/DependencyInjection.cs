@@ -62,7 +62,9 @@ namespace HairSalonBE.API
                 .AddScoped<IAppUserService, AppUserService>()
                 .AddScoped<IServiceAppointment, ServiceAppointmentService>()
                 .AddScoped<TokenService>()
-                ;
+                .AddScoped<IPasswordHasher<ApplicationUsers>, PasswordHasher<ApplicationUsers>>();
+
+            ;
 
         }
 
