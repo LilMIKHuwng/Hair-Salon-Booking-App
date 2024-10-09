@@ -10,6 +10,7 @@ using HairSalon.ModelViews.UserModelViews;
 using HairSalon.Repositories.Entity;
 using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalon.ModelViews.AppUserRoleViewModels;
+using HairSalon.ModelViews.ServiceAppointmentModelViews;
 
 namespace HairSalon.Repositories.Mapper
 {
@@ -71,6 +72,12 @@ namespace HairSalon.Repositories.Mapper
 			CreateMap<ApplicationUserRoles, UpdateAppUserRoleModelView>();
 			CreateMap<CreateAppUserRoleModelView, ApplicationUserRoles>();
 			CreateMap<UpdateAppUserRoleModelView, ApplicationUserRoles>();
-		}
+
+            CreateMap<ServiceAppointment, ServiceAppointmentModelView>();
+            CreateMap<ServiceAppointment, EditServiceAppointmentModelView>();
+            CreateMap<ServiceAppointment, CreatServiceAppointmentModelView>();
+            CreateMap<EditServiceAppointmentModelView, ServiceAppointment>();
+            CreateMap<CreateAppointmentModelView, ServiceAppointment>();
+        }
     }
 }
