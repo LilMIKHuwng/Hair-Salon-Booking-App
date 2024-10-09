@@ -77,7 +77,7 @@ namespace HairSalon.Repositories.Mapper
             CreateMap<ServiceAppointment, EditServiceAppointmentModelView>();
             CreateMap<ServiceAppointment, CreatServiceAppointmentModelView>();
             CreateMap<EditServiceAppointmentModelView, ServiceAppointment>();
-            CreateMap<CreateAppointmentModelView, ServiceAppointment>();
+            CreateMap<CreatServiceAppointmentModelView, ServiceAppointment>();
         }
     }
 }
