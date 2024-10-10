@@ -20,12 +20,17 @@ namespace HairSalon.Services.Service
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IEmailService _emailService;
+        private readonly UserManager<ApplicationUsers> _userManager;
         private readonly IPasswordHasher<ApplicationUsers> _passwordHasher;
-        public AppUserService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor, IPasswordHasher<ApplicationUsers> passwordHasher)
+
+        public AppUserService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor, IEmailService emailService, UserManager<ApplicationUsers> userManager, IPasswordHasher<ApplicationUsers> passwordHasher)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _contextAccessor = httpContextAccessor;
+            _emailService = emailService;
+            _userManager = userManager;
             _passwordHasher = passwordHasher;
         }
 
@@ -76,7 +81,15 @@ namespace HairSalon.Services.Service
             var user = await accountRepositoryCheck.Entities.FirstOrDefaultAsync(x => x.UserName == model.UserName);
             if (user != null)
             {
-                throw new Exception("Duplicate");
+                throw new Exception("UserName already exists!");
+            }
+
+            var existingEmail = await accountRepository.Entities
+                                            .AsNoTracking()
+                                            .FirstOrDefaultAsync(x => x.Email == model.Email);
+            if (existingEmail != null)
+            {
+                return "Email already exists!";
             }
 
             accountRepository = _unitOfWork.GetRepository<ApplicationUsers>();
@@ -105,10 +118,48 @@ namespace HairSalon.Services.Service
 			await userRoleRepository.InsertAsync(applicationUserRole);
 			await _unitOfWork.SaveAsync();
 
-			return "User added successfully.";
-		}
+            // Tạo mã OTP
+            var otpCode = GenerateOtpCode();
+            newAccount.OtpCode = otpCode;
+            newAccount.OtpExpiration = DateTime.UtcNow.AddMinutes(10); // OTP hết hạn sau 10 phút
 
-		public async Task<string> DeleteAppUserAsync(string id)
+            await _unitOfWork.SaveAsync();
+
+            // Gửi mã OTP qua email
+            await _emailService.SendEmailConfirmationCodeAsync(newAccount.Email, otpCode);
+
+            return "User added successfully. Please check your email for the OTP to confirm your account.";
+        }
+
+        public async Task<string> ConfirmEmailAsync(ConfirmEmailModelView model)
+        {
+            var accountRepo = _unitOfWork.GetRepository<ApplicationUsers>();
+            var user = await accountRepo.Entities.FirstOrDefaultAsync(u => u.Email == model.Email);
+            if (user == null) return "Invalid email.";
+
+            // Kiểm tra mã OTP và thời gian hết hạn
+            if (user.OtpCode != model.OtpCode || user.OtpExpiration < DateTime.UtcNow)
+            {
+                return "Invalid or expired OTP code.";
+            }
+
+            // Xác nhận tài khoản
+            user.EmailConfirmed = true;
+            user.OtpCode = null; // Xóa mã OTP sau khi xác nhận
+            user.OtpExpiration = null;
+
+            await _unitOfWork.SaveAsync();
+
+            return "Email confirmed successfully. Your account is now active.";
+        }
+
+        private string GenerateOtpCode()
+        {
+            var random = new Random();
+            return random.Next(1000, 9999).ToString(); // Tạo mã OTP 4 số
+        }
+
+        public async Task<string> DeleteAppUserAsync(string id)
 		{
 			if (string.IsNullOrWhiteSpace(id))
 			{
@@ -235,7 +286,7 @@ namespace HairSalon.Services.Service
 
             // Find the user by Username
             var user = await accountRepository.Entities
-                .FirstOrDefaultAsync(x => x.UserName == model.Username && x.DeletedTime == null);
+                .FirstOrDefaultAsync(x => x.UserName == model.Username && x.EmailConfirmed == true);
 
             if (user == null)
             {
@@ -286,7 +337,7 @@ namespace HairSalon.Services.Service
             return user; // Return the authenticated user
         }
 
-public async Task<BasePaginatedList<AppUserModelView>> GetAllAppUserAsync(int pageNumber, int pageSize, string id, string email, string phoneNumber)
+        public async Task<BasePaginatedList<AppUserModelView>> GetAllAppUserAsync(int pageNumber, int pageSize, string id, string email, string phoneNumber)
 		{
 			// Start building the query
 			IQueryable<ApplicationUsers> userQuery = _unitOfWork.GetRepository<ApplicationUsers>().Entities
@@ -324,5 +375,46 @@ public async Task<BasePaginatedList<AppUserModelView>> GetAllAppUserAsync(int pa
 			// Return the paginated list with users
 			return new BasePaginatedList<AppUserModelView>(appUserModelViews, totalCount, pageNumber, pageSize);
 		}
+
+        public async Task<string> ForgotPasswordAsync(ForgotPasswordModelView model)
+        {
+            var accountRepo = _unitOfWork.GetRepository<ApplicationUsers>();
+            var user = await accountRepo.Entities.FirstOrDefaultAsync(u => u.Email == model.Email);
+            if (user == null) return "Email not found.";
+
+            // Tạo mã OTP
+            var otpCode = GenerateOtpCode();
+            user.OtpCodeResetPassword = otpCode;
+            user.OtpExpirationResetPassword = DateTime.UtcNow.AddMinutes(10); // OTP hết hạn sau 10 phút
+
+            await _unitOfWork.SaveAsync();
+
+            // Gửi mã OTP qua email
+            await _emailService.SendEmailConfirmationCodeAsync(user.Email, otpCode);
+
+            return "OTP has been sent to your email.";
+        }
+
+        public async Task<string> ResetPasswordAsync(ResetPasswordModelView model)
+        {
+            var accountRepo = _unitOfWork.GetRepository<ApplicationUsers>();
+            var user = await accountRepo.Entities.FirstOrDefaultAsync(u => u.Email == model.Email);
+            if (user == null) return "Email not found.";
+
+            // Kiểm tra mã OTP và thời gian hết hạn
+            if (user.OtpCodeResetPassword != model.OtpCode || user.OtpExpirationResetPassword < DateTime.UtcNow)
+            {
+                return "Invalid or expired OTP code.";
+            }
+
+            // Cập nhật mật khẩu
+            user.PasswordHash = _passwordHasher.HashPassword(user, model.NewPassword);
+            user.OtpCodeResetPassword = null; // Xóa mã OTP sau khi đặt lại mật khẩu
+            user.OtpExpirationResetPassword = null;
+
+            await _unitOfWork.SaveAsync();
+
+            return "Password reset successfully.";
+        }
     }
 }

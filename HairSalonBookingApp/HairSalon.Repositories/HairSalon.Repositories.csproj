@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -7,8 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\**" />
     <Compile Remove="data_access\**" />
+    <EmbeddedResource Remove="Data\**" />
     <EmbeddedResource Remove="data_access\**" />
+    <None Remove="Data\**" />
     <None Remove="data_access\**" />
   </ItemGroup>
 
@@ -34,10 +37,6 @@
   <ItemGroup>
     <ProjectReference Include="..\HairSalon.Contract.Repositories\HairSalon.Contract.Repositories.csproj" />
     <ProjectReference Include="..\HairSalon.ModelViews\HairSalon.ModelViews.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>
