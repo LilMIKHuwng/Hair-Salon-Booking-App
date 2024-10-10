@@ -2,6 +2,7 @@
 using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Repositories.Entity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace HairSalon.Repositories.Context
 {
@@ -146,9 +147,17 @@ namespace HairSalon.Repositories.Context
                 }
             );
 
-            // 3. ApplicationUserRoles
+            // 3. ApplicationUsers
+            var passwordHasher = new PasswordHasher<ApplicationUsers>();
             var userId1 = Guid.NewGuid();
             var userId2 = Guid.NewGuid();
+
+            var adminUser = new ApplicationUsers { Id = userId1 };
+            var normalUser = new ApplicationUsers { Id = userId2 };
+
+            // Hash passwords
+            var adminPasswordHash = passwordHasher.HashPassword(adminUser, "123");
+            var userPasswordHash = passwordHasher.HashPassword(normalUser, "123");
 
             modelBuilder.Entity<ApplicationUsers>().HasData(
                 new ApplicationUsers
@@ -159,7 +168,7 @@ namespace HairSalon.Repositories.Context
                     Email = "admin@example.com",
                     NormalizedEmail = "ADMIN@EXAMPLE.COM",
                     EmailConfirmed = true,
-                    PasswordHash = "123",
+                    PasswordHash = adminPasswordHash,
                     UserInfoId = userInfoId1,
                     CreatedBy = "SeedData",
                     LastUpdatedBy = "SeedData",
@@ -174,7 +183,7 @@ namespace HairSalon.Repositories.Context
                     Email = "user@example.com",
                     NormalizedEmail = "USER@EXAMPLE.COM",
                     EmailConfirmed = true,
-                    PasswordHash = "123", 
+                    PasswordHash = userPasswordHash,
                     UserInfoId = userInfoId2,
                     CreatedBy = "SeedData",
                     LastUpdatedBy = "SeedData",
@@ -183,7 +192,7 @@ namespace HairSalon.Repositories.Context
                 }
             );
 
-            // 4. ApplicationUsers
+            // 4. ApplicationUserRoles
             modelBuilder.Entity<ApplicationUserRoles>().HasData(
                 new ApplicationUserRoles
                 {
@@ -204,7 +213,6 @@ namespace HairSalon.Repositories.Context
                     LastUpdatedTime = DateTimeOffset.UtcNow
                 }
             );
-
 
             // 5. Shop
             var shopId = Guid.NewGuid().ToString();
