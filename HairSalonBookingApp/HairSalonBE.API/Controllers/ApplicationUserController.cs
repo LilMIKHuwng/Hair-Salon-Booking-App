@@ -52,5 +52,19 @@ namespace HairSalonBE.API.Controllers
             string result = await _appUserService.DeleteAppUserAsync(userId);
             return Ok(result);
         }
+
+        [HttpPost("forgot-password")]
+        public async Task<ActionResult<string>> ForgotPassword([FromBody] ForgotPasswordModelView model)
+        {
+            string result = await _appUserService.ForgotPasswordAsync(model);
+            return Ok(result);
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<ActionResult<string>> ResetPassword([FromBody] ResetPasswordModelView model)
+        {
+            string result = await _appUserService.ResetPasswordAsync(model);
+            return Ok(result);
+        }
     }
 }

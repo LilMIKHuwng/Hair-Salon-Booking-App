@@ -13,5 +13,7 @@ namespace HairSalon.Contract.Services.Interface
 		Task<string> DeleteAppUserAsync(string id);
 		Task<ApplicationUsers> AuthenticateAsync(LoginModelView model);
         Task<string> ConfirmEmailAsync(ConfirmEmailModelView model);
+        Task<string> ForgotPasswordAsync(ForgotPasswordModelView model);
+        Task<string> ResetPasswordAsync(ResetPasswordModelView model);
     }
 }
