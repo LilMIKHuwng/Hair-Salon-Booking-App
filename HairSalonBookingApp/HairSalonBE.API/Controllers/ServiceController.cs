@@ -19,11 +19,11 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpGet("all")]
-        public async Task<ActionResult<BasePaginatedList<ServiceModelView>>> GetAllServices(int pageNumber = 1,
-                                                                                            int pageSize = 5,
-                                                                                            [FromQuery] string? id = null,
-                                                                                            [FromQuery] string? name = null,
-                                                                                            [FromQuery] string? type = null)
+        public async Task<ActionResult<BasePaginatedList<ServiceModelView>>> GetAllServices([FromQuery] string? id,
+                                                                                            [FromQuery] string? name,
+                                                                                            [FromQuery] string? type,
+                                                                                            int pageNumber = 1,
+                                                                                            int pageSize = 5)
         {
             var result = await _serviceService.GetAllServiceAsync(pageNumber, pageSize, id, name, type);
             return Ok(result);

@@ -6,7 +6,6 @@ using HairSalon.Core;
 using HairSalon.ModelViews.ShopModelViews;
 using Microsoft.EntityFrameworkCore;
 using HairSalon.Core.Base;
-using HairSalon.Core.Constants;
 using Microsoft.AspNetCore.Http;
 
 namespace HairSalon.Services.Service
@@ -17,7 +16,6 @@ namespace HairSalon.Services.Service
 		private readonly IMapper _mapper;
 		private readonly IHttpContextAccessor _contextAccessor;
 
-
 		public ShopService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
 		{
 			_unitOfWork = unitOfWork;
@@ -25,18 +23,16 @@ namespace HairSalon.Services.Service
 			_contextAccessor = httpContextAccessor;
 		}
 
-		public async Task<BasePaginatedList<ShopModelView>> GetAllShopAsync(int pageNumber, int pageSize, string searchName = null, string searchId = null)
+		public async Task<BasePaginatedList<ShopModelView>> GetAllShopAsync
+			(int pageNumber, int pageSize, string? searchName, string? searchId)
 		{
-
 			IQueryable<Shop> shopQuery = _unitOfWork.GetRepository<Shop>().Entities
 				.Where(p => !p.DeletedTime.HasValue);
 
 			if (!string.IsNullOrWhiteSpace(searchName))
 			{
 				searchName = searchName.ToLower();
-				shopQuery = shopQuery.Where(s =>
-					s.Name.ToLower().Contains(searchName)
-				);
+				shopQuery = shopQuery.Where(s => s.Name.ToLower().Contains(searchName));
 			}
 
 			if (!string.IsNullOrWhiteSpace(searchId))
@@ -56,7 +52,6 @@ namespace HairSalon.Services.Service
 			List<ShopModelView> shopModelViews = _mapper.Map<List<ShopModelView>>(paginatedShops);
 			return new BasePaginatedList<ShopModelView>(shopModelViews, totalCount, pageNumber, pageSize);
 		}
-
 
 		public async Task<string> AddShopAsync(CreateShopModelView model)
 		{
@@ -92,7 +87,7 @@ namespace HairSalon.Services.Service
 					return "Please provide a valid Shop ID.";
 				}
 
-				Shop existingShop = await _unitOfWork.GetRepository<Shop>().Entities
+				Shop? existingShop = await _unitOfWork.GetRepository<Shop>().Entities
 					.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
 
 				if (existingShop == null)

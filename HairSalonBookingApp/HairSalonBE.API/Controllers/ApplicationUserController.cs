@@ -33,29 +33,23 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpGet("all")]
-		public async Task<ActionResult<BasePaginatedList<AppUserModelView>>> GetAllApplicationUsers(
-	                                                                                        int pageNumber = 1,
-	                                                                                        int pageSize = 5,
-	                                                                                        [FromQuery] string? id = null,
-	                                                                                        [FromQuery] string? email = null,
-	                                                                                        [FromQuery] string? phoneNumber = null)
-		{
-			var result = await _appUserService.GetAllAppUserAsync(pageNumber, pageSize, id, email, phoneNumber);
-			return Ok(result);
-		}
-
-		[HttpPut("{id}")]
-        public async Task<IActionResult> UpdateApplicationUser(string id, [FromQuery] UpdateAppUserModelView model)
+        public async Task<ActionResult<BasePaginatedList<AppUserModelView>>> GetAllApplicationUsers(string? userId, int pageNumber = 1, int pageSize = 5)
         {
-            string result = await _appUserService.UpdateAppUserAsync(id, model);
+            var result = await _appUserService.GetAllAppUserAsync(userId, pageNumber, pageSize);
             return Ok(result);
-
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteApplicationUser(string id)
+        [HttpPut("update/{userId}")]
+        public async Task<IActionResult> UpdateApplicationUser(string userId, [FromQuery] UpdateAppUserModelView model)
         {
-            string result = await _appUserService.DeleteAppUserAsync(id);
+            string result = await _appUserService.UpdateAppUserAsync(userId, model);
+            return Ok(result);
+        }
+
+        [HttpDelete("delete/{userId}")]
+        public async Task<IActionResult> DeleteApplicationUser(string userId)
+        {
+            string result = await _appUserService.DeleteAppUserAsync(userId);
             return Ok(result);
         }
     }
