@@ -154,12 +154,12 @@ namespace HairSalon.Repositories.Context
                 new ApplicationUsers
                 {
                     Id = userId1,
-                    UserName = "admin@example.com",
+                    UserName = "admin",
                     NormalizedUserName = "ADMIN@EXAMPLE.COM",
                     Email = "admin@example.com",
                     NormalizedEmail = "ADMIN@EXAMPLE.COM",
                     EmailConfirmed = true,
-                    Password = "Admin@123", // Mật khẩu giả (nên mã hóa trong thực tế)
+                    PasswordHash = "123",
                     UserInfoId = userInfoId1,
                     CreatedBy = "SeedData",
                     LastUpdatedBy = "SeedData",
@@ -169,12 +169,12 @@ namespace HairSalon.Repositories.Context
                 new ApplicationUsers
                 {
                     Id = userId2,
-                    UserName = "user@example.com",
+                    UserName = "user",
                     NormalizedUserName = "USER@EXAMPLE.COM",
                     Email = "user@example.com",
                     NormalizedEmail = "USER@EXAMPLE.COM",
                     EmailConfirmed = true,
-                    Password = "User@123", // Mật khẩu giả (nên mã hóa trong thực tế)
+                    PasswordHash = "123", 
                     UserInfoId = userInfoId2,
                     CreatedBy = "SeedData",
                     LastUpdatedBy = "SeedData",
@@ -182,8 +182,6 @@ namespace HairSalon.Repositories.Context
                     LastUpdatedTime = DateTimeOffset.UtcNow
                 }
             );
-
-
 
             // 4. ApplicationUsers
             modelBuilder.Entity<ApplicationUserRoles>().HasData(

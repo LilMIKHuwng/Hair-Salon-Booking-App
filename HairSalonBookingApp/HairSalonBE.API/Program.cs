@@ -70,7 +70,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 var app = builder.Build();
 
 //add configue for seed data
-using (var scope = app.Services.CreateScope())
+/*using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
@@ -89,7 +89,7 @@ using (var scope = app.Services.CreateScope())
         var logger = services.GetRequiredService<ILogger<Program>>();
         logger.LogError(ex, "An error occurred while seeding the database.");
     }
-}
+}*/
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();
