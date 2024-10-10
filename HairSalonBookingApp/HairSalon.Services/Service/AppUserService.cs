@@ -10,6 +10,7 @@ using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalon.ModelViews.AuthModelViews;
 using HairSalon.Repositories.Entity;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace HairSalon.Services.Service
@@ -19,20 +20,25 @@ namespace HairSalon.Services.Service
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IEmailService _emailService;
+        private readonly UserManager<ApplicationUsers> _userManager;
 
-        public AppUserService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public AppUserService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor, IEmailService emailService, UserManager<ApplicationUsers> userManager)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _contextAccessor = httpContextAccessor;
+            _emailService = emailService;
+            _userManager = userManager;
         }
 
-		public async Task<string> AddAppUserAsync(CreateAppUserModelView model)
+        /*public async Task<string> AddAppUserAsync(CreateAppUserModelView model)
 		{
 			var userInfo = new UserInfo
 			{
 				Firstname = model.FirstName,
 				Lastname = model.LastName,
+
 			};
 
 			var newAccount = new ApplicationUsers
@@ -80,9 +86,77 @@ namespace HairSalon.Services.Service
 			await _unitOfWork.SaveAsync();
 
 			return "User added successfully.";
-		}
+		}*/
 
-		public async Task<string> DeleteAppUserAsync(string id)
+        public async Task<string> AddAppUserAsync(CreateAppUserModelView model)
+        {
+            var accountRepo = _unitOfWork.GetRepository<ApplicationUsers>();
+            var existingUser = await accountRepo.Entities.FirstOrDefaultAsync(x => x.UserName == model.UserName);
+            if (existingUser != null) return "User with this username already exists.";
+
+            var userInfo = new UserInfo
+            {
+                Firstname = model.FirstName,
+                Lastname = model.LastName
+            };
+
+            var newUser = new ApplicationUsers
+            {
+                Id = Guid.NewGuid(),
+                UserName = model.UserName,
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                PasswordHash = model.Password,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserInfo = userInfo,
+                
+            };
+
+            await accountRepo.InsertAsync(newUser);
+            await _unitOfWork.SaveAsync();
+
+            // Tạo mã OTP
+            var otpCode = GenerateOtpCode();
+            newUser.OtpCode = otpCode;
+            newUser.OtpExpiration = DateTime.UtcNow.AddMinutes(10); // OTP hết hạn sau 10 phút
+
+            await _unitOfWork.SaveAsync();
+
+            // Gửi mã OTP qua email
+            await _emailService.SendEmailConfirmationCodeAsync(newUser.Email, otpCode);
+
+            return "User added successfully. Please check your email for the OTP to confirm your account.";
+        }
+
+        public async Task<string> ConfirmEmailAsync(ConfirmEmailModelView model)
+        {
+            var accountRepo = _unitOfWork.GetRepository<ApplicationUsers>();
+            var user = await accountRepo.Entities.FirstOrDefaultAsync(u => u.Email == model.Email);
+            if (user == null) return "Invalid email.";
+
+            // Kiểm tra mã OTP và thời gian hết hạn
+            if (user.OtpCode != model.OtpCode || user.OtpExpiration < DateTime.UtcNow)
+            {
+                return "Invalid or expired OTP code.";
+            }
+
+            // Xác nhận tài khoản
+            user.EmailConfirmed = true;
+            user.OtpCode = null; // Xóa mã OTP sau khi xác nhận
+            user.OtpExpiration = null;
+
+            await _unitOfWork.SaveAsync();
+
+            return "Email confirmed successfully. Your account is now active.";
+        }
+
+        private string GenerateOtpCode()
+        {
+            var random = new Random();
+            return random.Next(1000, 9999).ToString(); // Tạo mã OTP 4 số
+        }
+
+        public async Task<string> DeleteAppUserAsync(string id)
 		{
 			if (string.IsNullOrWhiteSpace(id))
 			{
@@ -182,14 +256,13 @@ namespace HairSalon.Services.Service
             }
         }
 
-
         public async Task<ApplicationUsers> AuthenticateAsync(LoginModelView model)
         {
             var accountRepository = _unitOfWork.GetRepository<ApplicationUsers>();
 
             // Tìm người dùng theo Username
             var user = await accountRepository.Entities
-                .FirstOrDefaultAsync(x => x.UserName == model.Username);
+                .FirstOrDefaultAsync(x => x.UserName == model.Username && x.EmailConfirmed == true);
 
             if (user == null)
             {

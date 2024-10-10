@@ -18,5 +18,6 @@ namespace HairSalon.Contract.Services.Interface
 		Task<string> UpdateAppUserAsync(string id, UpdateAppUserModelView model);
 		Task<string> DeleteAppUserAsync(string id);
 		Task<ApplicationUsers> AuthenticateAsync(LoginModelView model);
-	}
+        Task<string> ConfirmEmailAsync(ConfirmEmailModelView model);
+    }
 }

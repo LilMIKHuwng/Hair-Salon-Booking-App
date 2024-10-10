@@ -1,6 +1,7 @@
 ﻿using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
 using HairSalon.ModelViews.ApplicationUserModelViews;
+using HairSalon.Repositories.Entity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairSalonBE.API.Controllers
@@ -24,7 +25,14 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
-		[HttpGet("all")]
+        [HttpPost("confirm-email")]
+        public async Task<ActionResult<string>> ConfirmEmail([FromBody] ConfirmEmailModelView model)
+        {
+            string result = await _appUserService.ConfirmEmailAsync(model);
+            return Ok(result);
+        }
+
+        [HttpGet("all")]
 		public async Task<ActionResult<BasePaginatedList<AppUserModelView>>> GetAllApplicationUsers(
 	                                                                                        int pageNumber = 1,
 	                                                                                        int pageSize = 5,

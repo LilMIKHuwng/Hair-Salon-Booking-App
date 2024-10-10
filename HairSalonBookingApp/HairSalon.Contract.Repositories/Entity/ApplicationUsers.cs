@@ -15,6 +15,9 @@ namespace HairSalon.Repositories.Entity
         public DateTimeOffset CreatedTime { get; set; }
         public DateTimeOffset LastUpdatedTime { get; set; }
         public DateTimeOffset? DeletedTime { get; set; }
+        public string? OtpCode { get; set; }
+        public DateTime? OtpExpiration { get; set; }
+
         public ApplicationUsers()
         {
             CreatedTime = CoreHelper.SystemTimeNow;

@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace HairSalon.Repositories.Migrations
+namespace HairSalon.Repositories.Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20241007012654_a")]
-    partial class a
+    [Migration("20241010023008_First")]
+    partial class First
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -471,7 +471,7 @@ namespace HairSalon.Repositories.Migrations
                     b.Property<DateTimeOffset>("LastUpdatedTime")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<int>("Rate")
+                    b.Property<int?>("Rate")
                         .HasColumnType("int");
 
                     b.Property<string>("ServiceId")
@@ -641,6 +641,12 @@ namespace HairSalon.Repositories.Migrations
 
                     b.Property<string>("NormalizedUserName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OtpCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("OtpExpiration")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Password")
                         .IsRequired()
