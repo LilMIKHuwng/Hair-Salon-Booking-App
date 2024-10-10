@@ -34,17 +34,6 @@ namespace HairSalon.Services.Service
             _passwordHasher = passwordHasher;
         }
 
-        /*public async Task<string> AddAppUserAsync(CreateAppUserModelView model)
-		{
-			var userInfo = new UserInfo
-			{
-				Firstname = model.FirstName,
-				Lastname = model.LastName,
-
-			};
-            _passwordHasher = passwordHasher;
-        }
-
         public async Task<string> AddAppUserAsync(CreateAppUserModelView model)
         {
             // Check for special characters in FirstName and LastName
@@ -92,7 +81,15 @@ namespace HairSalon.Services.Service
             var user = await accountRepositoryCheck.Entities.FirstOrDefaultAsync(x => x.UserName == model.UserName);
             if (user != null)
             {
-                throw new Exception("Duplicate");
+                throw new Exception("UserName already exists!");
+            }
+
+            var existingEmail = await accountRepository.Entities
+                                            .AsNoTracking()
+                                            .FirstOrDefaultAsync(x => x.Email == model.Email);
+            if (existingEmail != null)
+            {
+                return "Email already exists!";
             }
 
             accountRepository = _unitOfWork.GetRepository<ApplicationUsers>();
@@ -121,45 +118,15 @@ namespace HairSalon.Services.Service
 			await userRoleRepository.InsertAsync(applicationUserRole);
 			await _unitOfWork.SaveAsync();
 
-			return "User added successfully.";
-		}*/
-
-        public async Task<string> AddAppUserAsync(CreateAppUserModelView model)
-        {
-            var accountRepo = _unitOfWork.GetRepository<ApplicationUsers>();
-            var existingUser = await accountRepo.Entities.FirstOrDefaultAsync(x => x.UserName == model.UserName);
-            if (existingUser != null) return "User with this username already exists.";
-
-            var userInfo = new UserInfo
-            {
-                Firstname = model.FirstName,
-                Lastname = model.LastName
-            };
-
-            var newUser = new ApplicationUsers
-            {
-                Id = Guid.NewGuid(),
-                UserName = model.UserName,
-                Email = model.Email,
-                PhoneNumber = model.PhoneNumber,
-                PasswordHash = model.Password,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                UserInfo = userInfo,
-                
-            };
-
-            await accountRepo.InsertAsync(newUser);
-            await _unitOfWork.SaveAsync();
-
             // Tạo mã OTP
             var otpCode = GenerateOtpCode();
-            newUser.OtpCode = otpCode;
-            newUser.OtpExpiration = DateTime.UtcNow.AddMinutes(10); // OTP hết hạn sau 10 phút
+            newAccount.OtpCode = otpCode;
+            newAccount.OtpExpiration = DateTime.UtcNow.AddMinutes(10); // OTP hết hạn sau 10 phút
 
             await _unitOfWork.SaveAsync();
 
             // Gửi mã OTP qua email
-            await _emailService.SendEmailConfirmationCodeAsync(newUser.Email, otpCode);
+            await _emailService.SendEmailConfirmationCodeAsync(newAccount.Email, otpCode);
 
             return "User added successfully. Please check your email for the OTP to confirm your account.";
         }
@@ -417,8 +384,8 @@ namespace HairSalon.Services.Service
 
             // Tạo mã OTP
             var otpCode = GenerateOtpCode();
-            user.OtpCode = otpCode;
-            user.OtpExpiration = DateTime.UtcNow.AddMinutes(10); // OTP hết hạn sau 10 phút
+            user.OtpCodeResetPassword = otpCode;
+            user.OtpExpirationResetPassword = DateTime.UtcNow.AddMinutes(10); // OTP hết hạn sau 10 phút
 
             await _unitOfWork.SaveAsync();
 
@@ -435,15 +402,15 @@ namespace HairSalon.Services.Service
             if (user == null) return "Email not found.";
 
             // Kiểm tra mã OTP và thời gian hết hạn
-            if (user.OtpCode != model.OtpCode || user.OtpExpiration < DateTime.UtcNow)
+            if (user.OtpCodeResetPassword != model.OtpCode || user.OtpExpirationResetPassword < DateTime.UtcNow)
             {
                 return "Invalid or expired OTP code.";
             }
 
             // Cập nhật mật khẩu
             user.PasswordHash = _passwordHasher.HashPassword(user, model.NewPassword);
-            user.OtpCode = null; // Xóa mã OTP sau khi đặt lại mật khẩu
-            user.OtpExpiration = null;
+            user.OtpCodeResetPassword = null; // Xóa mã OTP sau khi đặt lại mật khẩu
+            user.OtpExpirationResetPassword = null;
 
             await _unitOfWork.SaveAsync();
 

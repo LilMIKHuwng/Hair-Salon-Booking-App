@@ -17,6 +17,9 @@ namespace HairSalon.Repositories.Entity
         public DateTimeOffset? DeletedTime { get; set; }
         public string? OtpCode { get; set; }
         public DateTime? OtpExpiration { get; set; }
+        public string? OtpCodeResetPassword { get; set; }
+        public DateTime? OtpExpirationResetPassword { get; set; }
+
 
         public ApplicationUsers()
         {
