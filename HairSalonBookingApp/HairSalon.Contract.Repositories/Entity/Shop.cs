@@ -1,11 +1,5 @@
 ﻿using HairSalon.Core.Base;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HairSalon.Contract.Repositories.Entity
 {
@@ -30,13 +24,8 @@ namespace HairSalon.Contract.Repositories.Entity
 		[Required]
 		public TimeSpan CloseTime { get; set; }
 
-		public int TotalServices { get; set; } = 0;
-
 		[MaxLength(100)]
 		public string Title { get; set; }
-
-		[Required]
-		public bool Status { get; set; }
 
 		public virtual ICollection<Service> Services { get; set; }
 	}

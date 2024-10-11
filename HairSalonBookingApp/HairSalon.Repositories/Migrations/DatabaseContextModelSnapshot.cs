@@ -18,47 +18,12 @@ namespace HairSalon.Repositories.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("Proxies:ChangeTracking", false)
+                .HasAnnotation("Proxies:CheckEquality", false)
+                .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.ApplicationRole", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("CreatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset?>("DeletedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("LastUpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("LastUpdatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ApplicationRole");
-                });
 
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.ApplicationRoleClaims", b =>
                 {
@@ -98,6 +63,82 @@ namespace HairSalon.Repositories.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ApplicationRoleClaims");
+                });
+
+            modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.ApplicationRoles", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset?>("DeletedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("LastUpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("LastUpdatedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ApplicationRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("2952161c-ce04-43b7-afc4-cee6ddb1a87d"),
+                            CreatedBy = "System",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8627), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8628), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = new Guid("3d26d219-6d84-4a68-b9ad-954f8078d94d"),
+                            CreatedBy = "System",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8631), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8631), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "Manager",
+                            NormalizedName = "MANAGER"
+                        },
+                        new
+                        {
+                            Id = new Guid("6db6c39b-65dd-4965-ba1a-a214a25f53f8"),
+                            CreatedBy = "System",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8633), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8633), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "Stylist",
+                            NormalizedName = "STYLIST"
+                        },
+                        new
+                        {
+                            Id = new Guid("4a68df10-6812-4385-8d90-1d88746f7c2b"),
+                            CreatedBy = "System",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8635), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8635), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "User",
+                            NormalizedName = "USER"
+                        });
                 });
 
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.ApplicationUserClaims", b =>
@@ -205,7 +246,47 @@ namespace HairSalon.Repositories.Migrations
 
                     b.HasKey("UserId", "RoleId");
 
+                    b.HasIndex("RoleId");
+
                     b.ToTable("ApplicationUserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = new Guid("8c5439fd-af20-44e5-ba2b-0c14d4c5100d"),
+                            RoleId = new Guid("2952161c-ce04-43b7-afc4-cee6ddb1a87d"),
+                            CreatedBy = "SeedData",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7982), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedBy = "SeedData",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7983), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            UserId = new Guid("393d525b-d90a-4e24-8682-9f3a0ae5b30a"),
+                            RoleId = new Guid("4a68df10-6812-4385-8d90-1d88746f7c2b"),
+                            CreatedBy = "SeedData",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7985), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedBy = "SeedData",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7986), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            UserId = new Guid("5925a17b-b9e5-4e60-b4c8-27b606a03811"),
+                            RoleId = new Guid("3d26d219-6d84-4a68-b9ad-954f8078d94d"),
+                            CreatedBy = "SeedData",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7988), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedBy = "SeedData",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7989), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            UserId = new Guid("da2d861a-18b6-4af4-b6ce-cab83599b318"),
+                            RoleId = new Guid("6db6c39b-65dd-4965-ba1a-a214a25f53f8"),
+                            CreatedBy = "SeedData",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7991), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedBy = "SeedData",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7991), new TimeSpan(0, 0, 0, 0, 0))
+                        });
                 });
 
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.ApplicationUserTokens", b =>
@@ -274,20 +355,16 @@ namespace HairSalon.Repositories.Migrations
                     b.Property<int>("PointsEarned")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
-
                     b.Property<string>("StatusForAppointment")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("StylistId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid?>("StylistId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("UserId")
+                    b.Property<Guid?>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -296,54 +373,21 @@ namespace HairSalon.Repositories.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Appointments");
-                });
 
-            modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.Feedback", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Comment")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("CreatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTime>("DateCreate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset?>("DeletedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("LastUpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("LastUpdatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int>("Rate")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ServiceId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("Feedbacks");
+                    b.HasData(
+                        new
+                        {
+                            Id = "525cd8c2-bcd0-4077-ad70-0e45b73e9076",
+                            AppointmentDate = new DateTime(2024, 10, 12, 2, 38, 4, 490, DateTimeKind.Utc).AddTicks(8270),
+                            CreatedBy = "SeedData",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8286), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedBy = "SeedData",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8287), new TimeSpan(0, 0, 0, 0, 0)),
+                            PointsEarned = 10,
+                            StatusForAppointment = "Scheduled",
+                            StylistId = new Guid("393d525b-d90a-4e24-8682-9f3a0ae5b30a"),
+                            UserId = new Guid("8c5439fd-af20-44e5-ba2b-0c14d4c5100d")
+                        });
                 });
 
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.Payment", b =>
@@ -381,58 +425,28 @@ namespace HairSalon.Repositories.Migrations
                     b.Property<DateTime>("PaymentTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
-
                     b.Property<decimal>("TotalAmount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(10, 2)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AppointmentId");
 
                     b.ToTable("Payments");
-                });
 
-            modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.Role", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("CreatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset?>("DeletedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("LastUpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("LastUpdatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("RoleName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Roles");
+                    b.HasData(
+                        new
+                        {
+                            Id = "aeaca7d8-bdd0-40b1-993b-da7ab5fea28e",
+                            AppointmentId = "525cd8c2-bcd0-4077-ad70-0e45b73e9076",
+                            CreatedBy = "SeedData",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8348), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedBy = "SeedData",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8349), new TimeSpan(0, 0, 0, 0, 0)),
+                            PaymentMethod = "Credit Card",
+                            PaymentTime = new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Utc).AddTicks(8347),
+                            TotalAmount = 100.00m
+                        });
                 });
 
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.SalaryPayment", b =>
@@ -441,7 +455,7 @@ namespace HairSalon.Repositories.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("BaseSalary")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(10, 2)");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -464,18 +478,28 @@ namespace HairSalon.Repositories.Migrations
                     b.Property<DateTime>("PaymentDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserId")
+                    b.Property<Guid?>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("SalaryPayments");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "bfbd151e-a1c2-4ff7-9d26-c5f2c3d5d3e2",
+                            BaseSalary = 2000.00m,
+                            CreatedBy = "SeedData",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8446), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedBy = "SeedData",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8446), new TimeSpan(0, 0, 0, 0, 0)),
+                            PaymentDate = new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Utc).AddTicks(8445),
+                            UserId = new Guid("8c5439fd-af20-44e5-ba2b-0c14d4c5100d")
+                        });
                 });
 
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.Service", b =>
@@ -496,7 +520,6 @@ namespace HairSalon.Repositories.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -512,17 +535,12 @@ namespace HairSalon.Repositories.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(10, 2)");
 
                     b.Property<string>("ShopId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Type")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -531,6 +549,47 @@ namespace HairSalon.Repositories.Migrations
                     b.HasIndex("ShopId");
 
                     b.ToTable("Services");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "7e9ff88b-8c89-433a-b63a-cf29bee0fda7",
+                            CreatedBy = "SeedData",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8134), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "A stylish haircut to refresh your look.",
+                            LastUpdatedBy = "SeedData",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8140), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "Hair Cut",
+                            Price = 25000.00m,
+                            ShopId = "1d27686a-55a3-4252-a8a7-4b6f51b72b9b",
+                            Type = "Hair"
+                        },
+                        new
+                        {
+                            Id = "606c590b-b7dc-4cee-9efb-fbc47b32a232",
+                            CreatedBy = "SeedData",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8144), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "A complete hair coloring service.",
+                            LastUpdatedBy = "SeedData",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8145), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "Hair Coloring",
+                            Price = 50000.00m,
+                            ShopId = "1d27686a-55a3-4252-a8a7-4b6f51b72b9b",
+                            Type = "Hair"
+                        },
+                        new
+                        {
+                            Id = "5fd85e69-9bbc-42b6-8867-d1c6b6801179",
+                            CreatedBy = "SeedData",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8149), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "A premium hair coloring service.",
+                            LastUpdatedBy = "SeedData",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8149), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "Premium Hair Coloring",
+                            Price = 100000.00m,
+                            ShopId = "1d27686a-55a3-4252-a8a7-4b6f51b72b9b",
+                            Type = "Hair"
+                        });
                 });
 
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.ServiceAppointment", b =>
@@ -541,6 +600,10 @@ namespace HairSalon.Repositories.Migrations
                     b.Property<string>("AppointmentId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -555,7 +618,6 @@ namespace HairSalon.Repositories.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -564,6 +626,9 @@ namespace HairSalon.Repositories.Migrations
 
                     b.Property<DateTimeOffset>("LastUpdatedTime")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<int?>("Rate")
+                        .HasColumnType("int");
 
                     b.Property<string>("ServiceId")
                         .IsRequired()
@@ -576,6 +641,21 @@ namespace HairSalon.Repositories.Migrations
                     b.HasIndex("ServiceId");
 
                     b.ToTable("ServiceAppointments");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "039db19d-11d6-4473-b32b-3c422e676c1e",
+                            AppointmentId = "525cd8c2-bcd0-4077-ad70-0e45b73e9076",
+                            Comment = "Excellent service!",
+                            CreatedBy = "SeedData",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8402), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Basic haircut",
+                            LastUpdatedBy = "SeedData",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8406), new TimeSpan(0, 0, 0, 0, 0)),
+                            Rate = 5,
+                            ServiceId = "7e9ff88b-8c89-433a-b63a-cf29bee0fda7"
+                        });
                 });
 
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.Shop", b =>
@@ -627,88 +707,31 @@ namespace HairSalon.Repositories.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("TotalServices")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("Shops");
-                });
 
-            modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.User", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("CreatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTime>("DateCreate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset?>("DeletedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("LastUpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("LastUpdatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<int>("Point")
-                        .HasColumnType("int");
-
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("Users");
+                    b.HasData(
+                        new
+                        {
+                            Id = "1d27686a-55a3-4252-a8a7-4b6f51b72b9b",
+                            Address = "123 Main St, Cityville",
+                            CloseTime = new TimeSpan(0, 19, 0, 0, 0),
+                            CreatedBy = "SeedData",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8058), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedBy = "SeedData",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8059), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "Salon A",
+                            OpenTime = new TimeSpan(0, 9, 0, 0, 0),
+                            ShopEmail = "contact@salona.com",
+                            ShopPhone = "123-456-7890",
+                            Title = "Best Hair Salon in Town"
+                        });
                 });
 
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.UserInfo", b =>
@@ -737,7 +760,7 @@ namespace HairSalon.Repositories.Migrations
                     b.Property<DateTimeOffset?>("DeletedTime")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("FullName")
+                    b.Property<string>("Firstname")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -747,12 +770,77 @@ namespace HairSalon.Repositories.Migrations
                     b.Property<DateTimeOffset>("LastUpdatedTime")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("Lastname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Point")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("UserInfos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "b5e57769-52e5-4dca-8628-04360ee00c45",
+                            Bank = "Bank A",
+                            BankAccount = "123456789",
+                            BankAccountName = "John Doe",
+                            CreatedBy = "SeedData",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8793), new TimeSpan(0, 0, 0, 0, 0)),
+                            Firstname = "John",
+                            LastUpdatedBy = "SeedData",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8794), new TimeSpan(0, 0, 0, 0, 0)),
+                            Lastname = "Doe",
+                            Point = 100
+                        },
+                        new
+                        {
+                            Id = "987f7b3d-5240-47c2-bea0-68bca8cfeb79",
+                            Bank = "Bank B",
+                            BankAccount = "987654321",
+                            BankAccountName = "Jane Smith",
+                            CreatedBy = "SeedData",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8798), new TimeSpan(0, 0, 0, 0, 0)),
+                            Firstname = "Jane",
+                            LastUpdatedBy = "SeedData",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8799), new TimeSpan(0, 0, 0, 0, 0)),
+                            Lastname = "Smith",
+                            Point = 150
+                        },
+                        new
+                        {
+                            Id = "6747dacd-f36a-4dd2-ac40-f0df5b004bea",
+                            Bank = "Bank c",
+                            BankAccount = "123456798",
+                            BankAccountName = "Dev Nguyen",
+                            CreatedBy = "SeedData",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8802), new TimeSpan(0, 0, 0, 0, 0)),
+                            Firstname = "Dev",
+                            LastUpdatedBy = "SeedData",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8802), new TimeSpan(0, 0, 0, 0, 0)),
+                            Lastname = "Nguyen",
+                            Point = 0
+                        },
+                        new
+                        {
+                            Id = "2a69e5d0-713e-483a-8326-2974c10e3d92",
+                            Bank = "Bank D",
+                            BankAccount = "123456987",
+                            BankAccountName = "Dan Tran",
+                            CreatedBy = "SeedData",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8805), new TimeSpan(0, 0, 0, 0, 0)),
+                            Firstname = "Dan",
+                            LastUpdatedBy = "SeedData",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8805), new TimeSpan(0, 0, 0, 0, 0)),
+                            Lastname = "Tran",
+                            Point = 0
+                        });
                 });
 
-            modelBuilder.Entity("HairSalon.Repositories.Entity.ApplicationUser", b =>
+            modelBuilder.Entity("HairSalon.Repositories.Entity.ApplicationUsers", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -800,6 +888,18 @@ namespace HairSalon.Repositories.Migrations
                     b.Property<string>("NormalizedUserName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("OtpCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OtpCodeResetPassword")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("OtpExpiration")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("OtpExpirationResetPassword")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -820,6 +920,7 @@ namespace HairSalon.Repositories.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("UserInfoId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UserName")
@@ -829,17 +930,122 @@ namespace HairSalon.Repositories.Migrations
 
                     b.HasIndex("UserInfoId");
 
-                    b.ToTable("ApplicationUser");
+                    b.ToTable("ApplicationUsers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("8c5439fd-af20-44e5-ba2b-0c14d4c5100d"),
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "0370ae27-e8cd-45fb-9cc2-3642a67f221d",
+                            CreatedBy = "SeedData",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7816), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "admin@example.com",
+                            EmailConfirmed = true,
+                            LastUpdatedBy = "SeedData",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7817), new TimeSpan(0, 0, 0, 0, 0)),
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@EXAMPLE.COM",
+                            NormalizedUserName = "ADMIN@EXAMPLE.COM",
+                            Password = "",
+                            PasswordHash = "AQAAAAIAAYagAAAAEDXOVmKvoYYVdpNTU8k45LGc16BRh/GcpbOHaz6ctPiD4k+5uSJiVFlexpvBY4eUZw==",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false,
+                            UserInfoId = "b5e57769-52e5-4dca-8628-04360ee00c45",
+                            UserName = "admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("393d525b-d90a-4e24-8682-9f3a0ae5b30a"),
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "9b1307a7-a445-4390-a37f-8ce83ab480aa",
+                            CreatedBy = "SeedData",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7825), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "user@example.com",
+                            EmailConfirmed = true,
+                            LastUpdatedBy = "SeedData",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7826), new TimeSpan(0, 0, 0, 0, 0)),
+                            LockoutEnabled = false,
+                            NormalizedEmail = "USER@EXAMPLE.COM",
+                            NormalizedUserName = "USER@EXAMPLE.COM",
+                            Password = "",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHUOhsSwdI0w/BLxXhiGUuUN1ArxXL+/Nip1QaNWPJfG2A7M0gTPbn/+HTPq5VIn7Q==",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false,
+                            UserInfoId = "987f7b3d-5240-47c2-bea0-68bca8cfeb79",
+                            UserName = "user"
+                        },
+                        new
+                        {
+                            Id = new Guid("5925a17b-b9e5-4e60-b4c8-27b606a03811"),
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "30e93df1-647c-4018-a1bf-0a82f6f8192e",
+                            CreatedBy = "SeedData",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7831), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "manager@example.com",
+                            EmailConfirmed = true,
+                            LastUpdatedBy = "SeedData",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7831), new TimeSpan(0, 0, 0, 0, 0)),
+                            LockoutEnabled = false,
+                            NormalizedEmail = "MANAGER@EXAMPLE.COM",
+                            NormalizedUserName = "MANAGER@EXAMPLE.COM",
+                            Password = "",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHJr7haC0OFNgLBE7Ni+1XYwihRYhxRVxW9ry9nY27ImYH3okP95q5nxe/pv1ZwtKw==",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false,
+                            UserInfoId = "6747dacd-f36a-4dd2-ac40-f0df5b004bea",
+                            UserName = "manager"
+                        },
+                        new
+                        {
+                            Id = new Guid("da2d861a-18b6-4af4-b6ce-cab83599b318"),
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "97bde579-1d7b-4265-b65f-406c447c51d7",
+                            CreatedBy = "SeedData",
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7835), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "stylist@example.com",
+                            EmailConfirmed = true,
+                            LastUpdatedBy = "SeedData",
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7836), new TimeSpan(0, 0, 0, 0, 0)),
+                            LockoutEnabled = false,
+                            NormalizedEmail = "STYLIST@EXAMPLE.COM",
+                            NormalizedUserName = "STYLIST@EXAMPLE.COM",
+                            Password = "",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFO8MtnBo5kRcBxuLss8VC5vH9mbzcRqmp2smc2c/eEvdGCSUR44IFn2PhkBySsyzg==",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false,
+                            UserInfoId = "2a69e5d0-713e-483a-8326-2974c10e3d92",
+                            UserName = "stylist"
+                        });
+                });
+
+            modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.ApplicationUserRoles", b =>
+                {
+                    b.HasOne("HairSalon.Contract.Repositories.Entity.ApplicationRoles", "Role")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HairSalon.Repositories.Entity.ApplicationUsers", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.Appointment", b =>
                 {
-                    b.HasOne("HairSalon.Contract.Repositories.Entity.User", "Stylist")
+                    b.HasOne("HairSalon.Repositories.Entity.ApplicationUsers", "Stylist")
                         .WithMany()
                         .HasForeignKey("StylistId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("HairSalon.Contract.Repositories.Entity.User", "User")
+                    b.HasOne("HairSalon.Repositories.Entity.ApplicationUsers", "User")
                         .WithMany("Appointments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -848,17 +1054,6 @@ namespace HairSalon.Repositories.Migrations
                     b.Navigation("Stylist");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.Feedback", b =>
-                {
-                    b.HasOne("HairSalon.Contract.Repositories.Entity.Service", "Service")
-                        .WithMany()
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Service");
                 });
 
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.Payment", b =>
@@ -874,7 +1069,7 @@ namespace HairSalon.Repositories.Migrations
 
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.SalaryPayment", b =>
                 {
-                    b.HasOne("HairSalon.Contract.Repositories.Entity.User", "User")
+                    b.HasOne("HairSalon.Repositories.Entity.ApplicationUsers", "User")
                         .WithMany("SalaryPayments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -887,9 +1082,7 @@ namespace HairSalon.Repositories.Migrations
                 {
                     b.HasOne("HairSalon.Contract.Repositories.Entity.Shop", "Shop")
                         .WithMany("Services")
-                        .HasForeignKey("ShopId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ShopId");
 
                     b.Navigation("Shop");
                 });
@@ -913,34 +1106,25 @@ namespace HairSalon.Repositories.Migrations
                     b.Navigation("Service");
                 });
 
-            modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.User", b =>
-                {
-                    b.HasOne("HairSalon.Contract.Repositories.Entity.Role", "Role")
-                        .WithMany("Users")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("HairSalon.Repositories.Entity.ApplicationUser", b =>
+            modelBuilder.Entity("HairSalon.Repositories.Entity.ApplicationUsers", b =>
                 {
                     b.HasOne("HairSalon.Contract.Repositories.Entity.UserInfo", "UserInfo")
                         .WithMany()
-                        .HasForeignKey("UserInfoId");
+                        .HasForeignKey("UserInfoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("UserInfo");
+                });
+
+            modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.ApplicationRoles", b =>
+                {
+                    b.Navigation("UserRoles");
                 });
 
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.Appointment", b =>
                 {
                     b.Navigation("ServiceAppointments");
-                });
-
-            modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.Role", b =>
-                {
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.Service", b =>
@@ -953,11 +1137,13 @@ namespace HairSalon.Repositories.Migrations
                     b.Navigation("Services");
                 });
 
-            modelBuilder.Entity("HairSalon.Contract.Repositories.Entity.User", b =>
+            modelBuilder.Entity("HairSalon.Repositories.Entity.ApplicationUsers", b =>
                 {
                     b.Navigation("Appointments");
 
                     b.Navigation("SalaryPayments");
+
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }
