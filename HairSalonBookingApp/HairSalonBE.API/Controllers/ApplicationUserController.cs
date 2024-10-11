@@ -17,10 +17,17 @@ namespace HairSalonBE.API.Controllers
             _appUserService = appUserService;
         }
 
-        [HttpPost("register")]
+        [HttpPost("user-register")]
         public async Task<ActionResult<string>> CreateAppUser([FromQuery] CreateAppUserModelView model)
         {
             string result = await _appUserService.AddAppUserAsync(model);
+            return Ok(result);
+        }
+
+        [HttpPost("stylist-register")]
+        public async Task<ActionResult<string>> CreateAppStylist([FromQuery] CreateAppStylistModelView model)
+        {
+            string result = await _appUserService.AddAppStylistAsync(model);
             return Ok(result);
         }
 
