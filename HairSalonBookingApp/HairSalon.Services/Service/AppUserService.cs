@@ -131,6 +131,94 @@ namespace HairSalon.Services.Service
             return "User added successfully. Please check your email for the OTP to confirm your account.";
         }
 
+        public async Task<string> AddAppStylistAsync(CreateAppStylistModelView model)
+        {
+            // Check for special characters in FirstName and LastName
+            var regex = new Regex(@"^[a-zA-Z]+$");
+            if (!regex.IsMatch(model.FirstName))
+            {
+                return "FirstName cannot contains special characters!";
+            }
+
+            if (!regex.IsMatch(model.LastName))
+            {
+                return "LastName cannot contains special characters!";
+            }
+
+            // Check if the username already exists
+            var accountRepository = _unitOfWork.GetRepository<ApplicationUsers>();
+            var existingUser = await accountRepository.Entities
+                                                    .AsNoTracking()
+                                                    .FirstOrDefaultAsync(x => x.UserName == model.UserName);
+            if (existingUser != null)
+            {
+                return "UserName is already existed!";
+            }
+
+            // Create new user info and account
+            var userInfo = new UserInfo
+            {
+                Firstname = model.FirstName,
+                Lastname = model.LastName,
+            };
+            var newAccount = new ApplicationUsers
+            {
+                Id = Guid.NewGuid(),
+                UserName = model.UserName,
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserInfo = userInfo,
+                EmailConfirmed = true
+            };
+
+            newAccount.PasswordHash = _passwordHasher.HashPassword(newAccount, model.Password);
+
+            var accountRepositoryCheck = _unitOfWork.GetRepository<ApplicationUsers>();
+
+            var user = await accountRepositoryCheck.Entities.FirstOrDefaultAsync(x => x.UserName == model.UserName);
+            if (user != null)
+            {
+                throw new Exception("UserName already exists!");
+            }
+
+            var existingEmail = await accountRepository.Entities
+                                            .AsNoTracking()
+                                            .FirstOrDefaultAsync(x => x.Email == model.Email);
+            if (existingEmail != null)
+            {
+                return "Email already exists!";
+            }
+
+            accountRepository = _unitOfWork.GetRepository<ApplicationUsers>();
+            await accountRepository.InsertAsync(newAccount);
+
+            // Check if the user role exists
+            var roleRepository = _unitOfWork.GetRepository<ApplicationRoles>();
+            var userRole = await roleRepository.Entities.FirstOrDefaultAsync(r => r.Name == model.RoleName);
+            if (userRole == null)
+            {
+                return "The 'User' role does not exist. Please make sure to create it first.";
+            }
+
+            // Create and insert user role mapping
+            var userRoleRepository = _unitOfWork.GetRepository<ApplicationUserRoles>();
+            var applicationUserRole = new ApplicationUserRoles
+            {
+                UserId = newAccount.Id,
+                RoleId = userRole.Id,
+                CreatedBy = newAccount.Id.ToString(),
+                CreatedTime = DateTime.UtcNow,
+                LastUpdatedBy = newAccount.Id.ToString(),
+                LastUpdatedTime = DateTime.UtcNow
+            };
+
+            await userRoleRepository.InsertAsync(applicationUserRole);
+            await _unitOfWork.SaveAsync();
+
+            return "Stylist added successfully.";
+        }
+
         public async Task<string> ConfirmEmailAsync(ConfirmEmailModelView model)
         {
             var accountRepo = _unitOfWork.GetRepository<ApplicationUsers>();
