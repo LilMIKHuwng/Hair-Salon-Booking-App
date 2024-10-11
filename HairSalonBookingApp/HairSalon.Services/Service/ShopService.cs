@@ -128,7 +128,7 @@ namespace HairSalon.Services.Service
 				existingShop.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 				existingShop.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-				_unitOfWork.GetRepository<Shop>().Update(existingShop);
+				await _unitOfWork.GetRepository<Shop>().UpdateAsync(existingShop);
 				await _unitOfWork.SaveAsync();
 
 				return "Updated shop successfully";
@@ -163,7 +163,7 @@ namespace HairSalon.Services.Service
 				existingShop.DeletedTime = DateTimeOffset.UtcNow;
 				existingShop.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 
-				_unitOfWork.GetRepository<Shop>().Update(existingShop);
+				await _unitOfWork.GetRepository<Shop>().UpdateAsync(existingShop);
 				await _unitOfWork.SaveAsync();
 				return "Deleted shop successfully!";
 			}

@@ -180,7 +180,7 @@ namespace HairSalon.Services.Service
 			existingPayment.LastUpdatedTime = DateTimeOffset.UtcNow;
 
 			// Save the updated payment
-			_unitOfWork.GetRepository<Payment>().Update(existingPayment);
+			await _unitOfWork.GetRepository<Payment>().UpdateAsync(existingPayment);
 			await _unitOfWork.SaveAsync();
 
 			return "Payment updated successfully.";
@@ -207,7 +207,7 @@ namespace HairSalon.Services.Service
 			existingPayment.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 
 			// Mark the payment as deleted
-			_unitOfWork.GetRepository<Payment>().Update(existingPayment);
+			await _unitOfWork.GetRepository<Payment>().UpdateAsync(existingPayment);
 			await _unitOfWork.SaveAsync();
 
 			return "Payment deleted successfully.";

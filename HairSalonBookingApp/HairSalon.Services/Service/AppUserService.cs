@@ -177,7 +177,7 @@ namespace HairSalon.Services.Service
 			existingUser.DeletedTime = DateTimeOffset.UtcNow;
 			existingUser.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 
-            _unitOfWork.GetRepository<ApplicationUsers>().Update(existingUser);
+            await _unitOfWork.GetRepository<ApplicationUsers>().UpdateAsync(existingUser);
             await _unitOfWork.SaveAsync();
             return "Deleted user successfully!";
         }
@@ -272,7 +272,8 @@ namespace HairSalon.Services.Service
             {
                 existingUser.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
                 existingUser.LastUpdatedTime = DateTimeOffset.UtcNow;
-                _unitOfWork.GetRepository<ApplicationUsers>().Update(existingUser);
+
+                await _unitOfWork.GetRepository<ApplicationUsers>().UpdateAsync(existingUser);
                 await _unitOfWork.SaveAsync();
             }
 

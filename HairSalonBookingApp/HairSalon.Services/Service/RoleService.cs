@@ -111,7 +111,7 @@ namespace HairSalon.Services.Service
                 existingRole.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
                 existingRole.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-                _unitOfWork.GetRepository<ApplicationRoles>().Update(existingRole);
+                await _unitOfWork.GetRepository<ApplicationRoles>().UpdateAsync(existingRole);
                 await _unitOfWork.SaveAsync();
             }
 
@@ -137,7 +137,7 @@ namespace HairSalon.Services.Service
             existingRole.DeletedTime = DateTimeOffset.UtcNow;
             existingRole.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 
-            _unitOfWork.GetRepository<ApplicationRoles>().Update(existingRole);
+            await _unitOfWork.GetRepository<ApplicationRoles>().UpdateAsync(existingRole);
             await _unitOfWork.SaveAsync();
 
             return "Role successfully deleted";

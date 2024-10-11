@@ -18,7 +18,7 @@ namespace HairSalonBE.API.Controllers
             _appUserRoleService = appUserRoleService;
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<IActionResult> CreateAppUserRole([FromQuery] CreateAppUserRoleModelView model)
         {
             var result = await _appUserRoleService.AddAppUserRoleAsync(model);
@@ -26,7 +26,7 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("get-all")]
+        [HttpGet("all")]
         public async Task<ActionResult<BasePaginatedList<AppUserRoleModelView>>> GetAllApplicationUserRoles(int pageNumber = 1, int pageSize = 5,
             [FromQuery] string? userId = null, [FromQuery] string? roleId = null)
         {

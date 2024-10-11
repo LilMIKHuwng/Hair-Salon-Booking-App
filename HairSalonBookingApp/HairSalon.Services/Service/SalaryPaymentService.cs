@@ -100,7 +100,7 @@ namespace HairSalon.Services.Service
 			existingSalary.LastUpdatedTime = DateTimeOffset.UtcNow;
 
 			// Save changes
-			_unitOfWork.GetRepository<SalaryPayment>().Update(existingSalary);
+			await _unitOfWork.GetRepository<SalaryPayment>().UpdateAsync(existingSalary);
 			await _unitOfWork.SaveAsync();
 
 			return "Updated salary payment successfully!";
@@ -130,7 +130,7 @@ namespace HairSalon.Services.Service
 			existingSalary.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 
 			// Save changes
-			_unitOfWork.GetRepository<SalaryPayment>().Update(existingSalary);
+			await _unitOfWork.GetRepository<SalaryPayment>().UpdateAsync(existingSalary);
 			await _unitOfWork.SaveAsync();
 
 			return "Deleted salary payment successfully!";

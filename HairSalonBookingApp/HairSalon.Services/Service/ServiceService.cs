@@ -122,7 +122,7 @@ namespace HairSalon.Services.Service
 			existingService.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
             existingService.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-            _unitOfWork.GetRepository<ServiceEntity>().Update(existingService);
+            await _unitOfWork.GetRepository<ServiceEntity>().UpdateAsync(existingService);
             await _unitOfWork.SaveAsync();
 
             return "Service updated successfully";
@@ -149,7 +149,7 @@ namespace HairSalon.Services.Service
             existingService.DeletedTime = DateTimeOffset.Now;
             existingService.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 
-            _unitOfWork.GetRepository<ServiceEntity>().Update(existingService);
+            await _unitOfWork.GetRepository<ServiceEntity>().UpdateAsync(existingService);
             await _unitOfWork.SaveAsync();
             return "Service deleted successfully";
         }
