@@ -1,7 +1,6 @@
 ﻿using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
 using HairSalon.ModelViews.ApplicationUserModelViews;
-using HairSalon.Repositories.Entity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairSalonBE.API.Controllers
@@ -71,6 +70,13 @@ namespace HairSalonBE.API.Controllers
         public async Task<ActionResult<string>> ResetPassword([FromBody] ResetPasswordModelView model)
         {
             string result = await _appUserService.ResetPasswordAsync(model);
+            return Ok(result);
+        }
+
+        [HttpPost("admin/reset-password")]
+        public async Task<ActionResult<string>> ResetPasswordAdminAsync([FromBody] ResetPasswordAdminModelView model)
+        {
+            string result = await _appUserService.ResetPasswordAdminAsync(model);
             return Ok(result);
         }
     }
