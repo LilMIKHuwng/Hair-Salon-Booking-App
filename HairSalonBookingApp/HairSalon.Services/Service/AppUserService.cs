@@ -395,7 +395,7 @@ namespace HairSalon.Services.Service
 
             return "OTP has been sent to your email.";
         }
-
+        
         public async Task<string> ResetPasswordAsync(ResetPasswordModelView model)
         {
             var accountRepo = _unitOfWork.GetRepository<ApplicationUsers>();
@@ -417,5 +417,37 @@ namespace HairSalon.Services.Service
 
             return "Password reset successfully.";
         }
+
+        public async Task<string> ResetPasswordAdminAsync(ResetPasswordAdminModelView model)
+        {
+            // Find user 
+            var user = await _unitOfWork.GetRepository<ApplicationUsers>().Entities
+                                        .FirstOrDefaultAsync(u => u.UserName == model.Username);
+
+            if (user == null) return "User does not exist."; // If the user is not found, return a message
+
+            // Find user's role
+            var userRole = await _unitOfWork.GetRepository<ApplicationUserRoles>().Entities
+                                            .FirstOrDefaultAsync(ur => ur.UserId == user.Id);
+            if (userRole == null) return "User is not assigned to any role."; // If the user has no role, return a message
+
+            // Check if role is Admin
+            var role = await _unitOfWork.GetRepository<ApplicationRoles>().Entities
+                                        .FirstOrDefaultAsync(r => r.Id == userRole.RoleId);
+            if (role == null || role.Name != "Admin")
+            {
+                return "User is not an admin."; // If the role is not Admin, return a message
+            }
+
+            // Update password
+            user.PasswordHash = _passwordHasher.HashPassword(user, model.NewPassword);
+
+            // Save changes to database
+            await _unitOfWork.SaveAsync();
+
+            return "Password reset successfully."; // Return a success message
+        }
+
+
     }
 }
