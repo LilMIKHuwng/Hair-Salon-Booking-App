@@ -115,6 +115,8 @@ namespace HairSalon.Repositories.Context
             // 2. UserInfo
             var userInfoId1 = Guid.NewGuid().ToString();
             var userInfoId2 = Guid.NewGuid().ToString();
+            var userInfoId3 = Guid.NewGuid().ToString();
+            var userInfoId4 = Guid.NewGuid().ToString();
 
             modelBuilder.Entity<UserInfo>().HasData(
                 new UserInfo
@@ -144,20 +146,55 @@ namespace HairSalon.Repositories.Context
                     LastUpdatedBy = "SeedData",
                     CreatedTime = DateTimeOffset.UtcNow,
                     LastUpdatedTime = DateTimeOffset.UtcNow
-                }
-            );
+                },
+				new UserInfo
+				{
+					Id = userInfoId3,
+					Firstname = "Dev",
+					Lastname = "Nguyen",
+					BankAccount = "123456798",
+					BankAccountName = "Dev Nguyen",
+					Bank = "Bank c",
+					Point = 0,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new UserInfo
+				{
+					Id = userInfoId4,
+					Firstname = "Dan",
+					Lastname = "Tran",
+					BankAccount = "123456987",
+					BankAccountName = "Dan Tran",
+					Bank = "Bank D",
+					Point = 0,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				}
+
+			);
 
             // 3. ApplicationUsers
             var passwordHasher = new PasswordHasher<ApplicationUsers>();
             var userId1 = Guid.NewGuid();
             var userId2 = Guid.NewGuid();
+            var userId3 = Guid.NewGuid();
+            var userId4 = Guid.NewGuid();
 
             var adminUser = new ApplicationUsers { Id = userId1 };
             var normalUser = new ApplicationUsers { Id = userId2 };
+            var managerUser = new ApplicationUsers { Id = userId3 };
+            var stylistUser = new ApplicationUsers { Id = userId4 };
 
             // Hash passwords
             var adminPasswordHash = passwordHasher.HashPassword(adminUser, "123");
             var userPasswordHash = passwordHasher.HashPassword(normalUser, "123");
+            var managerPasswordHash = passwordHasher.HashPassword(managerUser, "123");
+            var stylistPasswordHash = passwordHasher.HashPassword(stylistUser, "123");
 
             modelBuilder.Entity<ApplicationUsers>().HasData(
                 new ApplicationUsers
@@ -189,8 +226,38 @@ namespace HairSalon.Repositories.Context
                     LastUpdatedBy = "SeedData",
                     CreatedTime = DateTimeOffset.UtcNow,
                     LastUpdatedTime = DateTimeOffset.UtcNow
-                }
-            );
+				},
+				new ApplicationUsers
+				{
+					Id = userId3,
+					UserName = "manager",
+					NormalizedUserName = "MANAGER@EXAMPLE.COM",
+					Email = "manager@example.com",
+					NormalizedEmail = "MANAGER@EXAMPLE.COM",
+					EmailConfirmed = true,
+					PasswordHash = managerPasswordHash,
+					UserInfoId = userInfoId3,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new ApplicationUsers
+				{
+					Id = userId4,
+					UserName = "stylist",
+					NormalizedUserName = "STYLIST@EXAMPLE.COM",
+					Email = "stylist@example.com",
+					NormalizedEmail = "STYLIST@EXAMPLE.COM",
+					EmailConfirmed = true,
+					PasswordHash = stylistPasswordHash,
+					UserInfoId = userInfoId4,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				}
+			);
 
             // 4. ApplicationUserRoles
             modelBuilder.Entity<ApplicationUserRoles>().HasData(
@@ -211,8 +278,26 @@ namespace HairSalon.Repositories.Context
                     LastUpdatedBy = "SeedData",
                     CreatedTime = DateTimeOffset.UtcNow,
                     LastUpdatedTime = DateTimeOffset.UtcNow
-                }
-            );
+				},
+				new ApplicationUserRoles
+				{
+					UserId = userId3,
+					RoleId = roleIdManager,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new ApplicationUserRoles
+				{
+					UserId = userId4,
+					RoleId = roleIdStylist,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				}
+			);
 
             // 5. Shop
             var shopId = Guid.NewGuid().ToString();
@@ -234,41 +319,55 @@ namespace HairSalon.Repositories.Context
                 LastUpdatedTime = DateTimeOffset.UtcNow
             });
 
-            // 6. Service
-            var serviceId1 = Guid.NewGuid().ToString();
-            var serviceId2 = Guid.NewGuid().ToString();
+			// 6. Service
+			var serviceId1 = Guid.NewGuid().ToString();
+			var serviceId2 = Guid.NewGuid().ToString();
+			var serviceId3 = Guid.NewGuid().ToString();
 
-            modelBuilder.Entity<Service>().HasData(
-                new Service
-                {
-                    Id = serviceId1,
-                    Name = "Hair Cut",
-                    Type = "Hair",
-                    Price = 25.00m,
-                    Description = "A stylish haircut to refresh your look.",
-                    ShopId = shopId,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                },
-                new Service
-                {
-                    Id = serviceId2,
-                    Name = "Hair Coloring",
-                    Type = "Hair",
-                    Price = 50.00m,
-                    Description = "A complete hair coloring service.",
-                    ShopId = shopId,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                }
-            );
+			modelBuilder.Entity<Service>().HasData(
+				new Service
+				{
+					Id = serviceId1,
+					Name = "Hair Cut",
+					Type = "Hair",
+					Price = 25000.00m,
+					Description = "A stylish haircut to refresh your look.",
+					ShopId = shopId,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new Service
+				{
+					Id = serviceId2,
+					Name = "Hair Coloring",
+					Type = "Hair",
+					Price = 50000.00m,
+					Description = "A complete hair coloring service.",
+					ShopId = shopId,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new Service
+				{
+					Id = serviceId3, 
+					Name = "Premium Hair Coloring",
+					Type = "Hair",
+					Price = 100000.00m,
+					Description = "A premium hair coloring service.",
+					ShopId = shopId,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				}
+			);
 
-            // 7. Appointment
-            var appointmentId = Guid.NewGuid().ToString();
+			// 7. Appointment
+			var appointmentId = Guid.NewGuid().ToString();
 
             modelBuilder.Entity<Appointment>().HasData(
                 new Appointment
