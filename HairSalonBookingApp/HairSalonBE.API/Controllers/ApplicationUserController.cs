@@ -1,6 +1,7 @@
 ﻿using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
 using HairSalon.ModelViews.ApplicationUserModelViews;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairSalonBE.API.Controllers
@@ -8,6 +9,7 @@ namespace HairSalonBE.API.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "User")]
     public class ApplicationUserController : ControllerBase
     {
         private readonly IAppUserService _appUserService;

@@ -1,5 +1,6 @@
 ﻿using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.AuthModelViews;
+using HairSalon.ModelViews.TokenModelViews;
 using HairSalon.Repositories.Entity;
 using HairSalon.Services.Service;
 using Microsoft.AspNetCore.Mvc;
@@ -36,10 +37,29 @@ namespace HairSalonBE.API.Controllers
             }
 
             var token = await _tokenService.GenerateJwtTokenAsync(account.Id.ToString(), account.UserName);
-            return Ok(new
+            return Ok(token);
+        }
+
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken(TokenModelView tokenModel)
+        {
+            var token = await _tokenService.RefreshToken(tokenModel);
+            if (token != null)
+            { 
+                return Ok(token);
+            }
+            return BadRequest("Something error when Refresh Token");
+        }
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout(string username)
+        {
+            var result = await _tokenService.Revoke(username);
+            if (result != null)
             {
-                Token = token,
-            });
+                return BadRequest("Can't find username");
+            }
+            return Ok();
         }
     }
 }
