@@ -30,6 +30,7 @@ namespace HairSalon.Repositories.Context
         public virtual DbSet<SalaryPayment> SalaryPayments { get; set; }
         public virtual DbSet<ServiceAppointment> ServiceAppointments { get; set; }
         public virtual DbSet<Payment> Payments { get; set; }
+        public virtual DbSet<Feedback> Feedbacks{ get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -335,6 +336,7 @@ namespace HairSalon.Repositories.Context
 					ShopId = shopId,
 					CreatedBy = "SeedData",
 					LastUpdatedBy = "SeedData",
+                    TimeService = 30,
 					CreatedTime = DateTimeOffset.UtcNow,
 					LastUpdatedTime = DateTimeOffset.UtcNow
 				},
@@ -347,6 +349,7 @@ namespace HairSalon.Repositories.Context
 					Description = "A complete hair coloring service.",
 					ShopId = shopId,
 					CreatedBy = "SeedData",
+                    TimeService = 30,
 					LastUpdatedBy = "SeedData",
 					CreatedTime = DateTimeOffset.UtcNow,
 					LastUpdatedTime = DateTimeOffset.UtcNow
@@ -361,6 +364,7 @@ namespace HairSalon.Repositories.Context
 					ShopId = shopId,
 					CreatedBy = "SeedData",
 					LastUpdatedBy = "SeedData",
+                    TimeService = 60,
 					CreatedTime = DateTimeOffset.UtcNow,
 					LastUpdatedTime = DateTimeOffset.UtcNow
 				}
