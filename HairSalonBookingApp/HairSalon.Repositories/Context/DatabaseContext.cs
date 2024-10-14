@@ -417,8 +417,6 @@ namespace HairSalon.Repositories.Context
                     ServiceId = serviceId1,
                     AppointmentId = appointmentId,
                     Description = "Basic haircut",
-                    Rate = 5,
-                    Comment = "Excellent service!",
                     CreatedBy = "SeedData",
                     LastUpdatedBy = "SeedData",
                     CreatedTime = DateTimeOffset.UtcNow,
