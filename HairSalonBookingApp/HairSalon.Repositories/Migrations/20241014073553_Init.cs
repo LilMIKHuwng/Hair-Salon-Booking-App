@@ -171,6 +171,7 @@ namespace HairSalon.Repositories.Migrations
                     Type = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     Price = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    TimeService = table.Column<int>(type: "int", nullable: false),
                     ShopId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -206,6 +207,8 @@ namespace HairSalon.Repositories.Migrations
                     OtpExpiration = table.Column<DateTime>(type: "datetime2", nullable: true),
                     OtpCodeResetPassword = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     OtpExpirationResetPassword = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RefreshTokenExpiryTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -271,6 +274,7 @@ namespace HairSalon.Repositories.Migrations
                     StylistId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     StatusForAppointment = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     PointsEarned = table.Column<int>(type: "int", nullable: false),
+                    TotalTime = table.Column<int>(type: "int", nullable: false),
                     AppointmentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -318,6 +322,32 @@ namespace HairSalon.Repositories.Migrations
                         name: "FK_SalaryPayments_ApplicationUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "ApplicationUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Feedbacks",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Rate = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AppointmentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    LastUpdatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    DeletedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Feedbacks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Feedbacks_Appointments_AppointmentId",
+                        column: x => x.AppointmentId,
+                        principalTable: "Appointments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -388,47 +418,47 @@ namespace HairSalon.Repositories.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "CreatedBy", "CreatedTime", "DeletedBy", "DeletedTime", "LastUpdatedBy", "LastUpdatedTime", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { new Guid("2952161c-ce04-43b7-afc4-cee6ddb1a87d"), null, "System", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8627), new TimeSpan(0, 0, 0, 0, 0)), null, null, null, new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8628), new TimeSpan(0, 0, 0, 0, 0)), "Admin", "ADMIN" },
-                    { new Guid("3d26d219-6d84-4a68-b9ad-954f8078d94d"), null, "System", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8631), new TimeSpan(0, 0, 0, 0, 0)), null, null, null, new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8631), new TimeSpan(0, 0, 0, 0, 0)), "Manager", "MANAGER" },
-                    { new Guid("4a68df10-6812-4385-8d90-1d88746f7c2b"), null, "System", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8635), new TimeSpan(0, 0, 0, 0, 0)), null, null, null, new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8635), new TimeSpan(0, 0, 0, 0, 0)), "User", "USER" },
-                    { new Guid("6db6c39b-65dd-4965-ba1a-a214a25f53f8"), null, "System", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8633), new TimeSpan(0, 0, 0, 0, 0)), null, null, null, new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8633), new TimeSpan(0, 0, 0, 0, 0)), "Stylist", "STYLIST" }
+                    { new Guid("21ce3b3e-f4c3-4188-bcf8-12279e726b8d"), null, "System", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 416, DateTimeKind.Unspecified).AddTicks(5259), new TimeSpan(0, 0, 0, 0, 0)), null, null, null, new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 416, DateTimeKind.Unspecified).AddTicks(5259), new TimeSpan(0, 0, 0, 0, 0)), "User", "USER" },
+                    { new Guid("499a170f-2f5b-4f3f-87bf-b5f8e3aa99b8"), null, "System", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 416, DateTimeKind.Unspecified).AddTicks(5250), new TimeSpan(0, 0, 0, 0, 0)), null, null, null, new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 416, DateTimeKind.Unspecified).AddTicks(5251), new TimeSpan(0, 0, 0, 0, 0)), "Admin", "ADMIN" },
+                    { new Guid("61ceba1e-a131-4d27-a336-0e174ef213ab"), null, "System", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 416, DateTimeKind.Unspecified).AddTicks(5254), new TimeSpan(0, 0, 0, 0, 0)), null, null, null, new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 416, DateTimeKind.Unspecified).AddTicks(5254), new TimeSpan(0, 0, 0, 0, 0)), "Manager", "MANAGER" },
+                    { new Guid("830546e9-d7d2-4e78-bedd-b1bdebbd9591"), null, "System", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 416, DateTimeKind.Unspecified).AddTicks(5256), new TimeSpan(0, 0, 0, 0, 0)), null, null, null, new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 416, DateTimeKind.Unspecified).AddTicks(5257), new TimeSpan(0, 0, 0, 0, 0)), "Stylist", "STYLIST" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Shops",
                 columns: new[] { "Id", "Address", "CloseTime", "CreatedBy", "CreatedTime", "DeletedBy", "DeletedTime", "LastUpdatedBy", "LastUpdatedTime", "Name", "OpenTime", "ShopEmail", "ShopPhone", "Title" },
-                values: new object[] { "1d27686a-55a3-4252-a8a7-4b6f51b72b9b", "123 Main St, Cityville", new TimeSpan(0, 19, 0, 0, 0), "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8058), new TimeSpan(0, 0, 0, 0, 0)), null, null, "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8059), new TimeSpan(0, 0, 0, 0, 0)), "Salon A", new TimeSpan(0, 9, 0, 0, 0), "contact@salona.com", "123-456-7890", "Best Hair Salon in Town" });
+                values: new object[] { "f3fb6350-dacc-496c-98d6-8c1ee3ea2502", "123 Main St, Cityville", new TimeSpan(0, 19, 0, 0, 0), "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(9287), new TimeSpan(0, 0, 0, 0, 0)), null, null, "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(9288), new TimeSpan(0, 0, 0, 0, 0)), "Salon A", new TimeSpan(0, 9, 0, 0, 0), "contact@salona.com", "123-456-7890", "Best Hair Salon in Town" });
 
             migrationBuilder.InsertData(
                 table: "UserInfos",
                 columns: new[] { "Id", "Bank", "BankAccount", "BankAccountName", "CreatedBy", "CreatedTime", "DeletedBy", "DeletedTime", "Firstname", "LastUpdatedBy", "LastUpdatedTime", "Lastname", "Point" },
                 values: new object[,]
                 {
-                    { "2a69e5d0-713e-483a-8326-2974c10e3d92", "Bank D", "123456987", "Dan Tran", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8805), new TimeSpan(0, 0, 0, 0, 0)), null, null, "Dan", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8805), new TimeSpan(0, 0, 0, 0, 0)), "Tran", 0 },
-                    { "6747dacd-f36a-4dd2-ac40-f0df5b004bea", "Bank c", "123456798", "Dev Nguyen", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8802), new TimeSpan(0, 0, 0, 0, 0)), null, null, "Dev", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8802), new TimeSpan(0, 0, 0, 0, 0)), "Nguyen", 0 },
-                    { "987f7b3d-5240-47c2-bea0-68bca8cfeb79", "Bank B", "987654321", "Jane Smith", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8798), new TimeSpan(0, 0, 0, 0, 0)), null, null, "Jane", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8799), new TimeSpan(0, 0, 0, 0, 0)), "Smith", 150 },
-                    { "b5e57769-52e5-4dca-8628-04360ee00c45", "Bank A", "123456789", "John Doe", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8793), new TimeSpan(0, 0, 0, 0, 0)), null, null, "John", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 263, DateTimeKind.Unspecified).AddTicks(8794), new TimeSpan(0, 0, 0, 0, 0)), "Doe", 100 }
+                    { "10f76872-bb0c-405c-a275-900d04ece32b", "Bank c", "123456798", "Dev Nguyen", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 416, DateTimeKind.Unspecified).AddTicks(5507), new TimeSpan(0, 0, 0, 0, 0)), null, null, "Dev", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 416, DateTimeKind.Unspecified).AddTicks(5507), new TimeSpan(0, 0, 0, 0, 0)), "Nguyen", 0 },
+                    { "53023686-92d4-467d-b6c5-7c136c26f053", "Bank A", "123456789", "John Doe", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 416, DateTimeKind.Unspecified).AddTicks(5499), new TimeSpan(0, 0, 0, 0, 0)), null, null, "John", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 416, DateTimeKind.Unspecified).AddTicks(5499), new TimeSpan(0, 0, 0, 0, 0)), "Doe", 100 },
+                    { "827f28fe-8b3c-46a7-9ca2-3ee79d3fc781", "Bank D", "123456987", "Dan Tran", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 416, DateTimeKind.Unspecified).AddTicks(5511), new TimeSpan(0, 0, 0, 0, 0)), null, null, "Dan", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 416, DateTimeKind.Unspecified).AddTicks(5511), new TimeSpan(0, 0, 0, 0, 0)), "Tran", 0 },
+                    { "d04ecc75-f51a-4a1a-9eb0-c304f1060053", "Bank B", "987654321", "Jane Smith", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 416, DateTimeKind.Unspecified).AddTicks(5503), new TimeSpan(0, 0, 0, 0, 0)), null, null, "Jane", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 416, DateTimeKind.Unspecified).AddTicks(5503), new TimeSpan(0, 0, 0, 0, 0)), "Smith", 150 }
                 });
 
             migrationBuilder.InsertData(
                 table: "ApplicationUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedBy", "CreatedTime", "DeletedBy", "DeletedTime", "Email", "EmailConfirmed", "LastUpdatedBy", "LastUpdatedTime", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "OtpCode", "OtpCodeResetPassword", "OtpExpiration", "OtpExpirationResetPassword", "Password", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserInfoId", "UserName" },
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedBy", "CreatedTime", "DeletedBy", "DeletedTime", "Email", "EmailConfirmed", "LastUpdatedBy", "LastUpdatedTime", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "OtpCode", "OtpCodeResetPassword", "OtpExpiration", "OtpExpirationResetPassword", "Password", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "RefreshTokenExpiryTime", "SecurityStamp", "TwoFactorEnabled", "UserInfoId", "UserName" },
                 values: new object[,]
                 {
-                    { new Guid("393d525b-d90a-4e24-8682-9f3a0ae5b30a"), 0, "9b1307a7-a445-4390-a37f-8ce83ab480aa", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7825), new TimeSpan(0, 0, 0, 0, 0)), null, null, "user@example.com", true, "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7826), new TimeSpan(0, 0, 0, 0, 0)), false, null, "USER@EXAMPLE.COM", "USER@EXAMPLE.COM", null, null, null, null, "", "AQAAAAIAAYagAAAAEHUOhsSwdI0w/BLxXhiGUuUN1ArxXL+/Nip1QaNWPJfG2A7M0gTPbn/+HTPq5VIn7Q==", null, false, null, false, "987f7b3d-5240-47c2-bea0-68bca8cfeb79", "user" },
-                    { new Guid("5925a17b-b9e5-4e60-b4c8-27b606a03811"), 0, "30e93df1-647c-4018-a1bf-0a82f6f8192e", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7831), new TimeSpan(0, 0, 0, 0, 0)), null, null, "manager@example.com", true, "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7831), new TimeSpan(0, 0, 0, 0, 0)), false, null, "MANAGER@EXAMPLE.COM", "MANAGER@EXAMPLE.COM", null, null, null, null, "", "AQAAAAIAAYagAAAAEHJr7haC0OFNgLBE7Ni+1XYwihRYhxRVxW9ry9nY27ImYH3okP95q5nxe/pv1ZwtKw==", null, false, null, false, "6747dacd-f36a-4dd2-ac40-f0df5b004bea", "manager" },
-                    { new Guid("8c5439fd-af20-44e5-ba2b-0c14d4c5100d"), 0, "0370ae27-e8cd-45fb-9cc2-3642a67f221d", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7816), new TimeSpan(0, 0, 0, 0, 0)), null, null, "admin@example.com", true, "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7817), new TimeSpan(0, 0, 0, 0, 0)), false, null, "ADMIN@EXAMPLE.COM", "ADMIN@EXAMPLE.COM", null, null, null, null, "", "AQAAAAIAAYagAAAAEDXOVmKvoYYVdpNTU8k45LGc16BRh/GcpbOHaz6ctPiD4k+5uSJiVFlexpvBY4eUZw==", null, false, null, false, "b5e57769-52e5-4dca-8628-04360ee00c45", "admin" },
-                    { new Guid("da2d861a-18b6-4af4-b6ce-cab83599b318"), 0, "97bde579-1d7b-4265-b65f-406c447c51d7", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7835), new TimeSpan(0, 0, 0, 0, 0)), null, null, "stylist@example.com", true, "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7836), new TimeSpan(0, 0, 0, 0, 0)), false, null, "STYLIST@EXAMPLE.COM", "STYLIST@EXAMPLE.COM", null, null, null, null, "", "AQAAAAIAAYagAAAAEFO8MtnBo5kRcBxuLss8VC5vH9mbzcRqmp2smc2c/eEvdGCSUR44IFn2PhkBySsyzg==", null, false, null, false, "2a69e5d0-713e-483a-8326-2974c10e3d92", "stylist" }
+                    { new Guid("2d07f324-1537-4bc9-ad02-eb3f0ea878ef"), 0, "e5514e2a-1138-4ef6-a7fc-556dd366473f", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(8973), new TimeSpan(0, 0, 0, 0, 0)), null, null, "admin@example.com", true, "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(8973), new TimeSpan(0, 0, 0, 0, 0)), false, null, "ADMIN@EXAMPLE.COM", "ADMIN@EXAMPLE.COM", null, null, null, null, "", "AQAAAAIAAYagAAAAEJaSjsKTX7Hu7n/1Qe0HIt84q74KDzcA2bC3aukb++PHQYlFhxrIEZkVBrB+n7idtA==", null, false, null, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), null, false, "53023686-92d4-467d-b6c5-7c136c26f053", "admin" },
+                    { new Guid("acc49af7-7070-4ba4-a5f8-501ac603871e"), 0, "240229af-7896-43f4-89e6-6be819b42141", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(8999), new TimeSpan(0, 0, 0, 0, 0)), null, null, "stylist@example.com", true, "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(8999), new TimeSpan(0, 0, 0, 0, 0)), false, null, "STYLIST@EXAMPLE.COM", "STYLIST@EXAMPLE.COM", null, null, null, null, "", "AQAAAAIAAYagAAAAEAJBHq3nK73HHoj6dSg+T8/q5Px+uZqAJG/p6snACEMuprrgHfDe/Ak4ePVc0nfXdg==", null, false, null, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), null, false, "827f28fe-8b3c-46a7-9ca2-3ee79d3fc781", "stylist" },
+                    { new Guid("d241406b-2510-4f4b-8716-2ea2178a5443"), 0, "1da2e179-6c60-44a0-8fe5-299b91e81c47", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(8994), new TimeSpan(0, 0, 0, 0, 0)), null, null, "manager@example.com", true, "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(8994), new TimeSpan(0, 0, 0, 0, 0)), false, null, "MANAGER@EXAMPLE.COM", "MANAGER@EXAMPLE.COM", null, null, null, null, "", "AQAAAAIAAYagAAAAECtgCpsB9dq36VjmB2M0SUjh/xh6cVPI8PaXbiOS1tYhOKr/+qywya9XKWwenEH0kg==", null, false, null, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), null, false, "10f76872-bb0c-405c-a275-900d04ece32b", "manager" },
+                    { new Guid("ddab80d8-30a1-4700-aa84-59fd2e2b3e4a"), 0, "8dcb92e2-545d-4898-9326-9253082905a4", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(8982), new TimeSpan(0, 0, 0, 0, 0)), null, null, "user@example.com", true, "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(8983), new TimeSpan(0, 0, 0, 0, 0)), false, null, "USER@EXAMPLE.COM", "USER@EXAMPLE.COM", null, null, null, null, "", "AQAAAAIAAYagAAAAEBM0Mq4B7dG8VJ+BGsVJZKZ/KDPZOSU4P13hw3CQIUDdbi0fc9j91WHzX/PeSpCzkg==", null, false, null, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), null, false, "d04ecc75-f51a-4a1a-9eb0-c304f1060053", "user" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Services",
-                columns: new[] { "Id", "CreatedBy", "CreatedTime", "DeletedBy", "DeletedTime", "Description", "LastUpdatedBy", "LastUpdatedTime", "Name", "Price", "ShopId", "Type" },
+                columns: new[] { "Id", "CreatedBy", "CreatedTime", "DeletedBy", "DeletedTime", "Description", "LastUpdatedBy", "LastUpdatedTime", "Name", "Price", "ShopId", "TimeService", "Type" },
                 values: new object[,]
                 {
-                    { "5fd85e69-9bbc-42b6-8867-d1c6b6801179", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8149), new TimeSpan(0, 0, 0, 0, 0)), null, null, "A premium hair coloring service.", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8149), new TimeSpan(0, 0, 0, 0, 0)), "Premium Hair Coloring", 100000.00m, "1d27686a-55a3-4252-a8a7-4b6f51b72b9b", "Hair" },
-                    { "606c590b-b7dc-4cee-9efb-fbc47b32a232", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8144), new TimeSpan(0, 0, 0, 0, 0)), null, null, "A complete hair coloring service.", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8145), new TimeSpan(0, 0, 0, 0, 0)), "Hair Coloring", 50000.00m, "1d27686a-55a3-4252-a8a7-4b6f51b72b9b", "Hair" },
-                    { "7e9ff88b-8c89-433a-b63a-cf29bee0fda7", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8134), new TimeSpan(0, 0, 0, 0, 0)), null, null, "A stylish haircut to refresh your look.", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8140), new TimeSpan(0, 0, 0, 0, 0)), "Hair Cut", 25000.00m, "1d27686a-55a3-4252-a8a7-4b6f51b72b9b", "Hair" }
+                    { "107dc7fd-dde3-4212-8fec-491239149fe5", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(9352), new TimeSpan(0, 0, 0, 0, 0)), null, null, "A complete hair coloring service.", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(9352), new TimeSpan(0, 0, 0, 0, 0)), "Hair Coloring", 50000.00m, "f3fb6350-dacc-496c-98d6-8c1ee3ea2502", 30, "Hair" },
+                    { "10b26d17-b8ca-419f-8c98-39ec3d7e45c0", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(9356), new TimeSpan(0, 0, 0, 0, 0)), null, null, "A premium hair coloring service.", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(9356), new TimeSpan(0, 0, 0, 0, 0)), "Premium Hair Coloring", 100000.00m, "f3fb6350-dacc-496c-98d6-8c1ee3ea2502", 60, "Hair" },
+                    { "fb425e4a-b6c7-44b6-86c5-29dfbb090f6b", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(9344), new TimeSpan(0, 0, 0, 0, 0)), null, null, "A stylish haircut to refresh your look.", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(9348), new TimeSpan(0, 0, 0, 0, 0)), "Hair Cut", 25000.00m, "f3fb6350-dacc-496c-98d6-8c1ee3ea2502", 30, "Hair" }
                 });
 
             migrationBuilder.InsertData(
@@ -436,31 +466,31 @@ namespace HairSalon.Repositories.Migrations
                 columns: new[] { "RoleId", "UserId", "CreatedBy", "CreatedTime", "DeletedBy", "DeletedTime", "LastUpdatedBy", "LastUpdatedTime" },
                 values: new object[,]
                 {
-                    { new Guid("4a68df10-6812-4385-8d90-1d88746f7c2b"), new Guid("393d525b-d90a-4e24-8682-9f3a0ae5b30a"), "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7985), new TimeSpan(0, 0, 0, 0, 0)), null, null, "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7986), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { new Guid("3d26d219-6d84-4a68-b9ad-954f8078d94d"), new Guid("5925a17b-b9e5-4e60-b4c8-27b606a03811"), "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7988), new TimeSpan(0, 0, 0, 0, 0)), null, null, "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7989), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { new Guid("2952161c-ce04-43b7-afc4-cee6ddb1a87d"), new Guid("8c5439fd-af20-44e5-ba2b-0c14d4c5100d"), "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7982), new TimeSpan(0, 0, 0, 0, 0)), null, null, "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7983), new TimeSpan(0, 0, 0, 0, 0)) },
-                    { new Guid("6db6c39b-65dd-4965-ba1a-a214a25f53f8"), new Guid("da2d861a-18b6-4af4-b6ce-cab83599b318"), "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7991), new TimeSpan(0, 0, 0, 0, 0)), null, null, "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(7991), new TimeSpan(0, 0, 0, 0, 0)) }
+                    { new Guid("499a170f-2f5b-4f3f-87bf-b5f8e3aa99b8"), new Guid("2d07f324-1537-4bc9-ad02-eb3f0ea878ef"), "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(9181), new TimeSpan(0, 0, 0, 0, 0)), null, null, "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(9182), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { new Guid("830546e9-d7d2-4e78-bedd-b1bdebbd9591"), new Guid("acc49af7-7070-4ba4-a5f8-501ac603871e"), "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(9190), new TimeSpan(0, 0, 0, 0, 0)), null, null, "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(9192), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { new Guid("61ceba1e-a131-4d27-a336-0e174ef213ab"), new Guid("d241406b-2510-4f4b-8716-2ea2178a5443"), "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(9188), new TimeSpan(0, 0, 0, 0, 0)), null, null, "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(9188), new TimeSpan(0, 0, 0, 0, 0)) },
+                    { new Guid("21ce3b3e-f4c3-4188-bcf8-12279e726b8d"), new Guid("ddab80d8-30a1-4700-aa84-59fd2e2b3e4a"), "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(9185), new TimeSpan(0, 0, 0, 0, 0)), null, null, "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(9185), new TimeSpan(0, 0, 0, 0, 0)) }
                 });
 
             migrationBuilder.InsertData(
                 table: "Appointments",
-                columns: new[] { "Id", "AppointmentDate", "CreatedBy", "CreatedTime", "DeletedBy", "DeletedTime", "LastUpdatedBy", "LastUpdatedTime", "PointsEarned", "StatusForAppointment", "StylistId", "UserId" },
-                values: new object[] { "525cd8c2-bcd0-4077-ad70-0e45b73e9076", new DateTime(2024, 10, 12, 2, 38, 4, 490, DateTimeKind.Utc).AddTicks(8270), "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8286), new TimeSpan(0, 0, 0, 0, 0)), null, null, "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8287), new TimeSpan(0, 0, 0, 0, 0)), 10, "Scheduled", new Guid("393d525b-d90a-4e24-8682-9f3a0ae5b30a"), new Guid("8c5439fd-af20-44e5-ba2b-0c14d4c5100d") });
+                columns: new[] { "Id", "AppointmentDate", "CreatedBy", "CreatedTime", "DeletedBy", "DeletedTime", "LastUpdatedBy", "LastUpdatedTime", "PointsEarned", "StatusForAppointment", "StylistId", "TotalTime", "UserId" },
+                values: new object[] { "a030b181-6b76-45f3-b906-dfc015f79f84", new DateTime(2024, 10, 15, 7, 35, 52, 684, DateTimeKind.Utc).AddTicks(9409), "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(9428), new TimeSpan(0, 0, 0, 0, 0)), null, null, "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(9428), new TimeSpan(0, 0, 0, 0, 0)), 10, "Scheduled", new Guid("ddab80d8-30a1-4700-aa84-59fd2e2b3e4a"), 0, new Guid("2d07f324-1537-4bc9-ad02-eb3f0ea878ef") });
 
             migrationBuilder.InsertData(
                 table: "SalaryPayments",
                 columns: new[] { "Id", "BaseSalary", "CreatedBy", "CreatedTime", "DeletedBy", "DeletedTime", "LastUpdatedBy", "LastUpdatedTime", "PaymentDate", "UserId" },
-                values: new object[] { "bfbd151e-a1c2-4ff7-9d26-c5f2c3d5d3e2", 2000.00m, "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8446), new TimeSpan(0, 0, 0, 0, 0)), null, null, "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8446), new TimeSpan(0, 0, 0, 0, 0)), new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Utc).AddTicks(8445), new Guid("8c5439fd-af20-44e5-ba2b-0c14d4c5100d") });
+                values: new object[] { "a089b07f-b267-4a67-a6e9-c83c8a5a1113", 2000.00m, "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(9673), new TimeSpan(0, 0, 0, 0, 0)), null, null, "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(9674), new TimeSpan(0, 0, 0, 0, 0)), new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Utc).AddTicks(9673), new Guid("2d07f324-1537-4bc9-ad02-eb3f0ea878ef") });
 
             migrationBuilder.InsertData(
                 table: "Payments",
                 columns: new[] { "Id", "AppointmentId", "CreatedBy", "CreatedTime", "DeletedBy", "DeletedTime", "LastUpdatedBy", "LastUpdatedTime", "PaymentMethod", "PaymentTime", "TotalAmount" },
-                values: new object[] { "aeaca7d8-bdd0-40b1-993b-da7ab5fea28e", "525cd8c2-bcd0-4077-ad70-0e45b73e9076", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8348), new TimeSpan(0, 0, 0, 0, 0)), null, null, "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8349), new TimeSpan(0, 0, 0, 0, 0)), "Credit Card", new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Utc).AddTicks(8347), 100.00m });
+                values: new object[] { "f53ddd06-f9e4-4024-94bb-531b5c549902", "a030b181-6b76-45f3-b906-dfc015f79f84", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(9493), new TimeSpan(0, 0, 0, 0, 0)), null, null, "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(9494), new TimeSpan(0, 0, 0, 0, 0)), "Credit Card", new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Utc).AddTicks(9492), 100.00m });
 
             migrationBuilder.InsertData(
                 table: "ServiceAppointments",
                 columns: new[] { "Id", "AppointmentId", "Comment", "CreatedBy", "CreatedTime", "DeletedBy", "DeletedTime", "Description", "LastUpdatedBy", "LastUpdatedTime", "Rate", "ServiceId" },
-                values: new object[] { "039db19d-11d6-4473-b32b-3c422e676c1e", "525cd8c2-bcd0-4077-ad70-0e45b73e9076", "Excellent service!", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8402), new TimeSpan(0, 0, 0, 0, 0)), null, null, "Basic haircut", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 11, 2, 38, 4, 490, DateTimeKind.Unspecified).AddTicks(8406), new TimeSpan(0, 0, 0, 0, 0)), 5, "7e9ff88b-8c89-433a-b63a-cf29bee0fda7" });
+                values: new object[] { "344babed-d5c0-41e5-a0c3-435e72eb01f8", "a030b181-6b76-45f3-b906-dfc015f79f84", "Excellent service!", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(9554), new TimeSpan(0, 0, 0, 0, 0)), null, null, "Basic haircut", "SeedData", new DateTimeOffset(new DateTime(2024, 10, 14, 7, 35, 52, 684, DateTimeKind.Unspecified).AddTicks(9559), new TimeSpan(0, 0, 0, 0, 0)), 5, "fb425e4a-b6c7-44b6-86c5-29dfbb090f6b" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ApplicationUserRoles_RoleId",
@@ -481,6 +511,11 @@ namespace HairSalon.Repositories.Migrations
                 name: "IX_Appointments_UserId",
                 table: "Appointments",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Feedbacks_AppointmentId",
+                table: "Feedbacks",
+                column: "AppointmentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payments_AppointmentId",
@@ -525,6 +560,9 @@ namespace HairSalon.Repositories.Migrations
 
             migrationBuilder.DropTable(
                 name: "ApplicationUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Feedbacks");
 
             migrationBuilder.DropTable(
                 name: "Payments");
