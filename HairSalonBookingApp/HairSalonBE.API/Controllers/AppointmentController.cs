@@ -48,5 +48,12 @@ namespace HairSalonBE.API.Controllers
             var result = await _appointmentService.DeleteAppointmentAsync(id);
             return Ok(result);
         }
+
+        [HttpPut("mark/{id}")]
+        public async Task<IActionResult> MarkAppointmentCompleted(string id)
+        {
+            var result = await _appointmentService.MarkCompleted(id);
+            return Ok(result);
+        }
     }
 }
