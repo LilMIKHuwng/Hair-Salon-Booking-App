@@ -1,6 +1,8 @@
 ﻿using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
+using HairSalon.Core.Base;
 using HairSalon.ModelViews.ApplicationUserModelViews;
+using HairSalonBE.API.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +11,6 @@ namespace HairSalonBE.API.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "User")]
     public class ApplicationUserController : ControllerBase
     {
         private readonly IAppUserService _appUserService;
@@ -79,6 +80,23 @@ namespace HairSalonBE.API.Controllers
         public async Task<ActionResult<string>> ResetPasswordAdminAsync([FromBody] ResetPasswordAdminModelView model)
         {
             string result = await _appUserService.ResetPasswordAdminAsync(model);
+            return Ok(result);
+        }
+
+        [HttpGet("my-information")]
+        [Authorize]
+        public async Task<ActionResult<GetInforAppUserModelView>> GetMyInforUsersAsync()
+        {
+            // Lấy username từ JWT token
+            var username = User.GetUsername();
+
+            // Gọi service để lấy thông tin người dùng
+            var result = await _appUserService.GetMyInforUsersAsync(username);
+
+            if (result == null)
+            {
+                return NotFound("User not found");
+            }
             return Ok(result);
         }
     }

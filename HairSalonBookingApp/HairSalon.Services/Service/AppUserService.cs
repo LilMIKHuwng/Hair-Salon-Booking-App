@@ -11,6 +11,8 @@ using HairSalon.Repositories.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing;
+using System.Security.Principal;
 using System.Text.RegularExpressions;
 
 namespace HairSalon.Services.Service
@@ -322,9 +324,31 @@ namespace HairSalon.Services.Service
             // Manually map fields to retain existing data if the update fields are null
             if (!string.IsNullOrWhiteSpace(model.Email) && model.Email != existingUser.Email)
             {
+                var emailExists = await _unitOfWork.GetRepository<ApplicationUsers>().Entities
+                    .AnyAsync(u => u.Email == model.Email && !u.DeletedTime.HasValue);
+
+                if (emailExists)
+                {
+                    return "The new email is already in use by another account.";
+                }
+
                 existingUser.Email = model.Email;
+                existingUser.EmailConfirmed = false;
                 isUpdated = true;
+
+                // Generate and send OTP to the new email
+                var otpCode = GenerateOtpCode();
+                existingUser.OtpCode = otpCode;
+                existingUser.OtpExpiration = DateTime.UtcNow.AddMinutes(10); // Set expiration for OTP
+
+                await _unitOfWork.SaveAsync();
+
+                // Send OTP via email
+                await _emailService.SendEmailConfirmationCodeAsync(existingUser.Email, otpCode);
+
+                return "Email updated successfully. Please check your new email for a confirmation code.";
             }
+
             if (!string.IsNullOrWhiteSpace(model.PhoneNumber) && model.PhoneNumber != existingUser.PhoneNumber)
             {
                 existingUser.PhoneNumber = model.PhoneNumber;
@@ -536,6 +560,31 @@ namespace HairSalon.Services.Service
             return "Password reset successfully."; // Return a success message
         }
 
+        public async Task<GetInforAppUserModelView> GetMyInforUsersAsync(string username)
+        {
+            var appUser = await _userManager.Users
+        .Include(u => u.UserInfo) // Bao gồm bảng liên quan
+        .FirstOrDefaultAsync(u => u.UserName == username);
 
+            if (appUser == null)
+            {
+                return null; 
+            }
+
+            // Tạo DTO để trả về thông tin người dùng và thông tin từ UserInfo
+            var userinfor = new GetInforAppUserModelView
+            {
+                Id = appUser.Id,
+                UserName = appUser.UserName,
+                Email = appUser.Email,
+                PhoneNumber = appUser.PhoneNumber,
+                FirstName = appUser.UserInfo?.Firstname, 
+                LastName = appUser.UserInfo?.Lastname,   
+                BankAccount = appUser.UserInfo?.BankAccount,
+                Point = (int)(appUser.UserInfo?.Point),
+                Roles = await _userManager.GetRolesAsync(appUser)
+            };
+            return userinfor;
+        }
     }
 }
