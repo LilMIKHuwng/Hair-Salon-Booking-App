@@ -19,5 +19,7 @@ namespace HairSalon.ModelViews.AppointmentModelViews
 
         [Required(ErrorMessage = "AppointmentDate is required.")]
         public DateTime AppointmentDate { get; set; }
+        [Required(ErrorMessage = "ServiceIds is required.")]
+        public List<string> ServiceIds { get; set; }
     }
 }
