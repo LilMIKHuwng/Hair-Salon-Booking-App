@@ -60,10 +60,10 @@ namespace HairSalonBE.API
                 .AddScoped<IPaymentService, PaymentService>()
                 .AddScoped<IAppUserRoleService, AppUserRoleService>()
                 .AddScoped<IAppUserService, AppUserService>()
-                .AddScoped<IServiceAppointment, ServiceAppointmentService>()
                 .AddScoped<IEmailService, EmailService>()
                 .AddScoped<TokenService>()
-                .AddScoped<IPasswordHasher<ApplicationUsers>, PasswordHasher<ApplicationUsers>>();
+                .AddScoped<IPasswordHasher<ApplicationUsers>, PasswordHasher<ApplicationUsers>>()
+                .AddScoped<IFeedbackService, FeedbackService>();
 
             ;
 
