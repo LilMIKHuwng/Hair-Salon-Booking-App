@@ -7,7 +7,7 @@ using System.Security.Claims;
 
 namespace HairSalonBE.API.Controllers
 {
-	[Authorize(Roles = "User")]
+	[Authorize(Roles = "User,Admin")]
 	[Route("api/[controller]")]
     [ApiController]
 
