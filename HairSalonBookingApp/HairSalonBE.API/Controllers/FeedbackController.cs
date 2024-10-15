@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HairSalonBE.API.Controllers
 {
-    [Authorize(Roles = "User")]
+    [Authorize(Roles = "User,Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class FeedbackController : ControllerBase
@@ -52,5 +52,17 @@ namespace HairSalonBE.API.Controllers
             string result = await _feedbackService.DeleteFeedbackpAsync(id);
             return Ok(new { Message = result });
         }
-    }
+
+		[HttpGet("service-feedbacks")]
+		public async Task<ActionResult<BasePaginatedList<FeedBackModelView>>> GetAllFeedbackOfService(
+		                                                                                int pageNumber = 1,
+		                                                                                int pageSize = 5,
+		                                                                                [FromQuery] string? serviceId = null,
+		                                                                                [FromQuery] string? comboId = null)
+		{
+			// Gọi đến service để lấy dữ liệu feedback của service theo `serviceId` và `comboId`
+			var result = await _feedbackService.GetFeedbackOfServiceAsync(pageNumber, pageSize, serviceId, comboId);
+			return Ok(result);
+		}
+	}
 }

@@ -86,6 +86,7 @@ namespace HairSalon.Repositories.Mapper
             CreateMap<Feedback, UpdatedFeedbackModelView>();
             CreateMap<CreateFeedbackModelView, Feedback>();
             CreateMap<UpdatedFeedbackModelView, Feedback>();
-        }
+			CreateMap<Feedback, ServiceFeedbackModelView>();
+		}
     }
 }
