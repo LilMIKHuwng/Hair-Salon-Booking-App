@@ -2,6 +2,7 @@
 using HairSalon.Core;
 using HairSalon.ModelViews.PaymentModelViews;
 using HairSalon.ModelViews.RoleModelViews;
+using HairSalon.ModelViews.VnPayModelViews;
 using HairSalon.Services.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +15,12 @@ namespace HairSalonBE.API.Controllers
     public class PaymentController : ControllerBase
     {
         private readonly IPaymentService _paymentService;
+        private readonly IVnPayService _vpnPayService;
 
-        public PaymentController(IPaymentService paymentService)
+        public PaymentController(IPaymentService paymentService, IVnPayService vpnPayService)
         {
             _paymentService = paymentService;
+            _vpnPayService = vpnPayService;
         }
 
         [HttpGet("all")]
@@ -33,11 +36,25 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<string>> CreatePayment([FromQuery] CreatePaymentModelView model)
+        public async Task<ActionResult<string>> CreatePayment([FromQuery] VnPayResponseModelView model)
         {
-            string result = await _paymentService.AddPaymentAsync(model);
-            return Ok(new { Message = result });
+            if(model.Method == "VNPAY")
+            {
+                string result = await _vpnPayService.ExcutePayment(model);
+                return Ok(new { Message = result });
+
+            }
+            return BadRequest();
         }
+
+        [HttpPost("create-vnpay")]
+        public async Task<ActionResult> CreateVnPay(VnPayRequestModelView model)
+        {
+            var paymentUrl = _vpnPayService.CreatePaymentUrl(model, HttpContext);
+            return Ok(new { Url = paymentUrl });
+        }
+
+
 
         [HttpPut("update/{id}")]
         public async Task<ActionResult<string>> UpdatePayment(string id, [FromQuery] UpdatedPaymentModelView model)

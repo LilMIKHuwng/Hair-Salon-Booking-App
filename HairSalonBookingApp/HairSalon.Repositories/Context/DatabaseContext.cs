@@ -392,20 +392,20 @@ namespace HairSalon.Repositories.Context
             // 8. Payment
             var paymentId = Guid.NewGuid().ToString();
 
-            modelBuilder.Entity<Payment>().HasData(
-                new Payment
-                {
-                    Id = paymentId,
-                    AppointmentId = appointmentId,
-                    TotalAmount = 100.00m,
-                    PaymentTime = DateTime.UtcNow,
-                    PaymentMethod = "Credit Card",
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                }
-            );
+            //modelBuilder.Entity<Payment>().HasData(
+            //    new Payment
+            //    {
+            //        Id = paymentId,
+            //        AppointmentId = appointmentId,
+            //        TotalAmount = 100.00m,
+            //        PaymentTime = DateTime.UtcNow,
+            //        PaymentMethod = "Credit Card",
+            //        CreatedBy = "SeedData",
+            //        LastUpdatedBy = "SeedData",
+            //        CreatedTime = DateTimeOffset.UtcNow,
+            //        LastUpdatedTime = DateTimeOffset.UtcNow
+            //    }
+            //);
 
             // 9. ServiceAppointment
             var serviceAppointmentId = Guid.NewGuid().ToString();
