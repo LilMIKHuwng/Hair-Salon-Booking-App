@@ -23,7 +23,6 @@ namespace HairSalon.Contract.Repositories.Entity
 		public int PointsEarned { get; set; } = 0;
 
 		public int TotalTime {  get; set; }
-		public decimal TotalCost {  get; set; }
 
 		[Required]
 		public DateTime AppointmentDate { get; set; }
