@@ -24,7 +24,7 @@ namespace HairSalon.Services.Service
 		}
 
 		// Get all SalaryPayments with optional filtering by ID and payment date
-		public async Task<BasePaginatedList<SalaryPaymentModelView>> GetAllSalaryPaymentAsync(string? id, DateTime? paymentDate, int pageNumber, int pageSize)
+		public async Task<BasePaginatedList<SalaryPaymentModelView>> GetAllSalaryPaymentAsync(string? id, Guid? stylistId, DateTime? paymentDate, int pageNumber, int pageSize)
 		{
 			// Get all SalaryPayments that are not deleted
 			IQueryable<SalaryPayment> salaryPaymentQuery = _unitOfWork.GetRepository<SalaryPayment>().Entities
@@ -35,7 +35,12 @@ namespace HairSalon.Services.Service
 			{
 				salaryPaymentQuery = salaryPaymentQuery.Where(p => p.Id == id);
 			}
-			if (paymentDate.HasValue)
+
+            if (stylistId.HasValue)
+            {
+                salaryPaymentQuery = salaryPaymentQuery.Where(p => p.UserId == stylistId.Value);
+            }
+            if (paymentDate.HasValue)
 			{
 				salaryPaymentQuery = salaryPaymentQuery.Where(p => p.PaymentDate.Date == paymentDate.Value.Date);
 			}
