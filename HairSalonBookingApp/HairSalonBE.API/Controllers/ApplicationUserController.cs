@@ -50,7 +50,7 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpPut("update/{userId}")]
-        [Authorize("Admin")]
+        [Authorize]
         public async Task<IActionResult> UpdateApplicationUser(string userId, [FromQuery] UpdateAppUserModelView model)
         {
             string result = await _appUserService.UpdateAppUserAsync(userId, model);

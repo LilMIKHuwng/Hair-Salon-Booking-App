@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HairSalonBE.API.Controllers
 {
-	[Authorize(Roles = "User")]
+	[Authorize(Roles = "User,Admin,Manager")]
 	[Route("api/[controller]")]
     [ApiController]
     public class PaymentController : ControllerBase

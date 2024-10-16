@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HairSalonBE.API.Controllers
 {
-	[Authorize(Roles = "Admin,Staff")]
+	[Authorize(Roles = "Admin,Manager")]
 	[Route("api/[controller]")]
     [ApiController]
     public class ServiceController : ControllerBase
