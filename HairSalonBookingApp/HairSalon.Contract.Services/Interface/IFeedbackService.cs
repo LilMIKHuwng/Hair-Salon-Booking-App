@@ -14,7 +14,9 @@ namespace HairSalon.Contract.Services.Interface
     {
         Task<BasePaginatedList<FeedBackModelView>> GetAllFeedbackAsync(int pageNumber, int pageSize, string id, string AppointmentId);
 
-        Task<string> AddFeedbackAsync(CreateFeedbackModelView model);
+		Task<BasePaginatedList<ServiceFeedbackModelView>> GetFeedbackOfServiceAsync(int pageNumber, int pageSize, string serviceId, string comboId);
+
+		Task<string> AddFeedbackAsync(CreateFeedbackModelView model);
 
         Task<string> UpdateFeedbackAsync(string id, UpdatedFeedbackModelView model);
 
