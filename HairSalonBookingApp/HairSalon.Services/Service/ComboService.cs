@@ -92,8 +92,11 @@ namespace HairSalon.Services.Service
                 await _unitOfWork.GetRepository<ComboServices>().InsertAsync(comboService);
             }
 
+            // Apply a 10% discount to the total price
+            decimal discountedPrice = totalPrice * 0.9m;
+
             // Set the total price and time of the combo
-            newCombo.TotalPrice = totalPrice;
+            newCombo.TotalPrice = discountedPrice;
             newCombo.TimeCombo = totalTime;
 
             // Save the combo to the database
@@ -111,7 +114,7 @@ namespace HairSalon.Services.Service
             var existingCombo = await _unitOfWork.GetRepository<Combo>().GetByIdAsync(id);
             if (existingCombo == null)
             {
-                throw new Exception("Combo not found.");
+                return("Combo not found.");
             }
 
             if (!string.IsNullOrWhiteSpace(model.Name))
@@ -207,9 +210,11 @@ namespace HairSalon.Services.Service
                     totalTime += service.TimeService;
                 }
             }
+            // Apply a 10% discount to the total price
+            decimal discountedPrice = totalPrice * 0.9m;
 
             // Update the combo details
-            existingCombo.TotalPrice = totalPrice;
+            existingCombo.TotalPrice = discountedPrice;  // Discounted price
             existingCombo.TimeCombo = totalTime;
             existingCombo.LastUpdatedTime = DateTimeOffset.UtcNow;
 
