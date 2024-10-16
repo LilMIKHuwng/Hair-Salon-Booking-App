@@ -31,6 +31,7 @@ namespace HairSalon.Repositories.Context
         public virtual DbSet<ServiceAppointment> ServiceAppointments { get; set; }
         public virtual DbSet<Payment> Payments { get; set; }
         public virtual DbSet<Feedback> Feedbacks{ get; set; }
+        public virtual DbSet<Combo> Combos { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
