@@ -15,10 +15,9 @@ namespace HairSalon.Contract.Repositories.Entity
 		public virtual ApplicationUsers User { get; set; }
 
 		public Guid? StylistId { get; set; }
+		public virtual ApplicationUsers Stylist { get; set; }
 
-		public virtual ApplicationUsers Stylist { get; set; } 
-
-		[MaxLength(50)]
+        [MaxLength(50)]
 		public string? StatusForAppointment { get; set; }
 
 		public int PointsEarned { get; set; } = 0;
@@ -27,7 +26,7 @@ namespace HairSalon.Contract.Repositories.Entity
 
 		[Required]
 		public DateTime AppointmentDate { get; set; }
-
+		
 		public virtual ICollection<ServiceAppointment>? ServiceAppointments { get; set; }
 		public virtual ICollection<ComboAppointment>? ComboAppointments { get; set; }
 

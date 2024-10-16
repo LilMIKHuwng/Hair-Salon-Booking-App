@@ -52,11 +52,22 @@ namespace HairSalon.Services.Service
 
             // Get the user by userId
             var user = await _unitOfWork.GetRepository<ApplicationUsers>().GetByIdAsync(Guid.Parse(model.UserId));
+            if (user == null)
+            {
+                return "User is not found.";
+            }
 
             // Check if user has enough points
             if (model.PointsEarned > user.UserInfo.Point)
             {
                 return "Insufficient points. The user does not have enough points for this appointment.";
+            }
+
+            // Check if stylist exists
+            var stylist = await _unitOfWork.GetRepository<ApplicationUsers>().GetByIdAsync(Guid.Parse(model.StylistId));
+            if (stylist == null)
+            {
+                return "Stylist is not found.";
             }
 
             // check stylist don't have any appointment
@@ -71,7 +82,6 @@ namespace HairSalon.Services.Service
             {
                 return "Stylist is busy at that time";
             }
-
 
             // Map data model to entity
             Appointment newAppointment = _mapper.Map<Appointment>(model);
