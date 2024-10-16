@@ -49,7 +49,7 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpPut("mark/{id}")]
-        [Authorize("Admin, Staff")]
+        [Authorize("Admin, Manager")]
         public async Task<IActionResult> MarkAppointmentCompleted(string id)
         {
             var result = await _appointmentService.MarkCompleted(id);

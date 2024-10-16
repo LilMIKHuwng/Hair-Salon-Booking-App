@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HairSalonBE.API.Controllers
 {
-    [Authorize(Roles = "User,Admin")]
+    [Authorize(Roles = "User,Admin,Manager")]
     [Route("api/[controller]")]
     [ApiController]
     public class FeedbackController : ControllerBase

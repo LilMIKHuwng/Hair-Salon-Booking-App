@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HairSalonBE.API.Controllers
 {
-    [Authorize(Roles = "Admin,Staff")]
+    [Authorize(Roles = "Admin,Manager")]
     [Route("api/[controller]")]
     [ApiController]
     public class SalaryPaymentController : ControllerBase
