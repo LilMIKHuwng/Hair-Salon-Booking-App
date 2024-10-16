@@ -25,6 +25,10 @@ namespace HairSalon.Contract.Repositories.Entity
 		public int TotalTime {  get; set; }
 
 		[Required]
+		[Column(TypeName = "decimal(10, 2)")]
+		public decimal TotalAmount { get; set; } = 0;
+
+		[Required]
 		public DateTime AppointmentDate { get; set; }
 		
 		public virtual ICollection<ServiceAppointment>? ServiceAppointments { get; set; }
