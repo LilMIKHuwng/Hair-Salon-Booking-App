@@ -66,15 +66,6 @@ namespace HairSalon.Services.Service
         // Add a new payment
         public async Task<string> AddPaymentAsync(CreatePaymentModelView model)
         {
-            // Validate the payment model and method
-            if (model == null)
-            {
-                return "The payment model cannot be null.";
-            }
-            if (string.IsNullOrEmpty(model.PaymentMethod))
-            {
-                return "Payment method must be provided.";
-            }
 
             // Check if a payment already exists for the appointment
             var existingPayment = await _unitOfWork.GetRepository<Payment>().Entities
@@ -92,6 +83,12 @@ namespace HairSalon.Services.Service
             if (appointment == null)
             {
                 return "The appointment cannot be found or has been deleted.";
+            }
+
+            // Ensure appointment status is "Completed" before processing the payment
+            if (appointment.StatusForAppointment != "Completed")
+            {
+                return "The appointment is not completed yet. Payment can only be made for completed appointments.";
             }
 
             // Ensure appointment has either services or combo services
@@ -138,11 +135,6 @@ namespace HairSalon.Services.Service
                 return "User info not found.";
             }
 
-            // Deduct points used in appointment if available
-            if (appointment.PointsEarned > 0 && userInfo.Point < appointment.PointsEarned)
-            {
-                return "User does not have enough points to apply this discount.";
-            }
             userInfo.Point -= appointment.PointsEarned;
 
             // Calculate the final total amount after applying discount
@@ -159,7 +151,7 @@ namespace HairSalon.Services.Service
                 AppointmentId = model.AppointmentId,
                 TotalAmount = totalAmount,
                 PaymentMethod = model.PaymentMethod,
-                PaymentTime = DateTime.UtcNow,
+                PaymentTime = DateTime.UtcNow.AddHours(7),
                 CreatedBy = userIdString
             };
 
@@ -169,6 +161,7 @@ namespace HairSalon.Services.Service
 
             return "Payment added successfully.";
         }
+
 
         // Update an existing payment
         public async Task<string> UpdatePaymentAsync(string id, UpdatedPaymentModelView model)
