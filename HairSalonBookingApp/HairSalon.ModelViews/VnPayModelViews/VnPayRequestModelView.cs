@@ -10,8 +10,6 @@ namespace HairSalon.ModelViews.VnPayModelViews
     {
         public string AppoinmentId { get; set; }
         
-        public double Amount { get; set; }
-        
         
     }
 }
