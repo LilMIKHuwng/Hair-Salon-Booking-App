@@ -160,7 +160,7 @@ namespace HairSalon.Services.Service
 
 		// Update an existing payment
         // Add a new payment
-        public async Task<string> AddPaymentAsync(CreatePaymentModelView model)
+        /*public async Task<string> AddPaymentAsync(CreatePaymentModelView model)
         {
 
             // Check if a payment already exists for the appointment
@@ -256,7 +256,7 @@ namespace HairSalon.Services.Service
             await _unitOfWork.SaveAsync();
 
             return "Payment added successfully.";
-        }
+        }*/
 
 
         // Update an existing payment
