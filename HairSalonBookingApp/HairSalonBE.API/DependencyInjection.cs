@@ -63,10 +63,9 @@ namespace HairSalonBE.API
                 .AddScoped<IEmailService, EmailService>()
                 .AddScoped<TokenService>()
                 .AddScoped<IPasswordHasher<ApplicationUsers>, PasswordHasher<ApplicationUsers>>()
-                .AddScoped<IFeedbackService, FeedbackService>();
-
+                .AddScoped<IFeedbackService, FeedbackService>()
+                .AddScoped<IComboService, ComboService>();
             ;
-
         }
 
         public static void ConfigJwt(this IServiceCollection services, IConfiguration configuration)
