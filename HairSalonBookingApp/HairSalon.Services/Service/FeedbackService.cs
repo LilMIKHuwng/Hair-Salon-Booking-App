@@ -7,11 +7,6 @@ using HairSalon.ModelViews.FeedbackModeViews;
 using HairSalon.ModelViews.FeedBackModeViews;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HairSalon.Services.Service
 {
@@ -173,5 +168,52 @@ namespace HairSalon.Services.Service
 
             return "Feedback deleted successfully.";
         }
-    }
+
+		public async Task<BasePaginatedList<ServiceFeedbackModelView>> GetFeedbackOfServiceAsync(int pageNumber, int pageSize, string serviceId, string comboId)
+		{
+			// Query feedbacks not marked as deleted
+			IQueryable<Feedback> feedbackQuery = _unitOfWork.GetRepository<Feedback>().Entities
+				.Where(f => !f.DeletedTime.HasValue)
+				.OrderByDescending(f => f.CreatedTime);
+
+			// Apply filter based on serviceId if provided
+			if (!string.IsNullOrEmpty(serviceId))
+			{
+				// Get all service appointments related to the given serviceId
+				List<string> relatedAppointmentIds = await _unitOfWork.GetRepository<ServiceAppointment>().Entities
+					.Where(s => s.ServiceId == serviceId && !s.DeletedTime.HasValue)
+					.Select(s => s.AppointmentId)
+					.ToListAsync();
+
+				feedbackQuery = feedbackQuery.Where(f => relatedAppointmentIds.Contains(f.AppointmentId));
+			}
+
+			// Apply filter based on comboId if provided
+			if (!string.IsNullOrEmpty(comboId))
+			{
+				// Get all service appointments related to the given comboId
+				List<string> relatedComboAppointmentIds = await _unitOfWork.GetRepository<ComboAppointment>().Entities
+					.Where(s => s.ComboId == comboId && !s.DeletedTime.HasValue)
+					.Select(s => s.AppointmentId)
+					.ToListAsync();
+
+				feedbackQuery = feedbackQuery.Where(f => relatedComboAppointmentIds.Contains(f.AppointmentId));
+			}
+
+			// Get total count before pagination
+			int totalCount = await feedbackQuery.CountAsync();
+
+			// Paginate results
+			List<Feedback> paginatedFeedbacks = await feedbackQuery
+				.Skip((pageNumber - 1) * pageSize)
+				.Take(pageSize)
+				.ToListAsync();
+
+			// Map to FeedBackModelView
+			List<ServiceFeedbackModelView> feedbackModelViews = _mapper.Map<List<ServiceFeedbackModelView>>(paginatedFeedbacks);
+
+			// Return paginated list with total count
+			return new BasePaginatedList<ServiceFeedbackModelView>(feedbackModelViews, totalCount, pageNumber, pageSize);
+		}
+	}
 }

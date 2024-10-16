@@ -1,11 +1,6 @@
 ﻿using HairSalon.Core.Base;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HairSalon.Contract.Repositories.Entity
 {
@@ -24,6 +19,6 @@ namespace HairSalon.Contract.Repositories.Entity
 
 		public virtual ICollection<ComboAppointment>? ComboAppointments { get; set; }
 
-		public virtual ICollection<ComboService>? ComboServices { get; set; }
+		public virtual ICollection<ComboServices>? ComboServices { get; set; }
 	}
 }

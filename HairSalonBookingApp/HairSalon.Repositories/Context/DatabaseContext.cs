@@ -31,6 +31,7 @@ namespace HairSalon.Repositories.Context
         public virtual DbSet<ServiceAppointment> ServiceAppointments { get; set; }
         public virtual DbSet<Payment> Payments { get; set; }
         public virtual DbSet<Feedback> Feedbacks{ get; set; }
+        public virtual DbSet<Combo> Combos { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -148,36 +149,36 @@ namespace HairSalon.Repositories.Context
                     CreatedTime = DateTimeOffset.UtcNow,
                     LastUpdatedTime = DateTimeOffset.UtcNow
                 },
-				new UserInfo
-				{
-					Id = userInfoId3,
-					Firstname = "Dev",
-					Lastname = "Nguyen",
-					BankAccount = "123456798",
-					BankAccountName = "Dev Nguyen",
-					Bank = "Bank c",
-					Point = 0,
-					CreatedBy = "SeedData",
-					LastUpdatedBy = "SeedData",
-					CreatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedTime = DateTimeOffset.UtcNow
-				},
-				new UserInfo
-				{
-					Id = userInfoId4,
-					Firstname = "Dan",
-					Lastname = "Tran",
-					BankAccount = "123456987",
-					BankAccountName = "Dan Tran",
-					Bank = "Bank D",
-					Point = 0,
-					CreatedBy = "SeedData",
-					LastUpdatedBy = "SeedData",
-					CreatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedTime = DateTimeOffset.UtcNow
-				}
+                new UserInfo
+                {
+                    Id = userInfoId3,
+                    Firstname = "Dev",
+                    Lastname = "Nguyen",
+                    BankAccount = "123456798",
+                    BankAccountName = "Dev Nguyen",
+                    Bank = "Bank c",
+                    Point = 0,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new UserInfo
+                {
+                    Id = userInfoId4,
+                    Firstname = "Dan",
+                    Lastname = "Tran",
+                    BankAccount = "123456987",
+                    BankAccountName = "Dan Tran",
+                    Bank = "Bank D",
+                    Point = 0,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                }
 
-			);
+            );
 
             // 3. ApplicationUsers
             var passwordHasher = new PasswordHasher<ApplicationUsers>();
@@ -185,17 +186,29 @@ namespace HairSalon.Repositories.Context
             var userId2 = Guid.NewGuid();
             var userId3 = Guid.NewGuid();
             var userId4 = Guid.NewGuid();
+            var userId5 = Guid.NewGuid();
+            var userId6 = Guid.NewGuid();
+            var userId7 = Guid.NewGuid();
+            var userId8 = Guid.NewGuid();
 
             var adminUser = new ApplicationUsers { Id = userId1 };
             var normalUser = new ApplicationUsers { Id = userId2 };
             var managerUser = new ApplicationUsers { Id = userId3 };
             var stylistUser = new ApplicationUsers { Id = userId4 };
+            var additionalUser1 = new ApplicationUsers { Id = userId5 };
+            var additionalUser2 = new ApplicationUsers { Id = userId6 };
+            var additionalUser3 = new ApplicationUsers { Id = userId7 };
+            var additionalUser4 = new ApplicationUsers { Id = userId8 };
 
             // Hash passwords
             var adminPasswordHash = passwordHasher.HashPassword(adminUser, "123");
             var userPasswordHash = passwordHasher.HashPassword(normalUser, "123");
             var managerPasswordHash = passwordHasher.HashPassword(managerUser, "123");
             var stylistPasswordHash = passwordHasher.HashPassword(stylistUser, "123");
+            var additionalUserPasswordHash1 = passwordHasher.HashPassword(additionalUser1, "123");
+            var additionalUserPasswordHash2 = passwordHasher.HashPassword(additionalUser2, "123");
+            var additionalUserPasswordHash3 = passwordHasher.HashPassword(additionalUser3, "123");
+            var additionalUserPasswordHash4 = passwordHasher.HashPassword(additionalUser4, "123");
 
             modelBuilder.Entity<ApplicationUsers>().HasData(
                 new ApplicationUsers
@@ -227,38 +240,98 @@ namespace HairSalon.Repositories.Context
                     LastUpdatedBy = "SeedData",
                     CreatedTime = DateTimeOffset.UtcNow,
                     LastUpdatedTime = DateTimeOffset.UtcNow
-				},
-				new ApplicationUsers
-				{
-					Id = userId3,
-					UserName = "manager",
-					NormalizedUserName = "MANAGER@EXAMPLE.COM",
-					Email = "manager@example.com",
-					NormalizedEmail = "MANAGER@EXAMPLE.COM",
-					EmailConfirmed = true,
-					PasswordHash = managerPasswordHash,
-					UserInfoId = userInfoId3,
-					CreatedBy = "SeedData",
-					LastUpdatedBy = "SeedData",
-					CreatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedTime = DateTimeOffset.UtcNow
-				},
-				new ApplicationUsers
-				{
-					Id = userId4,
-					UserName = "stylist",
-					NormalizedUserName = "STYLIST@EXAMPLE.COM",
-					Email = "stylist@example.com",
-					NormalizedEmail = "STYLIST@EXAMPLE.COM",
-					EmailConfirmed = true,
-					PasswordHash = stylistPasswordHash,
-					UserInfoId = userInfoId4,
-					CreatedBy = "SeedData",
-					LastUpdatedBy = "SeedData",
-					CreatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedTime = DateTimeOffset.UtcNow
-				}
-			);
+                },
+                new ApplicationUsers
+                {
+                    Id = userId3,
+                    UserName = "manager",
+                    NormalizedUserName = "MANAGER@EXAMPLE.COM",
+                    Email = "manager@example.com",
+                    NormalizedEmail = "MANAGER@EXAMPLE.COM",
+                    EmailConfirmed = true,
+                    PasswordHash = managerPasswordHash,
+                    UserInfoId = userInfoId3,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new ApplicationUsers
+                {
+                    Id = userId4,
+                    UserName = "stylist",
+                    NormalizedUserName = "STYLIST@EXAMPLE.COM",
+                    Email = "stylist@example.com",
+                    NormalizedEmail = "STYLIST@EXAMPLE.COM",
+                    EmailConfirmed = true,
+                    PasswordHash = stylistPasswordHash,
+                    UserInfoId = userInfoId4,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new ApplicationUsers
+                {
+                    Id = userId5,
+                    UserName = "user2",
+                    NormalizedUserName = "USER2@EXAMPLE.COM",
+                    Email = "user2@example.com",
+                    NormalizedEmail = "USER2@EXAMPLE.COM",
+                    EmailConfirmed = true,
+                    PasswordHash = additionalUserPasswordHash1,
+                    UserInfoId = userInfoId1,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new ApplicationUsers
+                {
+                    Id = userId6,
+                    UserName = "user3",
+                    NormalizedUserName = "USER3@EXAMPLE.COM",
+                    Email = "user3@example.com",
+                    NormalizedEmail = "USER3@EXAMPLE.COM",
+                    EmailConfirmed = true,
+                    PasswordHash = additionalUserPasswordHash2,
+                    UserInfoId = userInfoId2,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new ApplicationUsers
+                {
+                    Id = userId7,
+                    UserName = "user4",
+                    NormalizedUserName = "USER4@EXAMPLE.COM",
+                    Email = "user4@example.com",
+                    NormalizedEmail = "USER4@EXAMPLE.COM",
+                    EmailConfirmed = true,
+                    PasswordHash = additionalUserPasswordHash3,
+                    UserInfoId = userInfoId3,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new ApplicationUsers
+                {
+                    Id = userId8,
+                    UserName = "user5",
+                    NormalizedUserName = "USER5@EXAMPLE.COM",
+                    Email = "user5@example.com",
+                    NormalizedEmail = "USER5@EXAMPLE.COM",
+                    EmailConfirmed = true,
+                    PasswordHash = additionalUserPasswordHash4,
+                    UserInfoId = userInfoId4,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                }
+            );
 
             // 4. ApplicationUserRoles
             modelBuilder.Entity<ApplicationUserRoles>().HasData(
@@ -279,26 +352,62 @@ namespace HairSalon.Repositories.Context
                     LastUpdatedBy = "SeedData",
                     CreatedTime = DateTimeOffset.UtcNow,
                     LastUpdatedTime = DateTimeOffset.UtcNow
-				},
-				new ApplicationUserRoles
-				{
-					UserId = userId3,
-					RoleId = roleIdManager,
-					CreatedBy = "SeedData",
-					LastUpdatedBy = "SeedData",
-					CreatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedTime = DateTimeOffset.UtcNow
-				},
-				new ApplicationUserRoles
-				{
-					UserId = userId4,
-					RoleId = roleIdStylist,
-					CreatedBy = "SeedData",
-					LastUpdatedBy = "SeedData",
-					CreatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedTime = DateTimeOffset.UtcNow
-				}
-			);
+                },
+                new ApplicationUserRoles
+                {
+                    UserId = userId3,
+                    RoleId = roleIdManager,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new ApplicationUserRoles
+                {
+                    UserId = userId4,
+                    RoleId = roleIdStylist,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new ApplicationUserRoles
+                {
+                    UserId = userId5,
+                    RoleId = roleIdUser,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new ApplicationUserRoles
+                {
+                    UserId = userId6,
+                    RoleId = roleIdUser,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new ApplicationUserRoles
+                {
+                    UserId = userId7,
+                    RoleId = roleIdUser,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new ApplicationUserRoles
+                {
+                    UserId = userId8,
+                    RoleId = roleIdUser,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                }
+            );
 
             // 5. Shop
             var shopId = Guid.NewGuid().ToString();
@@ -320,58 +429,136 @@ namespace HairSalon.Repositories.Context
                 LastUpdatedTime = DateTimeOffset.UtcNow
             });
 
-			// 6. Service
-			var serviceId1 = Guid.NewGuid().ToString();
-			var serviceId2 = Guid.NewGuid().ToString();
-			var serviceId3 = Guid.NewGuid().ToString();
+            // 6. Service
+            var serviceId1 = Guid.NewGuid().ToString();
+            var serviceId2 = Guid.NewGuid().ToString();
+            var serviceId3 = Guid.NewGuid().ToString();
+            var serviceId4 = Guid.NewGuid().ToString();
+            var serviceId5 = Guid.NewGuid().ToString();
+            var serviceId6 = Guid.NewGuid().ToString();
+            var serviceId7 = Guid.NewGuid().ToString();
+            var serviceId8 = Guid.NewGuid().ToString();
 
-			modelBuilder.Entity<Service>().HasData(
-				new Service
-				{
-					Id = serviceId1,
-					Name = "Hair Cut",
-					Type = "Hair",
-					Price = 25000.00m,
-					Description = "A stylish haircut to refresh your look.",
-					ShopId = shopId,
-					CreatedBy = "SeedData",
-					LastUpdatedBy = "SeedData",
+            modelBuilder.Entity<Service>().HasData(
+                new Service
+                {
+                    Id = serviceId1,
+                    Name = "Hair Cut",
+                    Type = "Hair",
+                    Price = 25000.00m,
+                    Description = "A stylish haircut to refresh your look.",
+                    ShopId = shopId,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
                     TimeService = 30,
-					CreatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedTime = DateTimeOffset.UtcNow
-				},
-				new Service
-				{
-					Id = serviceId2,
-					Name = "Hair Coloring",
-					Type = "Hair",
-					Price = 50000.00m,
-					Description = "A complete hair coloring service.",
-					ShopId = shopId,
-					CreatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new Service
+                {
+                    Id = serviceId2,
+                    Name = "Hair Coloring",
+                    Type = "Hair",
+                    Price = 50000.00m,
+                    Description = "A complete hair coloring service.",
+                    ShopId = shopId,
+                    CreatedBy = "SeedData",
                     TimeService = 30,
-					LastUpdatedBy = "SeedData",
-					CreatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedTime = DateTimeOffset.UtcNow
-				},
-				new Service
-				{
-					Id = serviceId3, 
-					Name = "Premium Hair Coloring",
-					Type = "Hair",
-					Price = 100000.00m,
-					Description = "A premium hair coloring service.",
-					ShopId = shopId,
-					CreatedBy = "SeedData",
-					LastUpdatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new Service
+                {
+                    Id = serviceId3,
+                    Name = "Premium Hair Coloring",
+                    Type = "Hair",
+                    Price = 100000.00m,
+                    Description = "A premium hair coloring service.",
+                    ShopId = shopId,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
                     TimeService = 60,
-					CreatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedTime = DateTimeOffset.UtcNow
-				}
-			);
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new Service
+                {
+                    Id = serviceId4,
+                    Name = "Hair Styling",
+                    Type = "Hair",
+                    Price = 20000.00m,
+                    Description = "A professional hair styling service.",
+                    ShopId = shopId,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    TimeService = 45,
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new Service
+                {
+                    Id = serviceId5,
+                    Name = "Beard Trim",
+                    Type = "Beard",
+                    Price = 15000.00m,
+                    Description = "A neat beard trimming service.",
+                    ShopId = shopId,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    TimeService = 20,
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new Service
+                {
+                    Id = serviceId6,
+                    Name = "Shave",
+                    Type = "Beard",
+                    Price = 12000.00m,
+                    Description = "A clean and smooth shaving service.",
+                    ShopId = shopId,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    TimeService = 15,
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new Service
+                {
+                    Id = serviceId7,
+                    Name = "Facial",
+                    Type = "Skin",
+                    Price = 40000.00m,
+                    Description = "A rejuvenating facial service.",
+                    ShopId = shopId,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    TimeService = 50,
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new Service
+                {
+                    Id = serviceId8,
+                    Name = "Scalp Treatment",
+                    Type = "Hair",
+                    Price = 45000.00m,
+                    Description = "A soothing scalp treatment.",
+                    ShopId = shopId,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    TimeService = 40,
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                }
+            );
 
-			// 7. Appointment
-			var appointmentId = Guid.NewGuid().ToString();
+            // 7. Appointment
+            var appointmentId = Guid.NewGuid().ToString();
+            var appointmentId1 = Guid.NewGuid().ToString();
+            var appointmentId2 = Guid.NewGuid().ToString();
+            var appointmentId3 = Guid.NewGuid().ToString();
 
             modelBuilder.Entity<Appointment>().HasData(
                 new Appointment
@@ -379,9 +566,51 @@ namespace HairSalon.Repositories.Context
                     Id = appointmentId,
                     UserId = userId1,
                     StylistId = userId2,
-                    StatusForAppointment = "Scheduled",
+                    StatusForAppointment = "Pending",
                     PointsEarned = 10,
                     AppointmentDate = DateTime.UtcNow.AddDays(1),
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new Appointment
+                {
+                    Id = appointmentId1,
+                    UserId = userId3,
+                    StylistId = userId4, // Stylist assigned correctly
+                    StatusForAppointment = "Scheduled",
+                    PointsEarned = 15,
+                    TotalTime = 75,
+                    AppointmentDate = DateTime.UtcNow.AddDays(2),
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new Appointment
+                {
+                    Id = appointmentId2,
+                    UserId = userId5,
+                    StylistId = userId4, // Stylist assigned correctly
+                    StatusForAppointment = "Pending",
+                    PointsEarned = 12,
+                    TotalTime = 45,
+                    AppointmentDate = DateTime.UtcNow.AddDays(3),
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new Appointment
+                {
+                    Id = appointmentId3,
+                    UserId = userId7,
+                    StylistId = userId4, // Stylist assigned correctly
+                    StatusForAppointment = "Completed",
+                    PointsEarned = 20,
+                    TotalTime = 90,
+                    AppointmentDate = DateTime.UtcNow.AddDays(4),
                     CreatedBy = "SeedData",
                     LastUpdatedBy = "SeedData",
                     CreatedTime = DateTimeOffset.UtcNow,
@@ -440,6 +669,150 @@ namespace HairSalon.Repositories.Context
                     LastUpdatedTime = DateTimeOffset.UtcNow
                 }
             );
+
+            // 11. Combo
+            var comboId1 = Guid.NewGuid().ToString();
+            var comboId2 = Guid.NewGuid().ToString();
+            var comboId3 = Guid.NewGuid().ToString();
+
+            modelBuilder.Entity<Combo>().HasData(
+                new Combo
+                {
+                    Id = comboId1,
+                    Name = "Basic Hair Combo",
+                    TotalPrice = 40000.00m,
+                    TimeCombo = 60,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new Combo
+                {
+                    Id = comboId2,
+                    Name = "Deluxe Hair Combo",
+                    TotalPrice = 80000.00m,
+                    TimeCombo = 120,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new Combo
+                {
+                    Id = comboId3,
+                    Name = "Ultimate Hair & Beard Combo",
+                    TotalPrice = 120000.00m,
+                    TimeCombo = 150,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                }
+            );
+
+            // 12. ComboService
+            modelBuilder.Entity<ComboServices>().HasData(
+                new ComboServices
+                {
+                    Id = Guid.NewGuid().ToString("N"),
+                    ServiceId = serviceId1,
+                    ComboId = comboId1,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new ComboServices
+                {
+                    Id = Guid.NewGuid().ToString("N"),
+                    ServiceId = serviceId2,
+                    ComboId = comboId1,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new ComboServices
+                {
+                    Id = Guid.NewGuid().ToString("N"),
+                    ServiceId = serviceId3,
+                    ComboId = comboId2,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new ComboServices
+                {
+                    Id = Guid.NewGuid().ToString("N"),
+                    ServiceId = serviceId4,
+                    ComboId = comboId2,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new ComboServices
+                {
+                    Id = Guid.NewGuid().ToString("N"),
+                    ServiceId = serviceId5,
+                    ComboId = comboId3,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new ComboServices
+                {
+                    Id = Guid.NewGuid().ToString("N"),
+                    ServiceId = serviceId6,
+                    ComboId = comboId3,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                }
+            );
+
+            // 13. ComboAppointment
+            var comboAppointmentId1 = Guid.NewGuid().ToString();
+            var comboAppointmentId2 = Guid.NewGuid().ToString();
+            var comboAppointmentId3 = Guid.NewGuid().ToString();
+
+            modelBuilder.Entity<ComboAppointment>().HasData(
+                new ComboAppointment
+                {
+                    Id = comboAppointmentId1,
+                    ComboId = comboId1, // ensure these IDs match your seeded combos
+                    AppointmentId = appointmentId, // ensure these IDs match your seeded appointments
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new ComboAppointment
+                {
+                    Id = comboAppointmentId2,
+                    ComboId = comboId2,
+                    AppointmentId = appointmentId1,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new ComboAppointment
+                {
+                    Id = comboAppointmentId3,
+                    ComboId = comboId3,
+                    AppointmentId = appointmentId2,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                }
+            );
+
         }
     }
 }

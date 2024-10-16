@@ -3,11 +3,9 @@ using HairSalon.Core;
 using HairSalon.ModelViews.AppointmentModelViews;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-
 namespace HairSalonBE.API.Controllers
 {
-	[Authorize(Roles = "User")]
+	[Authorize]
 	[Route("api/[controller]")]
     [ApiController]
 
@@ -36,7 +34,6 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
-
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateAppointment(string id, [FromQuery] UpdateAppointmentModelView model)
         {
@@ -52,6 +49,7 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpPut("mark/{id}")]
+        [Authorize("Admin, Manager")]
         public async Task<IActionResult> MarkAppointmentCompleted(string id)
         {
             var result = await _appointmentService.MarkCompleted(id);

@@ -1,6 +1,5 @@
 ﻿using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
-using HairSalon.Core.Base;
 using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalonBE.API.Extensions;
 using Microsoft.AspNetCore.Authorization;
@@ -28,6 +27,7 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpPost("stylist-register")]
+        [Authorize("Admin")]
         public async Task<ActionResult<string>> CreateAppStylist([FromQuery] CreateAppStylistModelView model)
         {
             string result = await _appUserService.AddAppStylistAsync(model);
@@ -42,6 +42,7 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpGet("all")]
+        [Authorize("Admin")]
         public async Task<ActionResult<BasePaginatedList<AppUserModelView>>> GetAllApplicationUsers(string? userId, int pageNumber = 1, int pageSize = 5)
         {
             var result = await _appUserService.GetAllAppUserAsync(userId, pageNumber, pageSize);
@@ -49,6 +50,7 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpPut("update/{userId}")]
+        [Authorize]
         public async Task<IActionResult> UpdateApplicationUser(string userId, [FromQuery] UpdateAppUserModelView model)
         {
             string result = await _appUserService.UpdateAppUserAsync(userId, model);
@@ -56,6 +58,7 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpDelete("delete/{userId}")]
+        [Authorize("Admin")]
         public async Task<IActionResult> DeleteApplicationUser(string userId)
         {
             string result = await _appUserService.DeleteAppUserAsync(userId);
@@ -77,6 +80,7 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpPost("admin/reset-password")]
+        [Authorize("Admin")]
         public async Task<ActionResult<string>> ResetPasswordAdminAsync([FromBody] ResetPasswordAdminModelView model)
         {
             string result = await _appUserService.ResetPasswordAdminAsync(model);

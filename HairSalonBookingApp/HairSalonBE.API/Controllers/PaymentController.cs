@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HairSalonBE.API.Controllers
 {
-	[Authorize(Roles = "User")]
+	[Authorize(Roles = "User,Admin,Manager")]
 	[Route("api/[controller]")]
     [ApiController]
     public class PaymentController : ControllerBase
@@ -64,6 +64,7 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpDelete("delete/{id}")]
+        [Authorize("Admin")]
         public async Task<ActionResult<string>> DeletePayment(string id)
         {
             string result = await _paymentService.DeletePaymentpAsync(id);

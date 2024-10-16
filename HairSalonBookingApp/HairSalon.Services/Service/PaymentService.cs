@@ -159,7 +159,108 @@ namespace HairSalon.Services.Service
 		}
 
 		// Update an existing payment
-		public async Task<string> UpdatePaymentAsync(string id, UpdatedPaymentModelView model)
+        // Add a new payment
+        public async Task<string> AddPaymentAsync(CreatePaymentModelView model)
+        {
+
+            // Check if a payment already exists for the appointment
+            var existingPayment = await _unitOfWork.GetRepository<Payment>().Entities
+                .FirstOrDefaultAsync(p => p.AppointmentId == model.AppointmentId && !p.DeletedTime.HasValue);
+            if (existingPayment != null)
+            {
+                return "An active payment has already been made for this appointment.";
+            }
+
+            // Fetch appointment details with services and comboservices
+            var appointment = await _unitOfWork.GetRepository<Appointment>().Entities
+                .Include(a => a.ServiceAppointments).ThenInclude(sa => sa.Service)
+                .Include(a => a.ComboAppointments).ThenInclude(ca => ca.Combo.ComboServices)
+                .FirstOrDefaultAsync(a => a.Id == model.AppointmentId && !a.DeletedTime.HasValue);
+            if (appointment == null)
+            {
+                return "The appointment cannot be found or has been deleted.";
+            }
+
+            // Ensure appointment status is "Completed" before processing the payment
+            if (appointment.StatusForAppointment != "Completed")
+            {
+                return "The appointment is not completed yet. Payment can only be made for completed appointments.";
+            }
+
+            // Ensure appointment has either services or combo services
+            bool hasServices = appointment.ServiceAppointments != null && appointment.ServiceAppointments.Any();
+            bool hasComboServices = appointment.ComboAppointments != null && appointment.ComboAppointments.Any();
+
+            if (!hasServices && !hasComboServices)
+            {
+                return "No services or combo services found for this appointment.";
+            }
+
+            // Calculate the total amount for services and combo services
+            decimal originalTotalAmount = 0;
+
+            if (hasServices)
+            {
+                originalTotalAmount += appointment.ServiceAppointments.Sum(sa => sa.Service.Price);
+            }
+
+            if (hasComboServices)
+            {
+                originalTotalAmount += appointment.ComboAppointments.Sum(ca => ca.Combo.TotalPrice);
+            }
+
+            // Fetch user ID from the context
+            var userIdString = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out Guid userId))
+            {
+                return "User ID is not valid or not provided.";
+            }
+
+            // Fetch user and user info
+            var applicationUser = await _unitOfWork.GetRepository<ApplicationUsers>().Entities
+                .FirstOrDefaultAsync(u => u.Id == userId);
+            if (applicationUser == null)
+            {
+                return "User not found in ApplicationUsers.";
+            }
+
+            var userInfo = await _unitOfWork.GetRepository<UserInfo>().Entities
+                .FirstOrDefaultAsync(ui => ui.Id == applicationUser.UserInfo.Id);
+            if (userInfo == null)
+            {
+                return "User info not found.";
+            }
+
+            userInfo.Point -= appointment.PointsEarned;
+
+            // Calculate the final total amount after applying discount
+            decimal totalAmount = Math.Max(0, originalTotalAmount - appointment.PointsEarned);
+
+            // Add points earned from the original total amount
+            int pointsToAdd = (int)(originalTotalAmount / 1000) * 10;
+            userInfo.Point += pointsToAdd;
+            _unitOfWork.GetRepository<UserInfo>().Update(userInfo);
+
+            // Create a new payment record
+            var payment = new Payment
+            {
+                AppointmentId = model.AppointmentId,
+                TotalAmount = totalAmount,
+                PaymentMethod = model.PaymentMethod,
+                PaymentTime = DateTime.UtcNow.AddHours(7),
+                CreatedBy = userIdString
+            };
+
+            // Save the payment to the database
+            await _unitOfWork.GetRepository<Payment>().InsertAsync(payment);
+            await _unitOfWork.SaveAsync();
+
+            return "Payment added successfully.";
+        }
+
+
+        // Update an existing payment
+        public async Task<string> UpdatePaymentAsync(string id, UpdatedPaymentModelView model)
 		{
 			// Validate Payment ID and model
 			if (string.IsNullOrWhiteSpace(id))
