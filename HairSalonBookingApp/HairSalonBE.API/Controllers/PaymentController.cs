@@ -1,8 +1,6 @@
 ﻿using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
 using HairSalon.ModelViews.PaymentModelViews;
-using HairSalon.ModelViews.RoleModelViews;
-using HairSalon.Services.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -47,6 +45,7 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpDelete("delete/{id}")]
+        [Authorize("Admin")]
         public async Task<ActionResult<string>> DeletePayment(string id)
         {
             string result = await _paymentService.DeletePaymentpAsync(id);

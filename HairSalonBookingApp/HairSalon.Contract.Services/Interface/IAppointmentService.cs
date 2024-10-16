@@ -1,6 +1,5 @@
 ﻿using HairSalon.Core;
 using HairSalon.ModelViews.AppointmentModelViews;
-using System.Security.Claims;
 
 namespace HairSalon.Contract.Services.Interface
 {
