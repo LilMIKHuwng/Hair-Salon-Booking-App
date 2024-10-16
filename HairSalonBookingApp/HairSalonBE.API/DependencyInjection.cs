@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Linq;
 
 namespace HairSalonBE.API
 {
@@ -64,7 +65,7 @@ namespace HairSalonBE.API
                 .AddScoped<TokenService>()
                 .AddScoped<IPasswordHasher<ApplicationUsers>, PasswordHasher<ApplicationUsers>>()
                 .AddScoped<IFeedbackService, FeedbackService>()
-                .AddScoped<IVnPayService, VnPayService>();
+                .AddScoped<IVnPayService, VnPayService>()
                 .AddScoped<IComboService, ComboService>();
             ;
         }

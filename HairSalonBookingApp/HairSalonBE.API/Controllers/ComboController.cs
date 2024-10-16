@@ -28,9 +28,9 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpGet("all")]
-        public async Task<ActionResult<BasePaginatedList<ComboModelView>>> GetAllAppointments(int pageNumber = 1, int pageSize = 5, [FromQuery] string? id = null)
+        public async Task<ActionResult<BasePaginatedList<ComboModelView>>> GetAllAppointments(int pageNumber = 1, int pageSize = 5, [FromQuery] string? id = null, [FromQuery] string? name = null)
         {
-            var result = await _comboService.GetAllCombosAsync(pageNumber, pageSize, id);
+            var result = await _comboService.GetAllCombosAsync(pageNumber, pageSize, id, name);
             return Ok(result);
         }
 
