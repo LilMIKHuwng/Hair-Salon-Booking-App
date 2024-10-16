@@ -1,6 +1,5 @@
 ﻿using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
-using HairSalon.Core.Base;
 using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalonBE.API.Extensions;
 using Microsoft.AspNetCore.Authorization;

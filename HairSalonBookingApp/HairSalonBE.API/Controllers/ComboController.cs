@@ -1,8 +1,6 @@
 ﻿using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
-using HairSalon.ModelViews.AppointmentModelViews;
 using HairSalon.ModelViews.ComboModelViews;
-using HairSalon.Services.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

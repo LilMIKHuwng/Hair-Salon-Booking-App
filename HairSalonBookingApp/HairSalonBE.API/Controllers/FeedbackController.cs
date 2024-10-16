@@ -2,8 +2,6 @@
 using HairSalon.Core;
 using HairSalon.ModelViews.FeedbackModeViews;
 using HairSalon.ModelViews.FeedBackModeViews;
-using HairSalon.ModelViews.PaymentModelViews;
-using HairSalon.Services.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
