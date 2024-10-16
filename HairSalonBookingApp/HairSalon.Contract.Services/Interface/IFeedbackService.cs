@@ -1,12 +1,6 @@
 ﻿using HairSalon.Core;
 using HairSalon.ModelViews.FeedbackModeViews;
 using HairSalon.ModelViews.FeedBackModeViews;
-using HairSalon.ModelViews.PaymentModelViews;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HairSalon.Contract.Services.Interface
 {

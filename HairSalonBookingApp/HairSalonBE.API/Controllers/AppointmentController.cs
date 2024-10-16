@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace HairSalonBE.API.Controllers
 {
-	[Authorize(Roles = "User,Admin")]
+	[Authorize]
 	[Route("api/[controller]")]
     [ApiController]
 
@@ -34,7 +34,6 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
-
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateAppointment(string id, [FromQuery] UpdateAppointmentModelView model)
         {
@@ -50,6 +49,7 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpPut("mark/{id}")]
+        [Authorize("Admin, Staff")]
         public async Task<IActionResult> MarkAppointmentCompleted(string id)
         {
             var result = await _appointmentService.MarkCompleted(id);
