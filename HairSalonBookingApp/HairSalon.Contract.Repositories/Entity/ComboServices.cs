@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HairSalon.Contract.Repositories.Entity
 {
-	public class ComboService : BaseEntity
+	public class ComboServices : BaseEntity
 	{
 		public string ServiceId { get; set; }
 

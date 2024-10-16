@@ -30,7 +30,8 @@ namespace HairSalon.Repositories.Context
         public virtual DbSet<SalaryPayment> SalaryPayments { get; set; }
         public virtual DbSet<ServiceAppointment> ServiceAppointments { get; set; }
         public virtual DbSet<Payment> Payments { get; set; }
-        public virtual DbSet<Feedback> Feedbacks { get; set; }
+        public virtual DbSet<Feedback> Feedbacks{ get; set; }
+        public virtual DbSet<Combo> Combos { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -711,8 +712,8 @@ namespace HairSalon.Repositories.Context
             );
 
             // 12. ComboService
-            modelBuilder.Entity<ComboService>().HasData(
-                new ComboService
+            modelBuilder.Entity<ComboServices>().HasData(
+                new ComboServices
                 {
                     Id = Guid.NewGuid().ToString("N"),
                     ServiceId = serviceId1,
@@ -722,7 +723,7 @@ namespace HairSalon.Repositories.Context
                     CreatedTime = DateTimeOffset.UtcNow,
                     LastUpdatedTime = DateTimeOffset.UtcNow
                 },
-                new ComboService
+                new ComboServices
                 {
                     Id = Guid.NewGuid().ToString("N"),
                     ServiceId = serviceId2,
@@ -732,7 +733,7 @@ namespace HairSalon.Repositories.Context
                     CreatedTime = DateTimeOffset.UtcNow,
                     LastUpdatedTime = DateTimeOffset.UtcNow
                 },
-                new ComboService
+                new ComboServices
                 {
                     Id = Guid.NewGuid().ToString("N"),
                     ServiceId = serviceId3,
@@ -742,7 +743,7 @@ namespace HairSalon.Repositories.Context
                     CreatedTime = DateTimeOffset.UtcNow,
                     LastUpdatedTime = DateTimeOffset.UtcNow
                 },
-                new ComboService
+                new ComboServices
                 {
                     Id = Guid.NewGuid().ToString("N"),
                     ServiceId = serviceId4,
@@ -752,7 +753,7 @@ namespace HairSalon.Repositories.Context
                     CreatedTime = DateTimeOffset.UtcNow,
                     LastUpdatedTime = DateTimeOffset.UtcNow
                 },
-                new ComboService
+                new ComboServices
                 {
                     Id = Guid.NewGuid().ToString("N"),
                     ServiceId = serviceId5,
@@ -762,7 +763,7 @@ namespace HairSalon.Repositories.Context
                     CreatedTime = DateTimeOffset.UtcNow,
                     LastUpdatedTime = DateTimeOffset.UtcNow
                 },
-                new ComboService
+                new ComboServices
                 {
                     Id = Guid.NewGuid().ToString("N"),
                     ServiceId = serviceId6,

@@ -19,6 +19,6 @@ namespace HairSalon.Contract.Repositories.Entity
 
 		public virtual ICollection<ComboAppointment>? ComboAppointments { get; set; }
 
-		public virtual ICollection<ComboService>? ComboServices { get; set; }
+		public virtual ICollection<ComboServices>? ComboServices { get; set; }
 	}
 }

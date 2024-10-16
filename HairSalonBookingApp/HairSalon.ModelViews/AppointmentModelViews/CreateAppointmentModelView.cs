@@ -10,8 +10,8 @@ namespace HairSalon.ModelViews.AppointmentModelViews
         [Required(ErrorMessage = "StylistId is required.")]
         public string StylistId { get; set; }
 
-        [Required(ErrorMessage = "List services is required.")]
-        public string[] ServiceIds { get; set; }
+        public string[]? ServiceIds { get; set; }
+        public string[]? ComboIds { get; set; }
 
         [Required(ErrorMessage = "PointsEarned is required.")]
         [Range(0, int.MaxValue, ErrorMessage = "PointsEarned must be a positive number.")]
