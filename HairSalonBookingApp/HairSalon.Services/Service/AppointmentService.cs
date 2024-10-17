@@ -106,9 +106,10 @@ namespace HairSalon.Services.Service
                         LastUpdatedTime = DateTimeOffset.UtcNow
                     };
 
-                    // calculate total time of appointment
-                    newAppointment.TotalTime += (await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>()
-                        .GetByIdAsync(serviceId)).TimeService;
+                    // calculate total time and total amount of appointment
+                    var service = await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>().GetByIdAsync(serviceId);
+                    newAppointment.TotalTime += service.TimeService;
+                    newAppointment.TotalAmount += service.Price;
 
                     // Add each ServiceAppointment to the repository
                     await _unitOfWork.GetRepository<ServiceAppointment>().InsertAsync(serviceAppointment);
@@ -130,8 +131,10 @@ namespace HairSalon.Services.Service
                         LastUpdatedTime = DateTimeOffset.UtcNow
                     };
 
-                    // calculate total time of appointment
-                    newAppointment.TotalTime += (await _unitOfWork.GetRepository<Combo>().GetByIdAsync(comboId)).TimeCombo;
+                    // calculate total time and total amount of appointment
+                    var combo = await _unitOfWork.GetRepository<Combo>().GetByIdAsync(comboId);
+                    newAppointment.TotalTime += combo.TimeCombo;
+                    newAppointment.TotalAmount += combo.TotalPrice;
 
                     // Add each ComboAppointment to the repository
                     await _unitOfWork.GetRepository<ComboAppointment>().InsertAsync(comboAppointment);
@@ -199,6 +202,7 @@ namespace HairSalon.Services.Service
             }
 
             int newTotalTime = existingAppointment.TotalTime; // get current total time 
+            decimal newTotalAmount = existingAppointment.TotalAmount;
 
             // Update the StylistId if provided
             if (!string.IsNullOrWhiteSpace(model.StylistId) && Guid.TryParse(model.StylistId, out Guid newStylistId))
@@ -209,6 +213,17 @@ namespace HairSalon.Services.Service
                     return "Stylist is busy at that time.";
                 }
                 existingAppointment.StylistId = newStylistId;
+            }
+
+            // Check if user has enough points
+            var user = await _unitOfWork.GetRepository<ApplicationUsers>().GetByIdAsync(existingAppointment.UserId);
+            if (model.PointsEarned > user.UserInfo.Point)
+            {
+                return "Insufficient points. The user does not have enough points for this appointment.";
+            }
+            if (model.PointsEarned.HasValue)
+            {
+                existingAppointment.PointsEarned = (int)model.PointsEarned;
             }
 
             // Update AppointmentDate if provided and valid
@@ -231,15 +246,17 @@ namespace HairSalon.Services.Service
             // Handle update ServiceIds if any
             if (model.ServiceIds != null && model.ServiceIds.Length > 0)
             {
-                // Update services and recalculate total time
-                newTotalTime = await UpdateServiceAppointmentsAsync(existingAppointment.Id, model.ServiceIds, newTotalTime);
+                var updateResult = await UpdateServiceAppointmentsAsync(existingAppointment.Id, model.ServiceIds, newTotalTime, newTotalAmount);
+                newTotalTime = updateResult.TotalTime;
+                newTotalAmount = updateResult.TotalAmount;
             }
 
             // Process update ComboIds if any
             if (model.ComboIds != null && model.ComboIds.Length > 0)
             {
-                // Update combos and recalculate total time
-                newTotalTime = await UpdateComboAppointmentsAsync(existingAppointment.Id, model.ComboIds, newTotalTime);
+                var updateResult = await UpdateComboAppointmentsAsync(existingAppointment.Id, model.ComboIds, newTotalTime, newTotalAmount);
+                newTotalTime = updateResult.TotalTime;
+                newTotalAmount = updateResult.TotalAmount;
             }
 
             // Check if the appointment after update overlaps
@@ -252,6 +269,7 @@ namespace HairSalon.Services.Service
             existingAppointment.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
             existingAppointment.LastUpdatedTime = DateTimeOffset.UtcNow;
             existingAppointment.TotalTime = newTotalTime;
+            existingAppointment.TotalAmount = newTotalAmount;
 
             // Save changes
             await _unitOfWork.GetRepository<Appointment>().UpdateAsync(existingAppointment);
@@ -290,7 +308,7 @@ namespace HairSalon.Services.Service
             return false;
         }
 
-        private async Task<int> UpdateServiceAppointmentsAsync(string appointmentId, string[] serviceIds, int currentTotalTime)
+        private async Task<(int TotalTime, decimal TotalAmount)> UpdateServiceAppointmentsAsync(string appointmentId, string[] serviceIds, int currentTotalTime, decimal currentTotalAmount)
         {
             var existingServiceAppointments = await _unitOfWork.GetRepository<ServiceAppointment>().Entities
                 .Where(sa => sa.AppointmentId == appointmentId && !sa.DeletedTime.HasValue).ToListAsync();
@@ -301,8 +319,9 @@ namespace HairSalon.Services.Service
             {
                 serviceAppointment.DeletedTime = DateTimeOffset.UtcNow;
                 serviceAppointment.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-                currentTotalTime -= (await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>()
-                    .GetByIdAsync(serviceAppointment.ServiceId)).TimeService;
+                var service = (await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>().GetByIdAsync(serviceAppointment.ServiceId));
+                currentTotalTime -= service.TimeService;
+                currentTotalAmount -= service.Price;
             }
 
             // Add new serviceAppointment
@@ -318,14 +337,15 @@ namespace HairSalon.Services.Service
                     LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value
                 };
                 await _unitOfWork.GetRepository<ServiceAppointment>().InsertAsync(serviceAppointment);
-                currentTotalTime += (await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>()
-                    .GetByIdAsync(serviceId)).TimeService;
+                var service = (await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>().GetByIdAsync(serviceId));
+                currentTotalTime += service.TimeService;
+                currentTotalAmount += service.Price;
             }
 
-            return currentTotalTime;
+            return (currentTotalTime, currentTotalAmount);
         }
 
-        private async Task<int> UpdateComboAppointmentsAsync(string appointmentId, string[] comboIds, int currentTotalTime)
+        private async Task<(int TotalTime, decimal TotalAmount)> UpdateComboAppointmentsAsync(string appointmentId, string[] comboIds, int currentTotalTime, decimal currentTotalAmount)
         {
             var existingComboAppointments = await _unitOfWork.GetRepository<ComboAppointment>().Entities
                 .Where(ca => ca.AppointmentId == appointmentId && !ca.DeletedTime.HasValue).ToListAsync();
@@ -335,7 +355,9 @@ namespace HairSalon.Services.Service
             {
                 comboAppointment.DeletedTime = DateTimeOffset.UtcNow;
                 comboAppointment.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-                currentTotalTime -= (await _unitOfWork.GetRepository<Combo>().GetByIdAsync(comboAppointment.ComboId)).TimeCombo;
+                var combo = await _unitOfWork.GetRepository<Combo>().GetByIdAsync(comboAppointment.ComboId);
+                currentTotalTime -= combo.TimeCombo;
+                currentTotalAmount -= combo.TotalPrice;
             }
 
             var currentComboIds = existingComboAppointments.Select(ca => ca.ComboId).ToList();
@@ -350,10 +372,12 @@ namespace HairSalon.Services.Service
                     LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value
                 };
                 await _unitOfWork.GetRepository<ComboAppointment>().InsertAsync(comboAppointment);
-                currentTotalTime += (await _unitOfWork.GetRepository<Combo>().GetByIdAsync(comboId)).TimeCombo;
+                var combo = (await _unitOfWork.GetRepository<Combo>().GetByIdAsync(comboId));
+                currentTotalTime += combo.TimeCombo;
+                currentTotalAmount += combo.TotalPrice;
             }
 
-            return currentTotalTime;
+            return (currentTotalTime, currentTotalAmount);
         }
 
 
@@ -379,7 +403,7 @@ namespace HairSalon.Services.Service
             // Soft delete appointment
             existingAppointment.DeletedTime = DateTimeOffset.UtcNow;
             existingAppointment.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-            existingAppointment.StatusForAppointment = "Deleted";
+            existingAppointment.StatusForAppointment = "Cancelled";
 
             // Get all related ServiceAppointments
             var relatedServiceAppointments = await _unitOfWork.GetRepository<ServiceAppointment>().Entities
@@ -432,10 +456,63 @@ namespace HairSalon.Services.Service
                 return "Appointment not found or has already been deleted.";
             }
 
-            // set status Completed
+            // set status Completed and save
             existingAppointment.StatusForAppointment = "Completed";
             existingAppointment.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
             existingAppointment.LastUpdatedTime = DateTimeOffset.UtcNow;
+            await _unitOfWork.SaveAsync();
+
+            return "success";
+        }
+
+        // Mark Appointment Confirmed
+        public async Task<string> MarkConfirmed(string id)
+        {
+            // Validate appointment ID
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return "Invalid appointment ID. Please provide a valid ID.";
+            }
+
+            // Get appointment by ID and ensure it's not deleted
+            var existingAppointment = await _unitOfWork.GetRepository<Appointment>().Entities
+                .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
+
+            if (existingAppointment == null)
+            {
+                return "Appointment not found or has already been deleted.";
+            }
+
+            // Fetch user and user info
+            var applicationUser = await _unitOfWork.GetRepository<ApplicationUsers>().Entities
+                .FirstOrDefaultAsync(u => u.Id == existingAppointment.UserId);
+            if (applicationUser == null)
+            {
+                return "User not found in ApplicationUsers.";
+            }
+
+            var userInfo = await _unitOfWork.GetRepository<UserInfo>().Entities
+                .FirstOrDefaultAsync(ui => ui.Id == applicationUser.UserInfo.Id);
+            if (userInfo == null)
+            {
+                return "User info not found.";
+            }
+
+            // Calculate points earned from the original total amount
+            userInfo.Point -= existingAppointment.PointsEarned;
+            int pointsToAdd = (int)(existingAppointment.TotalAmount / 1000) * 10;
+            userInfo.Point += pointsToAdd;
+            await _unitOfWork.GetRepository<UserInfo>().UpdateAsync(userInfo);
+
+            // Calculate the final total amount after applying discount
+            existingAppointment.TotalAmount -= existingAppointment.PointsEarned;
+
+
+            // set status Confirmed and save
+            existingAppointment.StatusForAppointment = "Confirmed";
+            existingAppointment.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            existingAppointment.LastUpdatedTime = DateTimeOffset.UtcNow;
+            await _unitOfWork.SaveAsync();
 
             return "success";
         }
