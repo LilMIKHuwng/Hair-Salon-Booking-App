@@ -264,7 +264,7 @@ namespace HairSalon.Services.Service
         }
 
         // Get all Combos with pagination
-        public async Task<BasePaginatedList<ComboModelView>> GetAllCombosAsync(int pageNumber, int pageSize, string? id = null)
+        public async Task<BasePaginatedList<ComboModelView>> GetAllCombosAsync(int pageNumber, int pageSize, string? id = null, string? name = null)
         {
             IQueryable<Combo> roleQuery = _unitOfWork.GetRepository<Combo>().Entities
                 .Where(p => !p.DeletedTime.HasValue);
@@ -273,6 +273,11 @@ namespace HairSalon.Services.Service
             if (!string.IsNullOrEmpty(id))
             {
                 roleQuery = roleQuery.Where(u => u.Id.ToString() == id);
+            }
+
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                roleQuery = roleQuery.Where(s => s.Name.Contains(name));
             }
 
             // Order by CreatedTime descending

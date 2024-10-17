@@ -28,10 +28,7 @@ namespace HairSalon.Repositories.Mapper
             CreateMap<CreateShopModelView, Shop>();
 
             CreateMap<Payment, PaymentModelView>();
-            CreateMap<Payment, CreatePaymentModelView>();
-            CreateMap<Payment, UpdatedPaymentModelView>();
-            CreateMap<UpdatedPaymentModelView, Payment>();
-            CreateMap<CreatePaymentModelView, Payment>();
+            
 
             CreateMap<Appointment, AppointmentModelView>();
             CreateMap<Appointment, CreateAppointmentModelView>();

@@ -42,7 +42,6 @@ namespace HairSalonBE.API.Controllers
             {
                 string result = await _vpnPayService.ExcutePayment(model);
                 return Ok(new { Message = result });
-
             }
             return BadRequest();
         }
@@ -52,15 +51,6 @@ namespace HairSalonBE.API.Controllers
         {
             var paymentUrl = _vpnPayService.CreatePaymentUrl(model, HttpContext);
             return Ok(new { Url = paymentUrl });
-        }
-
-
-
-        [HttpPut("update/{id}")]
-        public async Task<ActionResult<string>> UpdatePayment(string id, [FromQuery] UpdatedPaymentModelView model)
-        {
-            string result = await _paymentService.UpdatePaymentAsync(id, model);
-            return Ok(new { Message = result });
         }
 
         [HttpDelete("delete/{id}")]

@@ -31,17 +31,20 @@ namespace HairSalon.Services.Service
         }
         public string CreatePaymentUrl(VnPayRequestModelView model, HttpContext context)
         {
+            var appoinment = _unitOfWork.GetRepository<Appointment>().Entities.FirstOrDefault(x => x.Id == model.AppoinmentId);
+            if(appoinment == null) return "Appointment not found.";
+            if(string.Equals( appoinment.StatusForAppointment, "Completed")) return "Appointment has not been completed.";
             var vnpay = new VNPayLibrary();
             vnpay.AddRequestData("vnp_Command", "pay");
             vnpay.AddRequestData("vnp_Version", "2.1.0");
             vnpay.AddRequestData("vnp_TmnCode", _configuration["VnPay:TmnCode"]);
-            vnpay.AddRequestData("vnp_Amount", (model.Amount * 100).ToString());
+            vnpay.AddRequestData("vnp_Amount", ((int)appoinment.TotalAmount).ToString());
             vnpay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
             vnpay.AddRequestData("vnp_ExpireDate", DateTime.Now.AddHours(1).ToString("yyyyMMddHHmmss"));
             vnpay.AddRequestData("vnp_CurrCode", "VND");
             vnpay.AddRequestData("vnp_IpAddr", "165.225.230.115");
             vnpay.AddRequestData("vnp_Locale", "vn");
-            vnpay.AddRequestData("vnp_OrderInfo", "Thanh toan tien");
+            vnpay.AddRequestData("vnp_OrderInfo", "Thanh hoa don" + appoinment.Id);
             vnpay.AddRequestData("vnp_OrderType", "other");
             vnpay.AddRequestData("vnp_ReturnUrl", _configuration["VnPay:ReturnUrl"]);
             vnpay.AddRequestData("vnp_TxnRef", DateTime.Now.ToString("yyyyMMddHHmmss"));
@@ -57,36 +60,11 @@ namespace HairSalon.Services.Service
             {
                 return "The payment model cannot be null.";
             }
+
             if (string.IsNullOrEmpty(model.Method))
             {
                 return "Payment method must be provided.";
             }
-
-            // Check if a payment already exists for the appointment
-            var existingPayment = await _unitOfWork.GetRepository<Payment>().Entities
-                .FirstOrDefaultAsync(p => p.AppointmentId == model.AppointmentId && !p.DeletedTime.HasValue);
-            if (existingPayment != null)
-            {
-                return "An active payment has already been made for this appointment.";
-            }
-
-            // Fetch appointment details with services
-            var appointment = await _unitOfWork.GetRepository<Appointment>().Entities
-                .Include(a => a.ServiceAppointments).ThenInclude(sa => sa.Service)
-                .FirstOrDefaultAsync(a => a.Id == model.AppointmentId && !a.DeletedTime.HasValue);
-            if (appointment == null)
-            {
-                return "The appointment cannot be found or has been deleted.";
-            }
-
-            // Ensure appointment has services
-            //if (appointment.ServiceAppointments == null || !appointment.ServiceAppointments.Any())
-            //{
-            //    return "No services found for this appointment.";
-            //}
-
-            //// Calculate the total amount for services
-            //decimal originalTotalAmount = appointment.ServiceAppointments.Sum(sa => sa.Service.Price);
 
             // Fetch user ID from the context
             var userIdString = _httpContextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
@@ -109,21 +87,6 @@ namespace HairSalon.Services.Service
             {
                 return "User info not found.";
             }
-
-            //// Deduct points used in appointment if available
-            //if (appointment.PointsEarned > 0 && userInfo.Point < appointment.PointsEarned)
-            //{
-            //    return "User does not have enough points to apply this discount.";
-            //}
-            //userInfo.Point -= appointment.PointsEarned;
-
-            //// Calculate the final total amount after applying discount
-            //decimal totalAmount = Math.Max(0, originalTotalAmount - appointment.PointsEarned);
-
-            //// Add points earned from the original total amount
-            //int pointsToAdd = (int)(originalTotalAmount / 1000) * 100;
-            //userInfo.Point += pointsToAdd;
-            //_unitOfWork.GetRepository<UserInfo>().Update(userInfo);
 
             // Create a new payment record
             var payment = new Payment
