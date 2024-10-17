@@ -73,7 +73,7 @@ namespace HairSalon.Services.Service
             // check stylist don't have any appointment
             bool isStylistBusy = await _unitOfWork.GetRepository<Appointment>().Entities
                 .AnyAsync(p => p.StylistId == Guid.Parse(model.StylistId)
-                    && p.StatusForAppointment.Equals("Scheduled")
+                    && p.StatusForAppointment.Equals("Cancelled")
                     && model.AppointmentDate < p.AppointmentDate.AddMinutes(p.TotalTime)
                     && model.AppointmentDate >= p.AppointmentDate
                     && !p.DeletedTime.HasValue);
@@ -149,7 +149,7 @@ namespace HairSalon.Services.Service
         }
 
         // Get all appointments by startEndDay, id
-        public async Task<BasePaginatedList<AppointmentModelView>> GetAllAppointmentAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? endDate, string? id)
+        public async Task<BasePaginatedList<AppointmentModelView>> GetAllAppointmentAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? endDate, string? id, Guid? userId, Guid? stylistId, string? statusForAppointment)
         {
             // Get appointments from database
             IQueryable<Appointment> appointmentQuery = _unitOfWork.GetRepository<Appointment>().Entities
@@ -166,6 +166,21 @@ namespace HairSalon.Services.Service
             if (!string.IsNullOrEmpty(id))
             {
                 appointmentQuery = appointmentQuery.Where(a => a.Id.Equals(id));
+            }
+
+            if (userId.HasValue)
+            {
+                appointmentQuery = appointmentQuery.Where(p => p.UserId == userId.Value);
+            }
+
+            if (stylistId.HasValue)
+            {
+                appointmentQuery = appointmentQuery.Where(p => p.StylistId == stylistId.Value);
+            }
+
+            if (!string.IsNullOrEmpty(statusForAppointment))
+            {
+                appointmentQuery = appointmentQuery.Where(a => a.StatusForAppointment.Equals(statusForAppointment));
             }
 
             int totalCount = await appointmentQuery.CountAsync();
@@ -282,7 +297,7 @@ namespace HairSalon.Services.Service
         {
             return await _unitOfWork.GetRepository<Appointment>().Entities
                 .AnyAsync(p => p.StylistId == stylistId
-                    && p.StatusForAppointment == "Scheduled"
+                    && !p.StatusForAppointment.Equals("Cancelled")
                     && !p.DeletedTime.HasValue
                     && (currentAppointmentId == null || p.Id != currentAppointmentId)
                     && (appointmentDate < p.AppointmentDate.AddMinutes(p.TotalTime))
