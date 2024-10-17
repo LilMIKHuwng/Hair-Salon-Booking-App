@@ -27,8 +27,8 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpPost("stylist-register")]
-        [Authorize("Admin")]
-        public async Task<ActionResult<string>> CreateAppStylist([FromQuery] CreateAppStylistModelView model)
+		[Authorize(Roles = "Admin")]
+		public async Task<ActionResult<string>> CreateAppStylist([FromQuery] CreateAppStylistModelView model)
         {
             string result = await _appUserService.AddAppStylistAsync(model);
             return Ok(result);
@@ -42,8 +42,8 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpGet("all")]
-        [Authorize("Admin")]
-        public async Task<ActionResult<BasePaginatedList<AppUserModelView>>> GetAllApplicationUsers(string? userId, int pageNumber = 1, int pageSize = 5)
+		[Authorize(Roles = "Admin")]
+		public async Task<ActionResult<BasePaginatedList<AppUserModelView>>> GetAllApplicationUsers(string? userId, int pageNumber = 1, int pageSize = 5)
         {
             var result = await _appUserService.GetAllAppUserAsync(userId, pageNumber, pageSize);
             return Ok(result);
@@ -58,8 +58,8 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpDelete("delete/{userId}")]
-        [Authorize("Admin")]
-        public async Task<IActionResult> DeleteApplicationUser(string userId)
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> DeleteApplicationUser(string userId)
         {
             string result = await _appUserService.DeleteAppUserAsync(userId);
             return Ok(result);
@@ -80,8 +80,8 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpPost("admin/reset-password")]
-        [Authorize("Admin")]
-        public async Task<ActionResult<string>> ResetPasswordAdminAsync([FromBody] ResetPasswordAdminModelView model)
+		[Authorize(Roles = "Admin")]
+		public async Task<ActionResult<string>> ResetPasswordAdminAsync([FromBody] ResetPasswordAdminModelView model)
         {
             string result = await _appUserService.ResetPasswordAdminAsync(model);
             return Ok(result);
