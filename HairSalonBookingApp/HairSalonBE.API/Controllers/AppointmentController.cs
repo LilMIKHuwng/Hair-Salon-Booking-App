@@ -48,11 +48,19 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
-        [HttpPut("mark/{id}")]
-        [Authorize("Admin, Manager")]
+        [HttpPut("mark-completed/{id}")]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> MarkAppointmentCompleted(string id)
         {
             var result = await _appointmentService.MarkCompleted(id);
+            return Ok(result);
+        }
+
+        [HttpPut("mark-confirmed/{id}")]
+        [Authorize(Roles = "Admin,Manager")]
+        public async Task<IActionResult> MarkAppointmentConfirmed(string id)
+        {
+            var result = await _appointmentService.MarkConfirmed(id);
             return Ok(result);
         }
     }
