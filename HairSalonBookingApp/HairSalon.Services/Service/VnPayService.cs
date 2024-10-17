@@ -33,12 +33,12 @@ namespace HairSalon.Services.Service
         {
             var appoinment = _unitOfWork.GetRepository<Appointment>().Entities.FirstOrDefault(x => x.Id == model.AppoinmentId);
             if(appoinment == null) return "Appointment not found.";
-            if(string.Equals( appoinment.StatusForAppointment, "Completed")) return "Appointment has not been completed.";
+            if(!string.Equals( appoinment.StatusForAppointment, "Completed")) return "Appointment has not been completed.";
             var vnpay = new VNPayLibrary();
             vnpay.AddRequestData("vnp_Command", "pay");
             vnpay.AddRequestData("vnp_Version", "2.1.0");
             vnpay.AddRequestData("vnp_TmnCode", _configuration["VnPay:TmnCode"]);
-            vnpay.AddRequestData("vnp_Amount", ((int)appoinment.TotalAmount).ToString());
+            vnpay.AddRequestData("vnp_Amount", ((int)appoinment.TotalAmount*100).ToString());
             vnpay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
             vnpay.AddRequestData("vnp_ExpireDate", DateTime.Now.AddHours(1).ToString("yyyyMMddHHmmss"));
             vnpay.AddRequestData("vnp_CurrCode", "VND");
