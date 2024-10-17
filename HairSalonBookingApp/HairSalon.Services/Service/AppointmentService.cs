@@ -51,7 +51,8 @@ namespace HairSalon.Services.Service
             }
 
             // Get the user by userId
-            var user = await _unitOfWork.GetRepository<ApplicationUsers>().GetByIdAsync(Guid.Parse(model.UserId));
+            var user = await _unitOfWork.GetRepository<ApplicationUsers>()
+                .GetByIdAsync(Guid.Parse(_contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value));
             if (user == null)
             {
                 return "User is not found.";
@@ -86,6 +87,7 @@ namespace HairSalon.Services.Service
             // Map data model to entity
             Appointment newAppointment = _mapper.Map<Appointment>(model);
             newAppointment.Id = Guid.NewGuid().ToString("N");
+            newAppointment.UserId = user.Id;
             newAppointment.StatusForAppointment = "Scheduled";
             newAppointment.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
             newAppointment.CreatedTime = DateTimeOffset.UtcNow;
@@ -140,7 +142,7 @@ namespace HairSalon.Services.Service
                     await _unitOfWork.GetRepository<ComboAppointment>().InsertAsync(comboAppointment);
                 }
             }
-            
+
             // Add new appointment
             await _unitOfWork.GetRepository<Appointment>().InsertAsync(newAppointment);
             await _unitOfWork.SaveAsync();

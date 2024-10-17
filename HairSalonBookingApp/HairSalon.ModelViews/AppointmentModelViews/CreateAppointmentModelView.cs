@@ -4,9 +4,6 @@ namespace HairSalon.ModelViews.AppointmentModelViews
 {
     public class CreateAppointmentModelView
     {
-        [Required(ErrorMessage = "UserId is required.")]
-        public string UserId { get; set; }
-
         [Required(ErrorMessage = "StylistId is required.")]
         public string StylistId { get; set; }
 
