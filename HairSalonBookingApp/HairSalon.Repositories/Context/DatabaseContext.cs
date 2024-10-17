@@ -572,7 +572,8 @@ namespace HairSalon.Repositories.Context
                     CreatedBy = "SeedData",
                     LastUpdatedBy = "SeedData",
                     CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
+                    LastUpdatedTime = DateTimeOffset.UtcNow,
+                    TotalAmount = 100000.00m
                 },
                 new Appointment
                 {
@@ -586,7 +587,8 @@ namespace HairSalon.Repositories.Context
                     CreatedBy = "SeedData",
                     LastUpdatedBy = "SeedData",
                     CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
+                    LastUpdatedTime = DateTimeOffset.UtcNow,
+                    TotalAmount = 65000.00m
                 },
                 new Appointment
                 {
@@ -600,7 +602,8 @@ namespace HairSalon.Repositories.Context
                     CreatedBy = "SeedData",
                     LastUpdatedBy = "SeedData",
                     CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
+                    LastUpdatedTime = DateTimeOffset.UtcNow,
+                    TotalAmount = 200000.00m
                 },
                 new Appointment
                 {
@@ -614,7 +617,8 @@ namespace HairSalon.Repositories.Context
                     CreatedBy = "SeedData",
                     LastUpdatedBy = "SeedData",
                     CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
+                    LastUpdatedTime = DateTimeOffset.UtcNow,
+                    TotalAmount = 150000.00m
                 }
             );
 

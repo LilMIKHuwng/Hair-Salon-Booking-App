@@ -26,7 +26,7 @@ namespace HairSalon.Contract.Repositories.Entity
 
 		[Required]
 		[Column(TypeName = "decimal(10, 2)")]
-		public decimal TotalAmount { get; set; } = 0;
+		public decimal TotalAmount { get; set; }
 
 		[Required]
 		public DateTime AppointmentDate { get; set; }
