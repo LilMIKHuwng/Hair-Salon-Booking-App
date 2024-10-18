@@ -54,8 +54,8 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpDelete("delete/{id}")]
-        [Authorize("Admin")]
-        public async Task<ActionResult<string>> DeletePayment(string id)
+		[Authorize(Roles = "Admin")]
+		public async Task<ActionResult<string>> DeletePayment(string id)
         {
             string result = await _paymentService.DeletePaymentpAsync(id);
             return Ok(new { Message = result });
