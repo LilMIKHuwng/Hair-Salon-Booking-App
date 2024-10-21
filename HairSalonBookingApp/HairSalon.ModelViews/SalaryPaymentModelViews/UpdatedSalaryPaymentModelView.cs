@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace HairSalon.ModelViews.SalaryPaymentModelViews
+﻿namespace HairSalon.ModelViews.SalaryPaymentModelViews
 {
     public class UpdatedSalaryPaymentModelView
     {

@@ -1,27 +1,9 @@
-﻿using System.Text;
-using System.Text.Json.Serialization;
-using HairSalon.Contract.Repositories.Interface;
-using HairSalon.Contract.Repositories.SeedData;
-using HairSalon.Repositories.Context;
+﻿using System.Text.Json.Serialization;
 using HairSalonBE.API;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Text;
-using Microsoft.AspNetCore.Identity;
-using HairSalon.Repositories.Entity;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// var options = new JsonSerializerOptions
-// {
-//     ReferenceHandler = ReferenceHandler.Preserve,
-//     WriteIndented = true
-// };
-//
-// var json = JsonSerializer.Serialize(typeof(ServiceAppointment), options);
-
-// config appsettings by env
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -68,28 +50,6 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 var app = builder.Build();
-
-//add configue for seed data
-/*using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    try
-    {
-        var context = services.GetRequiredService<DatabaseContext>();
-        var unitOfWork = services.GetRequiredService<IUnitOfWork>();
-        var passwordHasher = services.GetRequiredService<IPasswordHasher<ApplicationUsers>>();
-        // Seed roles
-        await RoleSeeder.SeedRoles(unitOfWork);
-
-        //seed account admin
-        await RoleSeeder.SeedAdminUser(unitOfWork, passwordHasher);
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while seeding the database.");
-    }
-}*/
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();

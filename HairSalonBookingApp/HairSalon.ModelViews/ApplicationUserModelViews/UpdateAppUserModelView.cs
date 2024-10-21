@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace HairSalon.ModelViews.ApplicationUserModelViews
+﻿namespace HairSalon.ModelViews.ApplicationUserModelViews
 {
 	public class UpdateAppUserModelView
 	{

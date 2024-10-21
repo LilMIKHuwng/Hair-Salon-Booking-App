@@ -3,7 +3,6 @@ using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
-using HairSalon.Core.Base;
 using HairSalon.Core.Utils;
 using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalon.ModelViews.AuthModelViews;
@@ -11,8 +10,6 @@ using HairSalon.Repositories.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Drawing;
-using System.Security.Principal;
 using System.Text.RegularExpressions;
 
 namespace HairSalon.Services.Service
