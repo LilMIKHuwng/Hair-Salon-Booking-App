@@ -23,12 +23,12 @@ namespace HairSalon.Contract.Repositories.Entity
 		[MaxLength(50)]
 		public string? PaymentMethod { get; set; }
 
-        public required string BankCode { get; set; }
-        public required string BankTranNo { get; set; }
-        public required string CardType { get; set; }
-        public required string ResponseCode { get; set; }
-        public required string TransactionNo { get; set; }
-        public required string TransactionStatus { get; set; }
+        public string? BankCode { get; set; }
+        public  string? BankTranNo { get; set; }
+        public  string? CardType { get; set; }
+        public  string? ResponseCode { get; set; }
+        public  string? TransactionNo { get; set; }
+        public  string? TransactionStatus { get; set; }
         
 
     }

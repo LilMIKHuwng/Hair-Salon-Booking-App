@@ -11,8 +11,11 @@ namespace HairSalon.Contract.Services.Interface
 {
     public interface IVnPayService
     {
-        string CreatePaymentUrl(VnPayRequestModelView model, HttpContext context);
+        string CreatePaymentUrl(PaymentRequestModelView model, HttpContext context);
 
-        Task<string> ExcutePayment(VnPayResponseModelView collections);
+        Task<string> ExcutePayment(PaymentResponseModelView collections);
+
+        Task<string> ExcuteDepositToWallet(Guid userIdString, double amount);
+        Task<string> DepositWallet(VnPayDepositWalletRequestModelView model, HttpContext context);
     }
 }

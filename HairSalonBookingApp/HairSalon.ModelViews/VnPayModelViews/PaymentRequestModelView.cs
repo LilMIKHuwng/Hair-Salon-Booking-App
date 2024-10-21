@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace HairSalon.ModelViews.VnPayModelViews
 {
-    public class VnPayRequestModelView
+    public class PaymentRequestModelView
     {
         public string AppoinmentId { get; set; }
-        
-        
     }
 }

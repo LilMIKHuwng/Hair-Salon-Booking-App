@@ -9,8 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HairSalonBE.API.Controllers
 {
-	[Authorize(Roles = "User,Admin,Manager")]
-	[Route("api/[controller]")]
+    [Authorize(Roles = "User,Admin,Manager")]
+    [Route("api/[controller]")]
     [ApiController]
     public class PaymentController : ControllerBase
     {
@@ -36,29 +36,39 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<string>> CreatePayment([FromQuery] VnPayResponseModelView model)
+        public async Task<ActionResult<string>> CreatePayment([FromQuery] PaymentResponseModelView model)
         {
-            if(model.Method == "VNPAY")
-            {
-                string result = await _vpnPayService.ExcutePayment(model);
-                return Ok(new { Message = result });
-            }
-            return BadRequest();
+            string result = await _vpnPayService.ExcutePayment(model);
+            return Ok(new { Message = result });
         }
 
         [HttpPost("create-vnpay")]
-        public async Task<ActionResult> CreateVnPay(VnPayRequestModelView model)
+        public async Task<ActionResult> CreateVnPay(PaymentRequestModelView model)
         {
             var paymentUrl = _vpnPayService.CreatePaymentUrl(model, HttpContext);
             return Ok(new { Url = paymentUrl });
         }
 
         [HttpDelete("delete/{id}")]
-		[Authorize(Roles = "Admin")]
-		public async Task<ActionResult<string>> DeletePayment(string id)
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<string>> DeletePayment(string id)
         {
             string result = await _paymentService.DeletePaymentpAsync(id);
             return Ok(new { Message = result });
+        }
+
+        [HttpPost("deposit")]
+        public async Task<ActionResult<string>> Deposit([FromQuery] VnPayDepositWalletRequestModelView model)
+        {
+            string result = await _vpnPayService.DepositWallet(model, HttpContext);
+            return Ok(new { Url = result });
+        }
+
+        [HttpPost("execute-deposit")]
+        public async Task<ActionResult<string>> ExecuteDeposit([FromQuery] Guid userId, [FromQuery] double amount)
+        {
+            string result = await _vpnPayService.ExcuteDepositToWallet(userId, amount);
+            return Ok(new { Url = result });
         }
     }
 }
