@@ -1,5 +1,4 @@
-﻿using HairSalon.Contract.Repositories.Entity;
-using HairSalon.Contract.Repositories.IUOW;
+﻿using HairSalon.Contract.Repositories.IUOW;
 using HairSalon.Repositories.Context;
 using HairSalon.Repositories.Entity;
 using Microsoft.EntityFrameworkCore;

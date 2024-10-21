@@ -27,8 +27,9 @@ namespace HairSalon.Services.Service
 		// Add a new appointment
 		public async Task<string> AddAppointmentAsync(CreateAppointmentModelView model)
 		{
-			// Validate appointment date
-			if (model.AppointmentDate < DateTime.Now || model.AppointmentDate > DateTime.Now.AddMonths(1))
+            #region Validate input data
+            // Validate appointment date
+            if (model.AppointmentDate < DateTime.Now || model.AppointmentDate > DateTime.Now.AddMonths(1))
 			{
 				return "Invalid appointment date. The date must be within one month from today.";
 			}
@@ -70,8 +71,9 @@ namespace HairSalon.Services.Service
 			{
 				return "Stylist is not found.";
 			}
+            #endregion
 
-			int TotalTime = 0;
+            int TotalTime = 0;
 
 			if (!model.ServiceIds.IsNullOrEmpty())
 			{

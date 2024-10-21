@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using HairSalon.Contract.Repositories.Entity;
+﻿using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Core.Utils;
 using HairSalon.ModelViews.TokenModelViews;

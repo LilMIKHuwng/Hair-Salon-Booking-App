@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-
-namespace HairSalon.ModelViews.AppointmentModelViews
+﻿namespace HairSalon.ModelViews.AppointmentModelViews
 {
     public class AppointmentModelView
     {

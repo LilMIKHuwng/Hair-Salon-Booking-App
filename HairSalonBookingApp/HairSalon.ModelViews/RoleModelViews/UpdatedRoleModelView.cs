@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace HairSalon.ModelViews.RoleModelViews
+﻿namespace HairSalon.ModelViews.RoleModelViews
 {
     public class UpdatedRoleModelView
     {

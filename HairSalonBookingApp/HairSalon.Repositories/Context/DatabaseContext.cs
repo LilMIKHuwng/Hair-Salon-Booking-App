@@ -30,7 +30,7 @@ namespace HairSalon.Repositories.Context
         public virtual DbSet<SalaryPayment> SalaryPayments { get; set; }
         public virtual DbSet<ServiceAppointment> ServiceAppointments { get; set; }
         public virtual DbSet<Payment> Payments { get; set; }
-        public virtual DbSet<Feedback> Feedbacks{ get; set; }
+        public virtual DbSet<Feedback> Feedbacks { get; set; }
         public virtual DbSet<Combo> Combos { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -555,7 +555,7 @@ namespace HairSalon.Repositories.Context
             );
 
             // 7. Appointment
-            var appointmentId = Guid.NewGuid().ToString();
+            /*var appointmentId = Guid.NewGuid().ToString();
             var appointmentId1 = Guid.NewGuid().ToString();
             var appointmentId2 = Guid.NewGuid().ToString();
             var appointmentId3 = Guid.NewGuid().ToString();
@@ -620,28 +620,28 @@ namespace HairSalon.Repositories.Context
                     LastUpdatedTime = DateTimeOffset.UtcNow,
                     TotalAmount = 150000.00m
                 }
-            );
+            );*/
 
             // 8. Payment
-            var paymentId = Guid.NewGuid().ToString();
+            /*var paymentId = Guid.NewGuid().ToString();
 
-            //modelBuilder.Entity<Payment>().HasData(
-            //    new Payment
-            //    {
-            //        Id = paymentId,
-            //        AppointmentId = appointmentId,
-            //        TotalAmount = 100.00m,
-            //        PaymentTime = DateTime.UtcNow,
-            //        PaymentMethod = "Credit Card",
-            //        CreatedBy = "SeedData",
-            //        LastUpdatedBy = "SeedData",
-            //        CreatedTime = DateTimeOffset.UtcNow,
-            //        LastUpdatedTime = DateTimeOffset.UtcNow
-            //    }
-            //);
+            modelBuilder.Entity<Payment>().HasData(
+                new Payment
+                {
+                    Id = paymentId,
+                    AppointmentId = appointmentId,
+                    TotalAmount = 100.00m,
+                    PaymentTime = DateTime.UtcNow,
+                    PaymentMethod = "Credit Card",
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                }
+            );*/
 
             // 9. ServiceAppointment
-            var serviceAppointmentId = Guid.NewGuid().ToString();
+            /*var serviceAppointmentId = Guid.NewGuid().ToString();
 
             modelBuilder.Entity<ServiceAppointment>().HasData(
                 new ServiceAppointment
@@ -655,7 +655,7 @@ namespace HairSalon.Repositories.Context
                     CreatedTime = DateTimeOffset.UtcNow,
                     LastUpdatedTime = DateTimeOffset.UtcNow
                 }
-            );
+            );*/
 
             // 10. SalaryPayment
             var salaryPaymentId = Guid.NewGuid().ToString();
@@ -780,7 +780,7 @@ namespace HairSalon.Repositories.Context
             );
 
             // 13. ComboAppointment
-            var comboAppointmentId1 = Guid.NewGuid().ToString();
+            /*var comboAppointmentId1 = Guid.NewGuid().ToString();
             var comboAppointmentId2 = Guid.NewGuid().ToString();
             var comboAppointmentId3 = Guid.NewGuid().ToString();
 
@@ -815,8 +815,7 @@ namespace HairSalon.Repositories.Context
                     CreatedTime = DateTimeOffset.UtcNow,
                     LastUpdatedTime = DateTimeOffset.UtcNow
                 }
-            );
-
+            );*/
         }
     }
 }
