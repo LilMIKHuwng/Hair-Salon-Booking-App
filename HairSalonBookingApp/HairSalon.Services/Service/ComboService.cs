@@ -126,97 +126,14 @@ namespace HairSalon.Services.Service
             existingCombo.LastUpdatedTime = DateTimeOffset.UtcNow;
             existingCombo.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 
-            // Get the current services in the combo
-            var existingComboServices = await _unitOfWork.GetRepository<ComboServices>().Entities
-                .Where(cs => cs.ComboId == id).ToListAsync();
-
-            // Recalculate the total time and price
-            decimal totalPrice = 0;
-            int totalTime = 0;
-
-            // Remove services that are specified in ServiceIdsToRemove
-            foreach (var serviceId in model.ServiceIdsToRemove)
-            {
-                // Tìm thực thể ComboServices theo ComboId và ServiceId
-                var comboServiceExisted = await _unitOfWork.GetRepository<ComboServices>()
-                    .Entities.FirstOrDefaultAsync(cs => cs.ServiceId == serviceId && cs.ComboId == existingCombo.Id);
-
-                // Nếu tồn tại thì cập nhật thời gian xóa và người xóa
-                if (comboServiceExisted != null)
-                {
-                    var service = await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>()
-                                                    .GetByIdAsync(comboServiceExisted.ServiceId);
-
-                    if (service != null)
-                    {
-                        // Trừ giá và thời gian của dịch vụ trước khi xóa
-                        totalPrice -= service.Price;
-                        totalTime -= service.TimeService;
-                    }
-
-                    // Cập nhật thời gian xóa và người xóa
-                    comboServiceExisted.DeletedTime = DateTimeOffset.UtcNow;
-                    comboServiceExisted.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-
-                    // Cập nhật thực thể thay vì xóa
-                    await _unitOfWork.GetRepository<ComboServices>().UpdateAsync(comboServiceExisted);
-                }
-            }
-
-            // Add new services specified in ServiceIdsToAdd
-            foreach (var serviceId in model.ServiceIdsToAdd)
-            {
-                if (existingComboServices.Any(cs => cs.ServiceId == serviceId && !cs.DeletedTime.HasValue))
-                {
-                    // If a duplicate is found, throw an error
-                    return($"Service with ID {serviceId} already exists in the combo. Cannot add duplicates.");
-                }
-
-                var service = await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>().GetByIdAsync(serviceId);
-                if (service == null)
-                {
-                    return($"Service with ID {serviceId} not found.");
-                }
-
-                // Add the new service to ComboServices
-                ComboServices newComboService = new ComboServices
-                {
-                    Id = Guid.NewGuid().ToString("N"),
-                    ServiceId = serviceId,
-                    ComboId = existingCombo.Id,
-                    CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value,
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                };
-                await _unitOfWork.GetRepository<ComboServices>().InsertAsync(newComboService);
-
-                // Update total price and time for the combo
-                totalPrice += service.Price;
-                totalTime += service.TimeService;
-            }
-
-            // Recalculate total price and time for remaining services in the combo
-            var remainingComboServices = await _unitOfWork.GetRepository<ComboServices>().Entities
-                .Where(cs => cs.ComboId == id && !cs.DeletedTime.HasValue).ToListAsync();
-
-            foreach (var comboService in remainingComboServices)
-            {
-                var service = await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>()
-                    .GetByIdAsync(comboService.ServiceId);
-
-                if (service != null)
-                {
-                    totalPrice += service.Price;
-                    totalTime += service.TimeService;
-                }
-            }
-            // Apply a 10% discount to the total price
-            decimal discountedPrice = totalPrice * 0.9m;
-
-            // Update the combo details
-            existingCombo.TotalPrice = discountedPrice;  // Discounted price
-            existingCombo.TimeCombo = totalTime;
-            existingCombo.LastUpdatedTime = DateTimeOffset.UtcNow;
+			// Handle update ServiceIds if any
+			if (model.ServiceIds != null && model.ServiceIds.Length > 0)
+			{
+				var updateResult = await UpdateServiceAppointmentsAsync(existingCombo.Id, model.ServiceIds, existingCombo.TimeCombo, existingCombo.TotalPrice / 90 * 100);
+				// Update the combo details
+				existingCombo.TotalPrice = updateResult.TotalPrice * 0.9m;  // Discounted price
+				existingCombo.TimeCombo = updateResult.TimeCombo;
+			}
 
             // Save changes to the database
             await _unitOfWork.GetRepository<Combo>().UpdateAsync(existingCombo);
@@ -225,8 +142,46 @@ namespace HairSalon.Services.Service
             return "Combo successfully updated with services.";
         }
 
-        // Delete a Combo
-        public async Task<string> DeleteComboAsync(string id)
+        //Calculate TimeCombo and TotalPrice when Update
+		private async Task<(int TimeCombo, decimal TotalPrice)> UpdateServiceAppointmentsAsync(string comboId, string[] serviceIds, int currentTimeCombo, decimal currentTotalPrice)
+		{
+			var existingComboServices = await _unitOfWork.GetRepository<ComboServices>().Entities
+				.Where(sa => sa.ComboId == comboId && !sa.DeletedTime.HasValue).ToListAsync();
+
+			// Delete services that are no longer in the new list
+			var servicesToRemove = existingComboServices.Where(sa => !serviceIds.Contains(sa.ServiceId)).ToList();
+			foreach (var comboService in servicesToRemove)
+			{
+				comboService.DeletedTime = DateTimeOffset.UtcNow;
+				comboService.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+				var service = (await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>().GetByIdAsync(comboService.ServiceId));
+				currentTimeCombo -= service.TimeService;
+				currentTotalPrice -= service.Price;
+			}
+
+			// Add new serviceAppointment
+			var currentServiceIds = existingComboServices.Select(sa => sa.ServiceId).ToList();
+			var servicesToAdd = serviceIds.Where(s => !currentServiceIds.Contains(s)).ToList();
+			foreach (var serviceId in servicesToAdd)
+			{
+				var comboService = new ComboServices
+				{
+					ServiceId = serviceId,
+					ComboId = comboId,
+					LastUpdatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value
+				};
+				await _unitOfWork.GetRepository<ComboServices>().InsertAsync(comboService);
+				var service = (await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>().GetByIdAsync(serviceId));
+				currentTimeCombo += service.TimeService;
+				currentTotalPrice += service.Price;
+			}
+
+			return (currentTimeCombo, currentTotalPrice);
+		}
+
+		// Delete a Combo
+		public async Task<string> DeleteComboAsync(string id)
         {
 
             if (string.IsNullOrWhiteSpace(id))
