@@ -192,7 +192,7 @@ namespace HairSalon.Services.Service
             existingCombo.DeletedTime = DateTimeOffset.UtcNow;
             existingCombo.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 
-            // Lấy tất cả các dịch vụ trong combo và cập nhật thông tin xóa
+            // Get all service in combo
             var comboServices = await _unitOfWork.GetRepository<ComboServices>()
                 .Entities.Where(cs => cs.ComboId == id && !cs.DeletedTime.HasValue)
                 .ToListAsync();
@@ -202,7 +202,7 @@ namespace HairSalon.Services.Service
                 comboService.DeletedTime = DateTimeOffset.UtcNow;
                 comboService.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 
-                // Cập nhật thực thể thay vì xóa hoàn toàn
+                // Update
                 await _unitOfWork.GetRepository<ComboServices>().UpdateAsync(comboService);
             }
 

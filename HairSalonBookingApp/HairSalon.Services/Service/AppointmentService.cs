@@ -411,45 +411,53 @@ namespace HairSalon.Services.Service
 			return (currentTotalTime, currentTotalAmount);
 		}
 
-		private async Task<(int TotalTime, decimal TotalAmount)> UpdateComboAppointmentsAsync(string appointmentId, string[] comboIds, int currentTotalTime, decimal currentTotalAmount)
-		{
-			var existingComboAppointments = await _unitOfWork.GetRepository<ComboAppointment>().Entities
-				.Where(ca => ca.AppointmentId == appointmentId && !ca.DeletedTime.HasValue).ToListAsync();
+        private async Task<(int TotalTime, decimal TotalAmount)> UpdateComboAppointmentsAsync(string appointmentId, string[] comboIds, int currentTotalTime, decimal currentTotalAmount)
+        {
+            // Fetch existing combo appointments for the given appointmentId that are not marked as deleted
+            var existingComboAppointments = await _unitOfWork.GetRepository<ComboAppointment>().Entities
+                .Where(ca => ca.AppointmentId == appointmentId && !ca.DeletedTime.HasValue).ToListAsync();
 
-			var combosToRemove = existingComboAppointments.Where(ca => !comboIds.Contains(ca.ComboId)).ToList();
-			foreach (var comboAppointment in combosToRemove)
-			{
-				comboAppointment.DeletedTime = DateTimeOffset.UtcNow;
-				comboAppointment.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-				var combo = await _unitOfWork.GetRepository<Combo>().GetByIdAsync(comboAppointment.ComboId);
-				currentTotalTime -= combo.TimeCombo;
-				currentTotalAmount -= combo.TotalPrice;
-			}
+            // Find combo appointments that need to be removed (those not in the new comboIds array)
+            var combosToRemove = existingComboAppointments.Where(ca => !comboIds.Contains(ca.ComboId)).ToList();
 
-			var currentComboIds = existingComboAppointments.Select(ca => ca.ComboId).ToList();
-			var combosToAdd = comboIds.Where(c => !currentComboIds.Contains(c)).ToList();
-			foreach (var comboId in combosToAdd)
-			{
-				var comboAppointment = new ComboAppointment
-				{
-					ComboId = comboId,
-					AppointmentId = appointmentId,
-					LastUpdatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value
-				};
-				await _unitOfWork.GetRepository<ComboAppointment>().InsertAsync(comboAppointment);
-				var combo = (await _unitOfWork.GetRepository<Combo>().GetByIdAsync(comboId));
-				currentTotalTime += combo.TimeCombo;
-				currentTotalAmount += combo.TotalPrice;
-			}
+            // Mark each combo appointment to be removed as deleted and update the current total time and amount
+            foreach (var comboAppointment in combosToRemove)
+            {
+                comboAppointment.DeletedTime = DateTimeOffset.UtcNow; // Set deletion time to current time
+                comboAppointment.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value; // Set who deleted it
+                var combo = await _unitOfWork.GetRepository<Combo>().GetByIdAsync(comboAppointment.ComboId); // Fetch combo details
+                currentTotalTime -= combo.TimeCombo; // Deduct the combo's time from the total
+                currentTotalAmount -= combo.TotalPrice; // Deduct the combo's price from the total amount
+            }
 
-			return (currentTotalTime, currentTotalAmount);
-		}
+            // Get the list of current combo IDs from the existing appointments
+            var currentComboIds = existingComboAppointments.Select(ca => ca.ComboId).ToList();
 
+            // Find new combo IDs that need to be added (those in comboIds but not in the current combo IDs)
+            var combosToAdd = comboIds.Where(c => !currentComboIds.Contains(c)).ToList();
 
+            // Add each new combo appointment and update the current total time and amount
+            foreach (var comboId in combosToAdd)
+            {
+                var comboAppointment = new ComboAppointment
+                {
+                    ComboId = comboId,
+                    AppointmentId = appointmentId,
+                    LastUpdatedTime = DateTimeOffset.UtcNow, // Set the updated time to current time
+                    LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value // Set who updated it
+                };
+                await _unitOfWork.GetRepository<ComboAppointment>().InsertAsync(comboAppointment); // Insert the new combo appointment
+                var combo = (await _unitOfWork.GetRepository<Combo>().GetByIdAsync(comboId)); // Fetch combo details
+                currentTotalTime += combo.TimeCombo; // Add the combo's time to the total
+                currentTotalAmount += combo.TotalPrice; // Add the combo's price to the total amount
+            }
 
-		// Delete an appointment
-		public async Task<string> DeleteAppointmentAsync(string id)
+            // Return the updated total time and amount
+            return (currentTotalTime, currentTotalAmount);
+        }
+
+        // Delete an appointment
+        public async Task<string> DeleteAppointmentAsync(string id)
 		{
 			// Validate appointment ID
 			if (string.IsNullOrWhiteSpace(id))
