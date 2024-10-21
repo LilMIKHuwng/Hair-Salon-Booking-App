@@ -1,13 +1,20 @@
 ﻿using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Core.Utils;
 using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace HairSalon.Repositories.Entity
 {
     public class ApplicationUsers : IdentityUser<Guid>
     {
         public string Password {  get; set; } = string.Empty;
-        public string UserInfoId { get; set; }
+
+		[Required]
+		[Column(TypeName = "decimal(10, 2)")]
+		public decimal E_Wallet { get; set; }
+
+		public string UserInfoId { get; set; }
         public virtual UserInfo? UserInfo { get; set; }
         public string? CreatedBy { get; set; }
         public string? LastUpdatedBy { get; set; }
