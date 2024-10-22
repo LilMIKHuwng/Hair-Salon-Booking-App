@@ -1,6 +1,7 @@
 ﻿using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
 using HairSalon.ModelViews.ApplicationUserModelViews;
+using HairSalonBE.API.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +10,6 @@ namespace HairSalonBE.API.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "User")]
     public class ApplicationUserController : ControllerBase
     {
         private readonly IAppUserService _appUserService;
@@ -27,7 +27,8 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpPost("stylist-register")]
-        public async Task<ActionResult<string>> CreateAppStylist([FromQuery] CreateAppStylistModelView model)
+		[Authorize(Roles = "Admin")]
+		public async Task<ActionResult<string>> CreateAppStylist([FromQuery] CreateAppStylistModelView model)
         {
             string result = await _appUserService.AddAppStylistAsync(model);
             return Ok(result);
@@ -41,13 +42,15 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpGet("all")]
-        public async Task<ActionResult<BasePaginatedList<AppUserModelView>>> GetAllApplicationUsers(string? userId, int pageNumber = 1, int pageSize = 5)
+		[Authorize(Roles = "Admin")]
+		public async Task<ActionResult<BasePaginatedList<AppUserModelView>>> GetAllApplicationUsers(string? userId, int pageNumber = 1, int pageSize = 5)
         {
             var result = await _appUserService.GetAllAppUserAsync(userId, pageNumber, pageSize);
             return Ok(result);
         }
 
         [HttpPut("update/{userId}")]
+        [Authorize]
         public async Task<IActionResult> UpdateApplicationUser(string userId, [FromQuery] UpdateAppUserModelView model)
         {
             string result = await _appUserService.UpdateAppUserAsync(userId, model);
@@ -55,7 +58,8 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpDelete("delete/{userId}")]
-        public async Task<IActionResult> DeleteApplicationUser(string userId)
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> DeleteApplicationUser(string userId)
         {
             string result = await _appUserService.DeleteAppUserAsync(userId);
             return Ok(result);
@@ -76,9 +80,27 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpPost("admin/reset-password")]
-        public async Task<ActionResult<string>> ResetPasswordAdminAsync([FromBody] ResetPasswordAdminModelView model)
+		[Authorize(Roles = "Admin")]
+		public async Task<ActionResult<string>> ResetPasswordAdminAsync([FromBody] ResetPasswordAdminModelView model)
         {
             string result = await _appUserService.ResetPasswordAdminAsync(model);
+            return Ok(result);
+        }
+
+        [HttpGet("my-information")]
+        [Authorize]
+        public async Task<ActionResult<GetInforAppUserModelView>> GetMyInforUsersAsync()
+        {
+            // Lấy username từ JWT token
+            var username = User.GetUsername();
+
+            // Gọi service để lấy thông tin người dùng
+            var result = await _appUserService.GetMyInforUsersAsync(username);
+
+            if (result == null)
+            {
+                return NotFound("User not found");
+            }
             return Ok(result);
         }
     }

@@ -2,14 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using HairSalon.ModelViews.SalaryPaymentModelViews;
 using Microsoft.AspNetCore.Authorization;
-using HairSalon.Core.Constants;
-using HairSalon.Core.Base;
-using HairSalon.Core;
-using HairSalon.Services.Service;
 
 namespace HairSalonBE.API.Controllers
 {
-    [Authorize(Roles = "Admin,Staff")]
+    [Authorize(Roles = "Admin,Manager")]
     [Route("api/[controller]")]
     [ApiController]
     public class SalaryPaymentController : ControllerBase
@@ -22,9 +18,9 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpGet("all")]
-        public async Task<IActionResult> GetAllSalaryPayments(string? id, DateTime? paymentDate, int pageNumber = 1, int pageSize = 5)
+        public async Task<IActionResult> GetAllSalaryPayments(string? id, Guid? stylistId, DateTime? paymentDate, int pageNumber = 1, int pageSize = 5)
         {
-            var result = await _salaryPaymentService.GetAllSalaryPaymentAsync(id, paymentDate, pageNumber, pageSize);
+            var result = await _salaryPaymentService.GetAllSalaryPaymentAsync(id, stylistId, paymentDate, pageNumber, pageSize);
             return Ok(result);
         }
 

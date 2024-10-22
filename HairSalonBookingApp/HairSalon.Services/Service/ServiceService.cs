@@ -27,7 +27,7 @@ namespace HairSalon.Services.Service
         public async Task<BasePaginatedList<ServiceModelView>> GetAllServiceAsync(int pageNumber, int pageSize, string? id, string? name, string? type)
         {
             IQueryable<ServiceEntity> serviceQuery = _unitOfWork.GetRepository<ServiceEntity>().Entities
-                .Where(p => !p.DeletedTime.HasValue) // Ensure not deleted
+                .Where(p => !p.DeletedTime.HasValue)
                 .OrderByDescending(s => s.CreatedTime);
 
             // Apply filter for 'id' if provided

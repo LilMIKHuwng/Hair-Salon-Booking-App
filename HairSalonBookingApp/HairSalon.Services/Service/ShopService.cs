@@ -10,171 +10,213 @@ using Microsoft.AspNetCore.Http;
 
 namespace HairSalon.Services.Service
 {
-	public class ShopService : IShopService
-	{
-		private readonly IUnitOfWork _unitOfWork;
-		private readonly IMapper _mapper;
-		private readonly IHttpContextAccessor _contextAccessor;
+    public class ShopService : IShopService
+    {
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-		public ShopService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
-		{
-			_unitOfWork = unitOfWork;
-			_mapper = mapper;
-			_contextAccessor = httpContextAccessor;
-		}
+        public ShopService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        {
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _contextAccessor = httpContextAccessor;
+        }
 
-		public async Task<BasePaginatedList<ShopModelView>> GetAllShopAsync
-			(int pageNumber, int pageSize, string? searchName, string? searchId)
-		{
-			IQueryable<Shop> shopQuery = _unitOfWork.GetRepository<Shop>().Entities
-				.Where(p => !p.DeletedTime.HasValue);
+        public async Task<BasePaginatedList<ShopModelView>> GetAllShopAsync
+            (int pageNumber, int pageSize, string? searchName, string? searchId)
+        {
+            // Start a query to get all shops that haven't been deleted
+            IQueryable<Shop> shopQuery = _unitOfWork.GetRepository<Shop>().Entities
+                .Where(p => !p.DeletedTime.HasValue);
 
-			if (!string.IsNullOrWhiteSpace(searchName))
-			{
-				searchName = searchName.ToLower();
-				shopQuery = shopQuery.Where(s => s.Name.ToLower().Contains(searchName));
-			}
+            // If searchName is provided, filter shops by name (case-insensitive search)
+            if (!string.IsNullOrWhiteSpace(searchName))
+            {
+                searchName = searchName.ToLower();
+                shopQuery = shopQuery.Where(s => s.Name.ToLower().Contains(searchName));
+            }
 
-			if (!string.IsNullOrWhiteSpace(searchId))
-			{
-				shopQuery = shopQuery.Where(s => s.Id == searchId);
-			}
+            // If searchId is provided, filter shops by the provided ID
+            if (!string.IsNullOrWhiteSpace(searchId))
+            {
+                shopQuery = shopQuery.Where(s => s.Id == searchId);
+            }
 
-			shopQuery = shopQuery.OrderByDescending(s => s.CreatedTime);
+            // Order the results by the created time in descending order
+            shopQuery = shopQuery.OrderByDescending(s => s.CreatedTime);
 
-			int totalCount = await shopQuery.CountAsync();
+            // Get the total count of shops that match the query (without pagination)
+            int totalCount = await shopQuery.CountAsync();
 
-			List<Shop> paginatedShops = await shopQuery
-				.Skip((pageNumber - 1) * pageSize)
-				.Take(pageSize)
-				.ToListAsync();
+            // Apply pagination by skipping items based on the page number and size, then taking the appropriate page size
+            List<Shop> paginatedShops = await shopQuery
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
 
-			List<ShopModelView> shopModelViews = _mapper.Map<List<ShopModelView>>(paginatedShops);
-			return new BasePaginatedList<ShopModelView>(shopModelViews, totalCount, pageNumber, pageSize);
-		}
+            // Map the Shop entities to ShopModelView DTOs
+            List<ShopModelView> shopModelViews = _mapper.Map<List<ShopModelView>>(paginatedShops);
 
-		public async Task<string> AddShopAsync(CreateShopModelView model)
-		{
-			try
-			{
-				Shop newShop = _mapper.Map<Shop>(model);
+            // Return a paginated list, including the data, total count, page number, and page size
+            return new BasePaginatedList<ShopModelView>(shopModelViews, totalCount, pageNumber, pageSize);
+        }
 
-				newShop.Id = Guid.NewGuid().ToString("N");
-				newShop.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-				newShop.CreatedTime = DateTimeOffset.UtcNow;
-				newShop.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-				await _unitOfWork.GetRepository<Shop>().InsertAsync(newShop);
-				await _unitOfWork.SaveAsync();
+        public async Task<string> AddShopAsync(CreateShopModelView model)
+        {
+            try
+            {
+                // Map the CreateShopModelView to a Shop entity using AutoMapper
+                Shop newShop = _mapper.Map<Shop>(model);
 
-				return "Added new shop successfully!";
-			}
-			catch (BaseException.BadRequestException ex)
-			{
-				return ex.Message;
-			}
-			catch (Exception ex)
-			{
-				return "An error occurred while adding the shop.";
-			}
-		}
-		public async Task<string> UpdateShopAsync(string id, UpdatedShopModelView model)
-		{
-			try
-			{
-				if (string.IsNullOrWhiteSpace(id))
-				{
-					return "Please provide a valid Shop ID.";
-				}
+                // Generate a new unique GUID for the Shop ID and set it as a string
+                newShop.Id = Guid.NewGuid().ToString("N");
 
-				Shop? existingShop = await _unitOfWork.GetRepository<Shop>().Entities
-					.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
+                // Set the CreatedBy field to the current user's ID from the HttpContext
+                newShop.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 
-				if (existingShop == null)
-				{
-					return "The Shop cannot be found or has been deleted!";
-				}
+                // Set the CreatedTime and LastUpdatedTime to the current UTC time
+                newShop.CreatedTime = DateTimeOffset.UtcNow;
+                newShop.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-				// Manually map fields to retain existing data if the update fields are null
-				if (!string.IsNullOrWhiteSpace(model.Name) && model.Name != existingShop.Name)
-				{
-					existingShop.Name = model.Name;
-				}
-				if (!string.IsNullOrWhiteSpace(model.Address) && model.Address != existingShop.Address)
-				{
-					existingShop.Address = model.Address;
-				}
-				if (!string.IsNullOrWhiteSpace(model.ShopEmail) && model.ShopEmail != existingShop.ShopEmail)
-				{
-					existingShop.ShopEmail = model.ShopEmail;
-				}
-				if (!string.IsNullOrWhiteSpace(model.ShopPhone) && model.ShopPhone != existingShop.ShopPhone)
-				{
-					existingShop.ShopPhone = model.ShopPhone;
-				}
-				if (model.OpenTime != null && model.OpenTime != existingShop.OpenTime)
-				{
-					existingShop.OpenTime = (TimeSpan)model.OpenTime;
-				}
-				if (model.CloseTime != null && model.CloseTime != existingShop.CloseTime)
-				{
-					existingShop.CloseTime = (TimeSpan)model.CloseTime;
-				}
-				if (!string.IsNullOrWhiteSpace(model.Title) && model.Title != existingShop.Title)
-				{
-					existingShop.Title = model.Title;
-				}
+                // Insert the new shop entity into the repository
+                await _unitOfWork.GetRepository<Shop>().InsertAsync(newShop);
 
-				existingShop.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-				existingShop.LastUpdatedTime = DateTimeOffset.UtcNow;
+                // Save the changes to the database
+                await _unitOfWork.SaveAsync();
 
-				await _unitOfWork.GetRepository<Shop>().UpdateAsync(existingShop);
-				await _unitOfWork.SaveAsync();
+                // Return a success message
+                return "Added new shop successfully!";
+            }
+            catch (BaseException.BadRequestException ex)
+            {
+                return ex.Message;
+            }
+            catch (Exception ex)
+            {
+                return "An error occurred while adding the shop.";
+            }
+        }
 
-				return "Updated shop successfully";
-			}
-			catch (BaseException.BadRequestException ex)
-			{
-				return ex.Message;
-			}
-			catch (Exception ex)
-			{
-				return "An error occurred while updating the shop.";
-			}
-		}
+        public async Task<string> UpdateShopAsync(string id, UpdatedShopModelView model)
+        {
+            try
+            {
+                // Check if the provided Shop ID is valid (non-empty and non-whitespace)
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    return "Please provide a valid Shop ID.";
+                }
 
-		public async Task<string> DeleteShopAsync(string id)
-		{
-			try
-			{
-				if (string.IsNullOrWhiteSpace(id))
-				{
-					return "Please provide a valid Shop ID.";
-				}
+                // Retrieve the existing shop based on the provided ID, ensuring it hasn't been deleted
+                Shop? existingShop = await _unitOfWork.GetRepository<Shop>().Entities
+                    .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
 
-				Shop existingShop = await _unitOfWork.GetRepository<Shop>().Entities
-					.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
+                // If the shop doesn't exist or has been deleted, return an error message
+                if (existingShop == null)
+                {
+                    return "The Shop cannot be found or has been deleted!";
+                }
 
-				if (existingShop == null)
-				{
-					return "The Shop cannot be found or has been deleted!";
-				}
+                // Manually map each field to retain existing data if the update fields are null or unchanged
+                if (!string.IsNullOrWhiteSpace(model.Name) && model.Name != existingShop.Name)
+                {
+                    existingShop.Name = model.Name;
+                }
+                if (!string.IsNullOrWhiteSpace(model.Address) && model.Address != existingShop.Address)
+                {
+                    existingShop.Address = model.Address;
+                }
+                if (!string.IsNullOrWhiteSpace(model.ShopEmail) && model.ShopEmail != existingShop.ShopEmail)
+                {
+                    existingShop.ShopEmail = model.ShopEmail;
+                }
+                if (!string.IsNullOrWhiteSpace(model.ShopPhone) && model.ShopPhone != existingShop.ShopPhone)
+                {
+                    existingShop.ShopPhone = model.ShopPhone;
+                }
+                if (model.OpenTime != null && model.OpenTime != existingShop.OpenTime)
+                {
+                    existingShop.OpenTime = (TimeSpan)model.OpenTime;
+                }
+                if (model.CloseTime != null && model.CloseTime != existingShop.CloseTime)
+                {
+                    existingShop.CloseTime = (TimeSpan)model.CloseTime;
+                }
+                if (!string.IsNullOrWhiteSpace(model.Title) && model.Title != existingShop.Title)
+                {
+                    existingShop.Title = model.Title;
+                }
 
-				existingShop.DeletedTime = DateTimeOffset.UtcNow;
-				existingShop.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                // Update audit fields with the current user and timestamp
+                existingShop.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                existingShop.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-				await _unitOfWork.GetRepository<Shop>().UpdateAsync(existingShop);
-				await _unitOfWork.SaveAsync();
-				return "Deleted shop successfully!";
-			}
-			catch (BaseException.BadRequestException ex)
-			{
-				return ex.Message;
-			}
-			catch (Exception ex)
-			{
-				return "An error occurred while deleting the shop.";
-			}
-		}
-	}
+                // Update the shop entity in the repository
+                await _unitOfWork.GetRepository<Shop>().UpdateAsync(existingShop);
+
+                // Save the changes to the database
+                await _unitOfWork.SaveAsync();
+
+                // Return a success message
+                return "Updated shop successfully";
+            }
+            catch (BaseException.BadRequestException ex)
+            {
+                return ex.Message;
+            }
+            catch (Exception ex)
+            {
+                return "An error occurred while updating the shop.";
+            }
+        }
+
+        public async Task<string> DeleteShopAsync(string id)
+        {
+            try
+            {
+                // Check if the provided Shop ID is valid (non-empty and non-whitespace)
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    return "Please provide a valid Shop ID.";
+                }
+
+                // Retrieve the existing shop based on the provided ID, ensuring it hasn't been deleted
+                Shop existingShop = await _unitOfWork.GetRepository<Shop>().Entities
+                    .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
+
+                // If the shop doesn't exist or has been deleted, return an error message
+                if (existingShop == null)
+                {
+                    return "The Shop cannot be found or has been deleted!";
+                }
+
+                // Mark the shop as deleted by setting the DeletedTime to the current UTC time
+                existingShop.DeletedTime = DateTimeOffset.UtcNow;
+
+                // Record the ID of the user performing the deletion action
+                existingShop.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+
+                // Update the shop entity in the repository
+                await _unitOfWork.GetRepository<Shop>().UpdateAsync(existingShop);
+
+                // Save the changes to the database
+                await _unitOfWork.SaveAsync();
+
+                // Return a success message
+                return "Deleted shop successfully!";
+            }
+            catch (BaseException.BadRequestException ex)
+            {
+                // Return the exception message if a BadRequestException is caught
+                return ex.Message;
+            }
+            catch (Exception ex)
+            {
+                // Return a generic error message if any other exception occurs
+                return "An error occurred while deleting the shop.";
+            }
+        }
+    }
 }

@@ -11,6 +11,9 @@ using HairSalon.Repositories.Entity;
 using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalon.ModelViews.AppUserRoleViewModels;
 using HairSalon.ModelViews.ServiceAppointmentModelViews;
+using HairSalon.ModelViews.FeedBackModeViews;
+using HairSalon.ModelViews.FeedbackModeViews;
+using HairSalon.ModelViews.ComboModelViews;
 
 namespace HairSalon.Repositories.Mapper
 {
@@ -25,10 +28,7 @@ namespace HairSalon.Repositories.Mapper
             CreateMap<CreateShopModelView, Shop>();
 
             CreateMap<Payment, PaymentModelView>();
-            CreateMap<Payment, CreatePaymentModelView>();
-            CreateMap<Payment, UpdatedPaymentModelView>();
-            CreateMap<UpdatedPaymentModelView, Payment>();
-            CreateMap<CreatePaymentModelView, Payment>();
+            
 
             CreateMap<Appointment, AppointmentModelView>();
             CreateMap<Appointment, CreateAppointmentModelView>();
@@ -78,6 +78,19 @@ namespace HairSalon.Repositories.Mapper
             CreateMap<ServiceAppointment, CreatServiceAppointmentModelView>();
             CreateMap<EditServiceAppointmentModelView, ServiceAppointment>();
             CreateMap<CreatServiceAppointmentModelView, ServiceAppointment>();
+
+            CreateMap<Feedback, FeedBackModelView>();
+            CreateMap<Feedback, CreateFeedbackModelView>();
+            CreateMap<Feedback, UpdatedFeedbackModelView>();
+            CreateMap<CreateFeedbackModelView, Feedback>();
+            CreateMap<UpdatedFeedbackModelView, Feedback>();
+            CreateMap<Feedback, ServiceFeedbackModelView>();
+
+            CreateMap<Combo, ComboModelView>();
+            CreateMap<Combo, CreateComboModelView>();
+            CreateMap<Combo, UpdateComboModelView>();
+            CreateMap<CreateComboModelView, Combo>();
+            CreateMap<UpdateComboModelView, Combo>();
         }
     }
 }

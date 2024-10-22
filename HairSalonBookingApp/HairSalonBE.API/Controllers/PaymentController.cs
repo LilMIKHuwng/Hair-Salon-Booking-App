@@ -1,23 +1,24 @@
 ﻿using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
 using HairSalon.ModelViews.PaymentModelViews;
-using HairSalon.ModelViews.RoleModelViews;
-using HairSalon.Services.Service;
+using HairSalon.ModelViews.VnPayModelViews;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairSalonBE.API.Controllers
 {
-	[Authorize(Roles = "User")]
-	[Route("api/[controller]")]
+    [Authorize(Roles = "User,Admin,Manager")]
+    [Route("api/[controller]")]
     [ApiController]
     public class PaymentController : ControllerBase
     {
         private readonly IPaymentService _paymentService;
+        private readonly IVnPayService _vpnPayService;
 
-        public PaymentController(IPaymentService paymentService)
+        public PaymentController(IPaymentService paymentService, IVnPayService vpnPayService)
         {
             _paymentService = paymentService;
+            _vpnPayService = vpnPayService;
         }
 
         [HttpGet("all")]
@@ -33,24 +34,39 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<string>> CreatePayment([FromQuery] CreatePaymentModelView model)
+        public async Task<ActionResult<string>> CreatePayment([FromQuery] PaymentResponseModelView model)
         {
-            string result = await _paymentService.AddPaymentAsync(model);
+            string result = await _vpnPayService.ExcutePayment(model);
             return Ok(new { Message = result });
         }
 
-        [HttpPut("update/{id}")]
-        public async Task<ActionResult<string>> UpdatePayment(string id, [FromQuery] UpdatedPaymentModelView model)
+        [HttpPost("create-vnpay")]
+        public async Task<ActionResult> CreateVnPay(PaymentRequestModelView model)
         {
-            string result = await _paymentService.UpdatePaymentAsync(id, model);
-            return Ok(new { Message = result });
+            var paymentUrl = _vpnPayService.CreatePaymentUrl(model, HttpContext);
+            return Ok(new { Url = paymentUrl });
         }
 
         [HttpDelete("delete/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<string>> DeletePayment(string id)
         {
             string result = await _paymentService.DeletePaymentpAsync(id);
             return Ok(new { Message = result });
+        }
+
+        [HttpPost("deposit")]
+        public async Task<ActionResult<string>> Deposit([FromQuery] VnPayDepositWalletRequestModelView model)
+        {
+            string result = await _vpnPayService.DepositWallet(model, HttpContext);
+            return Ok(new { Url = result });
+        }
+
+        [HttpPost("execute-deposit")]
+        public async Task<ActionResult<string>> ExecuteDeposit([FromQuery] Guid userId, [FromQuery] double amount)
+        {
+            string result = await _vpnPayService.ExcuteDepositToWallet(userId, amount);
+            return Ok(new { Url = result });
         }
     }
 }

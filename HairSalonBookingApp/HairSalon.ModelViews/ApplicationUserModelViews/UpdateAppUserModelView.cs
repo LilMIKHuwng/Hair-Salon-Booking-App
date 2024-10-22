@@ -1,11 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace HairSalon.ModelViews.ApplicationUserModelViews
+﻿namespace HairSalon.ModelViews.ApplicationUserModelViews
 {
 	public class UpdateAppUserModelView
 	{
-		public string? UserInfoId { get; set; }
-
 		public string? FirstName { get; set; }
 
 		public string? LastName { get; set; }

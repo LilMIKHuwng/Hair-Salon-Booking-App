@@ -3,11 +3,9 @@ using HairSalon.Core;
 using HairSalon.ModelViews.AppointmentModelViews;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-
 namespace HairSalonBE.API.Controllers
 {
-	[Authorize(Roles = "User")]
+	[Authorize]
 	[Route("api/[controller]")]
     [ApiController]
 
@@ -30,12 +28,12 @@ namespace HairSalonBE.API.Controllers
 
         [HttpGet("all")]
         public async Task<ActionResult<BasePaginatedList<AppointmentModelView>>> GetAllAppointments(int pageNumber = 1, int pageSize = 5,
-            [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null, [FromQuery] string? id = null)
+            [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null, [FromQuery] string? id = null, [FromQuery] Guid? userId = null,
+            [FromQuery] Guid? stylistId = null, [FromQuery] string? statusForAppointment = null)
         {
-            var result = await _appointmentService.GetAllAppointmentAsync(pageNumber, pageSize, startDate, endDate, id);
+            var result = await _appointmentService.GetAllAppointmentAsync(pageNumber, pageSize, startDate, endDate, id, userId, stylistId, statusForAppointment);
             return Ok(result);
         }
-
 
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateAppointment(string id, [FromQuery] UpdateAppointmentModelView model)
@@ -48,6 +46,22 @@ namespace HairSalonBE.API.Controllers
         public async Task<IActionResult> DeleteAppointment(string id)
         {
             var result = await _appointmentService.DeleteAppointmentAsync(id);
+            return Ok(result);
+        }
+
+        [HttpPut("mark-completed/{id}")]
+        [Authorize(Roles = "Admin,Manager")]
+        public async Task<IActionResult> MarkAppointmentCompleted(string id)
+        {
+            var result = await _appointmentService.MarkCompleted(id);
+            return Ok(result);
+        }
+
+        [HttpPut("mark-confirmed/{id}")]
+        [Authorize(Roles = "Admin,Manager")]
+        public async Task<IActionResult> MarkAppointmentConfirmed(string id)
+        {
+            var result = await _appointmentService.MarkConfirmed(id);
             return Ok(result);
         }
     }
