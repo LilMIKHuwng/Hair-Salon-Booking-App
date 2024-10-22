@@ -12,5 +12,6 @@ namespace HairSalon.Contract.Services.Interface
         Task<string> UpdateServiceAsync(string id, UpdatedServiceModelView model);
 
         Task<string> DeleteServiceAsync(string id);
+        Task<BasePaginatedList<StatisticalServiceModelView>> MonthlyServiceStatistics(int pageNumber, int pageSize, int? year, int? month);
     }
 }
