@@ -5,7 +5,6 @@ namespace HairSalon.ModelViews.AppointmentModelViews
     public class CreateAppointmentModelView
     {
         public string? StylistId { get; set; }
-
         public string[]? ServiceIds { get; set; }
         public string[]? ComboIds { get; set; }
 

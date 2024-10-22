@@ -6,6 +6,8 @@ using ServiceEntity = HairSalon.Contract.Repositories.Entity.Service;
 using Microsoft.EntityFrameworkCore;
 using HairSalon.Core;
 using Microsoft.AspNetCore.Http;
+using HairSalon.Contract.Repositories.Entity;
+using HairSalon.Core.Utils;
 
 namespace HairSalon.Services.Service
 {
@@ -152,6 +154,42 @@ namespace HairSalon.Services.Service
             await _unitOfWork.GetRepository<ServiceEntity>().UpdateAsync(existingService);
             await _unitOfWork.SaveAsync();
             return "Service deleted successfully";
+        }
+
+        // Get number of each service per month
+        public async Task<BasePaginatedList<StatisticalServiceModelView>> MonthlyServiceStatistics(int pageNumber, int pageSize, int? year, int? month)
+        {
+            if (month.HasValue && !year.HasValue)
+            {
+                return new BasePaginatedList<StatisticalServiceModelView>(new List<StatisticalServiceModelView>(), 0, pageNumber, pageSize);
+            }
+
+            // Query the ServiceAppointment table to retrieve appointment and service information
+            var serviceUsageQuery = _unitOfWork.GetRepository<ServiceAppointment>().Entities
+                .Include(sa => sa.Service)
+                .Include(sa => sa.Appointment)
+                .Where(sa => sa.Appointment.AppointmentDate.Year == year &&
+                             (!month.HasValue || sa.Appointment.AppointmentDate.Month == month) && 
+                             !sa.DeletedTime.HasValue) // Filter by year and month
+                .GroupBy(sa => sa.Service.Name) // Group by Service Name 
+                .Select(group => new StatisticalServiceModelView
+                {
+                    ServiceName = group.Key,
+                    UsageCount = group.Count()
+                })
+                .OrderByDescending(x => x.UsageCount);
+
+            // Calculate the total number of services used
+            int totalCount = await serviceUsageQuery.CountAsync();
+
+            // Retrieve paginated data
+            var paginatedServiceUsage = await serviceUsageQuery
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            // Return the paginated list
+            return new BasePaginatedList<StatisticalServiceModelView>(paginatedServiceUsage, totalCount, pageNumber, pageSize);
         }
     }
 }
