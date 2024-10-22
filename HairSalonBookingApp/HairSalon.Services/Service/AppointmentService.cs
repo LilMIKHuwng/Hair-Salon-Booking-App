@@ -11,46 +11,72 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace HairSalon.Services.Service
 {
-	public class AppointmentService : IAppointmentService
-	{
-		private readonly IUnitOfWork _unitOfWork;
-		private readonly IMapper _mapper;
-		private readonly IHttpContextAccessor _contextAccessor;
+    public class AppointmentService : IAppointmentService
+    {
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-		public AppointmentService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor contextAccessor)
-		{
-			_unitOfWork = unitOfWork;
-			_mapper = mapper;
-			_contextAccessor = contextAccessor;
-		}
+        public AppointmentService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor contextAccessor)
+        {
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _contextAccessor = contextAccessor;
+        }
 
-		// Add a new appointment
-		public async Task<string> AddAppointmentAsync(CreateAppointmentModelView model)
-		{
-            #region Validate input data
-            // Validate appointment date
-            if (model.AppointmentDate < DateTime.Now || model.AppointmentDate > DateTime.Now.AddMonths(1))
-			{
-				return "Invalid appointment date. The date must be within one month from today.";
-			}
+        //check stylist is busy or not
+        private async Task<bool> IsStylistBusy(Guid stylistId, DateTime appointmentDate, int newTotalTime)
+        {
+            return await _unitOfWork.GetRepository<Appointment>().Entities
+                .AnyAsync(p => p.StylistId == stylistId
+                    && !p.StatusForAppointment.Equals("Cancelled")
+                    && !p.DeletedTime.HasValue
+                    && !(appointmentDate.AddMinutes(newTotalTime) <= p.AppointmentDate
+                    || appointmentDate >= p.AppointmentDate.AddMinutes(p.TotalTime)));
+        }
 
-			if (model.ComboIds.IsNullOrEmpty() && model.ServiceIds.IsNullOrEmpty())
-			{
-				return "You need choose at least one service or combo";
-			}
+        //check duplicate appointment
+        private async Task<bool> IsDuplicateAppointment(Guid userId, DateTime appointmentDate, int newTotalTime)
+        {
+            return await _unitOfWork.GetRepository<Appointment>().Entities
+                .AnyAsync(p => p.UserId == userId
+                    && !p.StatusForAppointment.Equals("Cancelled")
+                    && !p.DeletedTime.HasValue
+                    && !(appointmentDate.AddMinutes(newTotalTime) <= p.AppointmentDate
+                    || appointmentDate >= p.AppointmentDate.AddMinutes(p.TotalTime)));
+        }
 
-			// Check for duplicate services
-			if (model.ServiceIds != null && model.ServiceIds.Distinct().Count() != model.ServiceIds.Length)
-			{
-				return "Duplicate services found. Please remove the duplicate services.";
-			}
+        // calculate total time, price of service and combo
+        private async Task<(int totalTime, decimal totalPrice)> calculateTotalTimePrice(string[]? serviceIds, string[]? comboIds)
+        {
+            int totalTime = 0;
+            decimal totalPrice = 0;
 
-			// Check for duplicate combos
-			if (model.ComboIds != null && model.ComboIds.Distinct().Count() != model.ComboIds.Length)
-			{
-				return "Duplicate combos found. Please remove the duplicate combos.";
-			}
+            if (!serviceIds.IsNullOrEmpty())
+            {
+                var services = await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>().Entities
+                    .Where(s => serviceIds.Contains(s.Id))
+                    .ToListAsync();
 
+                totalTime += services.Sum(s => s.TimeService);
+                totalPrice += services.Sum(s => s.Price);
+            }
+
+            if (!comboIds.IsNullOrEmpty())
+            {
+                var combos = await _unitOfWork.GetRepository<Combo>().Entities
+                    .Where(c => comboIds.Contains(c.Id))
+                    .ToListAsync();
+
+                totalTime += combos.Sum(c => c.TimeCombo);
+                totalPrice += combos.Sum(c => c.TotalPrice);
+            }
+            return (totalTime, totalPrice);
+        }
+
+        // Add a new appointment
+        public async Task<string> AddAppointmentAsync(CreateAppointmentModelView model)
+        {
             // Get the user by userId
             var user = await _unitOfWork.GetRepository<ApplicationUsers>()
                 .GetByIdAsync(Guid.Parse(_contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value));
@@ -59,109 +85,145 @@ namespace HairSalon.Services.Service
                 return "User is not found.";
             }
 
-			// Check if user has enough points
-			if (model.PointsEarned > user.UserInfo.Point)
-			{
-				return "Insufficient points. The user does not have enough points for this appointment.";
-			}
+            if (model.ComboIds.IsNullOrEmpty() && model.ServiceIds.IsNullOrEmpty())
+            {
+                return "You need choose at least one service or combo";
+            }
 
-			// Check if stylist exists
-			var stylist = await _unitOfWork.GetRepository<ApplicationUsers>().GetByIdAsync(Guid.Parse(model.StylistId));
-			if (stylist == null)
-			{
-				return "Stylist is not found.";
-			}
-            #endregion
+            // Check for duplicate services
+            if (model.ServiceIds != null && model.ServiceIds.Distinct().Count() != model.ServiceIds.Length)
+            {
+                return "Duplicate services found. Please remove the duplicate services.";
+            }
 
-            int TotalTime = 0;
+            // Check for duplicate combos
+            if (model.ComboIds != null && model.ComboIds.Distinct().Count() != model.ComboIds.Length)
+            {
+                return "Duplicate combos found. Please remove the duplicate combos.";
+            }
 
-			if (!model.ServiceIds.IsNullOrEmpty())
-			{
-				foreach (var serviceId in model.ServiceIds)
-				{
-					// calculate total time
-					var service = await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>().GetByIdAsync(serviceId);
-					TotalTime += service.TimeService;
-				}
-			}
+            // Check if user has enough points
+            if (model.PointsEarned > user.UserInfo.Point)
+            {
+                return "Insufficient points. The user does not have enough points for this appointment.";
+            }
 
-			if (!model.ComboIds.IsNullOrEmpty())
-			{
-				foreach (var comboId in model.ComboIds)
-				{
-					// calculate total time 
-					var combo = await _unitOfWork.GetRepository<Combo>().GetByIdAsync(comboId);
-					TotalTime += combo.TimeCombo;
-				}
-			}
-			// check stylist don't have any appointment
-			bool isStylistBusy = await _unitOfWork.GetRepository<Appointment>().Entities
-			.AnyAsync(p => p.StylistId == Guid.Parse(model.StylistId)
-				&& !p.StatusForAppointment.Equals("Cancelled")
-				&& (model.AppointmentDate <= p.AppointmentDate.AddMinutes(p.TotalTime)
-				&& model.AppointmentDate >= p.AppointmentDate) 
-				|| (model.AppointmentDate.AddMinutes(TotalTime) <= p.AppointmentDate.AddMinutes(p.TotalTime)
-				&& model.AppointmentDate.AddMinutes(TotalTime) >= p.AppointmentDate)
-				&& !p.DeletedTime.HasValue);
+            var (totalTime, totalPrice) = await calculateTotalTimePrice(model.ServiceIds, model.ComboIds);
 
-			if (isStylistBusy)
-			{
-				return "Stylist is busy at that time";
-			}
+            // Validate appointment date
+            if (model.AppointmentDate < DateTime.Now || model.AppointmentDate > DateTime.Now.AddMonths(1))
+            {
+                return "Invalid appointment date. The date must be within one month from today.";
+            }
+
+            bool isConflictAppointment = await IsDuplicateAppointment(user.Id, model.AppointmentDate, totalTime);
+
+            if (isConflictAppointment)
+            {
+                return "You have other appointment at that time";
+            }
+
+            // Check valid stylist
+            if (model.StylistId.IsNullOrEmpty())
+            {
+                // Retrieve a list of available stylists who are active and not deleted
+                var role = await _unitOfWork.GetRepository<ApplicationRoles>()
+                    .Entities
+                    .FirstOrDefaultAsync(r => r.Name == "Stylist");
+                var availableStylists = await _unitOfWork.GetRepository<ApplicationUserRoles>()
+                    .Entities
+                    .Where(ur => ur.RoleId.Equals(role.Id)
+                        && !ur.DeletedTime.HasValue
+                        && !ur.User.DeletedTime.HasValue)
+                    .Select(ur => ur.User)
+                    .ToListAsync();
+
+                // Dictionary to store stylist and their appointment count
+                Dictionary<Guid, int> stylistAppointmentsCount = new Dictionary<Guid, int>();
+
+                // Check each stylist to see if they are available at the requested time and count their appointments
+                foreach (var stylists in availableStylists)
+                {
+                    bool isStylistAvailable = !await IsStylistBusy(stylists.Id, model.AppointmentDate, totalTime);
+
+                    // If stylist is available, count their total appointments
+                    if (isStylistAvailable)
+                    {
+                        int appointmentCount = await _unitOfWork.GetRepository<Appointment>().Entities
+                            .CountAsync(p => p.StylistId == stylists.Id && !p.StatusForAppointment.Equals("Cancelled") && !p.DeletedTime.HasValue);
+
+                        stylistAppointmentsCount.Add(stylists.Id, appointmentCount); // Add stylist and their appointment count
+                    }
+                }
+
+                // If no stylist is available, return error message
+                if (!stylistAppointmentsCount.Any())
+                {
+                    return "No available stylist found at the requested time.";
+                }
+
+                // Select the stylist with the least number of appointments
+                var stylistWithLeastAppointments = stylistAppointmentsCount.OrderBy(s => s.Value).FirstOrDefault();
+
+                // Assign the stylist ID with the least appointments to the model
+                model.StylistId = stylistWithLeastAppointments.Key.ToString();
+            }
+            else
+            {
+                // check stylist don't have any appointment
+                bool isStylistBusy = await IsStylistBusy(Guid.Parse(model.StylistId), model.AppointmentDate, totalTime);
+
+                if (isStylistBusy)
+                {
+                    return "Stylist has other appointment at that time";
+                }
+            }
 
             // Map data model to entity
             Appointment newAppointment = _mapper.Map<Appointment>(model);
             newAppointment.Id = Guid.NewGuid().ToString("N");
             newAppointment.UserId = user.Id;
             newAppointment.StatusForAppointment = "Scheduled";
+            newAppointment.TotalTime = totalTime;
+            newAppointment.TotalAmount = totalPrice;
             newAppointment.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
             newAppointment.CreatedTime = DateTimeOffset.UtcNow;
             newAppointment.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-			// create service appointment
-			if (!model.ServiceIds.IsNullOrEmpty())
-			{
-				foreach (var serviceId in model.ServiceIds)
-				{
-					ServiceAppointment serviceAppointment = new ServiceAppointment
-					{
-						Id = Guid.NewGuid().ToString("N"),
-						AppointmentId = newAppointment.Id,
-						ServiceId = serviceId,
-						CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value,
-						CreatedTime = DateTimeOffset.UtcNow,
-						LastUpdatedTime = DateTimeOffset.UtcNow
-					};
+            // create service appointment
+            if (!model.ServiceIds.IsNullOrEmpty())
+            {
+                foreach (var serviceId in model.ServiceIds)
+                {
+                    ServiceAppointment serviceAppointment = new ServiceAppointment
+                    {
+                        Id = Guid.NewGuid().ToString("N"),
+                        AppointmentId = newAppointment.Id,
+                        ServiceId = serviceId,
+                        CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value,
+                        CreatedTime = DateTimeOffset.UtcNow,
+                        LastUpdatedTime = DateTimeOffset.UtcNow
+                    };
 
-					// calculate total time and total amount of appointment
-					var service = await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>().GetByIdAsync(serviceId);
-					newAppointment.TotalTime += service.TimeService;
-					newAppointment.TotalAmount += service.Price;
+                    // Add each ServiceAppointment to the repository
+                    await _unitOfWork.GetRepository<ServiceAppointment>().InsertAsync(serviceAppointment);
+                }
+            }
 
-					// Add each ServiceAppointment to the repository
-					await _unitOfWork.GetRepository<ServiceAppointment>().InsertAsync(serviceAppointment);
-				}
-			}
-
-			// create ComboService appointment
-			if (!model.ComboIds.IsNullOrEmpty())
-			{
-				foreach (var comboId in model.ComboIds)
-				{
-					ComboAppointment comboAppointment = new ComboAppointment
-					{
-						Id = Guid.NewGuid().ToString("N"),
-						AppointmentId = newAppointment.Id,
-						ComboId = comboId,
-						CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value,
-						CreatedTime = DateTimeOffset.UtcNow,
-						LastUpdatedTime = DateTimeOffset.UtcNow
-					};
-
-					// calculate total time and total amount of appointment
-					var combo = await _unitOfWork.GetRepository<Combo>().GetByIdAsync(comboId);
-					newAppointment.TotalTime += combo.TimeCombo;
-					newAppointment.TotalAmount += combo.TotalPrice;
+            // create ComboService appointment
+            if (!model.ComboIds.IsNullOrEmpty())
+            {
+                foreach (var comboId in model.ComboIds)
+                {
+                    ComboAppointment comboAppointment = new ComboAppointment
+                    {
+                        Id = Guid.NewGuid().ToString("N"),
+                        AppointmentId = newAppointment.Id,
+                        ComboId = comboId,
+                        CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value,
+                        CreatedTime = DateTimeOffset.UtcNow,
+                        LastUpdatedTime = DateTimeOffset.UtcNow
+                    };
 
                     // Add each ComboAppointment to the repository
                     await _unitOfWork.GetRepository<ComboAppointment>().InsertAsync(comboAppointment);
@@ -172,421 +234,363 @@ namespace HairSalon.Services.Service
             await _unitOfWork.GetRepository<Appointment>().InsertAsync(newAppointment);
             await _unitOfWork.SaveAsync();
 
-			return "Appointment successfully created.";
-		}
+            return "Appointment successfully created.";
+        }
 
-		// Get all appointments by startEndDay, id
-		public async Task<BasePaginatedList<AppointmentModelView>> GetAllAppointmentAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? endDate, string? id, Guid? userId, Guid? stylistId, string? statusForAppointment)
-		{
-			// Get appointments from database
-			IQueryable<Appointment> appointmentQuery = _unitOfWork.GetRepository<Appointment>().Entities
-				.Where(p => !p.DeletedTime.HasValue)
-				.OrderByDescending(s => s.CreatedTime);
+        // Get all appointments by startEndDay, id
+        public async Task<BasePaginatedList<AppointmentModelView>> GetAllAppointmentAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? endDate, string? id, Guid? userId, Guid? stylistId, string? statusForAppointment)
+        {
+            // Get appointments from database
+            IQueryable<Appointment> appointmentQuery = _unitOfWork.GetRepository<Appointment>().Entities
+                .Where(p => !p.DeletedTime.HasValue)
+                .OrderByDescending(s => s.CreatedTime);
 
-			// Filter by date range if provided
-			if (startDate.HasValue && endDate.HasValue)
-			{
-				appointmentQuery = appointmentQuery.Where(a => a.AppointmentDate >= startDate.Value && a.AppointmentDate <= endDate.Value);
-			}
+            // Filter by date range if provided
+            if (startDate.HasValue && endDate.HasValue)
+            {
+                appointmentQuery = appointmentQuery.Where(a => a.AppointmentDate >= startDate.Value && a.AppointmentDate <= endDate.Value);
+            }
 
-			// Filter by ID if provided
-			if (!string.IsNullOrEmpty(id))
-			{
-				appointmentQuery = appointmentQuery.Where(a => a.Id.Equals(id));
-			}
+            // Filter by ID if provided
+            if (!string.IsNullOrEmpty(id))
+            {
+                appointmentQuery = appointmentQuery.Where(a => a.Id.Equals(id));
+            }
 
-			if (userId.HasValue)
-			{
-				appointmentQuery = appointmentQuery.Where(p => p.UserId == userId.Value);
-			}
+            if (userId.HasValue)
+            {
+                appointmentQuery = appointmentQuery.Where(p => p.UserId == userId.Value);
+            }
 
-			if (stylistId.HasValue)
-			{
-				appointmentQuery = appointmentQuery.Where(p => p.StylistId == stylistId.Value);
-			}
+            if (stylistId.HasValue)
+            {
+                appointmentQuery = appointmentQuery.Where(p => p.StylistId == stylistId.Value);
+            }
 
-			if (!string.IsNullOrEmpty(statusForAppointment))
-			{
-				appointmentQuery = appointmentQuery.Where(a => a.StatusForAppointment.Equals(statusForAppointment));
-			}
+            if (!string.IsNullOrEmpty(statusForAppointment))
+            {
+                appointmentQuery = appointmentQuery.Where(a => a.StatusForAppointment.Equals(statusForAppointment));
+            }
 
-			int totalCount = await appointmentQuery.CountAsync();
+            int totalCount = await appointmentQuery.CountAsync();
 
-			// Apply pagination
-			List<Appointment> paginatedAppointments = await appointmentQuery
-				.Skip((pageNumber - 1) * pageSize)
-				.Take(pageSize)
-				.ToListAsync();
+            // Apply pagination
+            List<Appointment> paginatedAppointments = await appointmentQuery
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
 
-			// Map data to model
-			List<AppointmentModelView> appointmentModelViews = _mapper.Map<List<AppointmentModelView>>(paginatedAppointments);
+            // Map data to model
+            List<AppointmentModelView> appointmentModelViews = _mapper.Map<List<AppointmentModelView>>(paginatedAppointments);
 
-			return new BasePaginatedList<AppointmentModelView>(appointmentModelViews, totalCount, pageNumber, pageSize);
-		}
+            return new BasePaginatedList<AppointmentModelView>(appointmentModelViews, totalCount, pageNumber, pageSize);
+        }
 
 
-		// Update Appointment
-		public async Task<string> UpdateAppointmentAsync(string id, UpdateAppointmentModelView model)
-		{
-			// Validate appointment ID
-			if (string.IsNullOrWhiteSpace(id))
-			{
-				return "Invalid appointment ID. Please provide a valid ID.";
-			}
+        // Update Appointment
+        public async Task<string> UpdateAppointmentAsync(string id, UpdateAppointmentModelView model)
+        {
+            // Validate appointment ID
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return "Invalid appointment ID. Please provide a valid ID.";
+            }
 
-			// Get the existing appointment by ID and ensure it's not deleted
-			var existingAppointment = await _unitOfWork.GetRepository<Appointment>().Entities
-				.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
+            // Get the existing appointment by ID and ensure it's not deleted
+            var existingAppointment = await _unitOfWork.GetRepository<Appointment>().Entities
+                .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
 
-			if (existingAppointment == null)
-			{
-				return "Appointment not found or has already been deleted.";
-			}
+            if (existingAppointment == null)
+            {
+                return "Appointment not found or has already been deleted.";
+            }
 
-			int newTotalTime = existingAppointment.TotalTime; // get current total time 
-			decimal newTotalAmount = existingAppointment.TotalAmount;
+            // Get current total time and total amount from existing services and combos
+            int newTotalTime = existingAppointment.TotalTime;
+            decimal newTotalAmount = existingAppointment.TotalAmount;
 
-			int TotalTime = 0;
+            // Handle update ServiceIds if any
+            if (!model.ServiceIds.IsNullOrEmpty())
+            {
+                var updateResult = await UpdateServiceAppointmentsAsync(existingAppointment.Id, model.ServiceIds, newTotalTime, newTotalAmount);
+                newTotalTime = updateResult.TotalTime;
+                newTotalAmount = updateResult.TotalAmount;
+            }
 
-			if (!model.ServiceIds.IsNullOrEmpty())
-			{
-				foreach (var serviceId in model.ServiceIds)
-				{
-					// calculate total time
-					var service = await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>().GetByIdAsync(serviceId);
-					TotalTime += service.TimeService;
-				}
-			}
+            // Handle update ComboIds if any
+            if (!model.ComboIds.IsNullOrEmpty())
+            {
+                var updateResult = await UpdateComboAppointmentsAsync(existingAppointment.Id, model.ComboIds, newTotalTime, newTotalAmount);
+                newTotalTime = updateResult.TotalTime;
+                newTotalAmount = updateResult.TotalAmount;
+            }
 
-			if (!model.ComboIds.IsNullOrEmpty())
-			{
-				foreach (var comboId in model.ComboIds)
-				{
-					// calculate total time 
-					var combo = await _unitOfWork.GetRepository<Combo>().GetByIdAsync(comboId);
-					TotalTime += combo.TimeCombo;
-				}
-			}
+            // Update AppointmentDate if provided and valid
+            if (model.AppointmentDate.HasValue)
+            {
+                if (model.AppointmentDate < DateTime.Now || model.AppointmentDate > DateTime.Now.AddMonths(1))
+                {
+                    return "Invalid appointment date. The date must be within one month from today.";
+                }
 
-			// Update the StylistId if provided
-			if (!string.IsNullOrWhiteSpace(model.StylistId) && Guid.TryParse(model.StylistId, out Guid newStylistId))
-			{
-				// Check is stylist busy 
-				if (await IsStylistBusyAsync(newStylistId, existingAppointment.AppointmentDate, TotalTime, existingAppointment.Id))
-				{
-					return "Stylist is busy at that time.";
-				}
-				existingAppointment.StylistId = newStylistId;
-			}
+                // Check for time conflicts when updating appointment dates
+                if (await IsDuplicateAppointment((Guid)existingAppointment.UserId, (DateTime)model.AppointmentDate, newTotalTime))
+                {
+                    return "The new appointment time conflicts with another appointment.";
+                }
 
-			// Check if user has enough points
-			var user = await _unitOfWork.GetRepository<ApplicationUsers>().GetByIdAsync(existingAppointment.UserId);
-			if (model.PointsEarned > user.UserInfo.Point)
-			{
-				return "Insufficient points. The user does not have enough points for this appointment.";
-			}
-			if (model.PointsEarned.HasValue)
-			{
-				existingAppointment.PointsEarned = (int)model.PointsEarned;
-			}
 
-			// Update AppointmentDate if provided and valid
-			if (model.AppointmentDate.HasValue)
-			{
-				if (model.AppointmentDate < DateTime.Now || model.AppointmentDate > DateTime.Now.AddMonths(1))
-				{
-					return "Invalid appointment date. The date must be within one month from today.";
-				}
+                existingAppointment.AppointmentDate = model.AppointmentDate.Value;
+            }
 
-				// Check for time conflicts when updating appointment dates
-				if (await CheckAppointmentOverlappingAsync(existingAppointment.Id, existingAppointment.StylistId, model.AppointmentDate.Value, newTotalTime))
-				{
-					return "The new appointment time conflicts with another appointment.";
-				}
+            // Update the StylistId if provided
+            if (!string.IsNullOrWhiteSpace(model.StylistId) && Guid.TryParse(model.StylistId, out Guid newStylistId))
+            {
+                // Check if stylist is busy
+                if (await IsStylistBusy(newStylistId, existingAppointment.AppointmentDate, newTotalTime))
+                {
+                    return "Stylist is busy at that time.";
+                }
+                existingAppointment.StylistId = newStylistId;
+            }
+            else
+            {
+                if (await IsStylistBusy((Guid)existingAppointment.StylistId, existingAppointment.AppointmentDate, newTotalTime))
+                {
+                    return "Stylist is busy at that time.";
+                }
+            }
+            // Check if user has enough points
+            var user = await _unitOfWork.GetRepository<ApplicationUsers>().GetByIdAsync(existingAppointment.UserId);
+            if (model.PointsEarned > user.UserInfo.Point)
+            {
+                return "Insufficient points. The user does not have enough points for this appointment.";
+            }
 
-				existingAppointment.AppointmentDate = model.AppointmentDate.Value;
-			}
+            if (model.PointsEarned.HasValue)
+            {
+                existingAppointment.PointsEarned = (int)model.PointsEarned;
+            }
 
-			// Handle update ServiceIds if any
-			if (model.ServiceIds != null && model.ServiceIds.Length > 0)
-			{
-				var updateResult = await UpdateServiceAppointmentsAsync(existingAppointment.Id, model.ServiceIds, newTotalTime, newTotalAmount);
-				newTotalTime = updateResult.TotalTime;
-				newTotalAmount = updateResult.TotalAmount;
-			}
+            // Update general appointment information
+            existingAppointment.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            existingAppointment.LastUpdatedTime = DateTimeOffset.UtcNow;
+            existingAppointment.TotalTime = newTotalTime;
+            existingAppointment.TotalAmount = newTotalAmount;
 
-			// Process update ComboIds if any
-			if (model.ComboIds != null && model.ComboIds.Length > 0)
-			{
-				var updateResult = await UpdateComboAppointmentsAsync(existingAppointment.Id, model.ComboIds, newTotalTime, newTotalAmount);
-				newTotalTime = updateResult.TotalTime;
-				newTotalAmount = updateResult.TotalAmount;
-			}
+            // Save changes
+            await _unitOfWork.GetRepository<Appointment>().UpdateAsync(existingAppointment);
+            await _unitOfWork.SaveAsync();
 
-			// Check if the appointment after update overlaps
-			if (await CheckAppointmentOverlappingAsync(existingAppointment.Id, existingAppointment.StylistId, existingAppointment.AppointmentDate, newTotalTime))
-			{
-				return "The updated appointment time conflicts with another appointment.";
-			}
+            return "Appointment updated successfully.";
+        }
 
-			// Update general appointment information
-			existingAppointment.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-			existingAppointment.LastUpdatedTime = DateTimeOffset.UtcNow;
-			existingAppointment.TotalTime = newTotalTime;
-			existingAppointment.TotalAmount = newTotalAmount;
+        // update ServiceAppointment 
+        private async Task<(int TotalTime, decimal TotalAmount)> UpdateServiceAppointmentsAsync(string appointmentId, string[] serviceIds, int currentTotalTime, decimal currentTotalAmount)
+        {
+            var existingServiceAppointments = await _unitOfWork.GetRepository<ServiceAppointment>().Entities
+                .Where(sa => sa.AppointmentId == appointmentId && !sa.DeletedTime.HasValue).ToListAsync();
 
-			// Save changes
-			await _unitOfWork.GetRepository<Appointment>().UpdateAsync(existingAppointment);
-			await _unitOfWork.SaveAsync();
+            // Delete services that are no longer in the new list
+            var servicesToRemove = existingServiceAppointments.Where(sa => !serviceIds.Contains(sa.ServiceId)).ToList();
+            foreach (var serviceAppointment in servicesToRemove)
+            {
+                serviceAppointment.DeletedTime = DateTimeOffset.UtcNow;
+                serviceAppointment.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                var service = (await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>().GetByIdAsync(serviceAppointment.ServiceId));
+                currentTotalTime -= service.TimeService;
+                currentTotalAmount -= service.Price;
+            }
 
-			return "Appointment updated successfully.";
-		}
+            // Add new serviceAppointment
+            var currentServiceIds = existingServiceAppointments.Select(sa => sa.ServiceId).ToList();
+            var servicesToAdd = serviceIds.Where(s => !currentServiceIds.Contains(s)).ToList();
+            foreach (var serviceId in servicesToAdd)
+            {
+                var serviceAppointment = new ServiceAppointment
+                {
+                    ServiceId = serviceId,
+                    AppointmentId = appointmentId,
+                    LastUpdatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value
+                };
+                await _unitOfWork.GetRepository<ServiceAppointment>().InsertAsync(serviceAppointment);
+                var service = (await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>().GetByIdAsync(serviceId));
+                currentTotalTime += service.TimeService;
+                currentTotalAmount += service.Price;
+            }
 
-		private async Task<bool> IsStylistBusyAsync(Guid stylistId, DateTime appointmentDate, int newTotalTime, string? currentAppointmentId = null)
-		{
-			return await _unitOfWork.GetRepository<Appointment>().Entities
-				.AnyAsync(p => p.StylistId == stylistId
-					&& !p.StatusForAppointment.Equals("Cancelled")
-					&& !p.DeletedTime.HasValue
-					&& (currentAppointmentId == null || p.Id != currentAppointmentId)
-					&& (appointmentDate <= p.AppointmentDate.AddMinutes(p.TotalTime)
-					&& appointmentDate >= p.AppointmentDate)
-					|| (appointmentDate.AddMinutes(newTotalTime) <= p.AppointmentDate.AddMinutes(p.TotalTime)
-					&& appointmentDate.AddMinutes(newTotalTime) >= p.AppointmentDate));
-		}
+            return (currentTotalTime, currentTotalAmount);
+        }
 
-		private async Task<bool> CheckAppointmentOverlappingAsync(string appointmentId, Guid? stylistId, DateTime newAppointmentDate, int newTotalTime)
-		{
-			var appointments = await _unitOfWork.GetRepository<Appointment>().Entities
-				.Where(a => a.StylistId == stylistId && a.Id != appointmentId && !a.DeletedTime.HasValue)
-				.ToListAsync();
-
-			foreach (var appt in appointments)
-			{
-				var apptEndTime = appt.AppointmentDate.AddMinutes(appt.TotalTime);
-				var newApptEndTime = newAppointmentDate.AddMinutes(newTotalTime);
-
-				if ((newAppointmentDate < apptEndTime && newApptEndTime > appt.AppointmentDate))
-				{
-					return true;
-				}
-			}
-			return false;
-		}
-
-		private async Task<(int TotalTime, decimal TotalAmount)> UpdateServiceAppointmentsAsync(string appointmentId, string[] serviceIds, int currentTotalTime, decimal currentTotalAmount)
-		{
-			var existingServiceAppointments = await _unitOfWork.GetRepository<ServiceAppointment>().Entities
-				.Where(sa => sa.AppointmentId == appointmentId && !sa.DeletedTime.HasValue).ToListAsync();
-
-			// Delete services that are no longer in the new list
-			var servicesToRemove = existingServiceAppointments.Where(sa => !serviceIds.Contains(sa.ServiceId)).ToList();
-			foreach (var serviceAppointment in servicesToRemove)
-			{
-				serviceAppointment.DeletedTime = DateTimeOffset.UtcNow;
-				serviceAppointment.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-				var service = (await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>().GetByIdAsync(serviceAppointment.ServiceId));
-				currentTotalTime -= service.TimeService;
-				currentTotalAmount -= service.Price;
-			}
-
-			// Add new serviceAppointment
-			var currentServiceIds = existingServiceAppointments.Select(sa => sa.ServiceId).ToList();
-			var servicesToAdd = serviceIds.Where(s => !currentServiceIds.Contains(s)).ToList();
-			foreach (var serviceId in servicesToAdd)
-			{
-				var serviceAppointment = new ServiceAppointment
-				{
-					ServiceId = serviceId,
-					AppointmentId = appointmentId,
-					LastUpdatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value
-				};
-				await _unitOfWork.GetRepository<ServiceAppointment>().InsertAsync(serviceAppointment);
-				var service = (await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>().GetByIdAsync(serviceId));
-				currentTotalTime += service.TimeService;
-				currentTotalAmount += service.Price;
-			}
-
-			return (currentTotalTime, currentTotalAmount);
-		}
-
+        // update ComboAppointment 
         private async Task<(int TotalTime, decimal TotalAmount)> UpdateComboAppointmentsAsync(string appointmentId, string[] comboIds, int currentTotalTime, decimal currentTotalAmount)
         {
-            // Fetch existing combo appointments for the given appointmentId that are not marked as deleted
             var existingComboAppointments = await _unitOfWork.GetRepository<ComboAppointment>().Entities
                 .Where(ca => ca.AppointmentId == appointmentId && !ca.DeletedTime.HasValue).ToListAsync();
 
-            // Find combo appointments that need to be removed (those not in the new comboIds array)
+            // Delete combos that are no longer in the new list
             var combosToRemove = existingComboAppointments.Where(ca => !comboIds.Contains(ca.ComboId)).ToList();
-
-            // Mark each combo appointment to be removed as deleted and update the current total time and amount
             foreach (var comboAppointment in combosToRemove)
             {
-                comboAppointment.DeletedTime = DateTimeOffset.UtcNow; // Set deletion time to current time
-                comboAppointment.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value; // Set who deleted it
-                var combo = await _unitOfWork.GetRepository<Combo>().GetByIdAsync(comboAppointment.ComboId); // Fetch combo details
-                currentTotalTime -= combo.TimeCombo; // Deduct the combo's time from the total
-                currentTotalAmount -= combo.TotalPrice; // Deduct the combo's price from the total amount
+                comboAppointment.DeletedTime = DateTimeOffset.UtcNow;
+                comboAppointment.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                var combo = await _unitOfWork.GetRepository<Combo>().GetByIdAsync(comboAppointment.ComboId);
+                currentTotalTime -= combo.TimeCombo;
+                currentTotalAmount -= combo.TotalPrice;
             }
 
-            // Get the list of current combo IDs from the existing appointments
+            // Add new comboAppointment
             var currentComboIds = existingComboAppointments.Select(ca => ca.ComboId).ToList();
-
-            // Find new combo IDs that need to be added (those in comboIds but not in the current combo IDs)
             var combosToAdd = comboIds.Where(c => !currentComboIds.Contains(c)).ToList();
-
-            // Add each new combo appointment and update the current total time and amount
             foreach (var comboId in combosToAdd)
             {
                 var comboAppointment = new ComboAppointment
                 {
                     ComboId = comboId,
                     AppointmentId = appointmentId,
-                    LastUpdatedTime = DateTimeOffset.UtcNow, // Set the updated time to current time
-                    LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value // Set who updated it
+                    LastUpdatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value
                 };
-                await _unitOfWork.GetRepository<ComboAppointment>().InsertAsync(comboAppointment); // Insert the new combo appointment
-                var combo = (await _unitOfWork.GetRepository<Combo>().GetByIdAsync(comboId)); // Fetch combo details
-                currentTotalTime += combo.TimeCombo; // Add the combo's time to the total
-                currentTotalAmount += combo.TotalPrice; // Add the combo's price to the total amount
+                await _unitOfWork.GetRepository<ComboAppointment>().InsertAsync(comboAppointment);
+                var combo = (await _unitOfWork.GetRepository<Combo>().GetByIdAsync(comboId));
+                currentTotalTime += combo.TimeCombo;
+                currentTotalAmount += combo.TotalPrice;
             }
 
-            // Return the updated total time and amount
             return (currentTotalTime, currentTotalAmount);
         }
 
         // Delete an appointment
         public async Task<string> DeleteAppointmentAsync(string id)
-		{
-			// Validate appointment ID
-			if (string.IsNullOrWhiteSpace(id))
-			{
-				return "Invalid appointment ID. Please provide a valid ID.";
-			}
+        {
+            // Validate appointment ID
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return "Invalid appointment ID. Please provide a valid ID.";
+            }
 
-			// Get appointment by ID and ensure it's not deleted
-			var existingAppointment = await _unitOfWork.GetRepository<Appointment>().Entities
-				.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
+            // Get appointment by ID and ensure it's not deleted
+            var existingAppointment = await _unitOfWork.GetRepository<Appointment>().Entities
+                .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
 
-			if (existingAppointment == null)
-			{
-				return "Appointment not found or has already been deleted.";
-			}
+            if (existingAppointment == null)
+            {
+                return "Appointment not found or has already been deleted.";
+            }
 
-			// Soft delete appointment
-			existingAppointment.DeletedTime = DateTimeOffset.UtcNow;
-			existingAppointment.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-			existingAppointment.StatusForAppointment = "Cancelled";
+            // Soft delete appointment
+            existingAppointment.DeletedTime = DateTimeOffset.UtcNow;
+            existingAppointment.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            existingAppointment.StatusForAppointment = "Cancelled";
 
-			// Get all related ServiceAppointments
-			var relatedServiceAppointments = await _unitOfWork.GetRepository<ServiceAppointment>().Entities
-				.Where(sa => sa.AppointmentId == id).ToListAsync();
+            // Get all related ServiceAppointments
+            var relatedServiceAppointments = await _unitOfWork.GetRepository<ServiceAppointment>().Entities
+                .Where(sa => sa.AppointmentId == id).ToListAsync();
 
-			// Soft delete each ServiceAppointment
-			foreach (var serviceAppointment in relatedServiceAppointments)
-			{
-				serviceAppointment.DeletedTime = DateTimeOffset.UtcNow;
-				serviceAppointment.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            // Soft delete each ServiceAppointment
+            foreach (var serviceAppointment in relatedServiceAppointments)
+            {
+                serviceAppointment.DeletedTime = DateTimeOffset.UtcNow;
+                serviceAppointment.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 
-				await _unitOfWork.GetRepository<ServiceAppointment>().UpdateAsync(serviceAppointment);
-			}
+                await _unitOfWork.GetRepository<ServiceAppointment>().UpdateAsync(serviceAppointment);
+            }
 
-			// Get all related ComboAppointment
-			var relatedComboAppointments = await _unitOfWork.GetRepository<ComboAppointment>().Entities
-				.Where(c => c.AppointmentId == id).ToListAsync();
+            // Get all related ComboAppointment
+            var relatedComboAppointments = await _unitOfWork.GetRepository<ComboAppointment>().Entities
+                .Where(c => c.AppointmentId == id).ToListAsync();
 
-			// Soft delete each ComboAppointment
-			foreach (var comboAppointment in relatedComboAppointments)
-			{
-				comboAppointment.DeletedTime = DateTimeOffset.UtcNow;
-				comboAppointment.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            // Soft delete each ComboAppointment
+            foreach (var comboAppointment in relatedComboAppointments)
+            {
+                comboAppointment.DeletedTime = DateTimeOffset.UtcNow;
+                comboAppointment.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 
-				await _unitOfWork.GetRepository<ComboAppointment>().UpdateAsync(comboAppointment);
-			}
+                await _unitOfWork.GetRepository<ComboAppointment>().UpdateAsync(comboAppointment);
+            }
 
-			// Save changes
-			await _unitOfWork.GetRepository<Appointment>().UpdateAsync(existingAppointment);
-			await _unitOfWork.SaveAsync();
+            // Save changes
+            await _unitOfWork.GetRepository<Appointment>().UpdateAsync(existingAppointment);
+            await _unitOfWork.SaveAsync();
 
-			return "Appointment deleted successfully.";
-		}
+            return "Appointment deleted successfully.";
+        }
 
-		// Mark Appointment Completed
-		public async Task<string> MarkCompleted(string id)
-		{
-			// Validate appointment ID
-			if (string.IsNullOrWhiteSpace(id))
-			{
-				return "Invalid appointment ID. Please provide a valid ID.";
-			}
+        // Mark Appointment Completed
+        public async Task<string> MarkCompleted(string id)
+        {
+            // Validate appointment ID
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return "Invalid appointment ID. Please provide a valid ID.";
+            }
 
-			// Get appointment by ID and ensure it's not deleted
-			var existingAppointment = await _unitOfWork.GetRepository<Appointment>().Entities
-				.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
+            // Get appointment by ID and ensure it's not deleted
+            var existingAppointment = await _unitOfWork.GetRepository<Appointment>().Entities
+                .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
 
-			if (existingAppointment == null)
-			{
-				return "Appointment not found or has already been deleted.";
-			}
+            if (existingAppointment == null)
+            {
+                return "Appointment not found or has already been deleted.";
+            }
 
-			// set status Completed and save
-			existingAppointment.StatusForAppointment = "Completed";
-			existingAppointment.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-			existingAppointment.LastUpdatedTime = DateTimeOffset.UtcNow;
-			await _unitOfWork.SaveAsync();
+            // set status Completed and save
+            existingAppointment.StatusForAppointment = "Completed";
+            existingAppointment.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            existingAppointment.LastUpdatedTime = DateTimeOffset.UtcNow;
+            await _unitOfWork.SaveAsync();
 
-			return "success";
-		}
+            return "success";
+        }
 
-		// Mark Appointment Confirmed
-		public async Task<string> MarkConfirmed(string id)
-		{
-			// Validate appointment ID
-			if (string.IsNullOrWhiteSpace(id))
-			{
-				return "Invalid appointment ID. Please provide a valid ID.";
-			}
+        // Mark Appointment Confirmed
+        public async Task<string> MarkConfirmed(string id)
+        {
+            // Validate appointment ID
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return "Invalid appointment ID. Please provide a valid ID.";
+            }
 
-			// Get appointment by ID and ensure it's not deleted
-			var existingAppointment = await _unitOfWork.GetRepository<Appointment>().Entities
-				.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
+            // Get appointment by ID and ensure it's not deleted
+            var existingAppointment = await _unitOfWork.GetRepository<Appointment>().Entities
+                .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
 
-			if (existingAppointment == null)
-			{
-				return "Appointment not found or has already been deleted.";
-			}
+            if (existingAppointment == null)
+            {
+                return "Appointment not found or has already been deleted.";
+            }
 
-			// Fetch user and user info
-			var applicationUser = await _unitOfWork.GetRepository<ApplicationUsers>().Entities
-				.FirstOrDefaultAsync(u => u.Id == existingAppointment.UserId);
-			if (applicationUser == null)
-			{
-				return "User not found in ApplicationUsers.";
-			}
+            // Fetch user and user info
+            var applicationUser = await _unitOfWork.GetRepository<ApplicationUsers>().Entities
+                .FirstOrDefaultAsync(u => u.Id == existingAppointment.UserId);
+            if (applicationUser == null)
+            {
+                return "User not found in ApplicationUsers.";
+            }
 
-			var userInfo = await _unitOfWork.GetRepository<UserInfo>().Entities
-				.FirstOrDefaultAsync(ui => ui.Id == applicationUser.UserInfo.Id);
-			if (userInfo == null)
-			{
-				return "User info not found.";
-			}
+            var userInfo = await _unitOfWork.GetRepository<UserInfo>().Entities
+                .FirstOrDefaultAsync(ui => ui.Id == applicationUser.UserInfo.Id);
+            if (userInfo == null)
+            {
+                return "User info not found.";
+            }
 
-			// Calculate points earned from the original total amount
-			userInfo.Point -= existingAppointment.PointsEarned;
-			int pointsToAdd = (int)(existingAppointment.TotalAmount / 1000) * 10;
-			userInfo.Point += pointsToAdd;
-			await _unitOfWork.GetRepository<UserInfo>().UpdateAsync(userInfo);
+            // Calculate points earned from the original total amount
+            userInfo.Point -= existingAppointment.PointsEarned;
+            int pointsToAdd = (int)(existingAppointment.TotalAmount / 1000) * 10;
+            userInfo.Point += pointsToAdd;
+            await _unitOfWork.GetRepository<UserInfo>().UpdateAsync(userInfo);
 
-			// Calculate the final total amount after applying discount
-			existingAppointment.TotalAmount -= existingAppointment.PointsEarned;
+            // Calculate the final total amount after applying discount
+            existingAppointment.TotalAmount -= existingAppointment.PointsEarned;
 
-
-			// set status Confirmed and save
-			existingAppointment.StatusForAppointment = "Confirmed";
-			existingAppointment.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-			existingAppointment.LastUpdatedTime = DateTimeOffset.UtcNow;
-			await _unitOfWork.SaveAsync();
+            // set status Confirmed and save
+            existingAppointment.StatusForAppointment = "Confirmed";
+            existingAppointment.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            existingAppointment.LastUpdatedTime = DateTimeOffset.UtcNow;
+            await _unitOfWork.SaveAsync();
 
             return "success";
         }
