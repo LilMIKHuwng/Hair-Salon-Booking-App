@@ -254,7 +254,7 @@ namespace HairSalon.Services.Service
 			// Check if only month is provided without year
 			if (month.HasValue && !year.HasValue)
 			{
-				throw new ArgumentException("You need to provide both month and year, or only the year.");
+				return new BasePaginatedList<StatisticalComboModelView>(new List<StatisticalComboModelView>(), 0, pageNumber, pageSize);
 			}
 
 			// Filter appointments based on month and year, including only valid (non-deleted) appointments
