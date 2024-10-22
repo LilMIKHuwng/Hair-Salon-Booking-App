@@ -42,6 +42,7 @@ namespace HairSalon.Repositories.Mapper
             CreateMap<UpdatedServiceModelView, Service>();
             CreateMap<CreateServiceModelView, Service>();
             CreateMap<CreateServiceModelView, ServiceModelView>();
+            CreateMap<Service, StatisticalServiceModelView>();
             
 			CreateMap<ApplicationRoles, RoleModelView>();
 			CreateMap<ApplicationRoles, CreateRoleModelView>();
