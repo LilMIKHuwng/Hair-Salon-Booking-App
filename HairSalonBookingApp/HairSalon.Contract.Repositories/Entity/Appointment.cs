@@ -23,9 +23,14 @@ namespace HairSalon.Contract.Repositories.Entity
 
 		public int PointsEarned { get; set; } = 0;
 
+		public int TotalTime {  get; set; }
+
 		[Required]
 		public DateTime AppointmentDate { get; set; }
 
 		public virtual ICollection<ServiceAppointment>? ServiceAppointments { get; set; }
+
+		public virtual Payment? Payment { get; set; }
+		public virtual Feedback? Feedback { get; set; }
 	}
 }
