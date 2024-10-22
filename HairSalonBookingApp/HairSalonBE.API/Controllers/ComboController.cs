@@ -47,5 +47,12 @@ namespace HairSalonBE.API.Controllers
             var result = await _comboService.DeleteComboAsync(id);
             return Ok(result);
         }
-    }
+
+		[HttpGet("statistical")]
+		public async Task<ActionResult<BasePaginatedList<StatisticalComboModelView>>> GetStatisticalCombos(int pageNumber = 1, int pageSize = 5, [FromQuery] int? month = null, [FromQuery] int? year = null)
+		{
+			var result = await _comboService.GetStatisticalCombosAsync(pageNumber, pageSize, month, year);
+			return Ok(result);
+		}
+	}
 }
