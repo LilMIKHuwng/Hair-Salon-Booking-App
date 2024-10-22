@@ -10,6 +10,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using HairSalon.Repositories.Entity;
+using HairSalon.Services.SignalIR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -100,5 +101,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.MapHub<PresenceHub>("hubs/presence");
 app.Run();
