@@ -18,6 +18,9 @@ namespace HairSalonBE.API.Controllers
 			_roleService = roleService;
 		}
 
+		/// <summary>
+		///		Lấy tất cả vai trò 
+		/// </summary>
 		[HttpGet("all")]
 		public async Task<ActionResult<BasePaginatedList<RoleModelView>>> GetAllRoles
 			([FromQuery] string? id, [FromQuery] string? name, int pageNumber = 1, int pageSize = 5)
@@ -26,21 +29,30 @@ namespace HairSalonBE.API.Controllers
 			return Ok(result);
 		}
 
-		[HttpPost("create")]
+        /// <summary>
+        ///		Tạo vai trò
+        /// </summary>
+        [HttpPost("create")]
 		public async Task<ActionResult<string>> CreateRole([FromQuery] CreateRoleModelView model)
 		{
 			string result = await _roleService.AddRoleAsync(model);
 			return Ok(new { Message = result });
 		}
 
-		[HttpPut("update/{id}")]
+        /// <summary>
+        ///		Cập nhật vai trò
+        /// </summary>
+        [HttpPut("update/{id}")]
 		public async Task<ActionResult<string>> UpdateRole(string id, [FromQuery] UpdatedRoleModelView model)
 		{
 			string result = await _roleService.UpdateRoleAsync(id, model);
 			return Ok(new { Message = result });
 		}
 
-		[HttpDelete("delete/{id}")]
+        /// <summary>
+        ///		Xóa vai trò
+        /// </summary>
+        [HttpDelete("delete/{id}")]
 		public async Task<ActionResult<string>> DeleteRole(string id)
 		{
 			string result = await _roleService.DeleteRoleAsync(id);

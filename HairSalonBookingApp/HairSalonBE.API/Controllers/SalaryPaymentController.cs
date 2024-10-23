@@ -17,6 +17,9 @@ namespace HairSalonBE.API.Controllers
             _salaryPaymentService = salaryPaymentService;
         }
 
+        /// <summary>
+		///		Lấy tất cả lương
+		/// </summary>
         [HttpGet("all")]
         public async Task<IActionResult> GetAllSalaryPayments(string? id, Guid? stylistId, DateTime? paymentDate, int pageNumber = 1, int pageSize = 5)
         {
@@ -24,6 +27,9 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+		///		Tạo lương cho nhân viên
+		/// </summary>
         [HttpPost("create")]
         public async Task<IActionResult> CreateSalaryPayment
                                     ([FromQuery] CreateSalaryPaymentModelView model)
@@ -32,6 +38,9 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+		///		Cập nhật lương
+		/// </summary>
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateSalaryPayment(string id, [FromQuery] UpdatedSalaryPaymentModelView model)
         {
@@ -39,6 +48,9 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+		///		Xóa lương
+		/// </summary>
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteSalaryPayment(string id)
         {
