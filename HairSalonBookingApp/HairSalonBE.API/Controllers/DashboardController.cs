@@ -19,17 +19,17 @@ namespace HairSalonBE.API.Controllers
 
         [HttpGet]
         /*[Authorize(Roles = "Admin")]*/
-        public async Task<IActionResult> GetAppointmentStatistic(string? startPeriod, string? endPeriod, string periodName = "day")
+        public async Task<IActionResult> GetAppointmentStatistic(string? startPeriod, string? endPeriod, string periodName = "day", int pageNumber = 1, int pageSize = 5)
         {
-            var statistics = await _service.GetAppointmentStatistic(startPeriod, endPeriod, periodName);
+            var statistics = await _service.GetAppointmentStatistic(startPeriod, endPeriod, periodName, pageNumber, pageSize);
             return Ok(statistics);
         }
 
         [HttpGet("GetTopUsersByTotalAmount")]
         /*[Authorize(Roles = "Admin")]*/
-        public async Task<IActionResult> GetTopUsersByTotalAmount(int? top)
+        public async Task<IActionResult> GetTopUsersByTotalAmount(int? top, int pageNumber = 1, int pageSize = 5)
         {
-            var statistics = await _service.GetTopUsersByTotalAmount(top);
+            var statistics = await _service.GetTopUsersByTotalAmount(top, pageNumber, pageSize);
             return Ok(statistics);
         }
     }

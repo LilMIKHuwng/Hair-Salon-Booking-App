@@ -7,6 +7,7 @@
         public string Firstname { get; set; }
         public string Lastname { get; set; }
         public decimal TotalAmount { get; set; }
+        public decimal TotalFeedback { get; set; }
         public int TotalAppointment { get; set; }
     }
 
