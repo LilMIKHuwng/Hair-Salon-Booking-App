@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using HairSalon.ModelViews.SalaryPaymentModelViews;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace HairSalonBE.API.Controllers
 {
@@ -28,16 +29,20 @@ namespace HairSalonBE.API.Controllers
         public async Task<IActionResult> CreateSalaryPayment
                                     ([FromQuery] CreateSalaryPaymentModelView model)
         {
+            
             string result = await _salaryPaymentService.CreateSalaryPaymentAsync(model);
             return Ok(result);
         }
 
+
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateSalaryPayment(string id, [FromQuery] UpdatedSalaryPaymentModelView model)
         {
+
             string result = await _salaryPaymentService.UpdateSalaryPaymentAsync(id, model);
             return Ok(result);
         }
+
 
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteSalaryPayment(string id)
