@@ -66,7 +66,7 @@ namespace HairSalon.Services.Service
         public async Task<string> AddServiceAsync(CreateServiceModelView model)
         {
             ServiceEntity newService = _mapper.Map<ServiceEntity>(model);
-            
+
             newService.Id = Guid.NewGuid().ToString("N");
             newService.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
             newService.CreatedTime = DateTimeOffset.UtcNow;
@@ -95,33 +95,33 @@ namespace HairSalon.Services.Service
                 return "The Service cannot be found or has been deleted!";
             }
 
-			// Update the service fields only if they are not null
-			if (!string.IsNullOrWhiteSpace(model.Name))
-			{
-				existingService.Name = model.Name;
-			}
+            // Update the service fields only if they are not null
+            if (!string.IsNullOrWhiteSpace(model.Name))
+            {
+                existingService.Name = model.Name;
+            }
 
-			if (!string.IsNullOrWhiteSpace(model.Type))
-			{
-				existingService.Type = model.Type;
-			}
+            if (!string.IsNullOrWhiteSpace(model.Type))
+            {
+                existingService.Type = model.Type;
+            }
 
-			if (model.Price.HasValue)
-			{
-				existingService.Price = model.Price.Value;
-			}
+            if (model.Price.HasValue)
+            {
+                existingService.Price = model.Price.Value;
+            }
 
-			if (!string.IsNullOrWhiteSpace(model.Description))
-			{
-				existingService.Description = model.Description;
-			}
+            if (!string.IsNullOrWhiteSpace(model.Description))
+            {
+                existingService.Description = model.Description;
+            }
 
-			if (!string.IsNullOrWhiteSpace(model.ShopId))
-			{
-				existingService.ShopId = model.ShopId;
-			}
+            if (!string.IsNullOrWhiteSpace(model.ShopId))
+            {
+                existingService.ShopId = model.ShopId;
+            }
 
-			existingService.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            existingService.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
             existingService.LastUpdatedTime = DateTimeOffset.UtcNow;
 
             await _unitOfWork.GetRepository<ServiceEntity>().UpdateAsync(existingService);
@@ -136,7 +136,7 @@ namespace HairSalon.Services.Service
             // Check if the provided id is null, empty, or whitespace
             if (string.IsNullOrWhiteSpace(id))
             {
-               return "Please provide a valid Service ID.";
+                return "Please provide a valid Service ID.";
             }
 
             // Check for existing service
@@ -156,40 +156,5 @@ namespace HairSalon.Services.Service
             return "Service deleted successfully";
         }
 
-        // Get number of each service per month
-        public async Task<BasePaginatedList<StatisticalServiceModelView>> MonthlyServiceStatistics(int pageNumber, int pageSize, int? year, int? month)
-        {
-            if (month.HasValue && !year.HasValue)
-            {
-                return new BasePaginatedList<StatisticalServiceModelView>(new List<StatisticalServiceModelView>(), 0, pageNumber, pageSize);
-            }
-
-            // Query the ServiceAppointment table to retrieve appointment and service information
-            var serviceUsageQuery = _unitOfWork.GetRepository<ServiceAppointment>().Entities
-                .Include(sa => sa.Service)
-                .Include(sa => sa.Appointment)
-                .Where(sa => sa.Appointment.AppointmentDate.Year == year &&
-                             (!month.HasValue || sa.Appointment.AppointmentDate.Month == month) && 
-                             !sa.DeletedTime.HasValue) // Filter by year and month
-                .GroupBy(sa => sa.Service.Name) // Group by Service Name 
-                .Select(group => new StatisticalServiceModelView
-                {
-                    ServiceName = group.Key,
-                    UsageCount = group.Count()
-                })
-                .OrderByDescending(x => x.UsageCount);
-
-            // Calculate the total number of services used
-            int totalCount = await serviceUsageQuery.CountAsync();
-
-            // Retrieve paginated data
-            var paginatedServiceUsage = await serviceUsageQuery
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-
-            // Return the paginated list
-            return new BasePaginatedList<StatisticalServiceModelView>(paginatedServiceUsage, totalCount, pageNumber, pageSize);
-        }
     }
 }

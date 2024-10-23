@@ -18,12 +18,14 @@ namespace HairSalonBE.API.Controllers
         public AuthController(TokenService tokenService, IAppUserService userService) {
             _tokenService = tokenService;
             _appUserService = userService;
-        } 
+        }
 
+        /// <summary>
+        ///     Đăng nhập
+        /// </summary>
         [HttpPost("auth-account")]
         public async Task<IActionResult> Login(LoginModelView model)
         {
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -40,6 +42,9 @@ namespace HairSalonBE.API.Controllers
             return Ok(token);
         }
 
+        /// <summary>
+        ///     Lấy refresh token
+        /// </summary>
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken(TokenModelView tokenModel)
         {
@@ -51,6 +56,9 @@ namespace HairSalonBE.API.Controllers
             return BadRequest("Something error when Refresh Token");
         }
 
+        /// <summary>
+        ///     Đăng xuất
+        /// </summary>
         [HttpPost("logout")]
         public async Task<IActionResult> Logout(string username)
         {

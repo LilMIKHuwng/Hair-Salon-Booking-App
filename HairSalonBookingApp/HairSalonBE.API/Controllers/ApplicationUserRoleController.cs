@@ -18,6 +18,9 @@ namespace HairSalonBE.API.Controllers
             _appUserRoleService = appUserRoleService;
         }
 
+        /// <summary>
+        ///     Tạo vai trò cho người dùng
+        /// </summary>
         [HttpPost("create")]
         public async Task<IActionResult> CreateAppUserRole([FromQuery] CreateAppUserRoleModelView model)
         {
@@ -26,6 +29,9 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        ///     Lấy tất cả người dùng có vai trò
+        /// </summary>
         [HttpGet("all")]
         public async Task<ActionResult<BasePaginatedList<AppUserRoleModelView>>> GetAllApplicationUserRoles(int pageNumber = 1, int pageSize = 5,
             [FromQuery] string? userId = null, [FromQuery] string? roleId = null)
@@ -35,6 +41,9 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        ///     Cập nhật vai trò của người dùng
+        /// </summary>
         [HttpPut("update")]
         public async Task<IActionResult> UpdateApplicationUserRole(string UserId, string RoleId, [FromQuery] UpdateAppUserRoleModelView model)
         {
@@ -43,6 +52,9 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        ///     Xóa người dùng với vai trò đó
+        /// </summary>
         [HttpDelete("delete")]
         public async Task<IActionResult> DeleteApplicationUserRole(string UserId, string RoleId)
         {
