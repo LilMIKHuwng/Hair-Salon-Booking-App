@@ -30,7 +30,6 @@ namespace HairSalonBE.API.Controllers
         {
             string result = await _shopService.AddShopAsync(model);
             return Ok(result);
-
         }
 
         [HttpPut("update/{id}")]

@@ -7,24 +7,15 @@ namespace HairSalon.Services.SignalIR
 {
     public class MessageHub : Hub
     {
-        public override async Task OnConnectedAsync()
+        public async Task SendMessage(string user, string message)
         {
-            // Make sure the Microsoft.AspNetCore.Http namespace is included
-            var httpContext = Context.GetHttpContext();
-
-            if (httpContext != null)
-            {
-                // You can now access the HTTP context properties, such as User or Headers
-                string userId = httpContext.User.Identity.Name ?? "Anonymous";
-                // Additional logic can go here
-            }
-
-            await base.OnConnectedAsync();
+            await Clients.All.SendAsync("ReceiveMessage", user, message);
         }
 
-        public override Task OnDisconnectedAsync(Exception exception)
+        // Method to send a message to a specific user
+        public async Task SendMessageToUser(string connectionId, string user, string message)
         {
-            return base.OnDisconnectedAsync(exception);
+            await Clients.Client(connectionId).SendAsync("ReceiveMessage", user, message);
         }
     }
 }
