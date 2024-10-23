@@ -1,4 +1,6 @@
-﻿namespace HairSalon.ModelViews.ShopModelViews
+﻿using Microsoft.AspNetCore.Http;
+
+namespace HairSalon.ModelViews.ShopModelViews
 {
     public class UpdatedShopModelView
     {
@@ -16,5 +18,7 @@
 
         public string? Title { get; set; }
 
-    }
+		public IFormFile? ShopImage { get; set; }
+
+	}
 }

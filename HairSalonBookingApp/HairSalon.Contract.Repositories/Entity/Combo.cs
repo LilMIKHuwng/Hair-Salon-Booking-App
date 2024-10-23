@@ -17,6 +17,8 @@ namespace HairSalon.Contract.Repositories.Entity
 		[Required]
 		public int TimeCombo { get; set; }
 
+		public string? ComboImage { get; set; }
+
 		public virtual ICollection<ComboAppointment>? ComboAppointments { get; set; }
 
 		public virtual ICollection<ComboServices>? ComboServices { get; set; }
