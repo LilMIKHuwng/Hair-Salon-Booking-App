@@ -254,6 +254,11 @@
             	Xóa lương
             </summary>
         </member>
+        <member name="M:HairSalonBE.API.Controllers.SalaryPaymentController.ExportToExcel(System.String,System.Nullable{System.Guid},System.String)">
+            <summary>
+            	Xuất tạo File Excel kiểm tra lương Stylist
+            </summary>
+        </member>
         <member name="M:HairSalonBE.API.Controllers.ServiceController.GetAllServices(System.String,System.String,System.String,System.Int32,System.Int32)">
             <summary>
             	Lấy tất cả dịch vụ
