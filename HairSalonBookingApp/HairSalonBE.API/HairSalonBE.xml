@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>HairSalonBE.API</name>
+    </assembly>
+    <members>
+        <member name="M:HairSalonBE.API.Controllers.AuthController.Login(HairSalon.ModelViews.AuthModelViews.LoginModelView)">
+            <summary>
+            hey
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

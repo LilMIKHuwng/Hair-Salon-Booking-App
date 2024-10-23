@@ -249,59 +249,6 @@ namespace HairSalon.Services.Service
             return new BasePaginatedList<ComboModelView>(comboModelView, totalCount, pageNumber, pageSize);
         }
 
-		public async Task<BasePaginatedList<StatisticalComboModelView>> GetStatisticalCombosAsync(int pageNumber, int pageSize, int? month, int? year)
-		{
-			// Check if only month is provided without year
-			if (month.HasValue && !year.HasValue)
-			{
-				return new BasePaginatedList<StatisticalComboModelView>(new List<StatisticalComboModelView>(), 0, pageNumber, pageSize);
-			}
-
-			// Filter appointments based on month and year, including only valid (non-deleted) appointments
-			IQueryable<Appointment> appointmentQuery = _unitOfWork.GetRepository<Appointment>().Entities
-				.Where(a => !a.DeletedTime.HasValue);
-
-			// Apply year filter if provided
-			if (year.HasValue)
-			{
-				appointmentQuery = appointmentQuery.Where(a => a.AppointmentDate.Year == year.Value);
-			}
-
-			// Apply month filter only if both month and year are provided
-			if (month.HasValue && year.HasValue)
-			{
-				appointmentQuery = appointmentQuery.Where(a => a.AppointmentDate.Month == month.Value);
-			}
-
-			// Get the list of ComboAppointments related to filtered appointments
-			var relatedComboIds = await _unitOfWork.GetRepository<ComboAppointment>().Entities
-				.Where(ca => appointmentQuery.Select(a => a.Id).Contains(ca.AppointmentId))
-				.Select(ca => ca.ComboId)
-				.ToListAsync();
-
-			// Filter Combos based on related ComboAppointment IDs
-			IQueryable<Combo> comboQuery = _unitOfWork.GetRepository<Combo>().Entities
-				.Where(c => !c.DeletedTime.HasValue && relatedComboIds.Contains(c.Id));
-
-			// Group by Combo name and calculate the total selections
-			var comboStatistics = await comboQuery
-				.GroupBy(c => c.Name)
-				.Select(group => new StatisticalComboModelView
-				{
-					Name = group.Key,
-					TotalCombo = group.Count()
-				})
-				.OrderByDescending(c => c.TotalCombo) // Sort by the total selections in descending order
-				.Skip((pageNumber - 1) * pageSize) // Apply pagination
-				.Take(pageSize)
-				.ToListAsync();
-
-			// Get total count before pagination
-			int totalCount = await comboQuery.CountAsync();
-
-			// Return paginated list with total count
-			return new BasePaginatedList<StatisticalComboModelView>(comboStatistics, totalCount, pageNumber, pageSize);
-		}
-
+		
 	}
 }

@@ -21,6 +21,9 @@ namespace HairSalonBE.API.Controllers
             _vpnPayService = vpnPayService;
         }
 
+        /// <summary>
+        ///     Lấy tất cả thông tin payment
+        /// </summary>
         [HttpGet("all")]
         public async Task<ActionResult<BasePaginatedList<PaymentModelView>>> GetAllPayments(
                                                                                     int pageNumber = 1,
@@ -33,6 +36,9 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        ///     Lấy tất cả thông tin payment
+        /// </summary>
         [HttpPost("create")]
         public async Task<ActionResult<string>> CreatePayment([FromQuery] PaymentResponseModelView model)
         {
@@ -40,6 +46,9 @@ namespace HairSalonBE.API.Controllers
             return Ok(new { Message = result });
         }
 
+        /// <summary>
+        ///     Tạo link VNPay
+        /// </summary>
         [HttpPost("create-vnpay")]
         public async Task<ActionResult> CreateVnPay(PaymentRequestModelView model)
         {
@@ -47,6 +56,9 @@ namespace HairSalonBE.API.Controllers
             return Ok(new { Url = paymentUrl });
         }
 
+        /// <summary>
+        ///     Xóa payment
+        /// </summary>
         [HttpDelete("delete/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<string>> DeletePayment(string id)
@@ -55,6 +67,9 @@ namespace HairSalonBE.API.Controllers
             return Ok(new { Message = result });
         }
 
+        /// <summary>
+        ///     Tạo thông tin để nạp tiền vào ví
+        /// </summary>
         [HttpPost("deposit")]
         public async Task<ActionResult<string>> Deposit([FromQuery] VnPayDepositWalletRequestModelView model)
         {
@@ -62,6 +77,9 @@ namespace HairSalonBE.API.Controllers
             return Ok(new { Url = result });
         }
 
+        /// <summary>
+        ///     Thực hiện gửi tiền vào ví
+        /// </summary>
         [HttpPost("execute-deposit")]
         public async Task<ActionResult<string>> ExecuteDeposit([FromQuery] Guid userId, [FromQuery] double amount)
         {
