@@ -7,6 +7,8 @@ using HairSalon.ModelViews.ShopModelViews;
 using Microsoft.EntityFrameworkCore;
 using HairSalon.Core.Base;
 using Microsoft.AspNetCore.Http;
+using Azure.Core;
+using Microsoft.Extensions.Configuration;
 
 namespace HairSalon.Services.Service
 {
@@ -15,12 +17,14 @@ namespace HairSalon.Services.Service
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _contextAccessor;
+		private readonly IConfiguration _configuration;
 
-        public ShopService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+		public ShopService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _contextAccessor = httpContextAccessor;
+            _configuration = configuration;
         }
 
         public async Task<BasePaginatedList<ShopModelView>> GetAllShopAsync
@@ -79,6 +83,11 @@ namespace HairSalon.Services.Service
                 // Set the CreatedTime and LastUpdatedTime to the current UTC time
                 newShop.CreatedTime = DateTimeOffset.UtcNow;
                 newShop.LastUpdatedTime = DateTimeOffset.UtcNow;
+
+
+				var imageHelper = new HairSalon.Core.Utils.Firebase.ImageHelper(_configuration);
+				string firebaseUrl = await imageHelper.Upload(model.ShopImage);
+                newShop.ShopImage = firebaseUrl;
 
                 // Insert the new shop entity into the repository
                 await _unitOfWork.GetRepository<Shop>().InsertAsync(newShop);
@@ -148,6 +157,12 @@ namespace HairSalon.Services.Service
                 {
                     existingShop.Title = model.Title;
                 }
+                if (model.ShopImage != null)
+                {
+					var imageHelper = new HairSalon.Core.Utils.Firebase.ImageHelper(_configuration);
+					string firebaseUrl = await imageHelper.Upload(model.ShopImage);
+					existingShop.ShopImage = firebaseUrl;
+				}
 
                 // Update audit fields with the current user and timestamp
                 existingShop.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
