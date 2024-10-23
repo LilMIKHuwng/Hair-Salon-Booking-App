@@ -45,5 +45,12 @@ namespace HairSalonBE.API.Controllers
             string result = await _salaryPaymentService.DeleteSalaryPaymentAsync(id);
             return Ok(result);
         }
+
+        [HttpGet("export-excel")]
+        public async Task<IActionResult> ExportToExcel([FromQuery] string? id, [FromQuery] Guid? stylistId, [FromQuery] string? paymentDate)
+        {
+            var excelData = await _salaryPaymentService.ExportSalaryPaymentsToExcelAsync(id, stylistId, paymentDate);
+            return File(excelData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "SalaryPayments.xlsx");
+        }
     }
 }
