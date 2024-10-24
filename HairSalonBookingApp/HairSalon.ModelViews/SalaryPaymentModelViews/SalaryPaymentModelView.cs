@@ -9,5 +9,13 @@
         public decimal BaseSalary { get; set; }
 
         public DateTime PaymentDate { get; set; }
+
+        public int DayOffPermitted { get; set; }     
+
+        public int DayOffNoPermitted { get; set; }   
+
+        public decimal DeductedSalary { get; set; }  
+
+        public decimal BonusSalary { get; set; }
     }
 }
