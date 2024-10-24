@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace HairSalon.ModelViews.ServiceModelViews
 {
@@ -17,6 +18,9 @@ namespace HairSalon.ModelViews.ServiceModelViews
 
         [Required(ErrorMessage = "Shop Id is required.")]
         public string ShopId { get; set; }
+
+        [Required(ErrorMessage = "Service Image is required.")]
+        public IFormFile ServiceImage { get; set; }
     }
 
 }

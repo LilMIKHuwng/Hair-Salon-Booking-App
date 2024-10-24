@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace HairSalon.ModelViews.ComboModelViews
 {
@@ -8,5 +9,8 @@ namespace HairSalon.ModelViews.ComboModelViews
         /*public string[] ServiceIds { get; set; }*/
         public List<string> ServiceIds { get; set; }
         public string Name { get; set; }
+
+        [Required(ErrorMessage = "ComboImage is required.")]
+        public IFormFile ComboImage { get; set; }
     }
 }
