@@ -19,9 +19,9 @@ namespace HairSalonBE.API.Controllers
         }
 
         [HttpGet("all")]
-        public async Task<IActionResult> GetAllSalaryPayments(string? id, Guid? stylistId, DateTime? paymentDate, int pageNumber = 1, int pageSize = 5)
+        public async Task<IActionResult> GetAllSalaryPayments(string? id, Guid? stylistId, DateTime? paymentDate, decimal? baseSalary, int pageNumber = 1, int pageSize = 5)
         {
-            var result = await _salaryPaymentService.GetAllSalaryPaymentAsync(id, stylistId, paymentDate, pageNumber, pageSize);
+            var result = await _salaryPaymentService.GetAllSalaryPaymentAsync(id, stylistId, paymentDate, baseSalary, pageNumber, pageSize);
             return Ok(result);
         }
 
