@@ -234,7 +234,7 @@
             	Xóa vai trò
             </summary>
         </member>
-        <member name="M:HairSalonBE.API.Controllers.SalaryPaymentController.GetAllSalaryPayments(System.String,System.Nullable{System.Guid},System.Nullable{System.DateTime},System.Int32,System.Int32)">
+        <member name="M:HairSalonBE.API.Controllers.SalaryPaymentController.GetAllSalaryPayments(System.String,System.Nullable{System.Guid},System.Nullable{System.DateTime},System.Nullable{System.Decimal},System.Int32,System.Int32)">
             <summary>
             	Lấy tất cả lương
             </summary>
@@ -254,7 +254,7 @@
             	Xóa lương
             </summary>
         </member>
-        <member name="M:HairSalonBE.API.Controllers.SalaryPaymentController.ExportToExcel(System.String,System.Nullable{System.Guid},System.String)">
+        <member name="M:HairSalonBE.API.Controllers.SalaryPaymentController.ExportToExcel(System.Nullable{System.Guid},System.String)">
             <summary>
             	Xuất tạo File Excel kiểm tra lương Stylist
             </summary>
