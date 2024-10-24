@@ -10,7 +10,10 @@ namespace HairSalon.ModelViews.SalaryPaymentModelViews
         public decimal BaseSalary { get; set; }
         [Required(ErrorMessage = "PaymentDate is required.")]
         public DateTime PaymentDate { get; set; }
+        [Required(ErrorMessage = "DayOffPermitted is required.")]
         public int DayOffPermitted { get; set; }
+        [Required(ErrorMessage = "DayOffNoPermitted is required.")]
         public int DayOffNoPermitted { get; set; }
+
     }
 }

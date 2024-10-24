@@ -4,8 +4,10 @@ using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
 using HairSalon.ModelViews.ComboModelViews;
+using HairSalon.ModelViews.FeedbackModeViews;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace HairSalon.Services.Service
 {
@@ -246,5 +248,7 @@ namespace HairSalon.Services.Service
             // Return paginated list
             return new BasePaginatedList<ComboModelView>(comboModelView, totalCount, pageNumber, pageSize);
         }
-    }
+
+		
+	}
 }

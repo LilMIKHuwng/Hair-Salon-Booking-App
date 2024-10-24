@@ -19,6 +19,9 @@ namespace HairSalonBE.API.Controllers
             _appUserService = appUserService;
         }
 
+        /// <summary>
+        ///     Tạo người dùng
+        /// </summary>
         [HttpPost("user-register")]
         public async Task<ActionResult<string>> CreateAppUser([FromQuery] CreateAppUserModelView model)
         {
@@ -26,6 +29,9 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        ///     Tạo thợ làm tóc
+        /// </summary>
         [HttpPost("stylist-register")]
 		[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<string>> CreateAppStylist([FromQuery] CreateAppStylistModelView model)
@@ -34,6 +40,9 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        ///     Xác nhận Email
+        /// </summary>
         [HttpPost("confirm-email")]
         public async Task<ActionResult<string>> ConfirmEmail([FromBody] ConfirmEmailModelView model)
         {
@@ -41,6 +50,9 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        ///     Lấy tất cả người dùng
+        /// </summary>
         [HttpGet("all")]
 		[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<BasePaginatedList<AppUserModelView>>> GetAllApplicationUsers(string? userId, int pageNumber = 1, int pageSize = 5)
@@ -49,6 +61,9 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        ///     Cập nhật người dùng
+        /// </summary>
         [HttpPut("update/{userId}")]
         [Authorize]
         public async Task<IActionResult> UpdateApplicationUser(string userId, [FromQuery] UpdateAppUserModelView model)
@@ -57,6 +72,9 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        ///     Xóa người dùng
+        /// </summary>
         [HttpDelete("delete/{userId}")]
 		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> DeleteApplicationUser(string userId)
@@ -65,6 +83,9 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        ///     Quên mật khẩu
+        /// </summary>
         [HttpPost("forgot-password")]
         public async Task<ActionResult<string>> ForgotPassword([FromBody] ForgotPasswordModelView model)
         {
@@ -72,6 +93,9 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        ///     Đổi lại mật khẩu người dùng
+        /// </summary>
         [HttpPost("reset-password")]
         public async Task<ActionResult<string>> ResetPassword([FromBody] ResetPasswordModelView model)
         {
@@ -79,6 +103,9 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        ///     Đổi lại mật khẩu Admin
+        /// </summary>
         [HttpPost("admin/reset-password")]
 		[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<string>> ResetPasswordAdminAsync([FromBody] ResetPasswordAdminModelView model)
@@ -87,6 +114,9 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        ///     Lấy thông tin người dùng hiện tại
+        /// </summary>
         [HttpGet("my-information")]
         [Authorize]
         public async Task<ActionResult<GetInforAppUserModelView>> GetMyInforUsersAsync()
