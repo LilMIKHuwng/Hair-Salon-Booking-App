@@ -38,21 +38,21 @@ namespace HairSalon.Services.Service
 				salaryPaymentQuery = salaryPaymentQuery.Where(p => p.Id == id);
 			}
 
-            if (stylistId.HasValue)
-            {
-                salaryPaymentQuery = salaryPaymentQuery.Where(p => p.UserId == stylistId.Value);
-            }
-            if (paymentDate.HasValue)
+			if (stylistId.HasValue)
+			{
+				salaryPaymentQuery = salaryPaymentQuery.Where(p => p.UserId == stylistId.Value);
+			}
+			if (paymentDate.HasValue)
 			{
 				salaryPaymentQuery = salaryPaymentQuery.Where(p => p.PaymentDate.Date == paymentDate.Value.Date);
 			}
-            if (baseSalary.HasValue)
-            {
-                salaryPaymentQuery = salaryPaymentQuery.Where(p => p.BaseSalary == baseSalary.Value);
-            }
+			if (baseSalary.HasValue)
+			{
+				salaryPaymentQuery = salaryPaymentQuery.Where(p => p.BaseSalary == baseSalary.Value);
+			}
 
-            // Order by creation time and paginate results
-            salaryPaymentQuery = salaryPaymentQuery.OrderByDescending(s => s.CreatedTime);
+			// Order by creation time and paginate results
+			salaryPaymentQuery = salaryPaymentQuery.OrderByDescending(s => s.CreatedTime);
 
 			int totalCount = await salaryPaymentQuery.CountAsync();
 			List<SalaryPayment> paginatedSalaryPayment = await salaryPaymentQuery
@@ -65,48 +65,48 @@ namespace HairSalon.Services.Service
 			return new BasePaginatedList<SalaryPaymentModelView>(salaryPaymentModelViews, totalCount, pageNumber, pageSize);
 		}
 
-        // Create a new SalaryPayment
-        public async Task<string> CreateSalaryPaymentAsync(CreateSalaryPaymentModelView model)
-        {
-            var paymentDate = model.PaymentDate;
-            var nextPaymentDate = new DateTime(paymentDate.Year, paymentDate.Month, 5).AddMonths(1);
-            var currentMonthPaymentStartDate = new DateTime(paymentDate.Year, paymentDate.Month, 5);
+		// Create a new SalaryPayment
+		public async Task<string> CreateSalaryPaymentAsync(CreateSalaryPaymentModelView model)
+		{
+			var paymentDate = model.PaymentDate;
+			var nextPaymentDate = new DateTime(paymentDate.Year, paymentDate.Month, 5).AddMonths(1);
+			var currentMonthPaymentStartDate = new DateTime(paymentDate.Year, paymentDate.Month, 5);
 
-            // Get the current user's ID from the context
-            var userId = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+			// Get the current user's ID from the context
+			var userId = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 
-            // Check if a salary payment already exists for the user in the current period
-            var existingPayment = await _unitOfWork.GetRepository<SalaryPayment>().Entities
-                .FirstOrDefaultAsync(s => s.CreatedBy == userId &&
-                                          s.PaymentDate >= currentMonthPaymentStartDate &&
-                                          s.PaymentDate < nextPaymentDate &&
-                                          !s.DeletedTime.HasValue);
+			// Check if a salary payment already exists for the user in the current period
+			var existingPayment = await _unitOfWork.GetRepository<SalaryPayment>().Entities
+				.FirstOrDefaultAsync(s => s.CreatedBy == userId &&
+										  s.PaymentDate >= currentMonthPaymentStartDate &&
+										  s.PaymentDate < nextPaymentDate &&
+										  !s.DeletedTime.HasValue);
 
-            if (existingPayment != null)
-            {
-                return "Salary payment for this period has already been created.";
-            }
+			if (existingPayment != null)
+			{
+				return "Salary payment for this period has already been created.";
+			}
 
-            // Create a new SalaryPayment
-            SalaryPayment newSalaryPayment = _mapper.Map<SalaryPayment>(model);
-            newSalaryPayment.Id = Guid.NewGuid().ToString("N");
-            newSalaryPayment.CreatedBy = userId;
-            newSalaryPayment.CreatedTime = DateTimeOffset.UtcNow;
-            newSalaryPayment.LastUpdatedTime = DateTimeOffset.UtcNow;
+			// Create a new SalaryPayment
+			SalaryPayment newSalaryPayment = _mapper.Map<SalaryPayment>(model);
+			newSalaryPayment.Id = Guid.NewGuid().ToString("N");
+			newSalaryPayment.CreatedBy = userId;
+			newSalaryPayment.CreatedTime = DateTimeOffset.UtcNow;
+			newSalaryPayment.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-            // Define deduction rules using dictionaries
-            var permittedDeductionRules = new Dictionary<int, decimal>
-            {
-                { 3, 1m / 28 }, // For 3 days, deduct 1 day salary
+			// Define deduction rules using dictionaries
+			var permittedDeductionRules = new Dictionary<int, decimal>
+			{
+				{ 3, 1m / 28 }, // For 3 days, deduct 1 day salary
                 { 7, 0.25m },   // For 7 days, deduct 25% of salary
                 { 9, 0.50m },   // For 9 days, deduct 50% of salary
                 { 11, 0.75m },  // For 11 days, deduct 75% of salary
                 { 13, 1.0m }    // For 13 days or more, deduct full salary
             };
 
-                    var nonPermittedDeductionRules = new Dictionary<int, decimal>
-            {
-                { 1, 1m / 28 }, // 1 day, deduct 1 day salary
+			var nonPermittedDeductionRules = new Dictionary<int, decimal>
+			{
+				{ 1, 1m / 28 }, // 1 day, deduct 1 day salary
                 { 2, 2m / 28 }, // 2 days, deduct 2 days salary
                 { 3, 0.25m },   // 3 days, deduct 25% of salary
                 { 4, 0.50m },   // 4 days, deduct 50% of salary
@@ -114,98 +114,98 @@ namespace HairSalon.Services.Service
                 { 6, 1.0m }     // 6 or more days, deduct full salary
             };
 
-                    // Define bonus rules
-                    var bonusRules = new Dictionary<int, decimal>
-            {
-                { 0, 0.10m }, // No days off, bonus 10%
+			// Define bonus rules
+			var bonusRules = new Dictionary<int, decimal>
+			{
+				{ 0, 0.10m }, // No days off, bonus 10%
                 { 1, 0.05m }, // 1 day off, bonus 5%
                 { 2, 0.02m }  // 2 days off, bonus 2%
             };
 
-            // Calculate deductions based on permitted days off
-            decimal deductionPercentage = permittedDeductionRules
-                .Where(rule => model.DayOffPermitted >= rule.Key)
-                .Select(rule => rule.Value)
-                .DefaultIfEmpty(0)
-                .Last();
+			// Calculate deductions based on permitted days off
+			decimal deductionPercentage = permittedDeductionRules
+				.Where(rule => model.DayOffPermitted >= rule.Key)
+				.Select(rule => rule.Value)
+				.DefaultIfEmpty(0)
+				.Last();
 
-            // Calculate deductions based on non-permitted days off
-            deductionPercentage += nonPermittedDeductionRules
-                .Where(rule => model.DayOffNoPermitted >= rule.Key)
-                .Select(rule => rule.Value)
-                .DefaultIfEmpty(0)
-                .Last();
+			// Calculate deductions based on non-permitted days off
+			deductionPercentage += nonPermittedDeductionRules
+				.Where(rule => model.DayOffNoPermitted >= rule.Key)
+				.Select(rule => rule.Value)
+				.DefaultIfEmpty(0)
+				.Last();
 
-            // Calculate total days off for bonus eligibility
-            int totalDaysOff = model.DayOffPermitted + model.DayOffNoPermitted;
+			// Calculate total days off for bonus eligibility
+			int totalDaysOff = model.DayOffPermitted + model.DayOffNoPermitted;
 
-            // Calculate bonus based on permitted days off only if total days off <= 3
-            decimal bonusPercentage = 0;
-            if (totalDaysOff <= 3)
-            {
-                bonusPercentage = bonusRules
-                    .Where(rule => model.DayOffPermitted == rule.Key)
-                    .Select(rule => rule.Value)
-                    .DefaultIfEmpty(0)
-                    .First();
-            }
+			// Calculate bonus based on permitted days off only if total days off <= 3
+			decimal bonusPercentage = 0;
+			if (totalDaysOff <= 3)
+			{
+				bonusPercentage = bonusRules
+					.Where(rule => model.DayOffPermitted == rule.Key)
+					.Select(rule => rule.Value)
+					.DefaultIfEmpty(0)
+					.First();
+			}
 
-            // Calculate the final Bonus and Deducted Salary
-            newSalaryPayment.DeductedSalary = model.BaseSalary * deductionPercentage;
-            newSalaryPayment.BonusSalary = model.BaseSalary * bonusPercentage;
+			// Calculate the final Bonus and Deducted Salary
+			newSalaryPayment.DeductedSalary = model.BaseSalary * deductionPercentage;
+			newSalaryPayment.BonusSalary = model.BaseSalary * bonusPercentage;
 
-            // Save the new salary payment
-            await _unitOfWork.GetRepository<SalaryPayment>().InsertAsync(newSalaryPayment);
-            await _unitOfWork.SaveAsync();
+			// Save the new salary payment
+			await _unitOfWork.GetRepository<SalaryPayment>().InsertAsync(newSalaryPayment);
+			await _unitOfWork.SaveAsync();
 
-            return "Add new salary payment successfully!";
-        }
+			return "Add new salary payment successfully!";
+		}
 
 
-        // Update an existing SalaryPayment
-        public async Task<string> UpdateSalaryPaymentAsync(string id, UpdatedSalaryPaymentModelView model)
-        {
-            if (string.IsNullOrWhiteSpace(id))
-            {
-                return "Please provide a valid Salary Payment ID.";
-            }
+		// Update an existing SalaryPayment
+		public async Task<string> UpdateSalaryPaymentAsync(string id, UpdatedSalaryPaymentModelView model)
+		{
+			if (string.IsNullOrWhiteSpace(id))
+			{
+				return "Please provide a valid Salary Payment ID.";
+			}
 
-            // Find the SalaryPayment by id
-            SalaryPayment existingSalary = await _unitOfWork.GetRepository<SalaryPayment>().Entities
-                .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
+			// Find the SalaryPayment by id
+			SalaryPayment existingSalary = await _unitOfWork.GetRepository<SalaryPayment>().Entities
+				.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
 
-            if (existingSalary == null)
-            {
-                return "The Salary Payment cannot be found or has been deleted!";
-            }
+			if (existingSalary == null)
+			{
+				return "The Salary Payment cannot be found or has been deleted!";
+			}
 
-            existingSalary.UserId = model.UserId ?? existingSalary.UserId;
-            existingSalary.BaseSalary = model.BaseSalary ?? existingSalary.BaseSalary;
-            existingSalary.PaymentDate = model.PaymentDate ?? existingSalary.PaymentDate;
-            existingSalary.DayOffPermitted = model.DayOffPermitted ?? existingSalary.DayOffPermitted;
-            existingSalary.DayOffNoPermitted = model.DayOffNoPermitted ?? existingSalary.DayOffNoPermitted;
+			existingSalary.UserId = model.UserId ?? existingSalary.UserId;
+			existingSalary.BaseSalary = model.BaseSalary ?? existingSalary.BaseSalary;
+			existingSalary.PaymentDate = model.PaymentDate ?? existingSalary.PaymentDate;
+			existingSalary.DayOffPermitted = model.DayOffPermitted ?? existingSalary.DayOffPermitted;
+			existingSalary.DayOffNoPermitted = model.DayOffNoPermitted ?? existingSalary.DayOffNoPermitted;
 
-            existingSalary.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-            existingSalary.LastUpdatedTime = DateTimeOffset.UtcNow;
+			existingSalary.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+			existingSalary.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-            decimal baseSalary = existingSalary.BaseSalary;
-            decimal deductedSalary = 0;
-            decimal bonusSalary = 0;
+			decimal baseSalary = existingSalary.BaseSalary;
+			decimal deductedSalary = 0;
+			decimal bonusSalary = 0;
 
-            // Rules for permitted days off deduction
-            var permittedDeductionRules = new List<(int minDays, int maxDays, decimal deductionPercentage)>
-    {
-        (3, 6, 1.0m / 28), // From day 3 to 6, deduct 1 day salary per day
+			// Rules for permitted days off deduction
+			var permittedDeductionRules = new List<(int minDays, int maxDays, decimal deductionPercentage)>
+	{
+		(3, 6, 1.0m / 28), // From day 3 to 6, deduct 1 day salary per day
         (7, 8, 0.25m),     // From day 7 to 8, deduct 25% of salary
         (9, 10, 0.5m),     // From day 9 to 10, deduct 50% of salary
         (11, 12, 0.75m),   // From day 11 to 12, deduct 75% of salary
         (13, int.MaxValue, 1.0m) // More than 12 days, deduct full salary
     };
 
-            // Rules for non-permitted days off deduction
-            var nonPermittedDeductionRules = new List<(int minDays, decimal deductionPercentage)>
-    {
-        (1, 1.0m / 28),  // 1 day, deduct 1 day salary
+			// Rules for non-permitted days off deduction
+			var nonPermittedDeductionRules = new List<(int minDays, decimal deductionPercentage)>
+	{
+		(1, 1.0m / 28),  // 1 day, deduct 1 day salary
         (2, 2.0m / 28),  // 2 days, deduct 2 days salary
         (3, 0.25m),      // From day 3, deduct 25% of salary
         (4, 0.5m),       // 4 days, deduct 50% of salary
@@ -213,63 +213,63 @@ namespace HairSalon.Services.Service
         (6, 1.0m)        // 6 or more days, deduct full salary
     };
 
-            // Rules for bonus
-            var bonusRules = new Dictionary<int, decimal>
-    {
-        { 0, 0.10m },  // No days off, bonus 10%
+			// Rules for bonus
+			var bonusRules = new Dictionary<int, decimal>
+	{
+		{ 0, 0.10m },  // No days off, bonus 10%
         { 1, 0.05m },  // 1 day off, bonus 5%
         { 2, 0.02m }   // 2 days off, bonus 2%
     };
 
-            // Calculate permitted days off deduction
-            int dayOffPermitted = model.DayOffPermitted.GetValueOrDefault();
-            int dayOffNoPermitted = model.DayOffNoPermitted.GetValueOrDefault();
+			// Calculate permitted days off deduction
+			int dayOffPermitted = model.DayOffPermitted.GetValueOrDefault();
+			int dayOffNoPermitted = model.DayOffNoPermitted.GetValueOrDefault();
 
-            // Calculate permitted days off deduction
-            foreach (var (minDays, maxDays, deductionPercentage) in permittedDeductionRules)
-            {
-                if (dayOffPermitted >= minDays && dayOffPermitted <= maxDays)
-                {
-                    deductedSalary += deductionPercentage * baseSalary;
-                    break;
-                }
-            }
+			// Calculate permitted days off deduction
+			foreach (var (minDays, maxDays, deductionPercentage) in permittedDeductionRules)
+			{
+				if (dayOffPermitted >= minDays && dayOffPermitted <= maxDays)
+				{
+					deductedSalary += deductionPercentage * baseSalary;
+					break;
+				}
+			}
 
-            // Calculate non-permitted days off deduction
-            foreach (var (minDays, deductionPercentage) in nonPermittedDeductionRules)
-            {
-                if (dayOffNoPermitted >= minDays)
-                {
-                    deductedSalary += deductionPercentage * baseSalary;
-                }
-            }
+			// Calculate non-permitted days off deduction
+			foreach (var (minDays, deductionPercentage) in nonPermittedDeductionRules)
+			{
+				if (dayOffNoPermitted >= minDays)
+				{
+					deductedSalary += deductionPercentage * baseSalary;
+				}
+			}
 
-            // Calculate total days off for bonus
-            int totalDaysOff = dayOffPermitted + dayOffNoPermitted;
+			// Calculate total days off for bonus
+			int totalDaysOff = dayOffPermitted + dayOffNoPermitted;
 
-            // Calculate bonus
-            if (totalDaysOff <= 3) // No bonus if total days off exceed 3
-            {
-                if (bonusRules.TryGetValue(dayOffPermitted, out decimal bonusPercentage))
-                {
-                    bonusSalary = bonusPercentage * baseSalary;
-                }
-            }
+			// Calculate bonus
+			if (totalDaysOff <= 3) // No bonus if total days off exceed 3
+			{
+				if (bonusRules.TryGetValue(dayOffPermitted, out decimal bonusPercentage))
+				{
+					bonusSalary = bonusPercentage * baseSalary;
+				}
+			}
 
-            // Update the salary values
-            existingSalary.DeductedSalary = deductedSalary;
-            existingSalary.BonusSalary = bonusSalary;
+			// Update the salary values
+			existingSalary.DeductedSalary = deductedSalary;
+			existingSalary.BonusSalary = bonusSalary;
 
-            // Save changes
-            await _unitOfWork.GetRepository<SalaryPayment>().UpdateAsync(existingSalary);
-            await _unitOfWork.SaveAsync();
+			// Save changes
+			await _unitOfWork.GetRepository<SalaryPayment>().UpdateAsync(existingSalary);
+			await _unitOfWork.SaveAsync();
 
-            return "Updated salary payment successfully!";
-        }
+			return "Updated salary payment successfully!";
+		}
 
 
-        // Delete a SalaryPayment (soft delete)
-        public async Task<string> DeleteSalaryPaymentAsync(string id)
+		// Delete a SalaryPayment (soft delete)
+		public async Task<string> DeleteSalaryPaymentAsync(string id)
 		{
 			// Check if id is provided
 			if (string.IsNullOrWhiteSpace(id))
@@ -298,128 +298,129 @@ namespace HairSalon.Services.Service
 			return "Deleted salary payment successfully!";
 		}
 
-        // Export Excel Salary Payments
-        public async Task<byte[]> ExportSalaryPaymentsToExcelAsync(Guid? stylistId, string? paymentDateStr)
-        {
-            IQueryable<SalaryPayment> salaryPaymentQuery = _unitOfWork.GetRepository<SalaryPayment>().Entities
-                .Include(sp => sp.User)
-                .Where(p => !p.DeletedTime.HasValue);
+		// Export Excel Salary Payments
+		// Export Excel Salary Payments
+		public async Task<byte[]> ExportSalaryPaymentsToExcelAsync(Guid? stylistId, string? paymentDateStr)
+		{
+			IQueryable<SalaryPayment> salaryPaymentQuery = _unitOfWork.GetRepository<SalaryPayment>().Entities
+				.Include(sp => sp.User)
+				.Where(p => !p.DeletedTime.HasValue);
 
-            // Filter by Stylist ID if provided
-            if (stylistId.HasValue)
-            {
-                salaryPaymentQuery = salaryPaymentQuery.Where(p => p.UserId == stylistId.Value);
-            }
+			// Filter by Stylist ID if provided
+			if (stylistId.HasValue)
+			{
+				salaryPaymentQuery = salaryPaymentQuery.Where(p => p.UserId == stylistId.Value);
+			}
 
-            // Filter by PaymentDate if provided
-            if (!string.IsNullOrEmpty(paymentDateStr))
-            {
-                if (int.TryParse(paymentDateStr, out int month) && month >= 1 && month <= 12)
-                {
-                    // If the string is a valid month
-                    salaryPaymentQuery = salaryPaymentQuery.Where(p => p.PaymentDate.Month == month);
-                }
-                else if (paymentDateStr.Length == 4 && int.TryParse(paymentDateStr, out int year))
-                {
-                    // If the string is a valid year
-                    salaryPaymentQuery = salaryPaymentQuery.Where(p => p.PaymentDate.Year == year);
-                }
-                else if (DateTime.TryParseExact(paymentDateStr, "yyyy-MM", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime paymentDate))
-                {
-                    // Filter by both year and month
-                    salaryPaymentQuery = salaryPaymentQuery.Where(p =>
-                        p.PaymentDate.Year == paymentDate.Year &&
-                        p.PaymentDate.Month == paymentDate.Month);
-                }
-                else if (DateTime.TryParse(paymentDateStr, out paymentDate))
-                {
-                    // If it's a full date, filter by that specific date
-                    salaryPaymentQuery = salaryPaymentQuery.Where(p => p.PaymentDate.Date == paymentDate.Date);
-                }
-            }
+			// Filter by PaymentDate if provided
+			if (!string.IsNullOrEmpty(paymentDateStr))
+			{
+				if (int.TryParse(paymentDateStr, out int month) && month >= 1 && month <= 12)
+				{
+					// If the string is a valid month
+					salaryPaymentQuery = salaryPaymentQuery.Where(p => p.PaymentDate.Month == month);
+				}
+				else if (paymentDateStr.Length == 4 && int.TryParse(paymentDateStr, out int year))
+				{
+					// If the string is a valid year
+					salaryPaymentQuery = salaryPaymentQuery.Where(p => p.PaymentDate.Year == year);
+				}
+				else if (DateTime.TryParseExact(paymentDateStr, "yyyy-MM", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime paymentDate))
+				{
+					// Filter by both year and month
+					salaryPaymentQuery = salaryPaymentQuery.Where(p =>
+						p.PaymentDate.Year == paymentDate.Year &&
+						p.PaymentDate.Month == paymentDate.Month);
+				}
+				else if (DateTime.TryParse(paymentDateStr, out paymentDate))
+				{
+					// If it's a full date, filter by that specific date
+					salaryPaymentQuery = salaryPaymentQuery.Where(p => p.PaymentDate.Date == paymentDate.Date);
+				}
+			}
 
-            // Get the filtered SalaryPayments list
-            var salaryPayments = await salaryPaymentQuery.ToListAsync();
+			// Get the filtered SalaryPayments list
+			var salaryPayments = await salaryPaymentQuery.ToListAsync();
 
-            // Create an Excel workbook
-            using var workbook = new XLWorkbook();
-            var worksheet = workbook.Worksheets.Add("Salary Payments");
+			// Create an Excel workbook
+			using var workbook = new XLWorkbook();
+			var worksheet = workbook.Worksheets.Add("Salary Payments");
 
-            // Define column headers
-            worksheet.Cell(1, 1).Value = "Name";
-            worksheet.Cell(1, 2).Value = "Email";
-            worksheet.Cell(1, 3).Value = "Phone";
-            worksheet.Cell(1, 4).Value = "Base Salary";
-            worksheet.Cell(1, 5).Value = "Payment Date";
-            worksheet.Cell(1, 6).Value = "Day Off Permitted";
-            worksheet.Cell(1, 7).Value = "Day Off Not Permitted";
-            worksheet.Cell(1, 8).Value = "Deducted Salary";
-            worksheet.Cell(1, 9).Value = "Bonus Salary";
-            worksheet.Cell(1, 10).Value = "Total Salary";
+			// Define column headers
+			worksheet.Cell(1, 1).Value = "Name";
+			worksheet.Cell(1, 2).Value = "Email";
+			worksheet.Cell(1, 3).Value = "Phone";
+			worksheet.Cell(1, 4).Value = "Base Salary";
+			worksheet.Cell(1, 5).Value = "Payment Date";
+			worksheet.Cell(1, 6).Value = "Day Off Permitted";
+			worksheet.Cell(1, 7).Value = "Day Off Not Permitted";
+			worksheet.Cell(1, 8).Value = "Deducted Salary";
+			worksheet.Cell(1, 9).Value = "Bonus Salary";
+			worksheet.Cell(1, 10).Value = "Total Salary";
 
-            // Apply styling to the header row
-            var headerRow = worksheet.Row(1);
-            foreach (var cell in headerRow.CellsUsed())
-            {
-                cell.Style.Font.Bold = true;
-                cell.Style.Fill.BackgroundColor = XLColor.LightCyan;
-                cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+			// Apply styling to the header row
+			var headerRow = worksheet.Row(1);
+			foreach (var cell in headerRow.CellsUsed())
+			{
+				cell.Style.Font.Bold = true;
+				cell.Style.Fill.BackgroundColor = XLColor.LightCyan;
+				cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
 
-                // Apply borders to header cells
-                cell.Style.Border.TopBorder = XLBorderStyleValues.Thin;
-                cell.Style.Border.BottomBorder = XLBorderStyleValues.Thin;
-                cell.Style.Border.LeftBorder = XLBorderStyleValues.Thin;
-                cell.Style.Border.RightBorder = XLBorderStyleValues.Thin;
-                cell.Style.Border.OutsideBorderColor = XLColor.Black;
-            }
+				// Apply borders to header cells
+				cell.Style.Border.TopBorder = XLBorderStyleValues.Thin;
+				cell.Style.Border.BottomBorder = XLBorderStyleValues.Thin;
+				cell.Style.Border.LeftBorder = XLBorderStyleValues.Thin;
+				cell.Style.Border.RightBorder = XLBorderStyleValues.Thin;
+				cell.Style.Border.OutsideBorderColor = XLColor.Black;
+			}
 
-            // Populate data and apply styling
-            for (int i = 0; i < salaryPayments.Count; i++)
-            {
-                var payment = salaryPayments[i];
-                var row = worksheet.Row(i + 2);
+			// Populate data and apply styling
+			for (int i = 0; i < salaryPayments.Count; i++)
+			{
+				var payment = salaryPayments[i];
+				var row = worksheet.Row(i + 2);
 
-                worksheet.Cell(i + 2, 1).Value = payment.User != null ? payment.User.UserInfo.Lastname + " " + payment.User.UserInfo.Firstname  : "Null";
-                worksheet.Cell(i + 2, 2).Value = payment.User.Email;
-                worksheet.Cell(i + 2, 3).Style.NumberFormat.Format = "@";
-                worksheet.Cell(i + 2, 3).Value = payment.User.PhoneNumber ?? "Null";
-                worksheet.Cell(i + 2, 4).Value = payment.BaseSalary;
-                worksheet.Cell(i + 2, 5).Value = payment.PaymentDate.ToString("yyyy-MM-dd");
-                worksheet.Cell(i + 2, 6).Value = payment.DayOffPermitted;
-                worksheet.Cell(i + 2, 7).Value = payment.DayOffNoPermitted;
-                worksheet.Cell(i + 2, 8).Value = payment.DeductedSalary;
-                worksheet.Cell(i + 2, 9).Value = payment.BonusSalary;
+				worksheet.Cell(i + 2, 1).Value = payment.User != null ? payment.User.UserInfo.Lastname + " " + payment.User.UserInfo.Firstname : "Null";
+				worksheet.Cell(i + 2, 2).Value = payment.User.Email;
+				worksheet.Cell(i + 2, 3).Style.NumberFormat.Format = "@";
+				worksheet.Cell(i + 2, 3).Value = payment.User.PhoneNumber ?? "Null";
+				worksheet.Cell(i + 2, 4).Value = payment.BaseSalary;
+				worksheet.Cell(i + 2, 5).Value = payment.PaymentDate.ToString("yyyy-MM-dd");
+				worksheet.Cell(i + 2, 6).Value = payment.DayOffPermitted;
+				worksheet.Cell(i + 2, 7).Value = payment.DayOffNoPermitted;
+				worksheet.Cell(i + 2, 8).Value = payment.DeductedSalary;
+				worksheet.Cell(i + 2, 9).Value = payment.BonusSalary;
 
-                // Calculate total salary
-                decimal totalSalary = payment.BaseSalary - payment.DeductedSalary + payment.BonusSalary;
-                worksheet.Cell(i + 2, 10).Value = totalSalary;
+				// Calculate total salary
+				decimal totalSalary = payment.BaseSalary - payment.DeductedSalary + payment.BonusSalary;
+				worksheet.Cell(i + 2, 10).Value = totalSalary;
 
-                // Apply borders and center-align content
-                foreach (var cell in row.CellsUsed())
-                {
-                    cell.Style.Border.TopBorder = XLBorderStyleValues.Thin;
-                    cell.Style.Border.BottomBorder = XLBorderStyleValues.Thin;
-                    cell.Style.Border.LeftBorder = XLBorderStyleValues.Thin;
-                    cell.Style.Border.RightBorder = XLBorderStyleValues.Thin;
-                    cell.Style.Border.OutsideBorderColor = XLColor.Black;
+				// Apply borders and center-align content
+				foreach (var cell in row.CellsUsed())
+				{
+					cell.Style.Border.TopBorder = XLBorderStyleValues.Thin;
+					cell.Style.Border.BottomBorder = XLBorderStyleValues.Thin;
+					cell.Style.Border.LeftBorder = XLBorderStyleValues.Thin;
+					cell.Style.Border.RightBorder = XLBorderStyleValues.Thin;
+					cell.Style.Border.OutsideBorderColor = XLColor.Black;
 
-                    cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                }
+					cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+				}
 
-                // Apply alternating row colors
-                row.CellsUsed().Style.Fill.BackgroundColor = i % 2 == 0 ? XLColor.White : XLColor.LightGray;
+				// Apply alternating row colors
+				row.CellsUsed().Style.Fill.BackgroundColor = i % 2 == 0 ? XLColor.White : XLColor.LightGray;
 
-                // Apply light yellow background to the "Total Salary" column
-                worksheet.Cell(i + 2, 10).Style.Fill.BackgroundColor = XLColor.LightYellow;
-            }
+				// Apply light yellow background to the "Total Salary" column
+				worksheet.Cell(i + 2, 10).Style.Fill.BackgroundColor = XLColor.LightYellow;
+			}
 
-            // Auto-size columns
-            worksheet.Columns().AdjustToContents();
+			// Auto-size columns
+			worksheet.Columns().AdjustToContents();
 
-            // Save workbook to memory stream
-            using var stream = new MemoryStream();
-            workbook.SaveAs(stream);
-            return stream.ToArray();
-        }
-    }
+			// Save workbook to memory stream
+			using var stream = new MemoryStream();
+			workbook.SaveAs(stream);
+			return stream.ToArray();
+		}
+	}
 }
