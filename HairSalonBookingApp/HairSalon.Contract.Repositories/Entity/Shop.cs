@@ -27,6 +27,8 @@ namespace HairSalon.Contract.Repositories.Entity
 		[MaxLength(100)]
 		public string Title { get; set; }
 
+		public string? ShopImage { get; set; }
+
 		public virtual ICollection<Service> Services { get; set; }
 	}
 }

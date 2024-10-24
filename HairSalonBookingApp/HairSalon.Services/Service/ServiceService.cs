@@ -6,6 +6,8 @@ using ServiceEntity = HairSalon.Contract.Repositories.Entity.Service;
 using Microsoft.EntityFrameworkCore;
 using HairSalon.Core;
 using Microsoft.AspNetCore.Http;
+using HairSalon.Contract.Repositories.Entity;
+using HairSalon.Core.Utils;
 
 namespace HairSalon.Services.Service
 {
@@ -64,7 +66,7 @@ namespace HairSalon.Services.Service
         public async Task<string> AddServiceAsync(CreateServiceModelView model)
         {
             ServiceEntity newService = _mapper.Map<ServiceEntity>(model);
-            
+
             newService.Id = Guid.NewGuid().ToString("N");
             newService.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
             newService.CreatedTime = DateTimeOffset.UtcNow;
@@ -93,33 +95,33 @@ namespace HairSalon.Services.Service
                 return "The Service cannot be found or has been deleted!";
             }
 
-			// Update the service fields only if they are not null
-			if (!string.IsNullOrWhiteSpace(model.Name))
-			{
-				existingService.Name = model.Name;
-			}
+            // Update the service fields only if they are not null
+            if (!string.IsNullOrWhiteSpace(model.Name))
+            {
+                existingService.Name = model.Name;
+            }
 
-			if (!string.IsNullOrWhiteSpace(model.Type))
-			{
-				existingService.Type = model.Type;
-			}
+            if (!string.IsNullOrWhiteSpace(model.Type))
+            {
+                existingService.Type = model.Type;
+            }
 
-			if (model.Price.HasValue)
-			{
-				existingService.Price = model.Price.Value;
-			}
+            if (model.Price.HasValue)
+            {
+                existingService.Price = model.Price.Value;
+            }
 
-			if (!string.IsNullOrWhiteSpace(model.Description))
-			{
-				existingService.Description = model.Description;
-			}
+            if (!string.IsNullOrWhiteSpace(model.Description))
+            {
+                existingService.Description = model.Description;
+            }
 
-			if (!string.IsNullOrWhiteSpace(model.ShopId))
-			{
-				existingService.ShopId = model.ShopId;
-			}
+            if (!string.IsNullOrWhiteSpace(model.ShopId))
+            {
+                existingService.ShopId = model.ShopId;
+            }
 
-			existingService.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            existingService.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
             existingService.LastUpdatedTime = DateTimeOffset.UtcNow;
 
             await _unitOfWork.GetRepository<ServiceEntity>().UpdateAsync(existingService);
@@ -134,7 +136,7 @@ namespace HairSalon.Services.Service
             // Check if the provided id is null, empty, or whitespace
             if (string.IsNullOrWhiteSpace(id))
             {
-               return "Please provide a valid Service ID.";
+                return "Please provide a valid Service ID.";
             }
 
             // Check for existing service
@@ -153,5 +155,6 @@ namespace HairSalon.Services.Service
             await _unitOfWork.SaveAsync();
             return "Service deleted successfully";
         }
+
     }
 }

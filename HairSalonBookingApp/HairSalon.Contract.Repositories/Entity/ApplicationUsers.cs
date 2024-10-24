@@ -16,7 +16,8 @@ namespace HairSalon.Repositories.Entity
 
 		public string UserInfoId { get; set; }
         public virtual UserInfo? UserInfo { get; set; }
-        public string? CreatedBy { get; set; }
+		public string? UserImage { get; set; }
+		public string? CreatedBy { get; set; }
         public string? LastUpdatedBy { get; set; }
         public string? DeletedBy { get; set; }
         public DateTimeOffset CreatedTime { get; set; }

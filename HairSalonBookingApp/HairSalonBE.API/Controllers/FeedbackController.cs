@@ -19,6 +19,9 @@ namespace HairSalonBE.API.Controllers
             _feedbackService = feedbackService;
         }
 
+        /// <summary>
+        ///     Lấy tất cả feedback
+        /// </summary>
         [HttpGet("all")]
         public async Task<ActionResult<BasePaginatedList<FeedBackModelView>>> GetAllFeedbacks(
                                                                                     int pageNumber = 1,
@@ -30,27 +33,39 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+		///		Tạo feedback
+		/// </summary>
         [HttpPost("create")]
-        public async Task<ActionResult<string>> CreatePayment([FromQuery] CreateFeedbackModelView model)
+        public async Task<ActionResult<string>> CreateFeedback([FromQuery] CreateFeedbackModelView model)
         {
             string result = await _feedbackService.AddFeedbackAsync(model);
             return Ok(new { Message = result });
         }
 
+        /// <summary>
+		///		Cập nhật feedback
+		/// </summary>
         [HttpPut("update/{id}")]
-        public async Task<ActionResult<string>> UpdatePayment(string id, [FromQuery] UpdatedFeedbackModelView model)
+        public async Task<ActionResult<string>> UpdateFeedback(string id, [FromQuery] UpdatedFeedbackModelView model)
         {
             string result = await _feedbackService.UpdateFeedbackAsync(id, model);
             return Ok(new { Message = result });
         }
 
+        /// <summary>
+		///		Xóa feedback
+		/// </summary>
         [HttpDelete("delete/{id}")]
-        public async Task<ActionResult<string>> DeletePayment(string id)
+        public async Task<ActionResult<string>> DeleteFeedback(string id)
         {
             string result = await _feedbackService.DeleteFeedbackpAsync(id);
             return Ok(new { Message = result });
         }
 
+        /// <summary>
+		///		Lấy tất cả feedback của dịch vụ
+		/// </summary>
 		[HttpGet("service-feedbacks")]
 		public async Task<ActionResult<BasePaginatedList<FeedBackModelView>>> GetAllFeedbackOfService(
 		                                                                                int pageNumber = 1,

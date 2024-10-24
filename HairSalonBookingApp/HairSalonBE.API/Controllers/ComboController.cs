@@ -19,6 +19,9 @@ namespace HairSalonBE.API.Controllers
             _comboService = comboService;
         }
 
+        /// <summary>
+        ///     Tạo combo
+        /// </summary>
         [HttpPost("create")]
         public async Task<IActionResult> CreateCombo([FromQuery] CreateComboModelView model)
         {
@@ -27,13 +30,19 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        ///     Lấy tất cả combo
+        /// </summary>
         [HttpGet("all")]
-        public async Task<ActionResult<BasePaginatedList<ComboModelView>>> GetAllAppointments(int pageNumber = 1, int pageSize = 5, [FromQuery] string? id = null, [FromQuery] string? name = null)
+        public async Task<ActionResult<BasePaginatedList<ComboModelView>>> GetAllCombos(int pageNumber = 1, int pageSize = 5, [FromQuery] string? id = null, [FromQuery] string? name = null)
         {
             var result = await _comboService.GetAllCombosAsync(pageNumber, pageSize, id, name);
             return Ok(result);
         }
 
+        /// <summary>
+        ///     Cập nhật combo
+        /// </summary>
         [HttpPut("update/{id}")]
         public async Task<ActionResult<string>> UpdateCombo(string id, [FromQuery] UpdateComboModelView model)
         {
@@ -41,11 +50,14 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        ///     Xóa combo
+        /// </summary>
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteCombo(string id)
         {
             var result = await _comboService.DeleteComboAsync(id);
             return Ok(result);
         }
-    }
+	}
 }

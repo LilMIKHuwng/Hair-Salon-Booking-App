@@ -18,6 +18,9 @@ namespace HairSalonBE.API.Controllers
             _serviceService = serviceService;
         }
 
+        /// <summary>
+		///		Lấy tất cả dịch vụ
+		/// </summary>
         [HttpGet("all")]
         public async Task<ActionResult<BasePaginatedList<ServiceModelView>>> GetAllServices([FromQuery] string? id,
                                                                                             [FromQuery] string? name,
@@ -29,6 +32,9 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+		///		Tạo dịch vụ
+		/// </summary>
 		[HttpPost("create")]
 		public async Task<ActionResult<string>> CreateService([FromQuery] CreateServiceModelView model)
         {
@@ -36,6 +42,9 @@ namespace HairSalonBE.API.Controllers
             return Ok(new { Message = result });
         }
 
+        /// <summary>
+		///		Cập nhật dịch vụ
+		/// </summary>
 		[HttpPut("update/{id}")]
 		public async Task<ActionResult<string>> UpdateService(string id, [FromQuery] UpdatedServiceModelView model)
         {
@@ -43,11 +52,16 @@ namespace HairSalonBE.API.Controllers
             return Ok(new { Message = result }); 
         }
 
+        /// <summary>
+		///		Xóa dịch vụ
+		/// </summary>
 		[HttpDelete("delete/{id}")]
 		public async Task<ActionResult<string>> DeleteService(string id)
         {
             string result = await _serviceService.DeleteServiceAsync(id);
             return Ok(new { Message = result });
         }
+
+        
     }
 }

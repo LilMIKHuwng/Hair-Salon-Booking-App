@@ -18,6 +18,9 @@ namespace HairSalonBE.API.Controllers
             _shopService = shopService;
         }
 
+        /// <summary>
+		///		Lấy tất cả thông tin shop
+		/// </summary>
         [HttpGet("all")]
         public async Task<ActionResult<BasePaginatedList<ShopModelView>>> GetAllShops(string? searchName, string? searchId, int pageNumber = 1, int pageSize = 5)
         {
@@ -25,6 +28,9 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+		///		Tạo thông tin shop
+		/// </summary>
         [HttpPost("create")]
         public async Task<ActionResult<ShopModelView>> CreateShop([FromQuery] CreateShopModelView model)
         {
@@ -33,6 +39,9 @@ namespace HairSalonBE.API.Controllers
 
         }
 
+        /// <summary>
+		///		Cập nhật thông tin shop
+		/// </summary>
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateShop(string id, [FromQuery] UpdatedShopModelView model)
         {
@@ -40,6 +49,9 @@ namespace HairSalonBE.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+		///		Xóa shop
+		/// </summary>
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteShop(string id)
         {
