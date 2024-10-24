@@ -62,9 +62,9 @@ namespace HairSalonBE.API.Controllers
 		///		Xuất tạo File Excel kiểm tra lương Stylist
 		/// </summary>
 		[HttpGet("export-excel")]
-        public async Task<IActionResult> ExportToExcel([FromQuery] string? id, [FromQuery] Guid? stylistId, [FromQuery] string? paymentDate)
+        public async Task<IActionResult> ExportToExcel([FromQuery] Guid? stylistId, [FromQuery] string? paymentDate)
         {
-            var excelData = await _salaryPaymentService.ExportSalaryPaymentsToExcelAsync(id, stylistId, paymentDate);
+            var excelData = await _salaryPaymentService.ExportSalaryPaymentsToExcelAsync(stylistId, paymentDate);
             return File(excelData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "SalaryPayments.xlsx");
         }
     }

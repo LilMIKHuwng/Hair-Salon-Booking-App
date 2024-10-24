@@ -144,17 +144,11 @@ namespace HairSalon.Services.Service
 		}
 
         // Export Excel Salary Payments
-        public async Task<byte[]> ExportSalaryPaymentsToExcelAsync(string? id, Guid? stylistId, string? paymentDateStr)
+        public async Task<byte[]> ExportSalaryPaymentsToExcelAsync(Guid? stylistId, string? paymentDateStr)
         {
             IQueryable<SalaryPayment> salaryPaymentQuery = _unitOfWork.GetRepository<SalaryPayment>().Entities
                 .Include(sp => sp.User)
                 .Where(p => !p.DeletedTime.HasValue);
-
-            // Filter by ID if provided
-            if (!string.IsNullOrEmpty(id))
-            {
-                salaryPaymentQuery = salaryPaymentQuery.Where(p => p.Id == id);
-            }
 
             // Filter by Stylist ID if provided
             if (stylistId.HasValue)
@@ -197,9 +191,9 @@ namespace HairSalon.Services.Service
             var worksheet = workbook.Worksheets.Add("Salary Payments");
 
             // Define column headers
-            worksheet.Cell(1, 1).Value = "ID";
-            worksheet.Cell(1, 2).Value = "User ID";
-            worksheet.Cell(1, 3).Value = "User Name";
+            worksheet.Cell(1, 1).Value = "Name";
+            worksheet.Cell(1, 2).Value = "Email";
+            worksheet.Cell(1, 3).Value = "Phone";
             worksheet.Cell(1, 4).Value = "Base Salary";
             worksheet.Cell(1, 5).Value = "Payment Date";
             worksheet.Cell(1, 6).Value = "Day Off Permitted";
@@ -230,9 +224,10 @@ namespace HairSalon.Services.Service
                 var payment = salaryPayments[i];
                 var row = worksheet.Row(i + 2);
 
-                worksheet.Cell(i + 2, 1).Value = payment.Id;
-                worksheet.Cell(i + 2, 2).Value = payment.UserId.HasValue ? payment.UserId.ToString() : string.Empty;
-                worksheet.Cell(i + 2, 3).Value = payment.User != null ? payment.User.UserName : "Unknown";
+                worksheet.Cell(i + 2, 1).Value = payment.User != null ? payment.User.UserInfo.Lastname + " " + payment.User.UserInfo.Firstname  : "Null";
+                worksheet.Cell(i + 2, 2).Value = payment.User.Email;
+                worksheet.Cell(i + 2, 3).Style.NumberFormat.Format = "@";
+                worksheet.Cell(i + 2, 3).Value = payment.User.PhoneNumber ?? "Null";
                 worksheet.Cell(i + 2, 4).Value = payment.BaseSalary;
                 worksheet.Cell(i + 2, 5).Value = payment.PaymentDate.ToString("yyyy-MM-dd");
                 worksheet.Cell(i + 2, 6).Value = payment.DayOffPermitted;
