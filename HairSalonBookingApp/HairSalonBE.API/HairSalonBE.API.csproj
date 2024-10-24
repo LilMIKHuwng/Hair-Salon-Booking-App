@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <DocumentationFile>D:\HairSalonApp\Hair-Salon-Booking-App\HairSalonBookingApp\HairSalonBE.API\HairSalonBE.API.xml</DocumentationFile>
+    <DocumentationFile>C:\OJTSalon\Hair-Salon-Booking-App\HairSalonBookingApp\HairSalonBE.API\HairSalonBE.API.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
