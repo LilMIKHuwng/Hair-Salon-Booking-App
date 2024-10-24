@@ -12,5 +12,6 @@ namespace HairSalon.ModelViews.ComboModelViews
         public string Name { get; set; }
         public decimal TotalPrice { get; set; }
         public int TimeCombo { get; set; }
+        public string ComboImage { get; set; }
     }
 }

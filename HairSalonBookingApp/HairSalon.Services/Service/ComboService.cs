@@ -3,10 +3,12 @@ using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
+using HairSalon.Core.Base;
 using HairSalon.ModelViews.ComboModelViews;
 using HairSalon.ModelViews.FeedbackModeViews;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace HairSalon.Services.Service
@@ -16,125 +18,160 @@ namespace HairSalon.Services.Service
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
 
-        public ComboService(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor, IMapper mapper)
+        public ComboService(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor, IMapper mapper, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
             _contextAccessor = httpContextAccessor;
             _mapper = mapper;
+            _configuration = configuration;
         }
 
         // Create a new Combo
         public async Task<string> CreateComboAsync(CreateComboModelView model)
         {
-
-            // Check if the combo name already exists
-            var existingCombo = await _unitOfWork.GetRepository<Combo>().Entities
-                .FirstOrDefaultAsync(c => c.Name == model.Name && !c.DeletedTime.HasValue);
-
-            if (existingCombo != null)
+            try
             {
-                return ($"Combo with the name '{model.Name}' already exists.");
-            }
+                // Check if the combo name already exists
+                var existingCombo = await _unitOfWork.GetRepository<Combo>().Entities
+                    .FirstOrDefaultAsync(c => c.Name == model.Name && !c.DeletedTime.HasValue);
 
-            // Check for duplicates in ServiceIds
-            var serviceIdList = model.ServiceIds.ToList(); // Convert to List to enable operations
-            var uniqueServiceIds = new HashSet<string>(serviceIdList);
-
-            if (uniqueServiceIds.Count < serviceIdList.Count)
-            {
-                return ("Duplicate Service IDs found.");
-            }
-
-            // Initialize a new Combo
-            Combo newCombo = _mapper.Map<Combo>(model);
-            newCombo.Id = Guid.NewGuid().ToString("N");
-            newCombo.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-            newCombo.CreatedTime = DateTimeOffset.UtcNow;
-            newCombo.LastUpdatedTime = DateTimeOffset.UtcNow;
-
-            // Initialize total values for the Combo
-            decimal totalPrice = 0;
-            int totalTime = 0;
-
-            // Loop through each selected service ID
-            foreach (var serviceId in model.ServiceIds)
-            {
-                // Retrieve the service from the database
-                var service = await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>().GetByIdAsync(serviceId);
-
-                if (service == null)
+                if (existingCombo != null)
                 {
-                    return ($"Service with ID {serviceId} not found.");
+                    return ($"Combo with the name '{model.Name}' already exists.");
                 }
 
-                // Sum the time and price of each service
-                totalTime += service.TimeService;
-                totalPrice += service.Price;
+                // Check for duplicates in ServiceIds
+                var serviceIdList = model.ServiceIds.ToList(); // Convert to List to enable operations
+                var uniqueServiceIds = new HashSet<string>(serviceIdList);
 
-                // Add a record in ComboServices (for the many-to-many relationship between Combo and Service)
-                ComboServices comboService = new ComboServices
+                if (uniqueServiceIds.Count < serviceIdList.Count)
                 {
-                    Id = Guid.NewGuid().ToString("N"),
-                    ServiceId = serviceId,
-                    ComboId = newCombo.Id,
-                    CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value,
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                };
+                    return ("Duplicate Service IDs found.");
+                }
 
-                // Insert the ComboServices record
-                await _unitOfWork.GetRepository<ComboServices>().InsertAsync(comboService);
+                // Initialize a new Combo
+                Combo newCombo = _mapper.Map<Combo>(model);
+                newCombo.Id = Guid.NewGuid().ToString("N");
+                newCombo.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                newCombo.CreatedTime = DateTimeOffset.UtcNow;
+                newCombo.LastUpdatedTime = DateTimeOffset.UtcNow;
+
+                var imageHelper = new HairSalon.Core.Utils.Firebase.ImageHelper(_configuration);
+                string firebaseUrl = await imageHelper.Upload(model.ComboImage);
+                newCombo.ComboImage = firebaseUrl;
+
+                // Initialize total values for the Combo
+                decimal totalPrice = 0;
+                int totalTime = 0;
+
+                // Loop through each selected service ID
+                foreach (var serviceId in model.ServiceIds)
+                {
+                    // Retrieve the service from the database
+                    var service = await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>().GetByIdAsync(serviceId);
+
+                    if (service == null)
+                    {
+                        return ($"Service with ID {serviceId} not found.");
+                    }
+
+                    // Sum the time and price of each service
+                    totalTime += service.TimeService;
+                    totalPrice += service.Price;
+
+                    // Add a record in ComboServices (for the many-to-many relationship between Combo and Service)
+                    ComboServices comboService = new ComboServices
+                    {
+                        Id = Guid.NewGuid().ToString("N"),
+                        ServiceId = serviceId,
+                        ComboId = newCombo.Id,
+                        CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value,
+                        CreatedTime = DateTimeOffset.UtcNow,
+                        LastUpdatedTime = DateTimeOffset.UtcNow
+                    };
+
+                    // Insert the ComboServices record
+                    await _unitOfWork.GetRepository<ComboServices>().InsertAsync(comboService);
+                }
+
+                // Apply a 10% discount to the total price
+                decimal discountedPrice = totalPrice * 0.9m;
+
+                // Set the total price and time of the combo
+                newCombo.TotalPrice = discountedPrice;
+                newCombo.TimeCombo = totalTime;
+
+                // Save the combo to the database
+                await _unitOfWork.GetRepository<Combo>().InsertAsync(newCombo);
+                await _unitOfWork.SaveAsync();
+
+                return "Combo successfully created.";
+            }
+            catch (BaseException.BadRequestException ex)
+            {
+                return ex.Message;
+            }
+            catch (Exception ex)
+            {
+                return "An error occurred while adding the combo.";
             }
 
-            // Apply a 10% discount to the total price
-            decimal discountedPrice = totalPrice * 0.9m;
-
-            // Set the total price and time of the combo
-            newCombo.TotalPrice = discountedPrice;
-            newCombo.TimeCombo = totalTime;
-
-            // Save the combo to the database
-            await _unitOfWork.GetRepository<Combo>().InsertAsync(newCombo);
-            await _unitOfWork.SaveAsync();
-
-            return "Combo successfully created.";
         }
 
 
         //update combo
         public async Task<string> UpdateComboAsync(string id, UpdateComboModelView model)
         {
-            // Retrieve the combo by its ID
-            var existingCombo = await _unitOfWork.GetRepository<Combo>().GetByIdAsync(id);
-            if (existingCombo == null)
+            try
             {
-                return("Combo not found.");
-            }
+                // Retrieve the combo by its ID
+                var existingCombo = await _unitOfWork.GetRepository<Combo>().GetByIdAsync(id);
+                if (existingCombo == null)
+                {
+                    return ("Combo not found.");
+                }
 
-            if (!string.IsNullOrWhiteSpace(model.Name))
+                if (!string.IsNullOrWhiteSpace(model.Name))
+                {
+                    existingCombo.Name = model.Name;
+                }
+
+                // Update combo details (Name, etc.)
+                existingCombo.LastUpdatedTime = DateTimeOffset.UtcNow;
+                existingCombo.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+
+                // Handle update ServiceIds if any
+                if (model.ServiceIds != null && model.ServiceIds.Length > 0)
+                {
+                    var updateResult = await UpdateServiceAppointmentsAsync(existingCombo.Id, model.ServiceIds, existingCombo.TimeCombo, existingCombo.TotalPrice / 90 * 100);
+                    // Update the combo details
+                    existingCombo.TotalPrice = updateResult.TotalPrice * 0.9m;  // Discounted price
+                    existingCombo.TimeCombo = updateResult.TimeCombo;
+                }
+
+                if(model.ComboImage != null)
+                {
+                    var imageHelper = new HairSalon.Core.Utils.Firebase.ImageHelper(_configuration);
+                    string firebaseUrl = await imageHelper.Upload(model.ComboImage);
+                    existingCombo.ComboImage = firebaseUrl;
+                }
+
+                // Save changes to the database
+                await _unitOfWork.GetRepository<Combo>().UpdateAsync(existingCombo);
+                await _unitOfWork.SaveAsync();
+
+                return "Combo successfully updated with services.";
+            }
+            catch (BaseException.BadRequestException ex)
             {
-                existingCombo.Name = model.Name;
+                return ex.Message;
             }
-
-            // Update combo details (Name, etc.)
-            existingCombo.LastUpdatedTime = DateTimeOffset.UtcNow;
-            existingCombo.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-
-			// Handle update ServiceIds if any
-			if (model.ServiceIds != null && model.ServiceIds.Length > 0)
-			{
-				var updateResult = await UpdateServiceAppointmentsAsync(existingCombo.Id, model.ServiceIds, existingCombo.TimeCombo, existingCombo.TotalPrice / 90 * 100);
-				// Update the combo details
-				existingCombo.TotalPrice = updateResult.TotalPrice * 0.9m;  // Discounted price
-				existingCombo.TimeCombo = updateResult.TimeCombo;
-			}
-
-            // Save changes to the database
-            await _unitOfWork.GetRepository<Combo>().UpdateAsync(existingCombo);
-            await _unitOfWork.SaveAsync();
-
-            return "Combo successfully updated with services.";
+            catch (Exception ex)
+            {
+                return "An error occurred while updating the combo.";
+            }
         }
 
         //Calculate TimeCombo and TotalPrice when Update

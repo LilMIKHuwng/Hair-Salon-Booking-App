@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace HairSalon.ModelViews.ApplicationUserModelViews
@@ -27,6 +28,9 @@ namespace HairSalon.ModelViews.ApplicationUserModelViews
         public string PhoneNumber { get; set; }
         [DefaultValue("User")]
         public string RoleName { get; set; }
+
+        [Required(ErrorMessage = "User image is required.")]
+        public IFormFile UserImage { get; set; }
     }
 
 }
