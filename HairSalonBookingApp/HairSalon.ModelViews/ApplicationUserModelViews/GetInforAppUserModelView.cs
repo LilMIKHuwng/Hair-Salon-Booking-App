@@ -9,6 +9,7 @@
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? BankAccount { get; set; }
+        public decimal E_Wallet { get; set; }
         public IList<string> Roles { get; set; } = new List<string>();
         public int Point { get; set; } = 0;
     }
