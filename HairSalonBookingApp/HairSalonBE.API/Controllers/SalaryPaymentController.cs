@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using HairSalon.ModelViews.SalaryPaymentModelViews;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace HairSalonBE.API.Controllers
 {
@@ -21,9 +22,9 @@ namespace HairSalonBE.API.Controllers
 		///		Lấy tất cả lương
 		/// </summary>
         [HttpGet("all")]
-        public async Task<IActionResult> GetAllSalaryPayments(string? id, Guid? stylistId, DateTime? paymentDate, int pageNumber = 1, int pageSize = 5)
+        public async Task<IActionResult> GetAllSalaryPayments(string? id, Guid? stylistId, DateTime? paymentDate, decimal? baseSalary, int pageNumber = 1, int pageSize = 5)
         {
-            var result = await _salaryPaymentService.GetAllSalaryPaymentAsync(id, stylistId, paymentDate, pageNumber, pageSize);
+            var result = await _salaryPaymentService.GetAllSalaryPaymentAsync(id, stylistId, paymentDate, baseSalary, pageNumber, pageSize);
             return Ok(result);
         }
 
@@ -34,6 +35,7 @@ namespace HairSalonBE.API.Controllers
         public async Task<IActionResult> CreateSalaryPayment
                                     ([FromQuery] CreateSalaryPaymentModelView model)
         {
+            
             string result = await _salaryPaymentService.CreateSalaryPaymentAsync(model);
             return Ok(result);
         }
@@ -44,6 +46,7 @@ namespace HairSalonBE.API.Controllers
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateSalaryPayment(string id, [FromQuery] UpdatedSalaryPaymentModelView model)
         {
+
             string result = await _salaryPaymentService.UpdateSalaryPaymentAsync(id, model);
             return Ok(result);
         }
