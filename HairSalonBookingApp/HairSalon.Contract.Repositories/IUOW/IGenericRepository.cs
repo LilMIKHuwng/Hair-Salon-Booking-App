@@ -1,4 +1,5 @@
 ﻿using HairSalon.Core;
+using System.Linq.Expressions;
 
 namespace HairSalon.Contract.Repositories.Interface
 {
@@ -25,5 +26,7 @@ namespace HairSalon.Contract.Repositories.Interface
         Task UpdateAsync(T obj);
         Task DeleteAsync(object id);
         Task SaveAsync();
+
+        
     }
 }

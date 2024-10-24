@@ -35,5 +35,6 @@ namespace HairSalon.Contract.Repositories.Entity
 		[Column(TypeName = "decimal(10, 2)")]
 		public decimal BonusSalary { get; set; }
 
+
 	}
 }
