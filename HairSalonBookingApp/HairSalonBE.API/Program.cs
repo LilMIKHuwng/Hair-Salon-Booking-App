@@ -17,9 +17,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
 {
     option.SwaggerDoc("v1", new OpenApiInfo { Title = "Hair Salon API", Version = "v1" });
+    // Document Swagger
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    option.IncludeXmlComments(xmlPath); // Bao gồm tài liệu từ tệp XML
+    option.IncludeXmlComments(xmlPath);
 
     option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {

@@ -50,6 +50,7 @@ namespace HairSalon.Services.Service
 
         public async Task<string> DepositWallet(VnPayDepositWalletRequestModelView model, HttpContext context)
         {
+            string userId = _httpContextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
             var vnpay = new VNPayLibrary();
             vnpay.AddRequestData("vnp_Command", "pay");
             vnpay.AddRequestData("vnp_Version", "2.1.0");
@@ -60,15 +61,13 @@ namespace HairSalon.Services.Service
             vnpay.AddRequestData("vnp_CurrCode", "VND");
             vnpay.AddRequestData("vnp_IpAddr", "165.225.230.115");
             vnpay.AddRequestData("vnp_Locale", "vn");
-            vnpay.AddRequestData("vnp_OrderInfo", "nap tien vao vi" + model.UserId.ToString());
+            vnpay.AddRequestData("vnp_OrderInfo", "nap tien vao vi" + userId);
             vnpay.AddRequestData("vnp_OrderType", "other");
             vnpay.AddRequestData("vnp_ReturnUrl", _configuration["VnPay:ReturnUrl"]);
             vnpay.AddRequestData("vnp_TxnRef", DateTime.Now.ToString("yyyyMMddHHmmss"));
             string paymentUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html" + vnpay.CreateRequestUrl(_configuration["VnPay:PaymentUrl"], _configuration["VnPay:HashSecret"]);
             return paymentUrl;
         }
-
-
 
         public async Task<string> ExcutePayment(PaymentResponseModelView model)
         {
@@ -141,9 +140,10 @@ namespace HairSalon.Services.Service
             return "Payment added successfully.";
         }
 
-        public async Task<string> ExcuteDepositToWallet(Guid userIdString, double amount)
+        public async Task<string> ExcuteDepositToWallet(double amount)
         {
-            var user = _unitOfWork.GetRepository<ApplicationUsers>().GetById(userIdString);
+            Guid userId = Guid.Parse(_httpContextAccessor.HttpContext?.User?.FindFirst("userId")?.Value);
+            var user = _unitOfWork.GetRepository<ApplicationUsers>().GetById(userId);
             if (user == null)
             {
                 return "Can't find user!";

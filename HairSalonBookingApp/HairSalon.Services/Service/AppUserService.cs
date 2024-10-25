@@ -631,6 +631,7 @@ namespace HairSalon.Services.Service
                 FirstName = appUser.UserInfo?.Firstname, 
                 LastName = appUser.UserInfo?.Lastname,   
                 BankAccount = appUser.UserInfo?.BankAccount,
+                E_Wallet = appUser.E_Wallet,
                 Point = (int)(appUser.UserInfo?.Point),
                 Roles = await _userManager.GetRolesAsync(appUser)
             };

@@ -9,7 +9,7 @@ namespace HairSalon.Contract.Services.Interface
 
         Task<string> ExcutePayment(PaymentResponseModelView collections);
 
-        Task<string> ExcuteDepositToWallet(Guid userIdString, double amount);
+        Task<string> ExcuteDepositToWallet(double amount);
         Task<string> DepositWallet(VnPayDepositWalletRequestModelView model, HttpContext context);
     }
 }
