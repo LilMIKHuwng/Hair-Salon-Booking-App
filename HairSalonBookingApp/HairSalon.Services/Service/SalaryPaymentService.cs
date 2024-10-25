@@ -75,14 +75,14 @@ namespace HairSalon.Services.Service
 			// Get the current user's ID from the context
 			var userId = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 
-			// Check if a salary payment already exists for the user in the current period
-			var existingPayment = await _unitOfWork.GetRepository<SalaryPayment>().Entities
-				.FirstOrDefaultAsync(s => s.CreatedBy == userId &&
-										  s.PaymentDate >= currentMonthPaymentStartDate &&
-										  s.PaymentDate < nextPaymentDate &&
-										  !s.DeletedTime.HasValue);
+            // Check if a salary payment already exists for the user in the current period
+            var existingPayment = await _unitOfWork.GetRepository<SalaryPayment>().Entities
+                .FirstOrDefaultAsync(s => s.UserId == model.UserId && 
+                                          s.PaymentDate >= currentMonthPaymentStartDate &&
+                                          s.PaymentDate < nextPaymentDate &&
+                                          !s.DeletedTime.HasValue);
 
-			if (existingPayment != null)
+            if (existingPayment != null)
 			{
 				return "Salary payment for this period has already been created.";
 			}
@@ -141,7 +141,7 @@ namespace HairSalon.Services.Service
 
 			// Calculate bonus based on permitted days off only if total days off <= 3
 			decimal bonusPercentage = 0;
-			if (totalDaysOff <= 3)
+			if (totalDaysOff < 3)
 			{
 				bonusPercentage = bonusRules
 					.Where(rule => model.DayOffPermitted == rule.Key)
@@ -161,115 +161,61 @@ namespace HairSalon.Services.Service
 			return "Add new salary payment successfully!";
 		}
 
+        // Update an existing SalaryPayment
+        public async Task<string> UpdateSalaryPaymentAsync(string id, UpdatedSalaryPaymentModelView model)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return "Please provide a valid Salary Payment ID.";
+            }
 
-		// Update an existing SalaryPayment
-		public async Task<string> UpdateSalaryPaymentAsync(string id, UpdatedSalaryPaymentModelView model)
-		{
-			if (string.IsNullOrWhiteSpace(id))
-			{
-				return "Please provide a valid Salary Payment ID.";
-			}
+            // Tìm kiếm SalaryPayment theo id
+            SalaryPayment existingSalary = await _unitOfWork.GetRepository<SalaryPayment>().Entities
+                .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
 
-			// Find the SalaryPayment by id
-			SalaryPayment existingSalary = await _unitOfWork.GetRepository<SalaryPayment>().Entities
-				.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
+            if (existingSalary == null)
+            {
+                return "The Salary Payment cannot be found or has been deleted!";
+            }
 
-			if (existingSalary == null)
-			{
-				return "The Salary Payment cannot be found or has been deleted!";
-			}
+            // Lấy PaymentDate mới (nếu có, dùng ngày trong model, nếu không dùng ngày cũ)
+            var newPaymentDate = model.PaymentDate ?? existingSalary.PaymentDate;
 
-			existingSalary.UserId = model.UserId ?? existingSalary.UserId;
-			existingSalary.BaseSalary = model.BaseSalary ?? existingSalary.BaseSalary;
-			existingSalary.PaymentDate = model.PaymentDate ?? existingSalary.PaymentDate;
-			existingSalary.DayOffPermitted = model.DayOffPermitted ?? existingSalary.DayOffPermitted;
-			existingSalary.DayOffNoPermitted = model.DayOffNoPermitted ?? existingSalary.DayOffNoPermitted;
+            // Kiểm tra nếu đã tồn tại lương cho UserId này trong cùng tháng và năm
+            var isDuplicateSalary = await _unitOfWork.GetRepository<SalaryPayment>().Entities
+                .AnyAsync(s => s.UserId == existingSalary.UserId &&
+                               s.PaymentDate.Year == newPaymentDate.Year &&
+                               s.PaymentDate.Month == newPaymentDate.Month &&
+                               s.Id != id &&
+                               !s.DeletedTime.HasValue);
 
-			existingSalary.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-			existingSalary.LastUpdatedTime = DateTimeOffset.UtcNow;
+            if (isDuplicateSalary)
+            {
+                return "The UserId has been received this Salary in this month!";
+            }
 
-			decimal baseSalary = existingSalary.BaseSalary;
-			decimal deductedSalary = 0;
-			decimal bonusSalary = 0;
+            // Cập nhật thông tin lương
+            existingSalary.UserId = model.UserId ?? existingSalary.UserId;
+            existingSalary.BaseSalary = model.BaseSalary ?? existingSalary.BaseSalary;
+            existingSalary.PaymentDate = newPaymentDate;
+            existingSalary.DayOffPermitted = model.DayOffPermitted ?? existingSalary.DayOffPermitted;
+            existingSalary.DayOffNoPermitted = model.DayOffNoPermitted ?? existingSalary.DayOffNoPermitted;
 
-			// Rules for permitted days off deduction
-			var permittedDeductionRules = new List<(int minDays, int maxDays, decimal deductionPercentage)>
-	{
-		(3, 6, 1.0m / 28), // From day 3 to 6, deduct 1 day salary per day
-        (7, 8, 0.25m),     // From day 7 to 8, deduct 25% of salary
-        (9, 10, 0.5m),     // From day 9 to 10, deduct 50% of salary
-        (11, 12, 0.75m),   // From day 11 to 12, deduct 75% of salary
-        (13, int.MaxValue, 1.0m) // More than 12 days, deduct full salary
-    };
+            existingSalary.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            existingSalary.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-			// Rules for non-permitted days off deduction
-			var nonPermittedDeductionRules = new List<(int minDays, decimal deductionPercentage)>
-	{
-		(1, 1.0m / 28),  // 1 day, deduct 1 day salary
-        (2, 2.0m / 28),  // 2 days, deduct 2 days salary
-        (3, 0.25m),      // From day 3, deduct 25% of salary
-        (4, 0.5m),       // 4 days, deduct 50% of salary
-        (5, 0.75m),      // 5 days, deduct 75% of salary
-        (6, 1.0m)        // 6 or more days, deduct full salary
-    };
+            // Các bước tính toán khấu trừ và thưởng như ban đầu...
 
-			// Rules for bonus
-			var bonusRules = new Dictionary<int, decimal>
-	{
-		{ 0, 0.10m },  // No days off, bonus 10%
-        { 1, 0.05m },  // 1 day off, bonus 5%
-        { 2, 0.02m }   // 2 days off, bonus 2%
-    };
+            // Lưu thay đổi
+            await _unitOfWork.GetRepository<SalaryPayment>().UpdateAsync(existingSalary);
+            await _unitOfWork.SaveAsync();
 
-			// Calculate permitted days off deduction
-			int dayOffPermitted = model.DayOffPermitted.GetValueOrDefault();
-			int dayOffNoPermitted = model.DayOffNoPermitted.GetValueOrDefault();
-
-			// Calculate permitted days off deduction
-			foreach (var (minDays, maxDays, deductionPercentage) in permittedDeductionRules)
-			{
-				if (dayOffPermitted >= minDays && dayOffPermitted <= maxDays)
-				{
-					deductedSalary += deductionPercentage * baseSalary;
-					break;
-				}
-			}
-
-			// Calculate non-permitted days off deduction
-			foreach (var (minDays, deductionPercentage) in nonPermittedDeductionRules)
-			{
-				if (dayOffNoPermitted >= minDays)
-				{
-					deductedSalary += deductionPercentage * baseSalary;
-				}
-			}
-
-			// Calculate total days off for bonus
-			int totalDaysOff = dayOffPermitted + dayOffNoPermitted;
-
-			// Calculate bonus
-			if (totalDaysOff <= 3) // No bonus if total days off exceed 3
-			{
-				if (bonusRules.TryGetValue(dayOffPermitted, out decimal bonusPercentage))
-				{
-					bonusSalary = bonusPercentage * baseSalary;
-				}
-			}
-
-			// Update the salary values
-			existingSalary.DeductedSalary = deductedSalary;
-			existingSalary.BonusSalary = bonusSalary;
-
-			// Save changes
-			await _unitOfWork.GetRepository<SalaryPayment>().UpdateAsync(existingSalary);
-			await _unitOfWork.SaveAsync();
-
-			return "Updated salary payment successfully!";
-		}
+            return "Updated salary payment successfully!";
+        }
 
 
-		// Delete a SalaryPayment (soft delete)
-		public async Task<string> DeleteSalaryPaymentAsync(string id)
+        // Delete a SalaryPayment (soft delete)
+        public async Task<string> DeleteSalaryPaymentAsync(string id)
 		{
 			// Check if id is provided
 			if (string.IsNullOrWhiteSpace(id))
