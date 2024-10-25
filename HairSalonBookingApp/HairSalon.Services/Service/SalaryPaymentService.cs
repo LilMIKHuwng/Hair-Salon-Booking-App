@@ -65,101 +65,101 @@ namespace HairSalon.Services.Service
 			return new BasePaginatedList<SalaryPaymentModelView>(salaryPaymentModelViews, totalCount, pageNumber, pageSize);
 		}
 
-		// Create a new SalaryPayment
-		public async Task<string> CreateSalaryPaymentAsync(CreateSalaryPaymentModelView model)
-		{
-			var paymentDate = model.PaymentDate;
-			var nextPaymentDate = new DateTime(paymentDate.Year, paymentDate.Month, 5).AddMonths(1);
-			var currentMonthPaymentStartDate = new DateTime(paymentDate.Year, paymentDate.Month, 5);
+        // Create a new SalaryPayment
+        public async Task<string> CreateSalaryPaymentAsync(CreateSalaryPaymentModelView model)
+        {
+            var paymentDate = model.PaymentDate;
+            var nextPaymentDate = new DateTime(paymentDate.Year, paymentDate.Month, 5).AddMonths(1);
+            var currentMonthPaymentStartDate = new DateTime(paymentDate.Year, paymentDate.Month, 5);
 
-			// Get the current user's ID from the context
-			var userId = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            // Get the current user's ID from the context
+            var userId = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 
             // Check if a salary payment already exists for the user in the current period
             var existingPayment = await _unitOfWork.GetRepository<SalaryPayment>().Entities
-                .FirstOrDefaultAsync(s => s.UserId == model.UserId && 
+                .FirstOrDefaultAsync(s => s.UserId == model.UserId &&
                                           s.PaymentDate >= currentMonthPaymentStartDate &&
                                           s.PaymentDate < nextPaymentDate &&
                                           !s.DeletedTime.HasValue);
 
             if (existingPayment != null)
-			{
-				return "Salary payment for this period has already been created.";
-			}
+            {
+                return "Salary payment for this period has already been created.";
+            }
 
-			// Create a new SalaryPayment
-			SalaryPayment newSalaryPayment = _mapper.Map<SalaryPayment>(model);
-			newSalaryPayment.Id = Guid.NewGuid().ToString("N");
-			newSalaryPayment.CreatedBy = userId;
-			newSalaryPayment.CreatedTime = DateTimeOffset.UtcNow;
-			newSalaryPayment.LastUpdatedTime = DateTimeOffset.UtcNow;
+            // Create a new SalaryPayment
+            SalaryPayment newSalaryPayment = _mapper.Map<SalaryPayment>(model);
+            newSalaryPayment.Id = Guid.NewGuid().ToString("N");
+            newSalaryPayment.CreatedBy = userId;
+            newSalaryPayment.CreatedTime = DateTimeOffset.UtcNow;
+            newSalaryPayment.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-			// Define deduction rules using dictionaries
-			var permittedDeductionRules = new Dictionary<int, decimal>
-			{
-				{ 3, 1m / 28 }, // For 3 days, deduct 1 day salary
-                { 7, 0.25m },   // For 7 days, deduct 25% of salary
-                { 9, 0.50m },   // For 9 days, deduct 50% of salary
-                { 11, 0.75m },  // For 11 days, deduct 75% of salary
-                { 13, 1.0m }    // For 13 days or more, deduct full salary
-            };
+            // Define deduction rules using dictionaries
+            var permittedDeductionRules = new Dictionary<int, decimal>
+    {
+        { 3, 1m / 28 }, // For 3 days, deduct 1 day salary
+        { 7, 0.25m },   // For 7 days, deduct 25% of salary
+        { 9, 0.50m },   // For 9 days, deduct 50% of salary
+        { 11, 0.75m },  // For 11 days, deduct 75% of salary
+        { 13, 1.0m }    // For 13 days or more, deduct full salary
+    };
 
-			var nonPermittedDeductionRules = new Dictionary<int, decimal>
-			{
-				{ 1, 1m / 28 }, // 1 day, deduct 1 day salary
-                { 2, 2m / 28 }, // 2 days, deduct 2 days salary
-                { 3, 0.25m },   // 3 days, deduct 25% of salary
-                { 4, 0.50m },   // 4 days, deduct 50% of salary
-                { 5, 0.75m },   // 5 days, deduct 75% of salary
-                { 6, 1.0m }     // 6 or more days, deduct full salary
-            };
+            var nonPermittedDeductionRules = new Dictionary<int, decimal>
+    {
+        { 1, 1m / 28 }, // 1 day, deduct 1 day salary
+        { 2, 2m / 28 }, // 2 days, deduct 2 days salary
+        { 3, 0.25m },   // 3 days, deduct 25% of salary
+        { 4, 0.50m },   // 4 days, deduct 50% of salary
+        { 5, 0.75m },   // 5 days, deduct 75% of salary
+        { 6, 1.0m }     // 6 or more days, deduct full salary
+    };
 
-			// Define bonus rules
-			var bonusRules = new Dictionary<int, decimal>
-			{
-				{ 0, 0.10m }, // No days off, bonus 10%
-                { 1, 0.05m }, // 1 day off, bonus 5%
-                { 2, 0.02m }  // 2 days off, bonus 2%
-            };
+            // Define bonus rules
+            var bonusRules = new Dictionary<int, decimal>
+    {
+        { 0, 0.10m }, // No days off, bonus 10%
+        { 1, 0.05m }, // 1 day off, bonus 5%
+        { 2, 0.02m }  // 2 days off, bonus 2%
+    };
 
-			// Calculate deductions based on permitted days off
-			decimal deductionPercentage = permittedDeductionRules
-				.Where(rule => model.DayOffPermitted >= rule.Key)
-				.Select(rule => rule.Value)
-				.DefaultIfEmpty(0)
-				.Last();
+            // Calculate deductions based on permitted days off
+            decimal deductionPercentage = permittedDeductionRules
+                .Where(rule => model.DayOffPermitted >= rule.Key)
+                .Select(rule => rule.Value)
+                .DefaultIfEmpty(0)
+                .Last();
 
-			// Calculate deductions based on non-permitted days off
-			deductionPercentage += nonPermittedDeductionRules
-				.Where(rule => model.DayOffNoPermitted >= rule.Key)
-				.Select(rule => rule.Value)
-				.DefaultIfEmpty(0)
-				.Last();
+            // Calculate deductions based on non-permitted days off
+            deductionPercentage += nonPermittedDeductionRules
+                .Where(rule => model.DayOffNoPermitted >= rule.Key)
+                .Select(rule => rule.Value)
+                .DefaultIfEmpty(0)
+                .Last();
 
-			// Calculate total days off for bonus eligibility
-			int totalDaysOff = model.DayOffPermitted + model.DayOffNoPermitted;
+            // Calculate total days off for bonus eligibility
+            int totalDaysOff = model.DayOffPermitted + model.DayOffNoPermitted;
 
-			// Calculate bonus based on permitted days off only if total days off <= 3
-			decimal bonusPercentage = 0;
-			if (totalDaysOff < 3)
-			{
-				bonusPercentage = bonusRules
-					.Where(rule => model.DayOffPermitted == rule.Key)
-					.Select(rule => rule.Value)
-					.DefaultIfEmpty(0)
-					.First();
-			}
+            // Calculate bonus based on permitted days off only if total days off <= 3
+            decimal bonusPercentage = 0;
+            if (totalDaysOff < 3)
+            {
+                bonusPercentage = bonusRules
+                    .Where(rule => model.DayOffPermitted == rule.Key)
+                    .Select(rule => rule.Value)
+                    .DefaultIfEmpty(0)
+                    .First();
+            }
 
-			// Calculate the final Bonus and Deducted Salary
-			newSalaryPayment.DeductedSalary = model.BaseSalary * deductionPercentage;
-			newSalaryPayment.BonusSalary = model.BaseSalary * bonusPercentage;
+            // Calculate the final Bonus and Deducted Salary
+            newSalaryPayment.DeductedSalary = model.BaseSalary * deductionPercentage;
+            newSalaryPayment.BonusSalary = model.BaseSalary * bonusPercentage;
 
-			// Save the new salary payment
-			await _unitOfWork.GetRepository<SalaryPayment>().InsertAsync(newSalaryPayment);
-			await _unitOfWork.SaveAsync();
+            // Save the new salary payment
+            await _unitOfWork.GetRepository<SalaryPayment>().InsertAsync(newSalaryPayment);
+            await _unitOfWork.SaveAsync();
 
-			return "Add new salary payment successfully!";
-		}
+            return "Add new salary payment successfully!";
+        }
 
         // Update an existing SalaryPayment
         public async Task<string> UpdateSalaryPaymentAsync(string id, UpdatedSalaryPaymentModelView model)
@@ -212,7 +212,6 @@ namespace HairSalon.Services.Service
 
             return "Updated salary payment successfully!";
         }
-
 
         // Delete a SalaryPayment (soft delete)
         public async Task<string> DeleteSalaryPaymentAsync(string id)
