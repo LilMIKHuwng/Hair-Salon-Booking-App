@@ -30,5 +30,8 @@ namespace HairSalon.Repositories.Entity
         public virtual ICollection<ApplicationUserRoles> UserRoles { get; set; }
         public virtual ICollection<Appointment> Appointments { get; set; }
         public virtual ICollection<SalaryPayment> SalaryPayments { get; set; }
+        public virtual ICollection<Message> MessageSent { get; set; }
+        public virtual ICollection<Message> MessageReceived { get; set; }
+        
     }
 }

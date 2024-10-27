@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using HairSalon.ModelViews.Message;
 using Microsoft.AspNetCore.Identity;
 using HairSalon.Repositories.Entity;
 using HairSalon.Services.SignalIR;
@@ -30,6 +31,9 @@ builder.Configuration
     .AddEnvironmentVariables();
 
 builder.Services.AddControllers();
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<IDictionary<string, UserRoomConnection>>(opt =>
+    new Dictionary<string, UserRoomConnection>());
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -60,6 +64,19 @@ builder.Services.AddSwaggerGen(option =>
         }
     });
 });
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.WithOrigins("http://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+
+
 builder.Services.AddConfig(builder.Configuration);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -95,11 +112,18 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 app.UseSwagger();
 app.UseSwaggerUI();
-
+// Enable CORS
+app.UseCors();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+// app.UseEndpoints(endpoint =>
+// {
+//     endpoint.MapHub<ChatHub>("/chat");
+// });
+app.MapHub<ChatHub>("/chat");
+
 app.MapControllers();
-app.MapHub<PresenceHub>("hubs/presence");
+
 app.Run();

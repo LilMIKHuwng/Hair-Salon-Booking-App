@@ -11,8 +11,8 @@ namespace HairSalon.ModelViews.Message
     {
         public string Id { get; set; }            // Unique identifier for each message
         public string Content { get; set; }    // The text content of the message
-        public DateTime Timestamp { get; set; } = DateTime.UtcNow; // Time the message was sent
-        public string SenderId { get; set; }      
-        public string RecipientId { get; set; }   // The user ID of the recipient
+        public DateTime Timestamp { get; set; }  // Time the message was sent
+        public Guid SenderId { get; set; }      
+        public Guid RecipientId { get; set; }   // The user ID of the recipient
     }
 }

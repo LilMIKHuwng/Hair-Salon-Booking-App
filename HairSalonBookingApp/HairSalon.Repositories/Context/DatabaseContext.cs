@@ -32,6 +32,7 @@ namespace HairSalon.Repositories.Context
         public virtual DbSet<Payment> Payments { get; set; }
         public virtual DbSet<Feedback> Feedbacks{ get; set; }
         public virtual DbSet<Combo> Combos { get; set; }
+        public virtual DbSet<Message> Messages { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -49,6 +50,20 @@ namespace HairSalon.Repositories.Context
                 .HasForeignKey(a => a.StylistId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Message>(message =>
+            {
+                message.HasOne(x => x.Recipient)
+                    .WithMany(x => x.MessageReceived)
+                    .HasForeignKey(x => x.RecipientId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                message.HasOne(x => x.Sender)
+                    .WithMany(x => x.MessageSent)
+                    .HasForeignKey(x => x.SenderId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+                
+            
             modelBuilder.Entity<ApplicationUserLogins>()
                 .HasKey(login => new { login.UserId, login.LoginProvider, login.ProviderKey });
 

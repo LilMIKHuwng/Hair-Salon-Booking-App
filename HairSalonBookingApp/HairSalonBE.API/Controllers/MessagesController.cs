@@ -1,5 +1,6 @@
 ﻿using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Services.Interface;
+using HairSalon.Core;
 using HairSalon.ModelViews.Message;
 using HairSalon.Services.Service;
 using HairSalon.Services.SignalIR;
@@ -9,40 +10,32 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HairSalonBE.API.Controllers
 {
-    public class MessagesController : ControllerBase
+    [Route("api/[controller]")]
+    [ApiController]
+    public class MessagesController(IMessageService messageService) : ControllerBase
     {
-        private readonly IHubContext<MessageHub> _hubContext;
-        private readonly IMessageService _messageService;
-
-        public MessagesController( IHubContext<MessageHub> hubContext, IMessageService messageService)
-        {
-            _hubContext = hubContext;
-            _messageService = messageService;
-        }
-
         // POST: api/Messages
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<ActionResult<Message>> SendMessage([FromBody] CreateMessageViewModel message)
         {
             message.Timestamp = DateTime.UtcNow;
-            await _messageService.AddMessageAsync(message);
-            // Notify all connected clients about the new message
-            await _hubContext.Clients.All.SendAsync("ReceiveMessage", message.SenderId, message.Content);
-
-            return CreatedAtAction(nameof(GetMessageById), new { userId = message.RecipientId }, message);
+            var result = await messageService.AddMessageAsync(message);
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Message>> GetMessageById(string id)
+        public async Task<ActionResult<MessageViewModel>> GetMessageById(string id)
         {
-            var message = await _messageService.GetMessageByIdAsync(id);
-
-            if (message == null)
-            {
-                return NotFound();
-            }
-
+            var message = await messageService.GetMessageByIdAsync(id);
+            
             return Ok(message);
         }
-    }
+        
+        [HttpGet("all")]
+        public async Task<ActionResult<BasePaginatedList<MessageViewModel>>> GetAllShops(int pageNumber = 1, int pageSize = 5)
+        {
+            var result = await messageService.GetAllMessageAsync(pageNumber, pageSize);
+            return Ok(result);
+        }
+     }
 }

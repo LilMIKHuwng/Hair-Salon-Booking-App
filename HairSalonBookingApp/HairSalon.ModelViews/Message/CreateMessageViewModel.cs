@@ -8,7 +8,6 @@ namespace HairSalon.ModelViews.Message
 {
     public class CreateMessageViewModel
     {
-        public Guid Id { get; set; }            // Unique identifier for each message
         public string Content { get; set; }    // The text content of the message
         public DateTime Timestamp { get; set; } = DateTime.UtcNow; // Time the message was sent
         public Guid SenderId { get; set; }

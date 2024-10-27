@@ -13,7 +13,7 @@ namespace HairSalon.Contract.Services.Interface
         
         Task<string> AddMessageAsync(CreateMessageViewModel model);
 
-
+        Task<BasePaginatedList<MessageViewModel>> GetAllMessageAsync(int pageNumber, int pageSize);
         Task<MessageViewModel> GetMessageByIdAsync(string id);
     }
 

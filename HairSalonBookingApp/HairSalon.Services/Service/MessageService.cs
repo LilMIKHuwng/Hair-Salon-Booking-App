@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HairSalon.Core;
 
 namespace HairSalon.Services.Service
 {
@@ -52,11 +53,24 @@ namespace HairSalon.Services.Service
             }
             catch (Exception ex)
             {
-                return "An error occurred while adding the message.";
+                return "An error occurred while adding the message." + ex.Message;
             }
         }
 
-        
+        public async Task<BasePaginatedList<MessageViewModel>> GetAllMessageAsync(int pageNumber, int pageSize)
+        {
+            var messageQuery = _unitOfWork.GetRepository<Message>().Entities; 
+            messageQuery = messageQuery.OrderByDescending(s => s.CreatedTime);
+            int totalCount = await messageQuery.CountAsync();
+
+            List<Message> paginatedShops = await messageQuery
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            List<MessageViewModel> messageModelViews = _mapper.Map<List<MessageViewModel>>(paginatedShops);
+            return new BasePaginatedList<MessageViewModel>(messageModelViews, totalCount, pageNumber, pageSize);
+        }
 
         // Method to retrieve a message by its ID
         public async Task<MessageViewModel> GetMessageByIdAsync(string id)

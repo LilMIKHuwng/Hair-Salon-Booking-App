@@ -3,6 +3,7 @@ using HairSalon.Core.Utils;
 using HairSalon.Repositories.Entity;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,10 +17,12 @@ namespace HairSalon.Contract.Repositories.Entity
 
         // Relationships
         public Guid SenderId { get; set; }      // The user ID of the sender
-        public ApplicationUsers Sender { get; set; }       // Navigation property for the sender
+        [ForeignKey("SenderId")]
+        public virtual ApplicationUsers Sender { get; set; }       // Navigation property for the sender
 
         public Guid RecipientId { get; set; }   // The user ID of the recipient
-        public ApplicationUsers Recipient { get; set; }
+        [ForeignKey(("RecipientId"))]
+        public virtual ApplicationUsers Recipient { get; set; }
 
         public Message()
         {
