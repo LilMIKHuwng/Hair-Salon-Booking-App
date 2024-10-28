@@ -75,16 +75,16 @@ namespace HairSalon.Services.Service
 			// Get the current user's ID from the context
 			var userId = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 
-            // Check if a salary payment already exists for the user in the current period
-            var existingPayment = await _unitOfWork.GetRepository<SalaryPayment>().Entities
-                .FirstOrDefaultAsync(s => s.UserId == model.UserId && 
-                                          s.PaymentDate >= currentMonthPaymentStartDate &&
-                                          s.PaymentDate < nextPaymentDate &&
-                                          !s.DeletedTime.HasValue);
+			// Check if a salary payment already exists for the user in the current period
+			var existingPayment = await _unitOfWork.GetRepository<SalaryPayment>().Entities
+				.FirstOrDefaultAsync(s => s.UserId == model.UserId &&
+										  s.PaymentDate >= currentMonthPaymentStartDate &&
+										  s.PaymentDate < nextPaymentDate &&
+										  !s.DeletedTime.HasValue);
 
-            if (existingPayment != null)
+			if (existingPayment != null)
 			{
-				return "Salary payment for this period has already been created.";
+				return "SThe salarypayment has been create in this month!";
 			}
 
 			// Create a new SalaryPayment
@@ -98,29 +98,29 @@ namespace HairSalon.Services.Service
 			var permittedDeductionRules = new Dictionary<int, decimal>
 			{
 				{ 3, 1m / 28 }, // For 3 days, deduct 1 day salary
-                { 7, 0.25m },   // For 7 days, deduct 25% of salary
-                { 9, 0.50m },   // For 9 days, deduct 50% of salary
-                { 11, 0.75m },  // For 11 days, deduct 75% of salary
-                { 13, 1.0m }    // For 13 days or more, deduct full salary
-            };
+				{ 7, 0.25m },   // For 7 days, deduct 25% of salary
+				{ 9, 0.50m },   // For 9 days, deduct 50% of salary
+				{ 11, 0.75m },  // For 11 days, deduct 75% of salary
+				{ 13, 1.0m }    // For 13 days or more, deduct full salary
+			};
 
 			var nonPermittedDeductionRules = new Dictionary<int, decimal>
 			{
 				{ 1, 1m / 28 }, // 1 day, deduct 1 day salary
-                { 2, 2m / 28 }, // 2 days, deduct 2 days salary
-                { 3, 0.25m },   // 3 days, deduct 25% of salary
-                { 4, 0.50m },   // 4 days, deduct 50% of salary
-                { 5, 0.75m },   // 5 days, deduct 75% of salary
-                { 6, 1.0m }     // 6 or more days, deduct full salary
-            };
+				{ 2, 2m / 28 }, // 2 days, deduct 2 days salary
+				{ 3, 0.25m },   // 3 days, deduct 25% of salary
+				{ 4, 0.50m },   // 4 days, deduct 50% of salary
+				{ 5, 0.75m },   // 5 days, deduct 75% of salary
+				{ 6, 1.0m }     // 6 or more days, deduct full salary
+			};
 
 			// Define bonus rules
 			var bonusRules = new Dictionary<int, decimal>
 			{
 				{ 0, 0.10m }, // No days off, bonus 10%
-                { 1, 0.05m }, // 1 day off, bonus 5%
-                { 2, 0.02m }  // 2 days off, bonus 2%
-            };
+				{ 1, 0.05m }, // 1 day off, bonus 5%
+				{ 2, 0.02m }  // 2 days off, bonus 2%
+			};
 
 			// Calculate deductions based on permitted days off
 			decimal deductionPercentage = permittedDeductionRules
@@ -161,61 +161,140 @@ namespace HairSalon.Services.Service
 			return "Add new salary payment successfully!";
 		}
 
-        // Update an existing SalaryPayment
-        public async Task<string> UpdateSalaryPaymentAsync(string id, UpdatedSalaryPaymentModelView model)
-        {
-            if (string.IsNullOrWhiteSpace(id))
-            {
-                return "Please provide a valid Salary Payment ID.";
-            }
 
-            // Tìm kiếm SalaryPayment theo id
-            SalaryPayment existingSalary = await _unitOfWork.GetRepository<SalaryPayment>().Entities
-                .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
+		// Update an existing SalaryPayment
+		public async Task<string> UpdateSalaryPaymentAsync(string id, UpdatedSalaryPaymentModelView model)
+		{
+			if (string.IsNullOrWhiteSpace(id))
+			{
+				return "Please provide a valid Salary Payment ID.";
+			}
 
-            if (existingSalary == null)
-            {
-                return "The Salary Payment cannot be found or has been deleted!";
-            }
+			// Tìm kiếm SalaryPayment theo id
+			SalaryPayment existingSalary = await _unitOfWork.GetRepository<SalaryPayment>().Entities
+				.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
 
-            // Lấy PaymentDate mới (nếu có, dùng ngày trong model, nếu không dùng ngày cũ)
-            var newPaymentDate = model.PaymentDate ?? existingSalary.PaymentDate;
+			if (existingSalary == null)
+			{
+				return "The Salary Payment cannot be found or has been deleted!";
+			}
 
-            // Kiểm tra nếu đã tồn tại lương cho UserId này trong cùng tháng và năm
-            var isDuplicateSalary = await _unitOfWork.GetRepository<SalaryPayment>().Entities
-                .AnyAsync(s => s.UserId == existingSalary.UserId &&
-                               s.PaymentDate.Year == newPaymentDate.Year &&
-                               s.PaymentDate.Month == newPaymentDate.Month &&
-                               s.Id != id &&
-                               !s.DeletedTime.HasValue);
+			// Lấy PaymentDate mới (nếu có, dùng ngày trong model, nếu không dùng ngày cũ)
+			var newPaymentDate = model.PaymentDate ?? existingSalary.PaymentDate;
 
-            if (isDuplicateSalary)
-            {
-                return "The UserId has been received this Salary in this month!";
-            }
+			// Kiểm tra nếu đã tồn tại lương cho UserId này trong cùng tháng và năm
+			var isDuplicateSalary = await _unitOfWork.GetRepository<SalaryPayment>().Entities
+				.AnyAsync(s => s.UserId == existingSalary.UserId &&
+							   s.PaymentDate.Year == newPaymentDate.Year &&
+							   s.PaymentDate.Month == newPaymentDate.Month &&
+							   s.Id != id &&
+							   !s.DeletedTime.HasValue);
 
-            // Cập nhật thông tin lương
-            existingSalary.UserId = model.UserId ?? existingSalary.UserId;
-            existingSalary.BaseSalary = model.BaseSalary ?? existingSalary.BaseSalary;
-            existingSalary.PaymentDate = newPaymentDate;
-            existingSalary.DayOffPermitted = model.DayOffPermitted ?? existingSalary.DayOffPermitted;
-            existingSalary.DayOffNoPermitted = model.DayOffNoPermitted ?? existingSalary.DayOffNoPermitted;
+			if (isDuplicateSalary)
+			{
+				return "The UserId has been received this Salary in this month!";
+			}
 
-            existingSalary.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-            existingSalary.LastUpdatedTime = DateTimeOffset.UtcNow;
+			// Cập nhật thông tin lương
+			existingSalary.UserId = model.UserId ?? existingSalary.UserId;
+			existingSalary.BaseSalary = model.BaseSalary ?? existingSalary.BaseSalary;
+			existingSalary.PaymentDate = newPaymentDate;
+			existingSalary.DayOffPermitted = model.DayOffPermitted ?? existingSalary.DayOffPermitted;
+			existingSalary.DayOffNoPermitted = model.DayOffNoPermitted ?? existingSalary.DayOffNoPermitted;
 
-            // Các bước tính toán khấu trừ và thưởng như ban đầu...
+			existingSalary.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+			existingSalary.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-            // Lưu thay đổi
-            await _unitOfWork.GetRepository<SalaryPayment>().UpdateAsync(existingSalary);
-            await _unitOfWork.SaveAsync();
+			// Tính toán tiền khấu trừ và thưởng
+			decimal baseSalary = existingSalary.BaseSalary;
+			decimal deductedSalary = 0;
+			decimal bonusSalary = 0;
 
-            return "Updated salary payment successfully!";
-        }
+			// Quy tắc khấu trừ cho ngày nghỉ có phép
+			var permittedDeductionRules = new List<(int minDays, int maxDays, decimal deductionPercentage)>
+			{
+				(3, 6, 1.0m / 28), // Từ 3 đến 6 ngày, trừ 1 ngày lương mỗi ngày
+				(7, 8, 0.25m),     // Từ 7 đến 8 ngày, trừ 25% lương
+				(9, 10, 0.5m),     // Từ 9 đến 10 ngày, trừ 50% lương
+				(11, 12, 0.75m),   // Từ 11 đến 12 ngày, trừ 75% lương
+				(13, int.MaxValue, 1.0m) // Trên 12 ngày, trừ toàn bộ lương
+			};
+
+			// Quy tắc khấu trừ cho ngày nghỉ không phép
+			var nonPermittedDeductionRules = new List<(int minDays, decimal deductionPercentage)>
+			{
+				(1, 1.0m / 28),  // 1 ngày, trừ 1 ngày lương
+				(2, 2.0m / 28),  // 2 ngày, trừ 2 ngày lương
+				(3, 0.25m),      // Từ 3 ngày, trừ 25% lương
+				(4, 0.5m),       // 4 ngày, trừ 50% lương
+				(5, 0.75m),      // 5 ngày, trừ 75% lương
+				(6, 1.0m)        // 6 ngày trở lên, trừ toàn bộ lương
+			};
+
+			// Quy tắc thưởng
+			var bonusRules = new Dictionary<int, decimal>
+			{
+				{ 0, 0.10m },  // Không nghỉ ngày nào, thưởng 10%
+				{ 1, 0.05m },  // Nghỉ 1 ngày, thưởng 5%
+				{ 2, 0.02m }   // Nghỉ 2 ngày, thưởng 2%
+			};
+
+			// Tính tổng số ngày nghỉ từ existingSalary
+			int permittedDaysOff = model.DayOffPermitted.HasValue ? model.DayOffPermitted.Value : existingSalary.DayOffPermitted;
+			int nonPermittedDaysOff = model.DayOffNoPermitted.HasValue ? model.DayOffNoPermitted.Value : existingSalary.DayOffNoPermitted;
+			int totalDaysOff = permittedDaysOff + nonPermittedDaysOff;
+
+			// Tính tiền thưởng dựa trên tổng số ngày nghỉ
+			if (totalDaysOff < 3)
+			{
+				if (bonusRules.TryGetValue(totalDaysOff, out decimal bonusPercentage))
+				{
+					bonusSalary = bonusPercentage * baseSalary;
+				}
+			}
+			else
+			{
+				bonusSalary = 0; // Không có bonus nếu tổng số ngày nghỉ >= 3
+			}
+
+			// Xét khấu trừ chỉ khi tổng số ngày nghỉ >= 3
+			if (totalDaysOff >= 3)
+			{
+				// Tính khấu trừ cho ngày nghỉ có phép
+				foreach (var (minDays, maxDays, deductionPercentage) in permittedDeductionRules)
+				{
+					if (permittedDaysOff >= minDays && permittedDaysOff <= maxDays)
+					{
+						deductedSalary += deductionPercentage * baseSalary;
+						break; // Ngừng kiểm tra nếu đã tìm thấy quy tắc khấu trừ
+					}
+				}
+
+				// Tính khấu trừ cho ngày nghỉ không phép
+				foreach (var (minDays, deductionPercentage) in nonPermittedDeductionRules.OrderByDescending(r => r.minDays))
+				{
+					if (nonPermittedDaysOff >= minDays)
+					{
+						deductedSalary += deductionPercentage * baseSalary;
+						break; // Ngừng kiểm tra nếu đã tìm thấy quy tắc khấu trừ
+					}
+				}
+			}
+
+			// Cập nhật lại các giá trị khấu trừ và thưởng cho SalaryPayment
+			existingSalary.DeductedSalary = deductedSalary;
+			existingSalary.BonusSalary = bonusSalary;
+
+			// Lưu thay đổi
+			await _unitOfWork.GetRepository<SalaryPayment>().UpdateAsync(existingSalary);
+			await _unitOfWork.SaveAsync();
+
+			return "Updated salary payment successfully!";
+		}
 
 
-        // Delete a SalaryPayment (soft delete)
-        public async Task<string> DeleteSalaryPaymentAsync(string id)
+		// Delete a SalaryPayment (soft delete)
+		public async Task<string> DeleteSalaryPaymentAsync(string id)
 		{
 			// Check if id is provided
 			if (string.IsNullOrWhiteSpace(id))
