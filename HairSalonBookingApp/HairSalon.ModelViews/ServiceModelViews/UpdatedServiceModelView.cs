@@ -12,6 +12,8 @@ namespace HairSalon.ModelViews.ServiceModelViews
 
         public string? Description { get; set; }
 
+        public int? TimeService { get; set; }
+
         public string? ShopId { get; set; }
 
         public IFormFile? ServiceImage { get; set; }

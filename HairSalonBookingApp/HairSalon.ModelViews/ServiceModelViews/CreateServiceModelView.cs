@@ -16,6 +16,9 @@ namespace HairSalon.ModelViews.ServiceModelViews
 
         public string? Description { get; set; }
 
+        [Required(ErrorMessage = "TimeService is required.")]
+        public int TimeService { get; set; }
+
         [Required(ErrorMessage = "Shop Id is required.")]
         public string ShopId { get; set; }
 

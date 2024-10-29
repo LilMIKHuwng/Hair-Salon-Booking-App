@@ -1,4 +1,4 @@
-namespace HairSalonRazerPage
+namespace HairSalon.RazorPage
 {
 	public class Program
 	{

@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HairSalon.ModelViews\HairSalon.ModelViews.csproj" />
     <ProjectReference Include="..\HairSalonBE.API\HairSalonBE.API.csproj" />
   </ItemGroup>
 
