@@ -22,6 +22,21 @@ namespace HairSalonBE.API
             services.AddInfrastructure(configuration);
             services.AddServices();
             services.ConfigJwt(configuration);
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => true;
+            });
+
+            services.AddRazorPages();
+            services.AddControllers();
+        }
+        
+        public static void AddConfigRazor(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.ConfigRoute();
+            services.AddServices();
+            services.AddRazorPages();
         }
 
         public static void ConfigRoute(this IServiceCollection services)

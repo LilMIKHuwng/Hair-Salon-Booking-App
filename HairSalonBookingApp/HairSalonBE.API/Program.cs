@@ -63,7 +63,10 @@ app.UseSwaggerUI();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
-app.MapControllers();
+app.UseEndpoints(endpoints => {
+    endpoints.MapRazorPages();
+    endpoints.MapControllerRoute("default", "api/{controller=Home}/{action=Index}/{id?}");
+    endpoints.MapControllers();
+});
 
 app.Run();

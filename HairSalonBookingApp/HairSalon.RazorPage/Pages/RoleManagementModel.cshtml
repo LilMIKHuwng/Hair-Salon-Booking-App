@@ -1,0 +1,40 @@
+﻿@page
+@model HairSalon.RazorPage.Pages.RoleManagementModel
+@{
+    ViewData["Title"] = "Role Management";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form method="post" asp-page-handler="AddRole">
+    <h3>Add New Role</h3>
+    <input asp-for="NewRole.Name" placeholder="Role Name" required />
+    <button type="submit">Add Role</button>
+    <span asp-validation-for="NewRole.Name" class="text-danger"></span>
+</form>
+
+<h3>Role List</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Role ID</th>
+            <th>Role Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var role in Model.Roles)
+        {
+            <tr>
+                <td>@role.Id</td>
+                <td>@role.Name</td>
+                <td>
+                    <form method="post" asp-page-handler="DeleteRole">
+                        <input type="hidden" name="id" value="@role.Id" />
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
