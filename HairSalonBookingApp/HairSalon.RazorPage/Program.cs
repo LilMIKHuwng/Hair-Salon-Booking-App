@@ -1,10 +1,4 @@
-using HairSalon.Contract.Repositories.Interface;
-using HairSalon.Contract.Services.Interface;
-using HairSalon.Repositories.Context;
-using HairSalon.Repositories.UOW;
-using HairSalon.Services.Service;
 using HairSalonBE.API;
-using Microsoft.EntityFrameworkCore;
 
 namespace HairSalon.RazorPage
 {
@@ -17,13 +11,8 @@ namespace HairSalon.RazorPage
 			builder.Services.AddHttpContextAccessor();
 			// Add services to the container.
 			builder.Services.AddRazorPages();
-			builder.Services.AddDbContext<DatabaseContext>(options =>
-			{
-				options.UseLazyLoadingProxies().UseSqlServer(configuration.GetConnectionString("HairSalonDb"));
-			});
-			builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-			builder.Services.AddScoped<IRoleService, RoleService>();
-			builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            builder.Services.AddConfig(builder.Configuration);
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 			var app = builder.Build();
 
 			// Configure the HTTP request pipeline.
@@ -41,9 +30,13 @@ namespace HairSalon.RazorPage
 
 			app.UseAuthorization();
 
-			app.MapRazorPages();
+            app.UseEndpoints(endpoints => {
+                endpoints.MapRazorPages();
+                endpoints.MapControllerRoute("default", "api/{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllers();
+            });
 
-			app.Run();
+            app.Run();
 		}
 	}
 }

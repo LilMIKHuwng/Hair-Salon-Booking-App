@@ -46,6 +46,7 @@ builder.Services.AddSwaggerGen(option =>
         }
     });
 });
+
 builder.Services.AddConfig(builder.Configuration);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -63,10 +64,5 @@ app.UseSwaggerUI();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-app.UseEndpoints(endpoints => {
-    endpoints.MapRazorPages();
-    endpoints.MapControllerRoute("default", "api/{controller=Home}/{action=Index}/{id?}");
-    endpoints.MapControllers();
-});
 
 app.Run();
