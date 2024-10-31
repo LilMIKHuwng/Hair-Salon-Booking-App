@@ -1,0 +1,49 @@
+﻿@page
+@model HairSalon.RazorPage.Pages.Role.GetAllModel
+@{
+    ViewData["Title"] = "All Roles";
+}
+
+<h2>All Roles</h2>
+
+@if (Model.Roles != null && Model.Roles.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var role in Model.Roles)
+            {
+                <tr>
+                    <td>@role.Id</td>
+                    <td>@role.Name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Pagination Controls -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            @for (int i = 1; i <= (Model.TotalCount + Model.PageSize - 1) / Model.PageSize; i++)
+            {
+                <li class="page-item @(Model.PageNumber == i ? "active" : "")">
+                    <form method="post" asp-page-handler="PageChange">
+                        <input type="hidden" name="pageNumber" value="@i" />
+                        <button type="submit" class="page-link">@i</button>
+                    </form>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+else
+{
+    <p>No roles found.</p>
+}
+
+<a href="~/Index" class="btn btn-primary">Back to Home</a>

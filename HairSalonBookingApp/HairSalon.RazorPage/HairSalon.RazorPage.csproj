@@ -7,8 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HairSalon.Core\HairSalon.Core.csproj" />
     <ProjectReference Include="..\HairSalon.ModelViews\HairSalon.ModelViews.csproj" />
+    <ProjectReference Include="..\HairSalon.Services\HairSalon.Services.csproj" />
     <ProjectReference Include="..\HairSalonBE.API\HairSalonBE.API.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\image\" />
   </ItemGroup>
 
 </Project>

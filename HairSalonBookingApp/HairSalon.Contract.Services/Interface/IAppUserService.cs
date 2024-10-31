@@ -7,7 +7,7 @@ namespace HairSalon.Contract.Services.Interface
 {
 	public interface IAppUserService
 	{
-		Task<BasePaginatedList<AppUserModelView>> GetAllAppUserAsync(string? userId, int pageNumber, int pageSize);
+		Task<BasePaginatedList<AppUserModelView>> GetAllAppUserAsync(string? userId, string? username, int pageNumber, int pageSize);
 		Task<string> AddAppUserAsync(CreateAppUserModelView model);
         Task<string> AddAppStylistAsync(CreateAppStylistModelView model);
         Task<string> UpdateAppUserAsync(string id, UpdateAppUserModelView model);

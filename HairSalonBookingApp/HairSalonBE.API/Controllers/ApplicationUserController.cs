@@ -55,9 +55,9 @@ namespace HairSalonBE.API.Controllers
         /// </summary>
         [HttpGet("all")]
 		[Authorize(Roles = "Admin")]
-		public async Task<ActionResult<BasePaginatedList<AppUserModelView>>> GetAllApplicationUsers(string? userId, int pageNumber = 1, int pageSize = 5)
+		public async Task<ActionResult<BasePaginatedList<AppUserModelView>>> GetAllApplicationUsers(string? userId, string? username, int pageNumber = 1, int pageSize = 5)
         {
-            var result = await _appUserService.GetAllAppUserAsync(userId, pageNumber, pageSize);
+            var result = await _appUserService.GetAllAppUserAsync(userId, username, pageNumber, pageSize);
             return Ok(result);
         }
 

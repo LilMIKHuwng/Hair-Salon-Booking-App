@@ -20,3 +20,29 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+/* Sidebar styles */
+#wrapper {
+    display: flex;
+}
+
+    #wrapper.toggled #sidebar-wrapper {
+        margin-left: -250px; /* Hide sidebar when toggled */
+    }
+
+#sidebar-wrapper {
+    width: 250px;
+    transition: margin 0.3s ease;
+}
+
+#page-content-wrapper {
+    flex: 1;
+}
+
+.sidebar-heading {
+    font-size: 1.5rem;
+    padding: 1rem;
+    text-align: center;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e0e0e0;
+}
