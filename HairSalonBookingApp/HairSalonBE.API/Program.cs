@@ -46,6 +46,7 @@ builder.Services.AddSwaggerGen(option =>
         }
     });
 });
+
 builder.Services.AddConfig(builder.Configuration);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddControllers().AddJsonOptions(options =>
