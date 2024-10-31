@@ -1,0 +1,141 @@
+﻿@page
+@model HairSalon.RazorPage.Pages.RoleManagementModel
+@{
+    ViewData["Title"] = "Role Management";
+}
+
+<style>
+    /* General Layout */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h2 {
+        color: #3f51b5;
+        border-bottom: 2px solid #3f51b5;
+        padding-bottom: 10px;
+    }
+
+    /* Form Styling */
+    form {
+        margin-bottom: 20px;
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    form h3 {
+        color: #3f51b5;
+        margin-top: 0;
+    }
+
+    input[type="text"],
+    button {
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+    }
+
+    input[type="text"] {
+        width: calc(100% - 20px);
+        box-sizing: border-box;
+    }
+
+    button[type="submit"] {
+        background-color: #3f51b5;
+        color: #ffffff;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #2c3e91;
+    }
+
+    .text-danger {
+        color: #e74c3c;
+    }
+
+    /* Table Styling */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    table th,
+    table td {
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+
+    table th {
+        background-color: #3f51b5;
+        color: #ffffff;
+        font-weight: bold;
+    }
+
+    table tbody tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    /* Button Styling within Table */
+    .table-button {
+        background-color: #e74c3c;
+        color: #ffffff;
+        border: none;
+        border-radius: 5px;
+        padding: 5px 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .table-button:hover {
+        background-color: #c0392b;
+    }
+</style>
+
+<h2>@ViewData["Title"]</h2>
+
+<form method="post" asp-page-handler="AddRole">
+    <h3>Add New Role</h3>
+    <input asp-for="NewRole.Name" placeholder="Role Name" required />
+    <button type="submit">Add Role</button>
+    <span asp-validation-for="NewRole.Name" class="text-danger"></span>
+</form>
+
+<h3>Role List</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Role ID</th>
+            <th>Role Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var role in Model.Roles)
+        {
+            <tr>
+                <td>@role.Id</td>
+                <td>@role.Name</td>
+                <td>
+                    <form method="post" asp-page-handler="DeleteRole" style="display: inline;">
+                        <input type="hidden" name="id" value="@role.Id" />
+                        <button type="submit" class="table-button">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
