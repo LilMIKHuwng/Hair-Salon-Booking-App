@@ -1,0 +1,94 @@
+﻿@page
+@model HairSalon.RazorPage.Pages.Role.DeleteModel
+@{
+    ViewData["Title"] = "Delete Role";
+}
+
+<style>
+    /* Page Layout */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+        padding: 20px;
+    }
+
+    h2 {
+        color: #d9534f;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #d9534f;
+        padding-bottom: 5px;
+    }
+
+    /* Confirmation Text */
+    p {
+        font-size: 1.1em;
+        color: #555;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    /* Form Styling */
+    form {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    button[type="submit"],
+    a {
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+    /* Delete Button */
+    button[type="submit"] {
+        background-color: #d9534f;
+        color: #ffffff;
+        border: none;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #c9302c;
+    }
+
+    /* Cancel Link as Button */
+    a {
+        background-color: #5bc0de;
+        color: #ffffff;
+    }
+
+    a:hover {
+        background-color: #31b0d5;
+    }
+
+    /* Error Alert */
+    .alert-danger {
+        background-color: #f2dede;
+        color: #a94442;
+        border: 1px solid #ebccd1;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 10px;
+        text-align: center;
+    }
+</style>
+
+<h2>Delete Role</h2>
+
+<p>Are you sure you want to delete the role "<strong>@Model.Role.Name</strong>"?</p>
+
+<form method="post">
+    <button type="submit">Delete</button>
+    <a asp-page="/Role/Index">Cancel</a>
+</form>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger mt-3 text-center">@TempData["ErrorMessage"]</div>
+}

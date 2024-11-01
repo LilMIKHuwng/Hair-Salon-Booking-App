@@ -25,10 +25,11 @@ namespace HairSalon.Services.Service
         }
 
         //check stylist is busy or not
-        private async Task<bool> IsStylistBusy(Guid stylistId, DateTime appointmentDate, int newTotalTime)
+        private async Task<bool> IsStylistBusy(Guid stylistId, DateTime appointmentDate, int newTotalTime, string? appointmentId = null)
         {
             return await _unitOfWork.GetRepository<Appointment>().Entities
                 .AnyAsync(p => p.StylistId == stylistId
+                    && (appointmentId == null || p.Id != appointmentId)
                     && !p.StatusForAppointment.Equals("Cancelled")
                     && !p.DeletedTime.HasValue
                     && !(appointmentDate.AddMinutes(newTotalTime) <= p.AppointmentDate
@@ -36,10 +37,11 @@ namespace HairSalon.Services.Service
         }
 
         //check duplicate appointment
-        private async Task<bool> IsDuplicateAppointment(Guid userId, DateTime appointmentDate, int newTotalTime)
+        private async Task<bool> IsDuplicateAppointment(Guid userId, DateTime appointmentDate, int newTotalTime, string? appointmentId = null)
         {
             return await _unitOfWork.GetRepository<Appointment>().Entities
                 .AnyAsync(p => p.UserId == userId
+                    && (appointmentId == null || p.Id != appointmentId)
                     && !p.StatusForAppointment.Equals("Cancelled")
                     && !p.DeletedTime.HasValue
                     && !(appointmentDate.AddMinutes(newTotalTime) <= p.AppointmentDate
@@ -334,11 +336,10 @@ namespace HairSalon.Services.Service
                 }
 
                 // Check for time conflicts when updating appointment dates
-                if (await IsDuplicateAppointment((Guid)existingAppointment.UserId, (DateTime)model.AppointmentDate, newTotalTime))
+                if (await IsDuplicateAppointment((Guid)existingAppointment.UserId, (DateTime)model.AppointmentDate, newTotalTime, existingAppointment.Id))
                 {
                     return "The new appointment time conflicts with another appointment.";
                 }
-
 
                 existingAppointment.AppointmentDate = model.AppointmentDate.Value;
             }
@@ -355,11 +356,12 @@ namespace HairSalon.Services.Service
             }
             else
             {
-                if (await IsStylistBusy((Guid)existingAppointment.StylistId, existingAppointment.AppointmentDate, newTotalTime))
+                if (await IsStylistBusy((Guid)existingAppointment.StylistId, existingAppointment.AppointmentDate, newTotalTime, existingAppointment.Id))
                 {
                     return "Stylist is busy at that time.";
                 }
             }
+
             // Check if user has enough points
             var user = await _unitOfWork.GetRepository<ApplicationUsers>().GetByIdAsync(existingAppointment.UserId);
             if (model.PointsEarned > user.UserInfo.Point)

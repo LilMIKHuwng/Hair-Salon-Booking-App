@@ -137,6 +137,12 @@ namespace HairSalon.Services.Service
                     existingService.Description = model.Description;
                 }
 
+                if (model.TimeService.HasValue)
+                {
+                    existingService.TimeService = model.TimeService.Value;
+                }
+
+
                 if (!string.IsNullOrWhiteSpace(model.ShopId))
                 {
                     existingService.ShopId = model.ShopId;
