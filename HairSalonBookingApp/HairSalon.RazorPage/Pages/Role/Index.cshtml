@@ -140,6 +140,7 @@
 {
     <div class="alert alert-danger mt-3 text-center">@TempData["ErrorMessage"]</div>
 }
+
 <table>
     <thead>
         <tr>
@@ -149,7 +150,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var role in Model.Roles)
+        @foreach (var role in Model.Roles.Items)
         {
             <tr>
                 <td>@role.Id</td>
@@ -163,3 +164,29 @@
         }
     </tbody>
 </table>
+
+<!-- Pagination Controls -->
+<div class="pagination">
+    @if (Model.Roles.HasPreviousPage)
+    {
+        <a asp-page="/Role/Index" asp-route-pageNumber="@(Model.Roles.CurrentPage - 1)" class="btn">Previous</a>
+    }
+
+    <span>Page @Model.Roles.CurrentPage of @Model.Roles.TotalPages</span>
+
+    @if (Model.Roles.HasNextPage)
+    {
+        <a asp-page="/Role/Index" asp-route-pageNumber="@(Model.Roles.CurrentPage + 1)" class="btn">Next</a>
+    }
+</div>
+
+<style>
+    /* Styling for Pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        gap: 10px;
+    }
+</style>
