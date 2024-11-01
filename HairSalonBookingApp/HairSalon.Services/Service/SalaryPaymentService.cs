@@ -68,6 +68,11 @@ namespace HairSalon.Services.Service
         // Create a new SalaryPayment
         public async Task<string> CreateSalaryPaymentAsync(CreateSalaryPaymentModelView model)
         {
+            if (model.BaseSalary < 0 || model.DayOffPermitted < 0 || model.DayOffNoPermitted < 0)
+            {
+                return "Invalid input: Base salary and day-off values must be non-negative.";
+            }
+
             var paymentDate = model.PaymentDate;
             var nextPaymentDate = new DateTime(paymentDate.Year, paymentDate.Month, 5).AddMonths(1);
             var currentMonthPaymentStartDate = new DateTime(paymentDate.Year, paymentDate.Month, 5);
@@ -165,7 +170,12 @@ namespace HairSalon.Services.Service
 		// Update an existing SalaryPayment
 		public async Task<string> UpdateSalaryPaymentAsync(string id, UpdatedSalaryPaymentModelView model)
 		{
-			if (string.IsNullOrWhiteSpace(id))
+            if (model.BaseSalary < 0 || model.DayOffPermitted < 0 || model.DayOffNoPermitted < 0)
+            {
+                return "Invalid input: Base salary and day-off values must be non-negative.";
+            }
+
+            if (string.IsNullOrWhiteSpace(id))
 			{
 				return "Please provide a valid Salary Payment ID.";
 			}
