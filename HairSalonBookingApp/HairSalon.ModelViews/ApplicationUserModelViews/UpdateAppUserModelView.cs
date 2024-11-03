@@ -1,4 +1,6 @@
-﻿namespace HairSalon.ModelViews.ApplicationUserModelViews
+﻿using Microsoft.AspNetCore.Http;
+
+namespace HairSalon.ModelViews.ApplicationUserModelViews
 {
 	public class UpdateAppUserModelView
 	{
@@ -11,5 +13,7 @@
 		public string? Password { get; set; }
 
 		public string? PhoneNumber { get; set; }
+
+		public IFormFile? UserImage { get; set; }
 	}
 }

@@ -1,4 +1,6 @@
-﻿namespace HairSalon.ModelViews.ServiceModelViews
+﻿using Microsoft.AspNetCore.Http;
+
+namespace HairSalon.ModelViews.ServiceModelViews
 {
     public class UpdatedServiceModelView
     {
@@ -11,5 +13,7 @@
         public string? Description { get; set; }
 
         public string? ShopId { get; set; }
+
+        public IFormFile? ServiceImage { get; set; }
     }
 }

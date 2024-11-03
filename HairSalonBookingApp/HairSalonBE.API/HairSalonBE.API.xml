@@ -191,7 +191,7 @@
         </member>
         <member name="M:HairSalonBE.API.Controllers.PaymentController.CreatePayment(HairSalon.ModelViews.VnPayModelViews.PaymentResponseModelView)">
             <summary>
-                Lấy tất cả thông tin payment
+                Thực hiện thanh toán
             </summary>
         </member>
         <member name="M:HairSalonBE.API.Controllers.PaymentController.CreateVnPay(HairSalon.ModelViews.VnPayModelViews.PaymentRequestModelView)">
@@ -209,7 +209,7 @@
                 Tạo thông tin để nạp tiền vào ví
             </summary>
         </member>
-        <member name="M:HairSalonBE.API.Controllers.PaymentController.ExecuteDeposit(System.Guid,System.Double)">
+        <member name="M:HairSalonBE.API.Controllers.PaymentController.ExecuteDeposit(System.Double)">
             <summary>
                 Thực hiện gửi tiền vào ví
             </summary>

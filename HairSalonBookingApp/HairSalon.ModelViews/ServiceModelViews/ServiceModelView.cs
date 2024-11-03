@@ -13,5 +13,7 @@
         public string? Description { get; set; } 
 
         public string ShopId { get; set; }
+
+        public string ServiceImage { get; set; }
     }
 }

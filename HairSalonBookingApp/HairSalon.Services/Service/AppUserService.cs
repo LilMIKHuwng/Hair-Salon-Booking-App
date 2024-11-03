@@ -3,6 +3,7 @@ using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
+using HairSalon.Core.Base;
 using HairSalon.Core.Utils;
 using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalon.ModelViews.AuthModelViews;
@@ -10,6 +11,8 @@ using HairSalon.Repositories.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System.Security.Principal;
 using System.Text.RegularExpressions;
 
 namespace HairSalon.Services.Service
@@ -22,8 +25,9 @@ namespace HairSalon.Services.Service
         private readonly IEmailService _emailService;
         private readonly UserManager<ApplicationUsers> _userManager;
         private readonly IPasswordHasher<ApplicationUsers> _passwordHasher;
+        private readonly IConfiguration _configuration;
 
-        public AppUserService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor, IEmailService emailService, UserManager<ApplicationUsers> userManager, IPasswordHasher<ApplicationUsers> passwordHasher)
+        public AppUserService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor, IEmailService emailService, UserManager<ApplicationUsers> userManager, IPasswordHasher<ApplicationUsers> passwordHasher, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -31,191 +35,222 @@ namespace HairSalon.Services.Service
             _emailService = emailService;
             _userManager = userManager;
             _passwordHasher = passwordHasher;
+            _configuration = configuration;
         }
 
         public async Task<string> AddAppUserAsync(CreateAppUserModelView model)
         {
-            // Check for special characters in FirstName and LastName
-            var regex = new Regex(@"^[a-zA-Z]+$");
-            if (!regex.IsMatch(model.FirstName))
+            try
             {
-                return "FirstName cannot contains special characters!";
+                // Check for special characters in FirstName and LastName
+                var regex = new Regex(@"^[a-zA-Z]+$");
+                if (!regex.IsMatch(model.FirstName))
+                {
+                    return "FirstName cannot contains special characters!";
+                }
+
+                if (!regex.IsMatch(model.LastName))
+                {
+                    return "LastName cannot contains special characters!";
+                }
+
+                // Check if the username already exists
+                var accountRepository = _unitOfWork.GetRepository<ApplicationUsers>();
+                var existingUser = await accountRepository.Entities
+                                                        .AsNoTracking()
+                                                        .FirstOrDefaultAsync(x => x.UserName == model.UserName);
+                if (existingUser != null)
+                {
+                    return "UserName is already existed!";
+                }
+
+                // Create new user info and account
+                var userInfo = new UserInfo
+                {
+                    Firstname = model.FirstName,
+                    Lastname = model.LastName,
+                };
+                var newAccount = new ApplicationUsers
+                {
+                    Id = Guid.NewGuid(),
+                    UserName = model.UserName,
+                    Email = model.Email,
+                    PhoneNumber = model.PhoneNumber,
+                    SecurityStamp = Guid.NewGuid().ToString(),
+                    UserInfo = userInfo
+                };
+
+                newAccount.PasswordHash = _passwordHasher.HashPassword(newAccount, model.Password);
+
+                var accountRepositoryCheck = _unitOfWork.GetRepository<ApplicationUsers>();
+
+                var user = await accountRepositoryCheck.Entities.FirstOrDefaultAsync(x => x.UserName == model.UserName);
+                if (user != null)
+                {
+                    throw new Exception("UserName already exists!");
+                }
+
+                var existingEmail = await accountRepository.Entities
+                                                .AsNoTracking()
+                                                .FirstOrDefaultAsync(x => x.Email == model.Email);
+                if (existingEmail != null)
+                {
+                    return "Email already exists!";
+                }
+
+                var imageHelper = new HairSalon.Core.Utils.Firebase.ImageHelper(_configuration);
+                string firebaseUrl = await imageHelper.Upload(model.UserImage);
+                newAccount.UserImage = firebaseUrl;
+
+                accountRepository = _unitOfWork.GetRepository<ApplicationUsers>();
+                await accountRepository.InsertAsync(newAccount);
+
+                // Check if the user role exists
+                var roleRepository = _unitOfWork.GetRepository<ApplicationRoles>();
+                var userRole = await roleRepository.Entities.FirstOrDefaultAsync(r => r.Name == model.RoleName);
+                if (userRole == null)
+                {
+                    return "The 'User' role does not exist. Please make sure to create it first.";
+                }
+
+                // Create and insert user role mapping
+                var userRoleRepository = _unitOfWork.GetRepository<ApplicationUserRoles>();
+                var applicationUserRole = new ApplicationUserRoles
+                {
+                    UserId = newAccount.Id,
+                    RoleId = userRole.Id,
+                    CreatedBy = newAccount.Id.ToString(),
+                    CreatedTime = DateTime.UtcNow,
+                    LastUpdatedBy = newAccount.Id.ToString(),
+                    LastUpdatedTime = DateTime.UtcNow
+                };
+
+                await userRoleRepository.InsertAsync(applicationUserRole);
+                await _unitOfWork.SaveAsync();
+
+                // Tạo mã OTP
+                var otpCode = GenerateOtpCode();
+                newAccount.OtpCode = otpCode;
+                newAccount.OtpExpiration = DateTime.UtcNow.AddMinutes(10); // OTP hết hạn sau 10 phút
+
+                await _unitOfWork.SaveAsync();
+
+                // Gửi mã OTP qua email
+                await _emailService.SendEmailConfirmationCodeAsync(newAccount.Email, otpCode);
+
+                return "User added successfully. Please check your email for the OTP to confirm your account.";
             }
-
-            if (!regex.IsMatch(model.LastName))
+            catch (BaseException.BadRequestException ex)
             {
-                return "LastName cannot contains special characters!";
+                return ex.Message;
             }
-
-            // Check if the username already exists
-            var accountRepository = _unitOfWork.GetRepository<ApplicationUsers>();
-            var existingUser = await accountRepository.Entities
-                                                    .AsNoTracking()
-                                                    .FirstOrDefaultAsync(x => x.UserName == model.UserName);
-            if (existingUser != null)
+            catch (Exception ex)
             {
-                return "UserName is already existed!";
+                return "An error occurred while adding user.";
             }
-
-            // Create new user info and account
-            var userInfo = new UserInfo
-            {
-                Firstname = model.FirstName,
-                Lastname = model.LastName,
-            };
-            var newAccount = new ApplicationUsers
-            {
-                Id = Guid.NewGuid(),
-                UserName = model.UserName,
-                Email = model.Email,
-                PhoneNumber = model.PhoneNumber,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                UserInfo = userInfo
-            };
-
-            newAccount.PasswordHash = _passwordHasher.HashPassword(newAccount, model.Password);
-
-            var accountRepositoryCheck = _unitOfWork.GetRepository<ApplicationUsers>();
-
-            var user = await accountRepositoryCheck.Entities.FirstOrDefaultAsync(x => x.UserName == model.UserName);
-            if (user != null)
-            {
-                throw new Exception("UserName already exists!");
-            }
-
-            var existingEmail = await accountRepository.Entities
-                                            .AsNoTracking()
-                                            .FirstOrDefaultAsync(x => x.Email == model.Email);
-            if (existingEmail != null)
-            {
-                return "Email already exists!";
-            }
-
-            accountRepository = _unitOfWork.GetRepository<ApplicationUsers>();
-            await accountRepository.InsertAsync(newAccount);
-
-            // Check if the user role exists
-            var roleRepository = _unitOfWork.GetRepository<ApplicationRoles>();
-            var userRole = await roleRepository.Entities.FirstOrDefaultAsync(r => r.Name == model.RoleName);
-            if (userRole == null)
-            {
-                return "The 'User' role does not exist. Please make sure to create it first.";
-            }
-
-            // Create and insert user role mapping
-            var userRoleRepository = _unitOfWork.GetRepository<ApplicationUserRoles>();
-            var applicationUserRole = new ApplicationUserRoles
-            {
-                UserId = newAccount.Id,
-                RoleId = userRole.Id,
-                CreatedBy = newAccount.Id.ToString(),
-                CreatedTime = DateTime.UtcNow,
-                LastUpdatedBy = newAccount.Id.ToString(),
-                LastUpdatedTime = DateTime.UtcNow
-            };
-
-			await userRoleRepository.InsertAsync(applicationUserRole);
-			await _unitOfWork.SaveAsync();
-
-            // Tạo mã OTP
-            var otpCode = GenerateOtpCode();
-            newAccount.OtpCode = otpCode;
-            newAccount.OtpExpiration = DateTime.UtcNow.AddMinutes(10); // OTP hết hạn sau 10 phút
-
-            await _unitOfWork.SaveAsync();
-
-            // Gửi mã OTP qua email
-            await _emailService.SendEmailConfirmationCodeAsync(newAccount.Email, otpCode);
-
-            return "User added successfully. Please check your email for the OTP to confirm your account.";
         }
 
         public async Task<string> AddAppStylistAsync(CreateAppStylistModelView model)
         {
-            // Check for special characters in FirstName and LastName
-            var regex = new Regex(@"^[a-zA-Z]+$");
-            if (!regex.IsMatch(model.FirstName))
+            try
             {
-                return "FirstName cannot contains special characters!";
+                // Check for special characters in FirstName and LastName
+                var regex = new Regex(@"^[a-zA-Z]+$");
+                if (!regex.IsMatch(model.FirstName))
+                {
+                    return "FirstName cannot contains special characters!";
+                }
+
+                if (!regex.IsMatch(model.LastName))
+                {
+                    return "LastName cannot contains special characters!";
+                }
+
+                // Check if the username already exists
+                var accountRepository = _unitOfWork.GetRepository<ApplicationUsers>();
+                var existingUser = await accountRepository.Entities
+                                                        .AsNoTracking()
+                                                        .FirstOrDefaultAsync(x => x.UserName == model.UserName);
+                if (existingUser != null)
+                {
+                    return "UserName is already existed!";
+                }
+
+                // Create new user info and account
+                var userInfo = new UserInfo
+                {
+                    Firstname = model.FirstName,
+                    Lastname = model.LastName,
+                };
+                var newAccount = new ApplicationUsers
+                {
+                    Id = Guid.NewGuid(),
+                    UserName = model.UserName,
+                    Email = model.Email,
+                    PhoneNumber = model.PhoneNumber,
+                    SecurityStamp = Guid.NewGuid().ToString(),
+                    UserInfo = userInfo,
+                    EmailConfirmed = true
+                };
+
+                newAccount.PasswordHash = _passwordHasher.HashPassword(newAccount, model.Password);
+
+                var accountRepositoryCheck = _unitOfWork.GetRepository<ApplicationUsers>();
+
+                var user = await accountRepositoryCheck.Entities.FirstOrDefaultAsync(x => x.UserName == model.UserName);
+                if (user != null)
+                {
+                    throw new Exception("UserName already exists!");
+                }
+
+                var existingEmail = await accountRepository.Entities
+                                                .AsNoTracking()
+                                                .FirstOrDefaultAsync(x => x.Email == model.Email);
+                if (existingEmail != null)
+                {
+                    return "Email already exists!";
+                }
+
+                var imageHelper = new HairSalon.Core.Utils.Firebase.ImageHelper(_configuration);
+                string firebaseUrl = await imageHelper.Upload(model.StylistImage);
+                newAccount.UserImage = firebaseUrl;
+
+                accountRepository = _unitOfWork.GetRepository<ApplicationUsers>();
+                await accountRepository.InsertAsync(newAccount);
+
+                // Check if the user role exists
+                var roleRepository = _unitOfWork.GetRepository<ApplicationRoles>();
+                var userRole = await roleRepository.Entities.FirstOrDefaultAsync(r => r.Name == model.RoleName);
+                if (userRole == null)
+                {
+                    return "The 'User' role does not exist. Please make sure to create it first.";
+                }
+
+                // Create and insert user role mapping
+                var userRoleRepository = _unitOfWork.GetRepository<ApplicationUserRoles>();
+                var applicationUserRole = new ApplicationUserRoles
+                {
+                    UserId = newAccount.Id,
+                    RoleId = userRole.Id,
+                    CreatedBy = newAccount.Id.ToString(),
+                    CreatedTime = DateTime.UtcNow,
+                    LastUpdatedBy = newAccount.Id.ToString(),
+                    LastUpdatedTime = DateTime.UtcNow
+                };
+
+                await userRoleRepository.InsertAsync(applicationUserRole);
+                await _unitOfWork.SaveAsync();
+
+                return "Stylist added successfully.";
             }
-
-            if (!regex.IsMatch(model.LastName))
+            catch (BaseException.BadRequestException ex)
             {
-                return "LastName cannot contains special characters!";
+                return ex.Message;
             }
-
-            // Check if the username already exists
-            var accountRepository = _unitOfWork.GetRepository<ApplicationUsers>();
-            var existingUser = await accountRepository.Entities
-                                                    .AsNoTracking()
-                                                    .FirstOrDefaultAsync(x => x.UserName == model.UserName);
-            if (existingUser != null)
+            catch (Exception ex)
             {
-                return "UserName is already existed!";
+                return "An error occurred while adding stylist.";
             }
-
-            // Create new user info and account
-            var userInfo = new UserInfo
-            {
-                Firstname = model.FirstName,
-                Lastname = model.LastName,
-            };
-            var newAccount = new ApplicationUsers
-            {
-                Id = Guid.NewGuid(),
-                UserName = model.UserName,
-                Email = model.Email,
-                PhoneNumber = model.PhoneNumber,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                UserInfo = userInfo,
-                EmailConfirmed = true
-            };
-
-            newAccount.PasswordHash = _passwordHasher.HashPassword(newAccount, model.Password);
-
-            var accountRepositoryCheck = _unitOfWork.GetRepository<ApplicationUsers>();
-
-            var user = await accountRepositoryCheck.Entities.FirstOrDefaultAsync(x => x.UserName == model.UserName);
-            if (user != null)
-            {
-                throw new Exception("UserName already exists!");
-            }
-
-            var existingEmail = await accountRepository.Entities
-                                            .AsNoTracking()
-                                            .FirstOrDefaultAsync(x => x.Email == model.Email);
-            if (existingEmail != null)
-            {
-                return "Email already exists!";
-            }
-
-            accountRepository = _unitOfWork.GetRepository<ApplicationUsers>();
-            await accountRepository.InsertAsync(newAccount);
-
-            // Check if the user role exists
-            var roleRepository = _unitOfWork.GetRepository<ApplicationRoles>();
-            var userRole = await roleRepository.Entities.FirstOrDefaultAsync(r => r.Name == model.RoleName);
-            if (userRole == null)
-            {
-                return "The 'User' role does not exist. Please make sure to create it first.";
-            }
-
-            // Create and insert user role mapping
-            var userRoleRepository = _unitOfWork.GetRepository<ApplicationUserRoles>();
-            var applicationUserRole = new ApplicationUserRoles
-            {
-                UserId = newAccount.Id,
-                RoleId = userRole.Id,
-                CreatedBy = newAccount.Id.ToString(),
-                CreatedTime = DateTime.UtcNow,
-                LastUpdatedBy = newAccount.Id.ToString(),
-                LastUpdatedTime = DateTime.UtcNow
-            };
-
-            await userRoleRepository.InsertAsync(applicationUserRole);
-            await _unitOfWork.SaveAsync();
-
-            return "Stylist added successfully.";
         }
 
         public async Task<string> ConfirmEmailAsync(ConfirmEmailModelView model)
@@ -301,92 +336,110 @@ namespace HairSalon.Services.Service
 
         public async Task<string> UpdateAppUserAsync(string id, UpdateAppUserModelView model)
         {
-
-            if (string.IsNullOrWhiteSpace(id))
+            try
             {
-                return "Please provide a valid Application User ID.";
-            }
-
-            // Retrieve the existing user
-            ApplicationUsers? existingUser = await _unitOfWork.GetRepository<ApplicationUsers>().Entities
-                .FirstOrDefaultAsync(u => u.Id == Guid.Parse(id) && !u.DeletedTime.HasValue);
-
-            if (existingUser == null)
-            {
-                return "The Application User cannot be found or has been deleted!";
-            }
-
-            bool isUpdated = false;
-
-            // Manually map fields to retain existing data if the update fields are null
-            if (!string.IsNullOrWhiteSpace(model.Email) && model.Email != existingUser.Email)
-            {
-                var emailExists = await _unitOfWork.GetRepository<ApplicationUsers>().Entities
-                    .AnyAsync(u => u.Email == model.Email && !u.DeletedTime.HasValue);
-
-                if (emailExists)
+                if (string.IsNullOrWhiteSpace(id))
                 {
-                    return "The new email is already in use by another account.";
+                    return "Please provide a valid Application User ID.";
                 }
 
-                existingUser.Email = model.Email;
-                existingUser.EmailConfirmed = false;
-                isUpdated = true;
+                // Retrieve the existing user
+                ApplicationUsers? existingUser = await _unitOfWork.GetRepository<ApplicationUsers>().Entities
+                    .FirstOrDefaultAsync(u => u.Id == Guid.Parse(id) && !u.DeletedTime.HasValue);
 
-                // Generate and send OTP to the new email
-                var otpCode = GenerateOtpCode();
-                existingUser.OtpCode = otpCode;
-                existingUser.OtpExpiration = DateTime.UtcNow.AddMinutes(10); // Set expiration for OTP
-
-                await _unitOfWork.SaveAsync();
-
-                // Send OTP via email
-                await _emailService.SendEmailConfirmationCodeAsync(existingUser.Email, otpCode);
-
-                return "Email updated successfully. Please check your new email for a confirmation code.";
-            }
-
-            if (!string.IsNullOrWhiteSpace(model.PhoneNumber) && model.PhoneNumber != existingUser.PhoneNumber)
-            {
-                existingUser.PhoneNumber = model.PhoneNumber;
-                isUpdated = true;
-            }
-
-            // Retrieve associated UserInfo if available
-            UserInfo? existingUserInfo = await _unitOfWork.GetRepository<UserInfo>().Entities
-                .FirstOrDefaultAsync(u => u.Id == existingUser.UserInfo.Id);
-
-            if (existingUserInfo != null)
-            {
-                if (!string.IsNullOrWhiteSpace(model.FirstName) && model.FirstName != existingUserInfo.Firstname)
+                if (existingUser == null)
                 {
-                    existingUserInfo.Firstname = model.FirstName;
+                    return "The Application User cannot be found or has been deleted!";
+                }
+
+                bool isUpdated = false;
+
+                // Manually map fields to retain existing data if the update fields are null
+                if (!string.IsNullOrWhiteSpace(model.Email) && model.Email != existingUser.Email)
+                {
+                    var emailExists = await _unitOfWork.GetRepository<ApplicationUsers>().Entities
+                        .AnyAsync(u => u.Email == model.Email && !u.DeletedTime.HasValue);
+
+                    if (emailExists)
+                    {
+                        return "The new email is already in use by another account.";
+                    }
+
+                    existingUser.Email = model.Email;
+                    existingUser.EmailConfirmed = false;
+                    isUpdated = true;
+
+                    // Generate and send OTP to the new email
+                    var otpCode = GenerateOtpCode();
+                    existingUser.OtpCode = otpCode;
+                    existingUser.OtpExpiration = DateTime.UtcNow.AddMinutes(10); // Set expiration for OTP
+
+                    await _unitOfWork.SaveAsync();
+
+                    // Send OTP via email
+                    await _emailService.SendEmailConfirmationCodeAsync(existingUser.Email, otpCode);
+
+                    return "Email updated successfully. Please check your new email for a confirmation code.";
+                }
+
+                if (!string.IsNullOrWhiteSpace(model.PhoneNumber) && model.PhoneNumber != existingUser.PhoneNumber)
+                {
+                    existingUser.PhoneNumber = model.PhoneNumber;
                     isUpdated = true;
                 }
-                if (!string.IsNullOrWhiteSpace(model.LastName) && model.LastName != existingUserInfo.Lastname)
+
+                if(model.UserImage != null)
                 {
-                    existingUserInfo.Lastname = model.LastName;
+                    var imageHelper = new HairSalon.Core.Utils.Firebase.ImageHelper(_configuration);
+                    string firebaseUrl = await imageHelper.Upload(model.UserImage);
+                    existingUser.UserImage = firebaseUrl;
                     isUpdated = true;
+                }
+
+                // Retrieve associated UserInfo if available
+                UserInfo? existingUserInfo = await _unitOfWork.GetRepository<UserInfo>().Entities
+                    .FirstOrDefaultAsync(u => u.Id == existingUser.UserInfo.Id);
+
+                if (existingUserInfo != null)
+                {
+                    if (!string.IsNullOrWhiteSpace(model.FirstName) && model.FirstName != existingUserInfo.Firstname)
+                    {
+                        existingUserInfo.Firstname = model.FirstName;
+                        isUpdated = true;
+                    }
+                    if (!string.IsNullOrWhiteSpace(model.LastName) && model.LastName != existingUserInfo.Lastname)
+                    {
+                        existingUserInfo.Lastname = model.LastName;
+                        isUpdated = true;
+                    }
+
+                    if (isUpdated)
+                    {
+                        existingUserInfo.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                        existingUserInfo.LastUpdatedTime = DateTimeOffset.UtcNow;
+                        _unitOfWork.GetRepository<UserInfo>().Update(existingUserInfo);
+                    }
                 }
 
                 if (isUpdated)
                 {
-                    existingUserInfo.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-                    existingUserInfo.LastUpdatedTime = DateTimeOffset.UtcNow;
-                    _unitOfWork.GetRepository<UserInfo>().Update(existingUserInfo);
+                    existingUser.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                    existingUser.LastUpdatedTime = DateTimeOffset.UtcNow;
+
+                    await _unitOfWork.GetRepository<ApplicationUsers>().UpdateAsync(existingUser);
+                    await _unitOfWork.SaveAsync();
                 }
-            }
 
-            if (isUpdated)
+                return "Updated user successfully!";
+            }
+            catch (BaseException.BadRequestException ex)
             {
-                existingUser.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-                existingUser.LastUpdatedTime = DateTimeOffset.UtcNow;
-
-                await _unitOfWork.GetRepository<ApplicationUsers>().UpdateAsync(existingUser);
-                await _unitOfWork.SaveAsync();
+                return ex.Message;
             }
-
-            return "Updated user successfully!";
+            catch (Exception ex)
+            {
+                return "An error occurred while updating user.";
+            }
 
         }
 
@@ -578,6 +631,7 @@ namespace HairSalon.Services.Service
                 FirstName = appUser.UserInfo?.Firstname, 
                 LastName = appUser.UserInfo?.Lastname,   
                 BankAccount = appUser.UserInfo?.BankAccount,
+                E_Wallet = appUser.E_Wallet,
                 Point = (int)(appUser.UserInfo?.Point),
                 Roles = await _userManager.GetRolesAsync(appUser)
             };

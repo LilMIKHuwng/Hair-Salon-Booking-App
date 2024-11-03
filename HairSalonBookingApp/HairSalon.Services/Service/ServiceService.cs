@@ -6,8 +6,10 @@ using ServiceEntity = HairSalon.Contract.Repositories.Entity.Service;
 using Microsoft.EntityFrameworkCore;
 using HairSalon.Core;
 using Microsoft.AspNetCore.Http;
-using HairSalon.Contract.Repositories.Entity;
+using HairSalon.Core.Base;
+using Microsoft.Extensions.Configuration;
 using HairSalon.Core.Utils;
+using HairSalon.Core.Utils.Firebase;
 
 namespace HairSalon.Services.Service
 {
@@ -16,13 +18,15 @@ namespace HairSalon.Services.Service
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IConfiguration _configuration;
 
-        public ServiceService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor contextAccessor)
+        public ServiceService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor contextAccessor, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _contextAccessor = contextAccessor;
-
+            _configuration = configuration;
+            _configuration = configuration;
         }
 
         // Get all services with optional filters for id, ... and support pagination
@@ -65,69 +69,102 @@ namespace HairSalon.Services.Service
         // Add a new service
         public async Task<string> AddServiceAsync(CreateServiceModelView model)
         {
-            ServiceEntity newService = _mapper.Map<ServiceEntity>(model);
+            try
+            {
+                ServiceEntity newService = _mapper.Map<ServiceEntity>(model);
 
-            newService.Id = Guid.NewGuid().ToString("N");
-            newService.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-            newService.CreatedTime = DateTimeOffset.UtcNow;
+                var imageHelper = new HairSalon.Core.Utils.Firebase.ImageHelper(_configuration);
+                string firebaseUrl = await imageHelper.Upload(model.ServiceImage);
+                newService.ServiceImage = firebaseUrl;
 
-            await _unitOfWork.GetRepository<ServiceEntity>().InsertAsync(newService);
-            await _unitOfWork.SaveAsync();
+                newService.Id = Guid.NewGuid().ToString("N");
+                newService.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                newService.CreatedTime = DateTimeOffset.UtcNow;
 
-            return "Service added successfully";
+                await _unitOfWork.GetRepository<ServiceEntity>().InsertAsync(newService);
+                await _unitOfWork.SaveAsync();
+
+                return "Service added successfully";
+            }
+            catch (BaseException.BadRequestException ex)
+            {
+                return ex.Message;
+            }
+            catch (Exception ex)
+            {
+                return "An error occurred while adding the service.";
+            }
         }
 
         //Update an existing service
         public async Task<string> UpdateServiceAsync(string id, UpdatedServiceModelView model)
         {
-            // Check if the provided id is null, empty, or whitespace
-            if (string.IsNullOrWhiteSpace(id))
+            try
             {
-                return "Please provide a valid Service ID.";
+                // Check if the provided id is null, empty, or whitespace
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    return "Please provide a valid Service ID.";
+                }
+
+                // Check for existing service
+                ServiceEntity existingService = await _unitOfWork.GetRepository<ServiceEntity>().Entities
+                    .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
+
+                if (existingService == null)
+                {
+                    return "The Service cannot be found or has been deleted!";
+                }
+
+                // Update the service fields only if they are not null
+                if (!string.IsNullOrWhiteSpace(model.Name))
+                {
+                    existingService.Name = model.Name;
+                }
+
+                if (!string.IsNullOrWhiteSpace(model.Type))
+                {
+                    existingService.Type = model.Type;
+                }
+
+                if (model.Price.HasValue)
+                {
+                    existingService.Price = model.Price.Value;
+                }
+
+                if (!string.IsNullOrWhiteSpace(model.Description))
+                {
+                    existingService.Description = model.Description;
+                }
+
+                if (!string.IsNullOrWhiteSpace(model.ShopId))
+                {
+                    existingService.ShopId = model.ShopId;
+                }
+
+                if (model.ServiceImage != null)
+                {
+                    var imageHelper = new HairSalon.Core.Utils.Firebase.ImageHelper(_configuration);
+                    string firebaseUrl = await imageHelper.Upload(model.ServiceImage);
+                    existingService.ServiceImage = firebaseUrl;
+                }
+
+                existingService.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                existingService.LastUpdatedTime = DateTimeOffset.UtcNow;
+
+                await _unitOfWork.GetRepository<ServiceEntity>().UpdateAsync(existingService);
+                await _unitOfWork.SaveAsync();
+
+                return "Service updated successfully";
             }
-
-            // Check for existing service
-            ServiceEntity existingService = await _unitOfWork.GetRepository<ServiceEntity>().Entities
-                .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
-
-            if (existingService == null)
+            catch (BaseException.BadRequestException ex)
             {
-                return "The Service cannot be found or has been deleted!";
+                return ex.Message;
             }
-
-            // Update the service fields only if they are not null
-            if (!string.IsNullOrWhiteSpace(model.Name))
+            catch (Exception ex)
             {
-                existingService.Name = model.Name;
+                return "An error occurred while updating the service.";
             }
-
-            if (!string.IsNullOrWhiteSpace(model.Type))
-            {
-                existingService.Type = model.Type;
-            }
-
-            if (model.Price.HasValue)
-            {
-                existingService.Price = model.Price.Value;
-            }
-
-            if (!string.IsNullOrWhiteSpace(model.Description))
-            {
-                existingService.Description = model.Description;
-            }
-
-            if (!string.IsNullOrWhiteSpace(model.ShopId))
-            {
-                existingService.ShopId = model.ShopId;
-            }
-
-            existingService.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-            existingService.LastUpdatedTime = DateTimeOffset.UtcNow;
-
-            await _unitOfWork.GetRepository<ServiceEntity>().UpdateAsync(existingService);
-            await _unitOfWork.SaveAsync();
-
-            return "Service updated successfully";
         }
 
         // Soft delete a service

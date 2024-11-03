@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HairSalon.Contract.Services
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HairSalon.ModelViews", "HairSalon.ModelViews\HairSalon.ModelViews.csproj", "{FBAA5C63-0D97-469D-A24D-212E029657C8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HairSalon.RazorPage", "HairSalon.RazorPage\HairSalon.RazorPage.csproj", "{81297B92-C607-4F36-A455-B3C47672E686}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{FBAA5C63-0D97-469D-A24D-212E029657C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBAA5C63-0D97-469D-A24D-212E029657C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBAA5C63-0D97-469D-A24D-212E029657C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81297B92-C607-4F36-A455-B3C47672E686}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81297B92-C607-4F36-A455-B3C47672E686}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81297B92-C607-4F36-A455-B3C47672E686}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81297B92-C607-4F36-A455-B3C47672E686}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -71,6 +77,7 @@ Global
 		{F04B3A27-AE75-4661-B298-CE69F6717865} = {71ABCFBD-2D13-41D2-A288-5B6B406C3C3B}
 		{C35A33FC-8BB0-4027-9094-4DAB48AC3513} = {71ABCFBD-2D13-41D2-A288-5B6B406C3C3B}
 		{FBAA5C63-0D97-469D-A24D-212E029657C8} = {764E208B-E22C-49BF-A0B3-9492AB64C892}
+		{81297B92-C607-4F36-A455-B3C47672E686} = {9691541A-5338-4A03-B235-FFDEC3B3C1FF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {44AD9DDA-1356-49FA-80E2-2BD31FFBCBA5}
