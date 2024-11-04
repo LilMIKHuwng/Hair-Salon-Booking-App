@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HairSalon.Contract.Services
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HairSalon.ModelViews", "HairSalon.ModelViews\HairSalon.ModelViews.csproj", "{FBAA5C63-0D97-469D-A24D-212E029657C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HairSalon.RazorPage", "HairSalon.RazorPage\HairSalon.RazorPage.csproj", "{81297B92-C607-4F36-A455-B3C47672E686}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HairSalon.RazorPage", "HairSalon.RazorPage\HairSalon.RazorPage.csproj", "{81297B92-C607-4F36-A455-B3C47672E686}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

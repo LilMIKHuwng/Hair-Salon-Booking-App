@@ -1,10 +1,29 @@
 ﻿using System.Reflection;
 using System.Text.Json.Serialization;
+using HairSalon.Contract.Repositories.Interface;
+using HairSalon.Contract.Repositories.SeedData;
+using HairSalon.Repositories.Context;
 using HairSalonBE.API;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
+using HairSalon.ModelViews.Message;
+using Microsoft.AspNetCore.Identity;
+using HairSalon.Repositories.Entity;
+using HairSalon.Services.SignalIR;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// var options = new JsonSerializerOptions
+// {
+//     ReferenceHandler = ReferenceHandler.Preserve,
+//     WriteIndented = true
+// };
+//
+// var json = JsonSerializer.Serialize(typeof(ServiceAppointment), options);
+
+// config appsettings by env
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -12,6 +31,10 @@ builder.Configuration
     .AddEnvironmentVariables();
 
 builder.Services.AddControllers();
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<IDictionary<string, UserRoomConnection>>(opt =>
+    new Dictionary<string, UserRoomConnection>());
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
@@ -46,6 +69,19 @@ builder.Services.AddSwaggerGen(option =>
         }
     });
 });
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.WithOrigins("http://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+
+
 builder.Services.AddConfig(builder.Configuration);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -56,13 +92,42 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 var app = builder.Build();
 
+//add configue for seed data
+/*using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<DatabaseContext>();
+        var unitOfWork = services.GetRequiredService<IUnitOfWork>();
+        var passwordHasher = services.GetRequiredService<IPasswordHasher<ApplicationUsers>>();
+        // Seed roles
+        await RoleSeeder.SeedRoles(unitOfWork);
+
+        //seed account admin
+        await RoleSeeder.SeedAdminUser(unitOfWork, passwordHasher);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding the database.");
+    }
+}*/
+
 // Configure the HTTP request pipeline.
 app.UseSwagger();
 app.UseSwaggerUI();
-
+// Enable CORS
+app.UseCors();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+// app.UseEndpoints(endpoint =>
+// {
+//     endpoint.MapHub<ChatHub>("/chat");
+// });
+app.MapHub<ChatHub>("/chat");
 
 app.MapControllers();
 

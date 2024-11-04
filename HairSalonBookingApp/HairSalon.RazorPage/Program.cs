@@ -1,3 +1,5 @@
+using HairSalonBE.API;
+
 namespace HairSalon.RazorPage
 {
 	public class Program
@@ -5,10 +7,12 @@ namespace HairSalon.RazorPage
 		public static void Main(string[] args)
 		{
 			var builder = WebApplication.CreateBuilder(args);
-
+			var configuration = builder.Configuration;
+			builder.Services.AddHttpContextAccessor();
 			// Add services to the container.
 			builder.Services.AddRazorPages();
-
+            builder.Services.AddConfig(builder.Configuration);
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 			var app = builder.Build();
 
 			// Configure the HTTP request pipeline.
@@ -26,9 +30,13 @@ namespace HairSalon.RazorPage
 
 			app.UseAuthorization();
 
-			app.MapRazorPages();
+            app.UseEndpoints(endpoints => {
+                endpoints.MapRazorPages();
+                endpoints.MapControllerRoute("default", "api/{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllers();
+            });
 
-			app.Run();
+            app.Run();
 		}
 	}
 }

@@ -61,7 +61,7 @@ namespace HairSalon.Services.Service
             // Check if the role already exists by querying the database for a role with the same name
             var existedRole = await _unitOfWork.GetRepository<ApplicationRoles>()
                 .Entities
-                .FirstOrDefaultAsync(role => role.Name.Equals(model.Name));
+                .FirstOrDefaultAsync(role => role.Name.Equals(model.Name) && !role.DeletedTime.HasValue);
 
             // If the role already exists, return a message indicating that
             if (existedRole != null)
@@ -174,6 +174,29 @@ namespace HairSalon.Services.Service
             return "Role successfully deleted";
         }
 
+        // Retrieve a role by its ID
+        public async Task<RoleModelView?> GetRoleByIdAsync(string id)
+        {
+            // Check if the provided Role ID is valid (non-empty and non-whitespace)
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return null; // Or you could throw an exception or return an error message
+            }
+
+            // Try to find the role by its ID, ensuring it hasn’t been marked as deleted
+            var roleEntity = await _unitOfWork.GetRepository<ApplicationRoles>().Entities
+                .FirstOrDefaultAsync(role => role.Id == Guid.Parse(id) && !role.DeletedTime.HasValue);
+
+            // If the role is not found, return null
+            if (roleEntity == null)
+            {
+                return null;
+            }
+
+            // Map the ApplicationRoles entity to a RoleModelView and return it
+            RoleModelView roleModelView = _mapper.Map<RoleModelView>(roleEntity);
+            return roleModelView;
+        }
     }
 }
 

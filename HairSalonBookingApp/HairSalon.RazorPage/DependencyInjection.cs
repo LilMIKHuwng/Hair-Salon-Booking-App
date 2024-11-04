@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using System.Linq;
 
 namespace HairSalonBE.API
 {
@@ -82,9 +81,7 @@ namespace HairSalonBE.API
                 .AddScoped<IFeedbackService, FeedbackService>()
                 .AddScoped<IVnPayService, VnPayService>()
                 .AddScoped<IComboService, ComboService>()
-                .AddScoped<IMessageService, MessageService>()
-                .AddSignalR();
-            ;
+                .AddScoped<IDashboardService, DashboardService>();
         }
 
         public static void ConfigJwt(this IServiceCollection services, IConfiguration configuration)

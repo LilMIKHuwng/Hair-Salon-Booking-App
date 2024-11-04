@@ -9,5 +9,7 @@ namespace HairSalon.Contract.Services.Interface
 		Task<string> AddRoleAsync(CreateRoleModelView model);
 		Task<string> UpdateRoleAsync(string id, UpdatedRoleModelView model);
 		Task<string> DeleteRoleAsync(string id);
-	}
+        Task<RoleModelView?> GetRoleByIdAsync(string id);
+
+    }
 }
