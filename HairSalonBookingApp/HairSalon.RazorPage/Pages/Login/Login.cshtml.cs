@@ -24,15 +24,13 @@ namespace HairSalon.RazorPage.Pages.Login
         [BindProperty]
         public LoginModelView LoginModelView { get; set; }
 
-        public string ErrorMessage { get; set; }
-
         public async Task<IActionResult> OnPostAsync()
         {
             ApplicationUsers account = await _appUserService.AuthenticateAsync(LoginModelView);
 
             if (account == null)
             {
-                ErrorMessage = "Invalid login attempt";
+                TempData["ErrorMessage"] = "Invalid login attempt";
                 return Page();
             }
 
@@ -40,7 +38,7 @@ namespace HairSalon.RazorPage.Pages.Login
 
             if (token == null)
             {
-                ErrorMessage = "Failed to retrieve token";
+                TempData["ErrorMessage"] = "Failed to retrieve token";
                 return Page();
             }
 
@@ -54,7 +52,7 @@ namespace HairSalon.RazorPage.Pages.Login
             }
             else
             {
-                ErrorMessage = "Failed to retrieve user roles";
+                TempData["ErrorMessage"] = "Failed to retrieve user roles";
                 return Page();
             }
 

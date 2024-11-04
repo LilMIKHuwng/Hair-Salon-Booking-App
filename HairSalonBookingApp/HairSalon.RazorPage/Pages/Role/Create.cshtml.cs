@@ -18,17 +18,9 @@ namespace HairSalon.RazorPage.Pages.Role
         [BindProperty]
         public CreateRoleModelView NewRole { get; set; }
 
-        // Property to store error messages
-        [TempData]
-        public string ErrorMessage { get; set; }
-
         // Property to store response or success messages
         [TempData]
         public string ResponseMessage { get; set; }
-
-        // Property to store denied access messages
-        [TempData]
-        public string DeniedMessage { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -36,16 +28,16 @@ namespace HairSalon.RazorPage.Pages.Role
             var userRolesJson = HttpContext.Session.GetString("UserRoles");
             if (userRolesJson == null)
             {
-                DeniedMessage = "You do not have permission to add a role.";
+                TempData["DeniedMessage"] = "You do not have permission to add a role.";
                 return Page();// Redirect to a different page with a denied message
             }
 
             var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
 
             // Check if the user has "Admin" or "Manager" roles
-            if (!userRoles.Any(role => role == "Admin" || role == "Manager"))
+            if (!userRoles.Any(role => role == "Admin"))
             {
-                DeniedMessage = "You do not have permission to add a role.";
+                TempData["DeniedMessage"] = "You do not have permission to add a role.";
                 return Page(); // Redirect to a different page with a denied message
             }
 
@@ -56,14 +48,16 @@ namespace HairSalon.RazorPage.Pages.Role
         {
             if (ModelState.IsValid)
             {
-                string response = await _roleService.AddRoleAsync(NewRole);
+                var userId = HttpContext.Session.GetString("UserId");
+
+                string response = await _roleService.AddRoleAsync(NewRole, userId);
                 if (response == "Role successfully added")
                 {
                     ResponseMessage = response;
                     return Redirect("/Role/Index"); // Redirect back to the role list page
                 }
                 // Set ErrorMessage if there’s an error
-                ErrorMessage = response;
+                TempData["ErrorMessage"] = response;
             }
             return Page(); // Return the same page in case of validation errors or other issues
         }
