@@ -262,5 +262,27 @@ namespace HairSalon.Services.Service
             // Return the principal (claims) extracted from the token.
             return principal;
         }
+
+        public async Task<List<string>> GetUserRoles(string token)
+        {
+            var roles = new List<string>();
+
+            try
+            {
+                var principal = GetPrincipalFromExpiredToken(token);
+                if (principal == null) throw new Exception("Unable to get principal from token.");
+
+                roles = principal.Claims
+                    .Where(c => c.Type == ClaimTypes.Role)
+                    .Select(c => c.Value)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while getting roles: {ex.Message}");
+            }
+
+            return roles;
+        }
     }
 }
