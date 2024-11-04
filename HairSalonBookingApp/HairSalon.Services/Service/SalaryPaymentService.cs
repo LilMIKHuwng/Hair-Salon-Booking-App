@@ -65,15 +65,20 @@ namespace HairSalon.Services.Service
 			return new BasePaginatedList<SalaryPaymentModelView>(salaryPaymentModelViews, totalCount, pageNumber, pageSize);
 		}
 
-		// Create a new SalaryPayment
-		public async Task<string> CreateSalaryPaymentAsync(CreateSalaryPaymentModelView model)
-		{
-			var paymentDate = model.PaymentDate;
-			var nextPaymentDate = new DateTime(paymentDate.Year, paymentDate.Month, 5).AddMonths(1);
-			var currentMonthPaymentStartDate = new DateTime(paymentDate.Year, paymentDate.Month, 5);
+        // Create a new SalaryPayment
+        public async Task<string> CreateSalaryPaymentAsync(CreateSalaryPaymentModelView model)
+        {
+            if (model.BaseSalary < 0 || model.DayOffPermitted < 0 || model.DayOffNoPermitted < 0)
+            {
+                return "Invalid input: Base salary and day-off values must be non-negative.";
+            }
 
-			// Get the current user's ID from the context
-			var userId = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            var paymentDate = model.PaymentDate;
+            var nextPaymentDate = new DateTime(paymentDate.Year, paymentDate.Month, 5).AddMonths(1);
+            var currentMonthPaymentStartDate = new DateTime(paymentDate.Year, paymentDate.Month, 5);
+
+            // Get the current user's ID from the context
+            var userId = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 
 			// Check if a salary payment already exists for the user in the current period
 			var existingPayment = await _unitOfWork.GetRepository<SalaryPayment>().Entities
@@ -87,12 +92,12 @@ namespace HairSalon.Services.Service
 				return "SThe salarypayment has been create in this month!";
 			}
 
-			// Create a new SalaryPayment
-			SalaryPayment newSalaryPayment = _mapper.Map<SalaryPayment>(model);
-			newSalaryPayment.Id = Guid.NewGuid().ToString("N");
-			newSalaryPayment.CreatedBy = userId;
-			newSalaryPayment.CreatedTime = DateTimeOffset.UtcNow;
-			newSalaryPayment.LastUpdatedTime = DateTimeOffset.UtcNow;
+            // Create a new SalaryPayment
+            SalaryPayment newSalaryPayment = _mapper.Map<SalaryPayment>(model);
+            newSalaryPayment.Id = Guid.NewGuid().ToString("N");
+            newSalaryPayment.CreatedBy = userId;
+            newSalaryPayment.CreatedTime = DateTimeOffset.UtcNow;
+            newSalaryPayment.LastUpdatedTime = DateTimeOffset.UtcNow;
 
 			// Define deduction rules using dictionaries
 			var permittedDeductionRules = new Dictionary<int, decimal>
@@ -122,50 +127,55 @@ namespace HairSalon.Services.Service
 				{ 2, 0.02m }  // 2 days off, bonus 2%
 			};
 
-			// Calculate deductions based on permitted days off
-			decimal deductionPercentage = permittedDeductionRules
-				.Where(rule => model.DayOffPermitted >= rule.Key)
-				.Select(rule => rule.Value)
-				.DefaultIfEmpty(0)
-				.Last();
+            // Calculate deductions based on permitted days off
+            decimal deductionPercentage = permittedDeductionRules
+                .Where(rule => model.DayOffPermitted >= rule.Key)
+                .Select(rule => rule.Value)
+                .DefaultIfEmpty(0)
+                .Last();
 
-			// Calculate deductions based on non-permitted days off
-			deductionPercentage += nonPermittedDeductionRules
-				.Where(rule => model.DayOffNoPermitted >= rule.Key)
-				.Select(rule => rule.Value)
-				.DefaultIfEmpty(0)
-				.Last();
+            // Calculate deductions based on non-permitted days off
+            deductionPercentage += nonPermittedDeductionRules
+                .Where(rule => model.DayOffNoPermitted >= rule.Key)
+                .Select(rule => rule.Value)
+                .DefaultIfEmpty(0)
+                .Last();
 
-			// Calculate total days off for bonus eligibility
-			int totalDaysOff = model.DayOffPermitted + model.DayOffNoPermitted;
+            // Calculate total days off for bonus eligibility
+            int totalDaysOff = model.DayOffPermitted + model.DayOffNoPermitted;
 
-			// Calculate bonus based on permitted days off only if total days off <= 3
-			decimal bonusPercentage = 0;
-			if (totalDaysOff < 3)
-			{
-				bonusPercentage = bonusRules
-					.Where(rule => model.DayOffPermitted == rule.Key)
-					.Select(rule => rule.Value)
-					.DefaultIfEmpty(0)
-					.First();
-			}
+            // Calculate bonus based on permitted days off only if total days off <= 3
+            decimal bonusPercentage = 0;
+            if (totalDaysOff < 3)
+            {
+                bonusPercentage = bonusRules
+                    .Where(rule => model.DayOffPermitted == rule.Key)
+                    .Select(rule => rule.Value)
+                    .DefaultIfEmpty(0)
+                    .First();
+            }
 
-			// Calculate the final Bonus and Deducted Salary
-			newSalaryPayment.DeductedSalary = model.BaseSalary * deductionPercentage;
-			newSalaryPayment.BonusSalary = model.BaseSalary * bonusPercentage;
+            // Calculate the final Bonus and Deducted Salary
+            newSalaryPayment.DeductedSalary = model.BaseSalary * deductionPercentage;
+            newSalaryPayment.BonusSalary = model.BaseSalary * bonusPercentage;
 
-			// Save the new salary payment
-			await _unitOfWork.GetRepository<SalaryPayment>().InsertAsync(newSalaryPayment);
-			await _unitOfWork.SaveAsync();
+            // Save the new salary payment
+            await _unitOfWork.GetRepository<SalaryPayment>().InsertAsync(newSalaryPayment);
+            await _unitOfWork.SaveAsync();
 
-			return "Add new salary payment successfully!";
-		}
+            return "Add new salary payment successfully!";
+        }
 
 
 		// Update an existing SalaryPayment
 		public async Task<string> UpdateSalaryPaymentAsync(string id, UpdatedSalaryPaymentModelView model)
 		{
-			if (string.IsNullOrWhiteSpace(id))
+            if (model.BaseSalary < 0 || model.DayOffPermitted < 0 || model.DayOffNoPermitted < 0)
+            {
+                return "Invalid input: Base salary and day-off values must be non-negative.";
+            }
+
+            if (string.IsNullOrWhiteSpace(id))
 			{
 				return "Please provide a valid Salary Payment ID.";
 			}
