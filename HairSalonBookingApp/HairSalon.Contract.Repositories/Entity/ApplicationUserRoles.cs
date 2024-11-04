@@ -1,4 +1,5 @@
 ﻿using HairSalon.Core.Utils;
+using HairSalon.Repositories.Entity;
 using Microsoft.AspNetCore.Identity;
 
 
@@ -12,6 +13,9 @@ namespace HairSalon.Contract.Repositories.Entity
         public DateTimeOffset CreatedTime { get; set; }
         public DateTimeOffset LastUpdatedTime { get; set; }
         public DateTimeOffset? DeletedTime { get; set; }
+        public virtual ApplicationRoles Role { get; set; }
+        public virtual ApplicationUsers User { get; set; }
+
         public ApplicationUserRoles()
         {
             CreatedTime = CoreHelper.SystemTimeNow;

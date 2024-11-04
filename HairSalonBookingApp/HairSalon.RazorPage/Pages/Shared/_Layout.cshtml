@@ -1,0 +1,51 @@
+﻿﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - HairSalon.RazorPage</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="d-flex" id="wrapper">
+        <!-- Add the #wrapper ID here -->
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper" class="bg-light border-right">
+            <div class="sidebar-heading">Hair Salon</div>
+            <div class="list-group list-group-flush">
+                <a href="~/Index" class="list-group-item list-group-item-action bg-light">Home</a>
+                <a href="~/Role/Index" class="list-group-item list-group-item-action bg-light">Role</a>
+                <a href="~/Service2" class="list-group-item list-group-item-action bg-light">Service 2</a>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper" class="w-100">
+            <!-- Navbar for mobile toggle -->
+            <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+                <button class="btn btn-primary" id="menu-toggle">☰ Menu</button>
+                <a class="navbar-brand ms-3" href="~/Index">Hair Salon</a>
+            </nav>
+
+            <main role="main" class="container pt-3">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        // Toggle sidebar visibility
+        $("#menu-toggle").click(function (e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
