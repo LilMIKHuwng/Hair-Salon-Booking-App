@@ -14,6 +14,7 @@ using HairSalon.ModelViews.ServiceAppointmentModelViews;
 using HairSalon.ModelViews.FeedBackModeViews;
 using HairSalon.ModelViews.FeedbackModeViews;
 using HairSalon.ModelViews.ComboModelViews;
+using HairSalon.ModelViews.Message;
 
 namespace HairSalon.Repositories.Mapper
 {
@@ -92,6 +93,12 @@ namespace HairSalon.Repositories.Mapper
             CreateMap<Combo, UpdateComboModelView>();
             CreateMap<CreateComboModelView, Combo>();
             CreateMap<UpdateComboModelView, Combo>();
+
+            CreateMap<MessageViewModel, Message>();
+            CreateMap<Message, MessageViewModel>();
+            CreateMap<Message, CreateMessageViewModel>();
+            CreateMap<CreateMessageViewModel, Message>();
+            
         }
     }
 }
