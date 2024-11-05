@@ -83,6 +83,7 @@ namespace HairSalonBE.API
                 .AddScoped<IVnPayService, VnPayService>()
                 .AddScoped<IComboService, ComboService>()
                 .AddScoped<IMessageService, MessageService>()
+                .AddScoped<IDashboardService, DashboardService>()
                 .AddSignalR();
             ;
         }
