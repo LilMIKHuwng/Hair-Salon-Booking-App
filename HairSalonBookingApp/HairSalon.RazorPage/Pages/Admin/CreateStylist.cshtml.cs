@@ -16,7 +16,7 @@ namespace HairSalon.RazorPage.Pages.Admin
         }
 
         [BindProperty]
-        public CreateAppUserModelView UserModel { get; set; }
+        public CreateAppStylistModelView UserModel { get; set; }
 
         [TempData]
         public string SuccessMessage { get; set; }
@@ -24,7 +24,7 @@ namespace HairSalon.RazorPage.Pages.Admin
         public void OnGet()
         {
             // Initialization or default values can be set here if needed
-            UserModel = new CreateAppUserModelView();
+            UserModel = new CreateAppStylistModelView();
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -34,7 +34,7 @@ namespace HairSalon.RazorPage.Pages.Admin
                 return Page();
             }
 
-            var result = await _appUserService.AddAppUserAsync(UserModel);
+            var result = await _appUserService.AddAppStylistAsync(UserModel);
 
             TempData["ErrorMessage"] = result; // Show error message if user creation failed
             return Page();

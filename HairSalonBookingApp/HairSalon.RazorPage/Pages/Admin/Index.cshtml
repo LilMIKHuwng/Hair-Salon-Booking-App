@@ -143,8 +143,8 @@ else
 {
     <h2>@ViewData["Title"]</h2>
 
-    <a asp-page="/Staff/Create" class="btn">Add New Staff</a>
-
+    <a asp-page="/Admin/CreateStylist" class="btn">Add New Staff</a>
+    <a asp-page="/Admin/ResetPassword" class="btn">Reset password</a>
     <h3>Staff List</h3>
 
     @if (TempData["ResponseMessage"] != null)
@@ -173,9 +173,10 @@ else
                         <td>@staff.Email</td>
                         <td>@staff.PhoneNumber</td>
                         <td>
-                            <a asp-page="/Staff/Update" asp-route-id="@staff.Id" class="btn-update">Update</a>
-                            <a asp-page="/Staff/Detail" asp-route-id="@staff.Id" class="btn-detail">Detail</a>
-                            <a asp-page="/Staff/Delete" asp-route-id="@staff.Id" class="btn-delete">Delete</a>
+                            @* <a asp-page="/Staff/Update" asp-route-id="@staff.Id" class="btn-update">Update</a> *@
+                            @* <a asp-page="/Staff/Detail" asp-route-id="@staff.Id" class="btn-detail">Detail</a> *@
+                            @* <a asp-page="/Staff/Delete" asp-route-id="@staff.Id" class="btn-delete">Delete</a> *@
+                            @* <a asp-page="/Staff/ResetPassword" asp-route-id="@staff.Id" class="btn-delete">Reset Password</a> *@
                         </td>
                     </tr>
                 }
