@@ -48,6 +48,7 @@ namespace HairSalon.RazorPage.Pages.Login
             if (userRoles != null)
             {
                 HttpContext.Session.SetString("UserId", account.Id.ToString());
+                HttpContext.Session.SetString("Username", account.UserName.ToString());
                 HttpContext.Session.SetString("UserRoles", JsonConvert.SerializeObject(userRoles));
             }
             else
