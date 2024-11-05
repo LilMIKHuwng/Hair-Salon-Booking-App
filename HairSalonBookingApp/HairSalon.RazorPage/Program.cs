@@ -13,7 +13,16 @@ namespace HairSalon.RazorPage
 			builder.Services.AddRazorPages();
             builder.Services.AddConfig(builder.Configuration);
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-			var app = builder.Build();
+
+            // Add session services
+            builder.Services.AddDistributedMemoryCache(); // Required for session management
+            builder.Services.AddSession(options => {
+                options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout
+                options.Cookie.HttpOnly = true; // Set cookie as HTTP only
+                options.Cookie.IsEssential = true; // Mark cookie as essential
+            });
+
+            var app = builder.Build();
 
 			// Configure the HTTP request pipeline.
 			if (!app.Environment.IsDevelopment())
@@ -26,14 +35,27 @@ namespace HairSalon.RazorPage
 			app.UseHttpsRedirection();
 			app.UseStaticFiles();
 
-			app.UseRouting();
+            // Use session middleware
+            app.UseSession();
+
+            app.UseRouting();
 
 			app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => {
+            
+
+            app.UseEndpoints(endpoints =>
+            {
                 endpoints.MapRazorPages();
                 endpoints.MapControllerRoute("default", "api/{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapControllers();
+
+                // Redirect root URL to the login page
+                endpoints.MapGet("/", context =>
+                {
+                    context.Response.Redirect("/Login/Login");
+                    return Task.CompletedTask;
+                });
             });
 
             app.Run();
