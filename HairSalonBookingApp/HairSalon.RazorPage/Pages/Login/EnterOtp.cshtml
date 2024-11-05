@@ -1,0 +1,73 @@
+﻿@page
+@model HairSalon.RazorPage.Pages.Login.EnterOtpModel
+@{
+    ViewData["Title"] = "Enter OTP";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - HairSalon.RazorPage</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .otp-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+            .otp-container h3 {
+                font-weight: bold;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+        .btn-primary {
+            width: 100%;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container otp-container">
+        <h3>Reset Your Password</h3>
+        <form method="post">
+            <div class="form-group mb-3">
+                <label for="email">Email</label>
+                <input id="email" name="OtpModel.Email" class="form-control" type="email" value="@TempData["Email"]" required />
+            </div>
+            <div class="form-group mb-3">
+                <label for="otpCode">OTP Code</label>
+                <input id="otpCode" name="OtpModel.OtpCode" class="form-control" type="text" placeholder="Enter the OTP code" required />
+            </div>
+            <div class="form-group mb-3">
+                <label for="newPassword">New Password</label>
+                <input id="newPassword" name="OtpModel.NewPassword" class="form-control" type="password" placeholder="Enter new password" required />
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Reset Password</button>
+        </form>
+
+        @if (TempData["ResponseMessage"] != null)
+        {
+            <div class="alert alert-info mt-3 text-center">@TempData["ResponseMessage"]</div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger mt-3 text-center">@TempData["ErrorMessage"]</div>
+        }
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
