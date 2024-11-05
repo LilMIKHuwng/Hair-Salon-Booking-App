@@ -67,7 +67,7 @@ namespace HairSalon.RazorPage.Pages.Role
             if (response == "Role successfully deleted")
             {
                 ResponseMessage = response;
-                return Redirect("/Roles");
+                return Redirect("/Role/Index");
             }
             // Set ErrorMessage if deletion fails
             TempData["ErrorMessage"] = response;

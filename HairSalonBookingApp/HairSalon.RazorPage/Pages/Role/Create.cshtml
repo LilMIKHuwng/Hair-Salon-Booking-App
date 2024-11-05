@@ -105,7 +105,7 @@
         <span asp-validation-for="NewRole.Name" class="text-danger"></span>
 
         <button type="submit">Add Role</button>
-        <a asp-page="/Roles" class="btn-cancel">Cancel</a>
+        <a asp-page="/Role/Index" class="btn-cancel">Cancel</a>
     </form>
 
     @if (TempData["ErrorMessage"] != null)

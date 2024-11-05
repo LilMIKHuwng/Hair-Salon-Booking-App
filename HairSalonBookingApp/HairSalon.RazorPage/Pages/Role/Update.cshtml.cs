@@ -73,7 +73,7 @@ namespace HairSalon.RazorPage.Pages.Role
             if (response == "Role successfully updated")
             {
                 ResponseMessage = response;
-                return RedirectToPage("/Roles");
+                return RedirectToPage("/Role/Index");
             }
 
             TempData["ErrorMessage"] = response;
