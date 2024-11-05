@@ -9,6 +9,7 @@ using HairSalon.Core.Base;
 using Microsoft.AspNetCore.Http;
 using Azure.Core;
 using Microsoft.Extensions.Configuration;
+using HairSalon.ModelViews.RoleModelViews;
 
 namespace HairSalon.Services.Service
 {
@@ -85,8 +86,8 @@ namespace HairSalon.Services.Service
                 newShop.LastUpdatedTime = DateTimeOffset.UtcNow;
 
 
-				var imageHelper = new HairSalon.Core.Utils.Firebase.ImageHelper(_configuration);
-				string firebaseUrl = await imageHelper.Upload(model.ShopImage);
+                var imageHelper = new HairSalon.Core.Utils.Firebase.ImageHelper(_configuration);
+                string firebaseUrl = await imageHelper.Upload(model.ShopImage);
                 newShop.ShopImage = firebaseUrl;
 
                 // Insert the new shop entity into the repository
@@ -149,20 +150,35 @@ namespace HairSalon.Services.Service
                 {
                     existingShop.OpenTime = (TimeSpan)model.OpenTime;
                 }
+
                 if (model.CloseTime != null && model.CloseTime != existingShop.CloseTime)
                 {
                     existingShop.CloseTime = (TimeSpan)model.CloseTime;
                 }
+
+                /*if (model.CloseTime != null)
+                {
+                    // Check that CloseTime is not earlier than OpenTime
+                    if (model.OpenTime != null && model.CloseTime < model.OpenTime)
+                    {
+                        return "Close time cannot be earlier than open time.";
+                    }
+                    if (model.CloseTime != existingShop.CloseTime)
+                    {
+                        existingShop.CloseTime = (TimeSpan)model.CloseTime;
+                    }
+                }*/
+
                 if (!string.IsNullOrWhiteSpace(model.Title) && model.Title != existingShop.Title)
                 {
                     existingShop.Title = model.Title;
                 }
                 if (model.ShopImage != null)
                 {
-					var imageHelper = new HairSalon.Core.Utils.Firebase.ImageHelper(_configuration);
-					string firebaseUrl = await imageHelper.Upload(model.ShopImage);
-					existingShop.ShopImage = firebaseUrl;
-				}
+                    var imageHelper = new HairSalon.Core.Utils.Firebase.ImageHelper(_configuration);
+                    string firebaseUrl = await imageHelper.Upload(model.ShopImage);
+                    existingShop.ShopImage = firebaseUrl;
+                }
 
                 // Update audit fields with the current user and timestamp
                 existingShop.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
@@ -220,7 +236,7 @@ namespace HairSalon.Services.Service
                 await _unitOfWork.SaveAsync();
 
                 // Return a success message
-                return "Deleted shop successfully!";
+                return "Deleted shop successfully";
             }
             catch (BaseException.BadRequestException ex)
             {
@@ -232,6 +248,30 @@ namespace HairSalon.Services.Service
                 // Return a generic error message if any other exception occurs
                 return "An error occurred while deleting the shop.";
             }
+        }
+
+        // Retrieve a shop by its ID
+        public async Task<ShopModelView?> GetShopByIdAsync(string id)
+        {
+            // Check if the provided Role ID is valid (non-empty and non-whitespace)
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return null; // Or you could throw an exception or return an error message
+            }
+
+            // Try to find the role by its ID, ensuring it hasn’t been marked as deleted
+            var shopEntity = await _unitOfWork.GetRepository<Shop>().Entities
+                .FirstOrDefaultAsync(shop => shop.Id == id && !shop.DeletedTime.HasValue);
+
+            // If the role is not found, return null
+            if (shopEntity == null)
+            {
+                return null;
+            }
+
+            // Map the ApplicationRoles entity to a RoleModelView and return it
+            ShopModelView shopModelView = _mapper.Map<ShopModelView>(shopEntity);
+            return shopModelView;
         }
     }
 }

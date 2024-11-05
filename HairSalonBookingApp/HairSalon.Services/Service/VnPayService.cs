@@ -84,9 +84,15 @@ namespace HairSalon.Services.Service
 
             // Fetch user ID from the context
             var userIdString = _httpContextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out Guid userId))
+            // Nếu mô hình có UserId, sử dụng nó; nếu không, sử dụng ID của người dùng hiện tại
+            Guid userId;
+            if (model.UserId.HasValue)
             {
-                return "User ID is not valid or not provided.";
+                userId = model.UserId.Value; // UserId do admin chỉ định
+            }
+            else if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out userId))
+            {
+                return "User ID không hợp lệ hoặc không được cung cấp.";
             }
 
             // Fetch user and user info

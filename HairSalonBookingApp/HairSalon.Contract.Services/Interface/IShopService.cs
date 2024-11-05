@@ -1,4 +1,5 @@
 ﻿using HairSalon.Core;
+using HairSalon.ModelViews.RoleModelViews;
 using HairSalon.ModelViews.ShopModelViews;
 
 namespace HairSalon.Contract.Services.Interface
@@ -9,6 +10,6 @@ namespace HairSalon.Contract.Services.Interface
         Task<string> AddShopAsync(CreateShopModelView model);
         Task<string> UpdateShopAsync(string id, UpdatedShopModelView model);
         Task<string> DeleteShopAsync(string id);
-
+        Task<ShopModelView?> GetShopByIdAsync(string id);
     }
 }
