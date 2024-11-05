@@ -17,9 +17,4 @@
     <ProjectReference Include="..\HairSalon.Services\HairSalon.Services.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="wwwroot\css\Dashboard\dashboard.css" />
-    <None Include="wwwroot\css\Dashboard\responsive.css" />
-  </ItemGroup>
-
 </Project>

@@ -1,5 +1,6 @@
 ﻿using HairSalon.Core;
 using HairSalon.ModelViews.ComboModelViews;
+using HairSalon.ModelViews.RoleModelViews;
 
 namespace HairSalon.Contract.Services.Interface
 {
@@ -9,5 +10,6 @@ namespace HairSalon.Contract.Services.Interface
         Task<BasePaginatedList<ComboModelView>> GetAllCombosAsync(int pageNumber, int pageSize, string? id, string? name);
         Task<string> UpdateComboAsync(string id, UpdateComboModelView model);
         Task<string> DeleteComboAsync(string id);
-	}
+        Task<ComboModelView?> GetComboByIdAsync(string id);
+    }
 }

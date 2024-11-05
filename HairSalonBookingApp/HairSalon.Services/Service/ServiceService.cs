@@ -199,5 +199,19 @@ namespace HairSalon.Services.Service
             return "Service deleted successfully";
         }
 
+        // Get a service by multiple IDs
+        public async Task<IEnumerable<ServiceModelView>> GetByIdsAsync(string[] ids)
+        {
+            if (ids == null || ids.Length == 0)
+            {
+                return Enumerable.Empty<ServiceModelView>();
+            }
+
+            var services = await _unitOfWork.GetRepository<ServiceEntity>().Entities
+                .Where(s => ids.Contains(s.Id) && !s.DeletedTime.HasValue) 
+                .ToListAsync();
+
+            return _mapper.Map<List<ServiceModelView>>(services);
+        }
     }
 }

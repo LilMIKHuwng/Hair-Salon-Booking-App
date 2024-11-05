@@ -1,23 +1,23 @@
 using HairSalon.Contract.Services.Interface;
-using HairSalon.ModelViews.RoleModelViews;
+using HairSalon.ModelViews.ComboModelViews;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace HairSalon.RazorPage.Pages.Role
+namespace HairSalon.RazorPage.Pages.Combo
 {
     public class DeleteModel : PageModel
     {
-        private readonly IRoleService _roleService;
+        private readonly IComboService _comboService;
 
-        public DeleteModel(IRoleService roleService)
+        public DeleteModel(IComboService comboService)
         {
-            _roleService = roleService;
+            _comboService = comboService;
         }
-
+        
         [BindProperty(SupportsGet = true)]
         public string Id { get; set; }
 
-        public RoleModelView Role { get; set; }
+        public ComboModelView Combo { get; set; }
 
         // Property to store error messages
         [TempData]
@@ -29,22 +29,22 @@ namespace HairSalon.RazorPage.Pages.Role
 
         public async Task<IActionResult> OnGetAsync()
         {
-            Role = await _roleService.GetRoleByIdAsync(Id);
-            if (Role == null)
+            Combo = await _comboService.GetComboByIdAsync(Id);
+            if (Combo == null)
             {
-                ErrorMessage = "Role Not Found";
-                return Redirect("/Roles"); // Redirect if role is not found
+                ErrorMessage = "Combo Not Found";
+                return Redirect("/Combos");
             }
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            string response = await _roleService.DeleteRoleAsync(Id);
-            if (response == "Role successfully deleted")
+			string response = await _comboService.DeleteComboAsync(Id);
+            if (response == "Deleted combo successfully!")
             {
                 ResponseMessage = response;
-                return Redirect("/Roles");
+                return Redirect("/Combos");
             }
             // Set ErrorMessage if deletion fails
             ErrorMessage = response;

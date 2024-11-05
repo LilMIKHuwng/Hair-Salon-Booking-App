@@ -35,7 +35,7 @@ namespace HairSalon.RazorPage.Pages.Role
             if (Role == null)
             {
                 ErrorMessage = "Role not found.";
-                return RedirectToPage("/Role/Index");
+                return RedirectToPage("/Roles");
             }
 
             // Initialize UpdatedRole with existing role name for display in the form
@@ -49,7 +49,7 @@ namespace HairSalon.RazorPage.Pages.Role
             if (response == "Role successfully updated")
             {
                 ResponseMessage = response;
-                return RedirectToPage("/Role/Index");
+                return RedirectToPage("/Roles");
             }
 
             ErrorMessage = response;

@@ -5,11 +5,9 @@ using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
 using HairSalon.Core.Base;
 using HairSalon.ModelViews.ComboModelViews;
-using HairSalon.ModelViews.FeedbackModeViews;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 
 namespace HairSalon.Services.Service
 {
@@ -115,50 +113,58 @@ namespace HairSalon.Services.Service
             }
             catch (Exception ex)
             {
-                return "An error occurred while adding the combo.";
+                return "An error occurred while adding the combo. " + ex.Message;
             }
 
         }
-
 
         //update combo
         public async Task<string> UpdateComboAsync(string id, UpdateComboModelView model)
         {
             try
             {
-                // Retrieve the combo by its ID
+                // Lấy thông tin combo từ ID
                 var existingCombo = await _unitOfWork.GetRepository<Combo>().GetByIdAsync(id);
                 if (existingCombo == null)
                 {
-                    return ("Combo not found.");
+                    return "Combo not found.";
                 }
 
+                // Cập nhật tên combo nếu có
                 if (!string.IsNullOrWhiteSpace(model.Name))
                 {
                     existingCombo.Name = model.Name;
                 }
 
-                // Update combo details (Name, etc.)
+                // Cập nhật thời gian và người dùng cuối cùng đã cập nhật
                 existingCombo.LastUpdatedTime = DateTimeOffset.UtcNow;
                 existingCombo.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 
-                // Handle update ServiceIds if any
+                // Xử lý cập nhật danh sách dịch vụ
                 if (model.ServiceIds != null && model.ServiceIds.Length > 0)
                 {
-                    var updateResult = await UpdateServiceAppointmentsAsync(existingCombo.Id, model.ServiceIds, existingCombo.TimeCombo, existingCombo.TotalPrice / 90 * 100);
-                    // Update the combo details
-                    existingCombo.TotalPrice = updateResult.TotalPrice * 0.9m;  // Discounted price
+                    var updateResult = await UpdateServiceAppointmentsAsync(
+                        existingCombo.Id,
+                        model.ServiceIds,
+                        existingCombo.TimeCombo,
+                        existingCombo.TotalPrice / 90 * 100
+                    );
+
+                    // Tính toán và áp dụng giá chiết khấu
+                    const decimal DiscountRate = 0.9m;
+                    existingCombo.TotalPrice = updateResult.TotalPrice * DiscountRate;
                     existingCombo.TimeCombo = updateResult.TimeCombo;
                 }
 
-                if(model.ComboImage != null)
+                // Tải lên ảnh combo nếu có
+                if (model.ComboImage != null)
                 {
                     var imageHelper = new HairSalon.Core.Utils.Firebase.ImageHelper(_configuration);
                     string firebaseUrl = await imageHelper.Upload(model.ComboImage);
                     existingCombo.ComboImage = firebaseUrl;
                 }
 
-                // Save changes to the database
+                // Lưu thay đổi vào cơ sở dữ liệu
                 await _unitOfWork.GetRepository<Combo>().UpdateAsync(existingCombo);
                 await _unitOfWork.SaveAsync();
 
@@ -166,54 +172,56 @@ namespace HairSalon.Services.Service
             }
             catch (BaseException.BadRequestException ex)
             {
+                // Lỗi yêu cầu sai từ người dùng (BadRequest)
                 return ex.Message;
             }
             catch (Exception ex)
             {
+                // Lỗi không xác định
                 return "An error occurred while updating the combo.";
             }
         }
 
         //Calculate TimeCombo and TotalPrice when Update
-		private async Task<(int TimeCombo, decimal TotalPrice)> UpdateServiceAppointmentsAsync(string comboId, string[] serviceIds, int currentTimeCombo, decimal currentTotalPrice)
-		{
-			var existingComboServices = await _unitOfWork.GetRepository<ComboServices>().Entities
-				.Where(sa => sa.ComboId == comboId && !sa.DeletedTime.HasValue).ToListAsync();
+        private async Task<(int TimeCombo, decimal TotalPrice)> UpdateServiceAppointmentsAsync(string comboId, string[] serviceIds, int currentTimeCombo, decimal currentTotalPrice)
+        {
+            var existingComboServices = await _unitOfWork.GetRepository<ComboServices>().Entities
+                .Where(sa => sa.ComboId == comboId && !sa.DeletedTime.HasValue).ToListAsync();
 
-			// Delete services that are no longer in the new list
-			var servicesToRemove = existingComboServices.Where(sa => !serviceIds.Contains(sa.ServiceId)).ToList();
-			foreach (var comboService in servicesToRemove)
-			{
-				comboService.DeletedTime = DateTimeOffset.UtcNow;
-				comboService.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-				var service = (await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>().GetByIdAsync(comboService.ServiceId));
-				currentTimeCombo -= service.TimeService;
-				currentTotalPrice -= service.Price;
-			}
+            // Delete services that are no longer in the new list
+            var servicesToRemove = existingComboServices.Where(sa => !serviceIds.Contains(sa.ServiceId)).ToList();
+            foreach (var comboService in servicesToRemove)
+            {
+                comboService.DeletedTime = DateTimeOffset.UtcNow;
+                comboService.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                var service = (await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>().GetByIdAsync(comboService.ServiceId));
+                currentTimeCombo -= service.TimeService;
+                currentTotalPrice -= service.Price;
+            }
 
-			// Add new serviceAppointment
-			var currentServiceIds = existingComboServices.Select(sa => sa.ServiceId).ToList();
-			var servicesToAdd = serviceIds.Where(s => !currentServiceIds.Contains(s)).ToList();
-			foreach (var serviceId in servicesToAdd)
-			{
-				var comboService = new ComboServices
-				{
-					ServiceId = serviceId,
-					ComboId = comboId,
-					LastUpdatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value
-				};
-				await _unitOfWork.GetRepository<ComboServices>().InsertAsync(comboService);
-				var service = (await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>().GetByIdAsync(serviceId));
-				currentTimeCombo += service.TimeService;
-				currentTotalPrice += service.Price;
-			}
+            // Add new serviceAppointment
+            var currentServiceIds = existingComboServices.Select(sa => sa.ServiceId).ToList();
+            var servicesToAdd = serviceIds.Where(s => !currentServiceIds.Contains(s)).ToList();
+            foreach (var serviceId in servicesToAdd)
+            {
+                var comboService = new ComboServices
+                {
+                    ServiceId = serviceId,
+                    ComboId = comboId,
+                    LastUpdatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value
+                };
+                await _unitOfWork.GetRepository<ComboServices>().InsertAsync(comboService);
+                var service = (await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>().GetByIdAsync(serviceId));
+                currentTimeCombo += service.TimeService;
+                currentTotalPrice += service.Price;
+            }
 
-			return (currentTimeCombo, currentTotalPrice);
-		}
+            return (currentTimeCombo, currentTotalPrice);
+        }
 
-		// Delete a Combo
-		public async Task<string> DeleteComboAsync(string id)
+        // Delete a Combo
+        public async Task<string> DeleteComboAsync(string id)
         {
 
             if (string.IsNullOrWhiteSpace(id))
@@ -253,39 +261,79 @@ namespace HairSalon.Services.Service
         // Get all Combos with pagination
         public async Task<BasePaginatedList<ComboModelView>> GetAllCombosAsync(int pageNumber, int pageSize, string? id = null, string? name = null)
         {
-            IQueryable<Combo> roleQuery = _unitOfWork.GetRepository<Combo>().Entities
+            // Start with the base query for combos that are not deleted
+            IQueryable<Combo> comboQuery = _unitOfWork.GetRepository<Combo>().Entities
                 .Where(p => !p.DeletedTime.HasValue);
 
-            // Apply filtering by userId if provided
+            // Filter by Combo ID if provided
             if (!string.IsNullOrEmpty(id))
             {
-                roleQuery = roleQuery.Where(u => u.Id.ToString() == id);
+                comboQuery = comboQuery.Where(u => u.Id.ToString() == id);
             }
 
+            // Filter by Combo name if provided
             if (!string.IsNullOrWhiteSpace(name))
             {
-                roleQuery = roleQuery.Where(s => s.Name.Contains(name));
+                comboQuery = comboQuery.Where(s => s.Name.Contains(name));
             }
 
             // Order by CreatedTime descending
-            roleQuery = roleQuery.OrderByDescending(s => s.CreatedTime);
+            comboQuery = comboQuery.OrderByDescending(s => s.CreatedTime);
 
             // Get total count
-            int totalCount = await roleQuery.CountAsync();
+            int totalCount = await comboQuery.CountAsync();
 
-            // Get paginated results
-            List<Combo> paginatedUsers = await roleQuery
+            // Get paginated Combo results
+            List<Combo> paginatedCombos = await comboQuery
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            // Map to ComboModelView
-            List<ComboModelView> comboModelView = _mapper.Map<List<ComboModelView>>(paginatedUsers);
+            // Retrieve ComboServices for each Combo
+            var comboIds = paginatedCombos.Select(c => c.Id).ToList();
+            var comboServices = await _unitOfWork.GetRepository<ComboServices>().Entities
+                .Where(cs => comboIds.Contains(cs.ComboId) && !cs.DeletedTime.HasValue)
+                .ToListAsync();
+
+            // Map Combo and ComboServices to ComboModelView
+            var comboModelViews = paginatedCombos.Select(combo =>
+            {
+                var model = _mapper.Map<ComboModelView>(combo);
+                model.ServiceIds = comboServices
+                                    .Where(cs => cs.ComboId == combo.Id)
+                                    .Select(cs => cs.ServiceId.ToString())
+                                    .ToArray();
+                return model;
+            }).ToList();
 
             // Return paginated list
-            return new BasePaginatedList<ComboModelView>(comboModelView, totalCount, pageNumber, pageSize);
+            return new BasePaginatedList<ComboModelView>(comboModelViews, totalCount, pageNumber, pageSize);
         }
 
-		
+		public async Task<ComboModelView?> GetComboByIdAsync(string id)
+		{
+			// Get the combo entity along with its services
+			var comboEntity = await _unitOfWork.GetRepository<Combo>().Entities
+									.Include(c => c.ComboServices) // Include the related ComboServices
+									.FirstOrDefaultAsync(combo => combo.Id.Equals(id) && !combo.DeletedTime.HasValue);
+
+			// If the combo is not found, return null
+			if (comboEntity == null)
+			{
+				return null;
+			}
+
+			// Map the Combo entity to ComboModelView
+			ComboModelView comboModelView = _mapper.Map<ComboModelView>(comboEntity);
+
+			// Retrieve ServiceIds from the related ComboServices
+			comboModelView.ServiceIds = comboEntity.ComboServices
+									 .Where(cs => !cs.DeletedTime.HasValue)
+									 .Select(cs => cs.ServiceId.ToString())
+									 .ToArray();
+
+			return comboModelView;
+		}
+
 	}
 }
