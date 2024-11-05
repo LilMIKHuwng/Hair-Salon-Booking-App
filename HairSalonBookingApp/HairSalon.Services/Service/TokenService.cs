@@ -10,6 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 namespace HairSalon.Services.Service
 {
@@ -189,7 +190,8 @@ namespace HairSalon.Services.Service
             #pragma warning restore CS8600 
 
             // Find the user by username (from the database)
-            var user = await _userManager.FindByNameAsync(username);
+            var user = await _unitOfWork.GetRepository<ApplicationUsers>().Entities.
+                FirstOrDefaultAsync(x => x.UserName == username);
             if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
             {
                 throw new Exception("Something went wrong with refresh"); 
@@ -220,7 +222,8 @@ namespace HairSalon.Services.Service
         public async Task<string> Revoke(string username)
         {
             // Look up the user by their username
-            var user = await _userManager.FindByNameAsync(username);
+            var user = await _unitOfWork.GetRepository<ApplicationUsers>().Entities.
+                FirstOrDefaultAsync(x => x.UserName == username);
 
             // If the user is not found, return null (indicating the revocation failed or the user does not exist)
             if (user == null) return null;

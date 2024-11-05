@@ -100,26 +100,35 @@
     }
 </style>
 
-<h2>@ViewData["Title"]</h2>
-
-<form method="post">
-    <!-- Hidden field for required Id -->
-    <input type="hidden" asp-for="Id" />
-    <div>
-        <label>Role ID:</label>
-        <p>@Model.Id</p> <!-- Display ID as non-editable text -->
-    </div>
-    <div>
-        <label asp-for="UpdatedRole.Name">Role Name</label>
-        <!-- Display Role.Name in the input -->
-        <input asp-for="UpdatedRole.Name" placeholder="Role Name" required />
-        <span asp-validation-for="UpdatedRole.Name" class="text-danger"></span>
-    </div>
-    <button type="submit">Save Changes</button>
-    <a asp-page="/Role/Index" class="btn-cancel">Cancel</a>
-</form>
-
-@if (TempData["ErrorMessage"] != null)
+@if (TempData["DeniedMessage"] != null)
 {
-    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    <div class="alert alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
 }
+else
+{
+    <h2>@ViewData["Title"]</h2>
+
+    <form method="post">
+        <!-- Hidden field for required Id -->
+        <input type="hidden" asp-for="Id" />
+        <div>
+            <label>Role ID:</label>
+            <p>@Model.Id</p> <!-- Display ID as non-editable text -->
+        </div>
+        <div>
+            <label asp-for="UpdatedRole.Name">Role Name</label>
+            <!-- Display Role.Name in the input -->
+            <input asp-for="UpdatedRole.Name" placeholder="Role Name" required />
+            <span asp-validation-for="UpdatedRole.Name" class="text-danger"></span>
+        </div>
+        <button type="submit">Save Changes</button>
+        <a asp-page="/Role/Index" class="btn-cancel">Cancel</a>
+    </form>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+}
+
+
