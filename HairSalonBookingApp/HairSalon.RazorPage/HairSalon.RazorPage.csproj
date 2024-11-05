@@ -22,4 +22,8 @@
     <None Include="wwwroot\css\Dashboard\responsive.css" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\image\" />
+  </ItemGroup>
+
 </Project>
