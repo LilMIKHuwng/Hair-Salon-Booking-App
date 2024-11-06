@@ -159,6 +159,15 @@
             width: 10%;
             text-align: center;
         }
+
+    /* Styling for Pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        gap: 10px;
+    }
 </style>
 
 <h2>@ViewData["Title"]</h2>
@@ -166,15 +175,12 @@
 <a asp-page="/Shop/Create" class="btn">Add New Shop</a>
 
 <h3>Shop List</h3>
-@if (TempData["ResponseMessage"] != null)
-{
-    <div class="alert alert-info mt-3 text-center">@TempData["ResponseMessage"]</div>
-}
 @if (TempData["ErrorMessage"] != null)
 {
     <div class="alert alert-danger mt-3 text-center">@TempData["ErrorMessage"]</div>
 }
-
+else
+{
 <table>
     <thead>
         <tr>
@@ -221,16 +227,8 @@
         <a asp-page="/Shop/Index" asp-route-pageNumber="@(Model.Shops.CurrentPage + 1)" class="btn">Next</a>
     }
 </div>
+}
 
-<style>
-    /* Styling for Pagination */
-    .pagination {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-top: 20px;
-        gap: 10px;
-    }
-</style>
+
 
 

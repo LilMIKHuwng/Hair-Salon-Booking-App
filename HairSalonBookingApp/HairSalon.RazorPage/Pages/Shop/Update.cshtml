@@ -111,7 +111,7 @@
 
 <h2>@ViewData["Title"]</h2>
 
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     <!-- Hidden field for required Id -->
     <input type="hidden" asp-for="Id" />
     <div>
@@ -161,14 +161,11 @@
         <span asp-validation-for="UpdatedShop.Title" class="text-danger"></span>
     </div>
 
-    @* Uncomment this section if you want to add image upload support *@
-    @*
     <div>
     <label asp-for="UpdatedShop.ShopImage">Shop Image</label>
     <input asp-for="UpdatedShop.ShopImage" type="file" accept="image/*" />
     <span asp-validation-for="UpdatedShop.ShopImage" class="text-danger"></span>
     </div>
-    *@
 
     <button type="submit">Save Changes</button>
     <a asp-page="/Role/Index" class="btn-cancel">Cancel</a>

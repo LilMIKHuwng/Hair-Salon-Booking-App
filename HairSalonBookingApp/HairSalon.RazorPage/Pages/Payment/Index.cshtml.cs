@@ -22,7 +22,7 @@ namespace HairSalon.RazorPage.Pages.Payment
 
         public async Task<IActionResult> OnGetAsync(int pageNumber = 1, int pageSize = 5, string? id = null, string? appointmentId = null, string? paymentMethod = null)
         {
-            /*var userRolesJson = HttpContext.Session.GetString("UserRoles");
+            var userRolesJson = HttpContext.Session.GetString("UserRoles");
 
             if (userRolesJson != null)
             {
@@ -39,7 +39,7 @@ namespace HairSalon.RazorPage.Pages.Payment
             {
                 TempData["ErrorMessage"] = "You do not have permission to view this page.";
                 return Page();
-            }*/
+            }
 
             // If authorized, retrieve paginated payments with filters
             Payment = await _paymentService.GetAllPaymentAsync(pageNumber, pageSize, id, appointmentId, paymentMethod);

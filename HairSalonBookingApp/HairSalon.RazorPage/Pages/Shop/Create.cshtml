@@ -125,7 +125,7 @@ else
 {
     <h2>Create New Shop</h2>
 
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         <div class="input-group">
             <input asp-for="NewShop.Name" placeholder="Shop Name" required />
             <span asp-validation-for="NewShop.Name" class="text-danger"></span>
