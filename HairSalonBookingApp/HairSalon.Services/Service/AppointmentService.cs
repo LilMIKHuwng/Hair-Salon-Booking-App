@@ -1,4 +1,5 @@
 using AutoMapper;
+using DocumentFormat.OpenXml.InkML;
 using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
@@ -596,5 +597,23 @@ namespace HairSalon.Services.Service
 
             return "success";
         }
+
+        public async Task<List<AppointmentModelView>> GetAppointmentsForDropdownAsync()
+        {
+            // L?y t?t c? appointments t? repository
+            var appointments = await _unitOfWork.GetRepository<Appointment>().Entities
+                .Where(a => !a.DeletedTime.HasValue) // Ch? l?y các appointment ch?a b? xóa
+                .ToListAsync();
+
+            if (appointments == null || !appointments.Any())
+            {
+                return new List<AppointmentModelView>();
+            }
+
+            // Chuy?n ??i sang AppointmentModelView
+            return _mapper.Map<List<AppointmentModelView>>(appointments);
+        }
+
+
     }
 }

@@ -11,5 +11,7 @@ namespace HairSalon.Contract.Services.Interface
         Task<string> DeleteAppointmentAsync(string id);
         Task<string> MarkCompleted(string id);
         Task<string> MarkConfirmed(string id);
+        Task<List<AppointmentModelView>> GetAppointmentsForDropdownAsync();
+
     }
 }

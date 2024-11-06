@@ -3,8 +3,11 @@ using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
+using HairSalon.ModelViews.AppointmentModelViews;
 using HairSalon.ModelViews.FeedbackModeViews;
 using HairSalon.ModelViews.FeedBackModeViews;
+using HairSalon.ModelViews.RoleModelViews;
+using HairSalon.Repositories.UOW;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -215,5 +218,41 @@ namespace HairSalon.Services.Service
 			// Return paginated list with total count
 			return new BasePaginatedList<ServiceFeedbackModelView>(feedbackModelViews, totalCount, pageNumber, pageSize);
 		}
-	}
+
+        // Retrieve a Feedback by its ID
+        public async Task<FeedBackModelView?> GetFeedBackByIdAsync(string id)
+        {
+            // Check if the provided Feedback ID is valid (non-empty and non-whitespace)
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return null; // Or you could throw an exception or return an error message
+            }
+
+            // Try to find the Feedback by its ID, ensuring it hasn’t been marked as deleted
+            var FeedbackEntity = await _unitOfWork.GetRepository<Feedback>().Entities
+                .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
+
+            // If the Feedback is not found, return null
+            if (FeedbackEntity == null)
+            {
+                return null;
+            }
+
+            // Map the Feedback entity to a RoleModelView and return it
+            FeedBackModelView FeedbackModelView = _mapper.Map<FeedBackModelView>(FeedbackEntity);
+            return FeedbackModelView;
+        }
+
+        public async Task<List<AppointmentModelView>> GetAppointmentsForDropdownAsync()
+        {
+            // Lấy danh sách Appointment đã được sử dụng để tạo feedback
+            var appointments = await _unitOfWork.GetRepository<Appointment>()
+                .Entities
+                .Where(a => a.Id.Any()) // Giả sử Feedbacks là danh sách feedback liên kết với Appointment
+                .ToListAsync();
+
+            // Ánh xạ sang AppointmentModelView nếu cần
+            return _mapper.Map<List<AppointmentModelView>>(appointments);
+        }
+    }
 }

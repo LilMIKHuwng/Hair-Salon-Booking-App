@@ -1,6 +1,8 @@
 ﻿using HairSalon.Core;
+using HairSalon.ModelViews.AppointmentModelViews;
 using HairSalon.ModelViews.FeedbackModeViews;
 using HairSalon.ModelViews.FeedBackModeViews;
+using HairSalon.ModelViews.RoleModelViews;
 
 namespace HairSalon.Contract.Services.Interface
 {
@@ -15,5 +17,8 @@ namespace HairSalon.Contract.Services.Interface
         Task<string> UpdateFeedbackAsync(string id, UpdatedFeedbackModelView model);
 
         Task<string> DeleteFeedbackpAsync(string id);
+        Task<FeedBackModelView?> GetFeedBackByIdAsync(string id);
+
+        Task<List<AppointmentModelView>> GetAppointmentsForDropdownAsync();
     }
 }
