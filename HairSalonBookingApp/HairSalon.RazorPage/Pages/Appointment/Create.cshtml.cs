@@ -45,9 +45,9 @@ namespace HairSalon.RazorPage.Pages.Appointment
             var userRolesJson = HttpContext.Session.GetString("UserRoles");
             if (userRolesJson == null)
             {
-                DeniedMessage = "You do not have permission to add a appointment.";
-                return Page();// Redirect to a different page with a denied message
-            }
+				TempData["ErrorMessage"] = "You do not have permission to add a appointment.";
+				return RedirectToPage("/Error");
+			}
 
             var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
 
@@ -59,7 +59,7 @@ namespace HairSalon.RazorPage.Pages.Appointment
             }
 
             //get list services, combos, stylists
-            Services = await _serviceService.GetAllServiceAsync();
+            Services = await _serviceService.GetAllServicesAsync();
             Combos = await _comboService.GetAllComboAsync();
             Stylists = await _appUserService.GetAllStylistAsync();
 
@@ -84,7 +84,7 @@ namespace HairSalon.RazorPage.Pages.Appointment
                     TempData["ErrorMessage"] = response;
 
                     // Retrieve services, combos, and stylists to display on the page
-                    Services = await _serviceService.GetAllServiceAsync();
+                    Services = await _serviceService.GetAllServicesAsync();
                     Combos = await _comboService.GetAllComboAsync();
                     Stylists = await _appUserService.GetAllStylistAsync();
                 }

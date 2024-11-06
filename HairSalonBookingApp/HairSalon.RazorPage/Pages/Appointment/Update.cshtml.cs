@@ -67,7 +67,7 @@ namespace HairSalon.RazorPage.Pages.Appointment
                 return RedirectToPage("/Appointment/Index");
             }
 
-            Services = await _serviceService.GetAllServiceAsync();
+            Services = await _serviceService.GetAllServicesAsync();
             Combos = await _comboService.GetAllComboAsync();
             Stylists = await _appUserService.GetAllStylistAsync();
             ComboAppointment = await _appointmentService.GetAllComboAppointment(Id);
@@ -96,7 +96,7 @@ namespace HairSalon.RazorPage.Pages.Appointment
             {
                 TempData["ErrorMessage"] = response;
 
-                Services = await _serviceService.GetAllServiceAsync();
+                Services = await _serviceService.GetAllServicesAsync();
                 Combos = await _comboService.GetAllComboAsync();
                 Stylists = await _appUserService.GetAllStylistAsync();
                 ComboAppointment = await _appointmentService.GetAllComboAppointment(Id);

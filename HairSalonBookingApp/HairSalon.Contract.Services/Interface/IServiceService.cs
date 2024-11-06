@@ -7,8 +7,6 @@ namespace HairSalon.Contract.Services.Interface
     {
         Task<BasePaginatedList<ServiceModelView>> GetAllServiceAsync(int pageNumber, int pageSize, string? id, string? name, string? type);
 
-        Task<List<ServiceModelView>> GetAllServiceAsync();
-
 		Task<string> AddServiceAsync(CreateServiceModelView model);
 
         Task<string> UpdateServiceAsync(string id, UpdatedServiceModelView model);
@@ -18,5 +16,8 @@ namespace HairSalon.Contract.Services.Interface
         Task<IEnumerable<ServiceModelView>> GetByIdsAsync(string[] ids);
 
 		Task<List<ServiceModelView>> GetAllServiceAsync();
+
+        Task<List<ServiceModelView>> GetAllServicesAsync();
+
 	}
 }

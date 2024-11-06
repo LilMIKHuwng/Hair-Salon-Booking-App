@@ -26,8 +26,14 @@ namespace HairSalon.RazorPage.Pages.Appointment
 
         public async Task<IActionResult> OnGetAsync()
         {
-            //Retrieve user roles from session
-            var userRolesJson = HttpContext.Session.GetString("UserRoles");
+			if (string.IsNullOrEmpty(Id))
+			{
+				TempData["ErrorMessage"] = "Invalid Appointment ID.";
+				return RedirectToPage("/Error");
+			}
+
+			//Retrieve user roles from session
+			var userRolesJson = HttpContext.Session.GetString("UserRoles");
 
             if (userRolesJson != null)
             {

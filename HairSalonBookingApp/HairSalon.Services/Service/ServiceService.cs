@@ -227,7 +227,7 @@ namespace HairSalon.Services.Service
             return _mapper.Map<List<ServiceModelView>>(services);
         }
 
-		public async Task<List<ServiceModelView>> GetAllServiceAsync()
+		public async Task<List<ServiceModelView>> GetAllServicesAsync()
 		{
 			// Try to find all services not deleted
 			var list = await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>().Entities
