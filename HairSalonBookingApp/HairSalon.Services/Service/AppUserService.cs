@@ -7,6 +7,7 @@ using HairSalon.Core.Base;
 using HairSalon.Core.Utils;
 using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalon.ModelViews.AuthModelViews;
+using HairSalon.ModelViews.ComboModelViews;
 using HairSalon.Repositories.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -618,7 +619,7 @@ namespace HairSalon.Services.Service
 
             if (appUser == null)
             {
-                return null; 
+                return null;
             }
 
             // Tạo DTO để trả về thông tin người dùng và thông tin từ UserInfo
@@ -628,14 +629,34 @@ namespace HairSalon.Services.Service
                 UserName = appUser.UserName,
                 Email = appUser.Email,
                 PhoneNumber = appUser.PhoneNumber,
-                FirstName = appUser.UserInfo?.Firstname, 
-                LastName = appUser.UserInfo?.Lastname,   
+                FirstName = appUser.UserInfo?.Firstname,
+                LastName = appUser.UserInfo?.Lastname,
                 BankAccount = appUser.UserInfo?.BankAccount,
                 E_Wallet = appUser.E_Wallet,
                 Point = (int)(appUser.UserInfo?.Point),
                 Roles = await _userManager.GetRolesAsync(appUser)
             };
             return userinfor;
+        }
+
+        public async Task<List<AppUserModelView>> GetAllStylistAsync()
+        {
+            // Try to find all stylists not deleted
+            var list = await _unitOfWork.GetRepository<ApplicationUsers>().Entities
+                .Where(a => !a.DeletedTime.HasValue)
+                .Where(u => u.UserRoles.Any(ur => ur.Role.Name == "Stylist"))
+                .ToListAsync();
+
+            // If list combos is not found, return null
+            if (list == null)
+            {
+                return null;
+            }
+
+            // Map the service entity to a ServiceModelView and return it
+            var listStylist = _mapper.Map<List<AppUserModelView>>(list);
+
+            return listStylist;
         }
     }
 }

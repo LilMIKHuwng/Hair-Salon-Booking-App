@@ -10,6 +10,8 @@ using HairSalon.Core.Base;
 using Microsoft.Extensions.Configuration;
 using HairSalon.Core.Utils;
 using HairSalon.Core.Utils.Firebase;
+using HairSalon.Contract.Repositories.Entity;
+using HairSalon.ModelViews.AppointmentModelViews;
 
 namespace HairSalon.Services.Service
 {
@@ -197,6 +199,26 @@ namespace HairSalon.Services.Service
             await _unitOfWork.GetRepository<ServiceEntity>().UpdateAsync(existingService);
             await _unitOfWork.SaveAsync();
             return "Service deleted successfully";
+        }
+
+        
+        public async Task<List<ServiceModelView>> GetAllServiceAsync()
+        {
+            // Try to find all services not deleted
+            var list = await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>().Entities
+                .Where(a => !a.DeletedTime.HasValue)
+                .ToListAsync();
+
+            // If the services is not found, return null
+            if (list == null)
+            {
+                return null;
+            }
+
+            // Map the service entity to a ServiceModelView and return it
+            var serviceModelViews = _mapper.Map<List<ServiceModelView>>(list);
+
+            return serviceModelViews;
         }
 
     }

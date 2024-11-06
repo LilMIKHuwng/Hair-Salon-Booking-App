@@ -19,7 +19,7 @@
                 Xác nhận Email
             </summary>
         </member>
-        <member name="M:HairSalonBE.API.Controllers.ApplicationUserController.GetAllApplicationUsers(System.String,System.Int32,System.Int32)">
+        <member name="M:HairSalonBE.API.Controllers.ApplicationUserController.GetAllApplicationUsers(System.String,System.String,System.Int32,System.Int32)">
             <summary>
                 Lấy tất cả người dùng
             </summary>

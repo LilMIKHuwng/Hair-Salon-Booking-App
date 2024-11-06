@@ -5,11 +5,10 @@ using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
 using HairSalon.Core.Base;
 using HairSalon.ModelViews.ComboModelViews;
-using HairSalon.ModelViews.FeedbackModeViews;
+using HairSalon.ModelViews.ServiceModelViews;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 
 namespace HairSalon.Services.Service
 {
@@ -286,6 +285,23 @@ namespace HairSalon.Services.Service
             return new BasePaginatedList<ComboModelView>(comboModelView, totalCount, pageNumber, pageSize);
         }
 
-		
-	}
+        public async Task<List<ComboModelView>> GetAllComboAsync()
+        {
+            // Try to find all combos not deleted
+            var list = await _unitOfWork.GetRepository<Combo>().Entities
+                .Where(a => !a.DeletedTime.HasValue)
+                .ToListAsync();
+
+            // If list combos is not found, return null
+            if (list == null)
+            {
+                return null;
+            }
+
+            // Map the service entity to a ServiceModelView and return it
+            var comboModelViews = _mapper.Map<List<ComboModelView>>(list);
+
+            return comboModelViews;
+        }
+    }
 }

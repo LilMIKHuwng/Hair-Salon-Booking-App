@@ -12,5 +12,7 @@ namespace HairSalon.Contract.Services.Interface
         Task<string> UpdateServiceAsync(string id, UpdatedServiceModelView model);
 
         Task<string> DeleteServiceAsync(string id);
+
+        Task<List<ServiceModelView>> GetAllServiceAsync();
     }
 }
