@@ -18,5 +18,6 @@ namespace HairSalon.Contract.Services.Interface
         Task<string> ResetPasswordAsync(ResetPasswordModelView model);
         Task<string> ResetPasswordAdminAsync(ResetPasswordAdminModelView model);
         Task<GetInforAppUserModelView> GetMyInforUsersAsync(string username);
+        Task<List<AppUserModelView>> GetAllStylistAsync();
     }
 }

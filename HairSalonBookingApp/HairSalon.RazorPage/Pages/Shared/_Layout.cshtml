@@ -7,6 +7,17 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
+<style>
+    .logout-link {
+        color: red;
+        font-weight: bold;
+    }
+
+        .logout-link:hover {
+            background-color: #ffe6e6; /* Light red background on hover */
+            color: darkred;
+        }
+</style>
 <body>
     <div class="d-flex" id="wrapper">
         <!-- Add the #wrapper ID here -->
@@ -15,9 +26,13 @@
             <div class="sidebar-heading">Hair Salon</div>
             <div class="list-group list-group-flush">
                 <a href="~/Index" class="list-group-item list-group-item-action bg-light">Home</a>
+                <a href="~/Admin/Profile" class="list-group-item list-group-item-action bg-light">Profile</a>
                 <a href="~/Role/Index" class="list-group-item list-group-item-action bg-light">Role</a>
                 <a href="~/SalaryPayments/Index" class="list-group-item list-group-item-action bg-light">SalaryPayments</a>
                 <a href="~/Service2" class="list-group-item list-group-item-action bg-light">Service 2</a>
+                <a href="~/Appointment/Index" class="list-group-item list-group-item-action bg-light">Appointment</a>
+                <a href="~/Combos" class="list-group-item list-group-item-action bg-light">Combo</a>
+                <a href="~/Login/Logout" class="list-group-item list-group-item-action bg-light logout-link">Logout</a> <!-- Logout link added here -->
             </div>
         </div>
 

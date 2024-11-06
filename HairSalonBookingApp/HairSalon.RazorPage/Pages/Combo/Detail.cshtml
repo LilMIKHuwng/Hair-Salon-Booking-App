@@ -1,0 +1,148 @@
+﻿@page
+@model HairSalon.RazorPage.Pages.Combo.DetailModel
+@{
+	ViewData["Title"] = "Combo Details";
+}
+
+<style>
+	h2 {
+		color: #3f51b5;
+		border-bottom: 2px solid #3f51b5;
+		padding-bottom: 10px;
+		margin-bottom: 20px;
+	}
+
+	/* Details Container Styling */
+	.details-container {
+		background-color: #fff;
+		padding: 20px;
+		border-radius: 8px;
+		box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+		max-width: 500px;
+		margin: 0 auto 20px;
+	}
+
+		.details-container p {
+			font-size: 16px;
+			line-height: 1.6;
+		}
+
+			.details-container p strong {
+				color: #3f51b5;
+			}
+
+	/* Button Styling */
+	.btn-container {
+		display: flex;
+		gap: 10px;
+		justify-content: center;
+	}
+
+	.btn {
+		padding: 10px 20px;
+		color: #ffffff;
+		background-color: #3f51b5;
+		border-radius: 4px;
+		text-decoration: none;
+		font-size: 14px;
+		transition: background-color 0.3s ease;
+		display: inline-block;
+		text-align: center;
+	}
+
+		.btn:hover {
+			background-color: #2c3e91;
+		}
+
+	/* Lightbox Styling */
+	.lightbox {
+		display: none;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 0, 0, 0.8);
+		align-items: center;
+		justify-content: center;
+		z-index: 1000;
+	}
+
+		.lightbox img {
+			max-width: 80%;
+			max-height: 80%;
+			border-radius: 8px;
+			margin-left: 12%;
+		}
+
+		.lightbox:target {
+			display: flex;
+		}
+
+	/* Services List Styling */
+	.services-container {
+		margin-top: 20px;
+	}
+
+		.services-container ul {
+			list-style-type: none;
+			padding: 0;
+		}
+
+		.services-container li {
+			padding: 10px;
+			border: 1px solid #3f51b5;
+			border-radius: 4px;
+			margin-bottom: 10px;
+			background-color: #f9f9f9;
+		}
+</style>
+
+@if (TempData["DeniedMessage"] != null)
+{
+	<div class="alert alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
+}
+else
+{
+	<h2>@ViewData["Title"]</h2>
+
+	<div class="details-container">
+		<p><strong>Combo ID: </strong> @Model.ComboDetail.Id</p>
+		<p><strong>Combo Name: </strong> @Model.ComboDetail.Name</p>
+		<p><strong>Total Price: </strong> @Model.ComboDetail.TotalPrice VND</p>
+		<p><strong>Time Combo: </strong> @Model.ComboDetail.TimeCombo minutes</p>
+		<p><strong>Combo Image:</strong></p>
+		<a href="#lightbox">
+			<img src="@Model.ComboDetail.ComboImage" alt="@Model.ComboDetail.Name" style="width:100px;height:auto;" />
+		</a>
+		<p><strong>Combo Services:</strong></p>
+		<div class="services-container">
+			<ul>
+				@if (Model.SelectedServices != null && Model.SelectedServices.Any())
+				{
+					foreach (var service in Model.SelectedServices)
+					{
+						<li>@service.Name - @service.TimeService minutes</li>
+					}
+				}
+				else
+				{
+					<li>No services available for this combo.</li>
+				}
+			</ul>
+		</div>
+
+	</div>
+
+	<div id="lightbox" class="lightbox">
+		<a href="#">
+			<img src="@Model.ComboDetail.ComboImage" alt="@Model.ComboDetail.Name" />
+		</a>
+	</div>
+
+
+	<div class="btn-container">
+		<a asp-page="/Combo/Update" asp-route-id="@Model.ComboDetail.Id" class="btn">Update Combo</a>
+		<a asp-page="/Combo/Index" class="btn">Back to Combo List</a>
+	</div>
+}

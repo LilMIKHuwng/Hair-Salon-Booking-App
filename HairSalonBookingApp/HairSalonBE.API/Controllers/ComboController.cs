@@ -25,7 +25,7 @@ namespace HairSalonBE.API.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateCombo([FromQuery] CreateComboModelView model)
         {
-            var result = await _comboService.CreateComboAsync(model);
+            var result = await _comboService.CreateComboAsync(model, null);
 
             return Ok(result);
         }
@@ -46,7 +46,7 @@ namespace HairSalonBE.API.Controllers
         [HttpPut("update/{id}")]
         public async Task<ActionResult<string>> UpdateCombo(string id, [FromQuery] UpdateComboModelView model)
         {
-            var result = await _comboService.UpdateComboAsync(id, model);
+            var result = await _comboService.UpdateComboAsync(id, model, null);
             return Ok(result);
         }
 
@@ -56,7 +56,7 @@ namespace HairSalonBE.API.Controllers
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteCombo(string id)
         {
-            var result = await _comboService.DeleteComboAsync(id);
+            var result = await _comboService.DeleteComboAsync(id, null);
             return Ok(result);
         }
 	}

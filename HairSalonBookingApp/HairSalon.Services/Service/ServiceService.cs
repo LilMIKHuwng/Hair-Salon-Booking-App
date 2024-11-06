@@ -66,8 +66,21 @@ namespace HairSalon.Services.Service
             return new BasePaginatedList<ServiceModelView>(serviceModelViews, totalCount, pageNumber, pageSize);
         }
 
-        // Add a new service
-        public async Task<string> AddServiceAsync(CreateServiceModelView model)
+		//Get all without pagination
+		public async Task<List<ServiceModelView>> GetAllServiceAsync()
+        {
+			List<ServiceEntity> serviceList = _unitOfWork.GetRepository<ServiceEntity>().Entities
+				.Where(p => !p.DeletedTime.HasValue)
+				.OrderByDescending(s => s.CreatedTime)
+                .ToList();
+
+			List<ServiceModelView> serviceModelViews = _mapper.Map<List<ServiceModelView>>(serviceList);
+
+			return serviceModelViews;
+		}
+
+		// Add a new service
+		public async Task<string> AddServiceAsync(CreateServiceModelView model)
         {
             try
             {
@@ -199,5 +212,38 @@ namespace HairSalon.Services.Service
             return "Service deleted successfully";
         }
 
-    }
+        // Get a service by multiple IDs
+        public async Task<IEnumerable<ServiceModelView>> GetByIdsAsync(string[] ids)
+        {
+            if (ids == null || ids.Length == 0)
+            {
+                return Enumerable.Empty<ServiceModelView>();
+            }
+
+            var services = await _unitOfWork.GetRepository<ServiceEntity>().Entities
+                .Where(s => ids.Contains(s.Id) && !s.DeletedTime.HasValue)
+                .ToListAsync();
+
+            return _mapper.Map<List<ServiceModelView>>(services);
+        }
+
+		public async Task<List<ServiceModelView>> GetAllServicesAsync()
+		{
+			// Try to find all services not deleted
+			var list = await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>().Entities
+				.Where(a => !a.DeletedTime.HasValue)
+				.ToListAsync();
+
+			// If the services is not found, return null
+			if (list == null)
+			{
+				return null;
+			}
+
+			// Map the service entity to a ServiceModelView and return it
+			var serviceModelViews = _mapper.Map<List<ServiceModelView>>(list);
+
+			return serviceModelViews;
+		}
+	}
 }
