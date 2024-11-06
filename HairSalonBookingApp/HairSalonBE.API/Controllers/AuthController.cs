@@ -63,7 +63,7 @@ namespace HairSalonBE.API.Controllers
         public async Task<IActionResult> Logout(string username)
         {
             var result = await _tokenService.Revoke(username);
-            if (result != null)
+            if (result == null)
             {
                 return BadRequest("Can't find username");
             }

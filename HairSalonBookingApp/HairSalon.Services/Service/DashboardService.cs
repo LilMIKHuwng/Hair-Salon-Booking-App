@@ -95,7 +95,7 @@ namespace HairSalon.Services.Service
             {
                 return isStartPeriod
                     ? new DateTime(year, 1, 1) // Start of the given year
-                    : new DateTime(year, 12, 31, 23, 59, 59); // End of the given year
+        : new DateTime(year, 12, 31, 23, 59, 59); // End of the given year
             }
             else if (dateStr.Length == 7 && DateTime.TryParseExact(dateStr, "yyyy-MM", null, System.Globalization.DateTimeStyles.None, out DateTime month))
             {
@@ -200,13 +200,13 @@ namespace HairSalon.Services.Service
 
         public async Task<BasePaginatedList<StatisticalComboModelView>> GetStatisticalCombosAsync(int pageNumber, int pageSize, int? month, int? year)
         {
-            // Check if only month is provided without year
+            // Return an empty list if month is provided without year
             if (month.HasValue && !year.HasValue)
             {
                 return new BasePaginatedList<StatisticalComboModelView>(new List<StatisticalComboModelView>(), 0, pageNumber, pageSize);
             }
 
-            // Filter appointments based on month and year, including only valid (non-deleted) appointments
+            // Filter appointments based on year and month, including only valid (non-deleted) appointments
             IQueryable<Appointment> appointmentQuery = _unitOfWork.GetRepository<Appointment>().Entities
                 .Where(a => !a.DeletedTime.HasValue);
 
@@ -222,70 +222,80 @@ namespace HairSalon.Services.Service
                 appointmentQuery = appointmentQuery.Where(a => a.AppointmentDate.Month == month.Value);
             }
 
-            // Get the list of ComboAppointments related to filtered appointments
-            var relatedComboIds = await _unitOfWork.GetRepository<ComboAppointment>().Entities
+            // Query ComboAppointments with the filtered Appointment IDs
+            var comboUsageQuery = _unitOfWork.GetRepository<ComboAppointment>().Entities
                 .Where(ca => appointmentQuery.Select(a => a.Id).Contains(ca.AppointmentId))
-                .Select(ca => ca.ComboId)
-                .ToListAsync();
-
-            // Filter Combos based on related ComboAppointment IDs
-            IQueryable<Combo> comboQuery = _unitOfWork.GetRepository<Combo>().Entities
-                .Where(c => !c.DeletedTime.HasValue && relatedComboIds.Contains(c.Id));
-
-            // Group by Combo name and calculate the total selections
-            var comboStatistics = await comboQuery
-                .GroupBy(c => c.Name)
+                .GroupBy(ca => ca.Combo.Name) // Group by Combo Name
                 .Select(group => new StatisticalComboModelView
                 {
                     Name = group.Key,
-                    TotalCombo = group.Count()
+                    TotalCombo = group.Count() // Count each Combo's usage across appointments
                 })
-                .OrderByDescending(c => c.TotalCombo) // Sort by the total selections in descending order
-                .Skip((pageNumber - 1) * pageSize) // Apply pagination
+                .OrderByDescending(c => c.TotalCombo); // Sort by usage count in descending order
+
+            // Get total count before pagination
+            int totalCount = await comboUsageQuery.CountAsync();
+
+            // Retrieve paginated results
+            var paginatedComboUsage = await comboUsageQuery
+                .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            // Get total count before pagination
-            int totalCount = await comboQuery.CountAsync();
-
             // Return paginated list with total count
-            return new BasePaginatedList<StatisticalComboModelView>(comboStatistics, totalCount, pageNumber, pageSize);
+            return new BasePaginatedList<StatisticalComboModelView>(paginatedComboUsage, totalCount, pageNumber, pageSize);
         }
 
+
+
         // Get number of each service per month
-        public async Task<BasePaginatedList<StatisticalServiceModelView>> MonthlyServiceStatistics(int pageNumber, int pageSize, int? year, int? month)
+        public async Task<BasePaginatedList<StatisticalServiceModelView>> MonthlyServiceStatistics(int pageNumber, int pageSize, int? month, int? year)
         {
+            // Check if only month is provided without year
             if (month.HasValue && !year.HasValue)
             {
                 return new BasePaginatedList<StatisticalServiceModelView>(new List<StatisticalServiceModelView>(), 0, pageNumber, pageSize);
             }
 
-            // Query the ServiceAppointment table to retrieve appointment and service information
-            var serviceUsageQuery = _unitOfWork.GetRepository<ServiceAppointment>().Entities
-                .Include(sa => sa.Service)
-                .Include(sa => sa.Appointment)
-                .Where(sa => sa.Appointment.AppointmentDate.Year == year &&
-                             (!month.HasValue || sa.Appointment.AppointmentDate.Month == month) &&
-                             !sa.DeletedTime.HasValue) // Filter by year and month
-                .GroupBy(sa => sa.Service.Name) // Group by Service Name 
+            // Filter ServiceAppointments based on year and month, including only valid (non-deleted) appointments
+            IQueryable<Appointment> serviceUsageQuery = _unitOfWork.GetRepository<Appointment>().Entities
+                .Where(sa => !sa.DeletedTime.HasValue && !sa.DeletedTime.HasValue);
+
+            // Apply year filter if provided
+            if (year.HasValue)
+            {
+                serviceUsageQuery = serviceUsageQuery.Where(sa => sa.AppointmentDate.Year == year.Value);
+            }
+
+            // Apply month filter only if both month and year are provided
+            if (month.HasValue && year.HasValue)
+            {
+                serviceUsageQuery = serviceUsageQuery.Where(sa => sa.AppointmentDate.Month == month.Value);
+            }
+
+            // Query ComboAppointments with the filtered Appointment IDs
+            var serviceUsageQuerys = _unitOfWork.GetRepository<ServiceAppointment>().Entities
+                .Where(ca => serviceUsageQuery.Select(a => a.Id).Contains(ca.AppointmentId))
+                .GroupBy(ca => ca.Service.Name) // Group by Combo Name
                 .Select(group => new StatisticalServiceModelView
                 {
                     ServiceName = group.Key,
-                    UsageCount = group.Count()
+                    UsageCount = group.Count() // Count each Combo's usage across appointments
                 })
-                .OrderByDescending(x => x.UsageCount);
+                .OrderByDescending(c => c.UsageCount); // Sort by usage count in descending order
 
-            // Calculate the total number of services used
-            int totalCount = await serviceUsageQuery.CountAsync();
+            // Get total count before pagination
+            int totalCount = await serviceUsageQuerys.CountAsync();
 
-            // Retrieve paginated data
-            var paginatedServiceUsage = await serviceUsageQuery
+            // Retrieve paginated results
+            var paginatedComboUsage = await serviceUsageQuerys
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            // Return the paginated list
-            return new BasePaginatedList<StatisticalServiceModelView>(paginatedServiceUsage, totalCount, pageNumber, pageSize);
+            // Return paginated list with total count
+            return new BasePaginatedList<StatisticalServiceModelView>(paginatedComboUsage, totalCount, pageNumber, pageSize);
         }
+
     }
 }

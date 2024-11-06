@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\css\Dashboard\**" />
+    <Content Remove="wwwroot\css\Dashboard\**" />
+    <EmbeddedResource Remove="wwwroot\css\Dashboard\**" />
+    <None Remove="wwwroot\css\Dashboard\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
   </ItemGroup>
 
@@ -18,8 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\css\Dashboard\dashboard.css" />
-    <None Include="wwwroot\css\Dashboard\responsive.css" />
+    <Folder Include="wwwroot\image\" />
   </ItemGroup>
 
 </Project>

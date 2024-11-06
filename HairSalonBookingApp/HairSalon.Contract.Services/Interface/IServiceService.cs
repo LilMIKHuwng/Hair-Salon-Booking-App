@@ -7,12 +7,16 @@ namespace HairSalon.Contract.Services.Interface
     {
         Task<BasePaginatedList<ServiceModelView>> GetAllServiceAsync(int pageNumber, int pageSize, string? id, string? name, string? type);
 
-        Task<string> AddServiceAsync(CreateServiceModelView model);
+        Task<List<ServiceModelView>> GetAllServiceAsync();
+
+		Task<string> AddServiceAsync(CreateServiceModelView model);
 
         Task<string> UpdateServiceAsync(string id, UpdatedServiceModelView model);
 
         Task<string> DeleteServiceAsync(string id);
 
-        Task<List<ServiceModelView>> GetAllServiceAsync();
-    }
+        Task<IEnumerable<ServiceModelView>> GetByIdsAsync(string[] ids);
+
+		Task<List<ServiceModelView>> GetAllServiceAsync();
+	}
 }

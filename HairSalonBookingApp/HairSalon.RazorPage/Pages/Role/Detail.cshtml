@@ -5,15 +5,6 @@
 }
 
 <style>
-    /* General Page Styling */
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f5f5f5;
-        color: #333;
-        margin: 0;
-        padding: 20px;
-    }
-
     h2 {
         color: #3f51b5;
         border-bottom: 2px solid #3f51b5;
@@ -64,15 +55,24 @@
     }
 </style>
 
-<h2>@ViewData["Title"]</h2>
+@if (TempData["DeniedMessage"] != null)
+{
+    <div class="alert alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
+}
+else
+{
+    <h2>@ViewData["Title"]</h2>
 
-<div class="details-container">
-    <p><strong>Role ID:</strong> @Model.RoleDetail.Id</p>
-    <p><strong>Role Name:</strong> @Model.RoleDetail.Name</p>
-    <!-- Include other fields if needed -->
-</div>
+    <div class="details-container">
+        <p><strong>Role ID:</strong> @Model.RoleDetail.Id</p>
+        <p><strong>Role Name:</strong> @Model.RoleDetail.Name</p>
+        <!-- Include other fields if needed -->
+    </div>
 
-<div class="btn-container">
-    <a asp-page="/Role/Update" asp-route-id="@Model.RoleDetail.Id" class="btn">Update Role</a>
-    <a asp-page="/Role/Index" class="btn">Back to Role List</a>  
-</div>
+    <div class="btn-container">
+        <a asp-page="/Role/Update" asp-route-id="@Model.RoleDetail.Id" class="btn">Update Role</a>
+        <a asp-page="/Role/Index" class="btn">Back to Role List</a>
+    </div>
+}
+
+
