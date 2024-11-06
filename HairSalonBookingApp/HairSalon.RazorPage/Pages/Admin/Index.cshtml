@@ -173,9 +173,9 @@ else
                         <td>@staff.Email</td>
                         <td>@staff.PhoneNumber</td>
                         <td>
-                            @* <a asp-page="/Staff/Update" asp-route-id="@staff.Id" class="btn-update">Update</a> *@
-                            @* <a asp-page="/Staff/Detail" asp-route-id="@staff.Id" class="btn-detail">Detail</a> *@
-                            @* <a asp-page="/Staff/Delete" asp-route-id="@staff.Id" class="btn-delete">Delete</a> *@
+                            <a asp-page="/Admin/Update" asp-route-id="@staff.Id" class="btn-update">Update</a>
+                            <a asp-page="/Admin/Detail" asp-route-id="@staff.Id" class="btn-detail">Detail</a>
+                            <a asp-page="/Admin/Delete" asp-route-id="@staff.Id" class="btn-delete">Delete</a>
                             @* <a asp-page="/Staff/ResetPassword" asp-route-id="@staff.Id" class="btn-delete">Reset Password</a> *@
                         </td>
                     </tr>
@@ -187,14 +187,14 @@ else
         <div class="pagination">
             @if (Model.StaffList.HasPreviousPage)
             {
-                <a asp-page="/Staff/Index" asp-route-pageNumber="@(Model.StaffList.CurrentPage - 1)" class="btn">Previous</a>
+                <a asp-page="/Admin/Index" asp-route-pageNumber="@(Model.StaffList.CurrentPage - 1)" class="btn">Previous</a>
             }
 
             <span>Page @Model.StaffList.CurrentPage of @Model.StaffList.TotalPages</span>
 
             @if (Model.StaffList.HasNextPage)
             {
-                <a asp-page="/Staff/Index" asp-route-pageNumber="@(Model.StaffList.CurrentPage + 1)" class="btn">Next</a>
+                <a asp-page="/Admin/Index" asp-route-pageNumber="@(Model.StaffList.CurrentPage + 1)" class="btn">Next</a>
             }
         </div>
     }

@@ -22,17 +22,13 @@ public class StaffManagementModel : PageModel
     {
         // Check user roles from session
         var userRolesJson = HttpContext.Session.GetString("UserRoles");
-
+        List<string>? userRoles;
         if (userRolesJson != null)
         {
-            var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
+            userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
 
             // Check if the user has the "Admin" role
-            if (!userRoles.Any(role => role == "Admin"))
-            {
-                TempData["ErrorMessage"] = "You do not have permission to view this page.";
-                return Page(); // Show error message on the same page
-            }
+            
         }
         else
         {
@@ -41,7 +37,13 @@ public class StaffManagementModel : PageModel
         }
 
         // If authorized, retrieve staff data with pagination and optional filters
+        
         StaffList = await _userService.GetAllAppUserAsync(id, pageNumber, pageSize);
+        if (!userRoles.Any(role => role == "Admin"))
+        {
+            id = HttpContext.Session.GetString("UserId");
+            StaffList = await _userService.GetAllAppUserAsync(id, pageNumber, pageSize);
+        }
         return Page();
     }
 }
