@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.6" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,6 +27,14 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\image\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\Feedback\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Pages\Feedback\Delete.cshtml" />
+    <_ContentIncludedByDefault Remove="Pages\Feedback\Details.cshtml" />
+    <_ContentIncludedByDefault Remove="Pages\Feedback\Edit.cshtml" />
+    <_ContentIncludedByDefault Remove="Pages\Feedback\Index.cshtml" />
   </ItemGroup>
 
 </Project>
