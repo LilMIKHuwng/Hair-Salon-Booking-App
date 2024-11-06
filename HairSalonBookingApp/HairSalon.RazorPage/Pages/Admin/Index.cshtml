@@ -142,9 +142,11 @@
 else
 {
     <h2>@ViewData["Title"]</h2>
-
-    <a asp-page="/Admin/CreateStylist" class="btn">Add New Staff</a>
-    <a asp-page="/Admin/ResetPassword" class="btn">Reset password</a>
+    @if (TempData["role"] != null)
+    {
+        <a asp-page="/Admin/CreateStylist" class="btn">Add New Staff</a>
+        <a asp-page="/Admin/ResetPassword" class="btn">Reset password</a>
+    }
     <h3>Staff List</h3>
 
     @if (TempData["ResponseMessage"] != null)
