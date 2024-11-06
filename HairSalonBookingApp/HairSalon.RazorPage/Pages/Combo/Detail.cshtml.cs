@@ -4,6 +4,7 @@ using HairSalon.ModelViews.ComboModelViews;
 using HairSalon.ModelViews.ServiceModelViews;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Newtonsoft.Json;
 
 namespace HairSalon.RazorPage.Pages.Combo
 {
@@ -26,7 +27,31 @@ namespace HairSalon.RazorPage.Pages.Combo
 
         public async Task<IActionResult> OnGetAsync()
         {
-            ComboDetail = await _comboService.GetComboByIdAsync(Id);
+			// Retrieve user roles from session
+			var userRolesJson = HttpContext.Session.GetString("UserRoles");
+			if (userRolesJson == null)
+			{
+				TempData["DeniedMessage"] = "You do not have permission";
+				return Page();// Redirect to a different page with a denied message
+			}
+
+			// Check if Id is provided
+			if (string.IsNullOrEmpty(Id))
+			{
+				TempData["ErrorMessage"] = "Invalid Combo ID.";
+				return RedirectToPage("/Error"); // Redirect to error page if Id is missing
+			}
+			
+			var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
+
+			// Check if the user has "Admin" or "Manager" roles
+			if (!userRoles.Any(role => role == "Admin"))
+			{
+				TempData["DeniedMessage"] = "You do not have permission";
+				return Page(); // Redirect to a different page with a denied message
+			}
+
+			ComboDetail = await _comboService.GetComboByIdAsync(Id);
             if (ComboDetail == null)
             {
                 TempData["ErrorMessage"] = "Combo not found.";

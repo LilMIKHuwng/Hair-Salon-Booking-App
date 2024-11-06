@@ -8,8 +8,6 @@ using HairSalon.Core;
 using Microsoft.AspNetCore.Http;
 using HairSalon.Core.Base;
 using Microsoft.Extensions.Configuration;
-using HairSalon.Core.Utils;
-using HairSalon.Core.Utils.Firebase;
 
 namespace HairSalon.Services.Service
 {
@@ -66,8 +64,21 @@ namespace HairSalon.Services.Service
             return new BasePaginatedList<ServiceModelView>(serviceModelViews, totalCount, pageNumber, pageSize);
         }
 
-        // Add a new service
-        public async Task<string> AddServiceAsync(CreateServiceModelView model)
+		//Get all without pagination
+		public async Task<List<ServiceModelView>> GetAllServiceAsync()
+        {
+			List<ServiceEntity> serviceList = _unitOfWork.GetRepository<ServiceEntity>().Entities
+				.Where(p => !p.DeletedTime.HasValue)
+				.OrderByDescending(s => s.CreatedTime)
+                .ToList();
+
+			List<ServiceModelView> serviceModelViews = _mapper.Map<List<ServiceModelView>>(serviceList);
+
+			return serviceModelViews;
+		}
+
+		// Add a new service
+		public async Task<string> AddServiceAsync(CreateServiceModelView model)
         {
             try
             {

@@ -33,11 +33,26 @@ namespace HairSalon.RazorPage.Pages.Combo
         [TempData]
         public string ResponseMessage { get; set; }
 
-        public BasePaginatedList<ServiceModelView> AvailableServices { get; set; } // Danh sách dịch vụ có sẵn
+        public List<ServiceModelView> AvailableServices { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
-            Combo = await _comboService.GetComboByIdAsync(Id);
+			// Check if Id is provided
+			if (string.IsNullOrEmpty(Id))
+			{
+				TempData["ErrorMessage"] = "Invalid Combo ID.";
+				return RedirectToPage("/Error"); // Redirect to error page if Id is missing
+			}
+
+			// Retrieve user roles from session
+			var userRolesJson = HttpContext.Session.GetString("UserRoles");
+			if (userRolesJson == null)
+			{
+				TempData["DeniedMessage"] = "You do not have permission";
+				return Page();// Redirect to a different page with a denied message
+			}
+
+			Combo = await _comboService.GetComboByIdAsync(Id);
             if (Combo == null)
             {
                 ErrorMessage = "Combo not found.";
@@ -50,7 +65,7 @@ namespace HairSalon.RazorPage.Pages.Combo
                 ServiceIds = Combo.ServiceIds ?? Array.Empty<string>()  
             };
 
-            AvailableServices = await _serviceService.GetAllServiceAsync(1, 10, null, null, null); 
+            AvailableServices = await _serviceService.GetAllServiceAsync(); 
 
             return Page();
         }
@@ -60,7 +75,9 @@ namespace HairSalon.RazorPage.Pages.Combo
             var selectedServiceIds = Request.Form["UpdatedCombo.ServiceIds"];
             UpdatedCombo.ServiceIds = selectedServiceIds.ToArray();
 
-            var response = await _comboService.UpdateComboAsync(Id, UpdatedCombo);
+			var userId = HttpContext.Session.GetString("UserId");
+
+			var response = await _comboService.UpdateComboAsync(Id, UpdatedCombo, userId);
             if (response == "Combo successfully updated with services.")
             {
                 ResponseMessage = response;

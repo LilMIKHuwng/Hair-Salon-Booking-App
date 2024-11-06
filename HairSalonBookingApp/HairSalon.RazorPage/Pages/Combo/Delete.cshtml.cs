@@ -2,6 +2,7 @@ using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.ComboModelViews;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Newtonsoft.Json;
 
 namespace HairSalon.RazorPage.Pages.Combo
 {
@@ -29,7 +30,31 @@ namespace HairSalon.RazorPage.Pages.Combo
 
         public async Task<IActionResult> OnGetAsync()
         {
-            Combo = await _comboService.GetComboByIdAsync(Id);
+			// Check if Id is provided
+			if (string.IsNullOrEmpty(Id))
+			{
+				TempData["ErrorMessage"] = "Invalid Combo ID.";
+				return RedirectToPage("/Error"); // Redirect to error page if Id is missing
+			}
+
+			// Retrieve user roles from session
+			var userRolesJson = HttpContext.Session.GetString("UserRoles");
+			if (userRolesJson == null)
+			{
+				TempData["DeniedMessage"] = "You do not have permission";
+				return Page();// Redirect to a different page with a denied message
+			}
+
+			var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
+
+			// Check if the user has "Admin" or "Manager" roles
+			if (!userRoles.Any(role => role == "Admin"))
+			{
+				TempData["DeniedMessage"] = "You do not have permission";
+				return Page(); // Redirect to a different page with a denied message
+			}
+
+			Combo = await _comboService.GetComboByIdAsync(Id);
             if (Combo == null)
             {
                 ErrorMessage = "Combo Not Found";
@@ -40,7 +65,9 @@ namespace HairSalon.RazorPage.Pages.Combo
 
         public async Task<IActionResult> OnPostAsync()
         {
-			string response = await _comboService.DeleteComboAsync(Id);
+			var userId = HttpContext.Session.GetString("UserId");
+
+			string response = await _comboService.DeleteComboAsync(Id, userId);
             if (response == "Deleted combo successfully!")
             {
                 ResponseMessage = response;

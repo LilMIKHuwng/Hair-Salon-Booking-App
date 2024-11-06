@@ -21,7 +21,7 @@ namespace HairSalon.RazorPage.Pages.Combo
 
         [BindProperty]
         public CreateComboModelView NewCombo { get; set; }
-		public BasePaginatedList<ServiceModelView> AvailableServices { get; set; }
+		public List<ServiceModelView> AvailableServices { get; set; }
 
 		// Property to store error messages
 		[TempData]
@@ -37,34 +37,34 @@ namespace HairSalon.RazorPage.Pages.Combo
 
 		public async Task<IActionResult> OnGetAsync(string? id, string? name, string? type, int pageNumber = 1, int pageSize = 5)
 		{
-            // Retrieve user roles from session
-            var userRolesJson = HttpContext.Session.GetString("UserRoles");
-            if (userRolesJson == null)
-            {
-                DeniedMessage = "You do not have permission to add a combo.";
-                return Page();// Redirect to a different page with a denied message
-            }
+			// Retrieve user roles from session
+			var userRolesJson = HttpContext.Session.GetString("UserRoles");
+			if (userRolesJson == null)
+			{
+				TempData["DeniedMessage"] = "You do not have permission";
+				return Page();// Redirect to a different page with a denied message
+			}
 
-            var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
+			var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
 
-            // Check if the user has "Admin" or "Manager" roles
-            if (!userRoles.Any(role => role == "Admin" || role == "Manager"))
-            {
-                DeniedMessage = "You do not have permission to add a combo.";
-                return Page(); // Redirect to a different page with a denied message
-            }
+			// Check if the user has "Admin" or "Manager" roles
+			if (!userRoles.Any(role => role == "Admin"))
+			{
+				TempData["DeniedMessage"] = "You do not have permission";
+				return Page(); // Redirect to a different page with a denied message
+			}
 
-			AvailableServices = await _serviceService.GetAllServiceAsync(pageNumber, pageSize, id, name, type);
+			AvailableServices = await _serviceService.GetAllServiceAsync();
 			return Page(); // Allow access to the page if the user has the correct role
         }
 
 		public async Task<IActionResult> OnPostAsync(string? id, string? name, string? type, int pageNumber = 1, int pageSize = 5)
 		{
-			AvailableServices = await _serviceService.GetAllServiceAsync(pageNumber, pageSize, id, name, type);
-
 			if (ModelState.IsValid)
 			{
-				string response = await _comboService.CreateComboAsync(NewCombo);
+                var userId = HttpContext.Session.GetString("UserId");
+
+                string response = await _comboService.CreateComboAsync(NewCombo, userId);
 				if (response == "Combo successfully created.")
 
                 {

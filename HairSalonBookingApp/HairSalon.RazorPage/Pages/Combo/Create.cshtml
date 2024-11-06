@@ -173,10 +173,11 @@ else
 						<th>Select</th>
 						<th>Service Name</th>
 						<th>Service Time (min)</th>
+						<th>Price (VND)</th>
 					</tr>
 				</thead>
 				<tbody>
-					@foreach (var service in Model.AvailableServices.Items)
+					@foreach (var service in Model.AvailableServices)
 					{
 						<tr>
 							<td>
@@ -184,6 +185,7 @@ else
 							</td>
 							<td>@service.Name</td>
 							<td>@service.TimeService</td>
+							<td>@service.Price</td>
 						</tr>
 					}
 				</tbody>
