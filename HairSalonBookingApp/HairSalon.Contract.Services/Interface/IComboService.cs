@@ -1,6 +1,5 @@
 ﻿using HairSalon.Core;
 using HairSalon.ModelViews.ComboModelViews;
-using HairSalon.ModelViews.RoleModelViews;
 
 namespace HairSalon.Contract.Services.Interface
 {
@@ -11,5 +10,6 @@ namespace HairSalon.Contract.Services.Interface
         Task<string> UpdateComboAsync(string id, UpdateComboModelView modeln, string? userId);
         Task<string> DeleteComboAsync(string id, string? userId);
         Task<ComboModelView?> GetComboByIdAsync(string id);
-    }
+		Task<List<ComboModelView>> GetAllComboAsync();
+	}
 }
