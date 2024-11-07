@@ -130,10 +130,11 @@
 
     <!-- Add Rate field -->
     <div>
-        <label asp-for="UpdatedFeedback.Rate">Rate (1-5)</label>
+        <label asp-for="UpdatedFeedback.Rate"></label>
         <!-- Input for Rate -->
-        <input asp-for="UpdatedFeedback.Rate" type="number" min="1" max="5" placeholder="Rate (1-5)" required />
+        <input asp-for="UpdatedFeedback.Rate" type="number" min="1" max="5" placeholder="" required value="@Model.UpdatedFeedback.Rate" />
         <span asp-validation-for="UpdatedFeedback.Rate" class="text-danger"></span>
+
     </div>
 
     <button type="submit">Save Changes</button>

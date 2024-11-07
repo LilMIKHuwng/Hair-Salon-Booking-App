@@ -1,6 +1,7 @@
 ﻿using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.AppointmentModelViews;
 using HairSalon.ModelViews.FeedBackModeViews;
+using HairSalon.Services.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
@@ -25,51 +26,60 @@ namespace HairSalon.RazorPage.Pages.Feedback
         public CreateFeedbackModelView NewFeedback { get; set; }
 
         [TempData]
-        public string ErrorMessage { get; set; }
-
-        [TempData]
         public string ResponseMessage { get; set; }
 
-        [TempData]
-        public string DeniedMessage { get; set; }
-
+        public List<FeedBackModelView> Feedbacks { get; set; }
         public List<AppointmentModelView> Appointments { get; set; }
+
 
         public async Task<IActionResult> OnGetAsync()
         {
+            // Retrieve user roles from session
             var userRolesJson = HttpContext.Session.GetString("UserRoles");
             if (userRolesJson == null)
             {
-                DeniedMessage = "You do not have permission to add feedback.";
+                TempData["DeniedMessage"] = "You do not have permission";
                 return Page();
             }
 
             var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
-            if (!userRoles.Any(role => role == "Admin" || role == "Manager"))
+
+            // Check if the user has the "Admin" role
+            if (!userRoles.Any(role => role == "Admin"))
             {
-                DeniedMessage = "You do not have permission to add feedback.";
+                TempData["DeniedMessage"] = "You do not have permission";
                 return Page();
             }
 
-            // Retrieve appointments using _appointmentService
-            Appointments = await _appointmentService.GetAppointmentsForDropdownAsync() ?? new List<AppointmentModelView>();
+            // Retrieve all feedbacks and appointments
+            var feedbacks = await _feedbackService.GetAllFeedbackAsync(1, int.MaxValue, null, null); // Use appropriate parameters here
+            var allAppointments = await _appointmentService.GetAppointmentsForDropdownAsync() ?? new List<AppointmentModelView>();
+
+            // Filter appointments to include only those without feedback
+            var feedbackAppointmentIds = feedbacks.Items.Select(f => f.AppointmentId).ToList();
+            Appointments = allAppointments.Where(a => !feedbackAppointmentIds.Contains(a.Id)).ToList();
+
             return Page();
         }
+
 
         public async Task<IActionResult> OnPostAsync()
         {
             if (ModelState.IsValid)
             {
-                string response = await _feedbackService.AddFeedbackAsync(NewFeedback);
-                if (response == "Feedback successfully added")
-                {
-                    ResponseMessage = response;
-                    return Redirect("/Feedback/Index");
-                }
+                var userId = HttpContext.Session.GetString("UserId");
 
-                ErrorMessage = response;
+                string response = await _feedbackService.AddFeedbackAsync(NewFeedback, userId);
+                if (response == "Feedback added successfully.")
+                {
+                    TempData["ResponseMessage"] = response; // Success message
+                    return Redirect("/Feedback/Index"); // Redirect back to the feedback list page
+                }
+                TempData["ErrorMessage"] = response; // Error message for issues
             }
             return Page();
         }
+
+
     }
 }

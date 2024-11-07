@@ -12,13 +12,14 @@ namespace HairSalon.Contract.Services.Interface
 
 		Task<BasePaginatedList<ServiceFeedbackModelView>> GetFeedbackOfServiceAsync(int pageNumber, int pageSize, string serviceId, string comboId);
 
-		Task<string> AddFeedbackAsync(CreateFeedbackModelView model);
+		Task<string> AddFeedbackAsync(CreateFeedbackModelView model, string? userId);
 
         Task<string> UpdateFeedbackAsync(string id, UpdatedFeedbackModelView model);
 
-        Task<string> DeleteFeedbackpAsync(string id);
+        Task<string> DeleteFeedbackpAsync(string id, string? userId);
         Task<FeedBackModelView?> GetFeedBackByIdAsync(string id);
 
         Task<List<AppointmentModelView>> GetAppointmentsForDropdownAsync();
+
     }
 }

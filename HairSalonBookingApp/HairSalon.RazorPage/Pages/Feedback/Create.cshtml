@@ -4,6 +4,7 @@
     ViewData["Title"] = "Create Feedback";
 }
 
+
 <style>
     /* Page Layout */
     body {
@@ -75,6 +76,14 @@
             background-color: #c9302c;
         }
 
+    .btn-delete {
+        background-color: #e74c3c;
+    }
+
+        .btn-delete:hover {
+            background-color: #c0392b;
+        }
+
     /* Alert Styling */
     .alert-danger {
         background-color: #f2dede;
@@ -91,11 +100,21 @@
         color: #e74c3c;
         font-size: 0.9em;
     }
+    /* Success Alert Styling */
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 10px;
+        text-align: center;
+    }
 </style>
 
 @if (TempData["DeniedMessage"] != null)
 {
-<div class="alert alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
+    <div class="alert alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
 }
 else
 {
@@ -137,8 +156,12 @@ else
         <a asp-page="/Feedback/Index" class="btn-cancel">Cancel</a>
 </form>
 
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger mt-3 text-center">@TempData["ErrorMessage"]</div>
-}
+    @if (TempData["ResponseMessage"] != null)
+    {
+        <div class="alert alert-success mt-3 text-center">@TempData["ResponseMessage"]</div>
+    }
+    else if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger mt-3 text-center">@TempData["ErrorMessage"]</div>
+    }
 }

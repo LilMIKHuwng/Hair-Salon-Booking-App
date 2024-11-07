@@ -93,23 +93,42 @@
     }
 </style>
 
-<h2>Delete Feedback</h2>
-
-<div class="details-container">
-    <p><strong>Feedback ID:</strong> @Model.Feedback.Id</p>
-    <p><strong>Feedback Appointment:</strong> @Model.Feedback.AppointmentId</p>
-    <p><strong>Feedback Rate:</strong> @Model.Feedback.Rate</p>
-    <p><strong>Feedback Comment:</strong> @Model.Feedback.Comment</p>
-</div>
-
-<p class="confirmation-text">Are you sure you want to delete this Feedback?</p>
-
-<form method="post">
-    <button type="submit">Delete</button>
-    <a asp-page="/Feedback/Index" class="btn-cancel">Cancel</a>
-</form>
-
-@if (TempData["ErrorMessage"] != null)
+@if (TempData["DeniedMessage"] != null)
 {
-    <div class="alert-danger">@TempData["ErrorMessage"]</div>
+    <div class="alert alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
 }
+else
+{
+    <h2>Delete Feedback</h2>
+
+    
+    @if (Model.Feedback != null)
+    {
+        <div class="details-container">
+            <p><strong>Feedback ID:</strong> @Model.Feedback.Id</p>
+            <p><strong>Feedback Name:</strong> @Model.Feedback.AppointmentId</p>
+            <p><strong>Feedback Rate:</strong> @Model.Feedback.Rate</p>
+            <p><strong>Feedback Comment:</strong> @Model.Feedback.Comment</p>
+        </div>
+
+        <p class="confirmation-text">Are you sure you want to delete this Feedback?</p>
+
+        <form method="post">
+            <button type="submit">Delete</button>
+            <a asp-page="/Feedback/Index" class="btn-cancel">Cancel</a>
+        </form>
+    }
+    else
+    {
+        <p class="alert-danger">No feedback details available.</p>
+    }
+
+    
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert-danger">@TempData["ErrorMessage"]</div>
+    }
+}
+
+

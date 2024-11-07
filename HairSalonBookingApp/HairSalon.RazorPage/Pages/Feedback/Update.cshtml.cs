@@ -39,15 +39,19 @@ namespace HairSalon.RazorPage.Pages.Feedback
                 return RedirectToPage("/Feedback/Index");
             }
 
-            // Initialize UpdatedFeedback with existing feedback comment for display in the form
-            UpdatedFeedback = new UpdatedFeedbackModelView { Comment = Feedback.Comment };
+            // Initialize UpdatedFeedback with existing feedback data for display in the form
+            UpdatedFeedback = new UpdatedFeedbackModelView
+            {
+                Comment = Feedback.Comment,
+                Rate = Feedback.Rate // Gán giá tr? Rate t? Feedback
+            };
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
             var response = await _feedbackService.UpdateFeedbackAsync(Id, UpdatedFeedback);
-            if (response == "Feedback successfully updated")
+            if (response == "Feedback updated successfully.")
             {
                 ResponseMessage = response;
                 return RedirectToPage("/Feedback/Index");

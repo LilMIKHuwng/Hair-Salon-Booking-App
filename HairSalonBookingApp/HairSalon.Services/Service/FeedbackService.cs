@@ -62,7 +62,7 @@ namespace HairSalon.Services.Service
         }
 
         // Add a new feedback
-        public async Task<string> AddFeedbackAsync(CreateFeedbackModelView model)
+        public async Task<string> AddFeedbackAsync(CreateFeedbackModelView model, string? userId)
         {
             // Check if payment exists for the given AppointmentId
             var paymentExists = await _unitOfWork.GetRepository<Payment>().Entities
@@ -105,7 +105,14 @@ namespace HairSalon.Services.Service
             // Proceed to create a new feedback since no feedback exists for the given AppointmentId
             Feedback newFeedback = _mapper.Map<Feedback>(model);
             newFeedback.Id = Guid.NewGuid().ToString("N");
-            newFeedback.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            if (userId != null)
+            {
+                newFeedback.CreatedBy = userId;
+            }
+            else
+            {
+                newFeedback.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            }
             newFeedback.CreatedTime = DateTimeOffset.UtcNow;
 
             await _unitOfWork.GetRepository<Feedback>().InsertAsync(newFeedback);
@@ -146,7 +153,7 @@ namespace HairSalon.Services.Service
         }
 
         // Soft delete a feedback
-        public async Task<string> DeleteFeedbackpAsync(string id)
+        public async Task<string> DeleteFeedbackpAsync(string id, string? userId)
         {
             // Validate Feedback ID
             if (string.IsNullOrWhiteSpace(id))
@@ -163,7 +170,15 @@ namespace HairSalon.Services.Service
             }
 
             existingFeedback.DeletedTime = DateTimeOffset.UtcNow;
-            existingFeedback.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            
+            if (userId != null)
+            {
+                existingFeedback.DeletedBy = userId;
+            }
+            else
+            {
+                existingFeedback.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            }
 
             // Mark the feedback as deleted
             await _unitOfWork.GetRepository<Feedback>().UpdateAsync(existingFeedback);
@@ -254,5 +269,7 @@ namespace HairSalon.Services.Service
             // Ánh xạ sang AppointmentModelView nếu cần
             return _mapper.Map<List<AppointmentModelView>>(appointments);
         }
+
+
     }
 }
