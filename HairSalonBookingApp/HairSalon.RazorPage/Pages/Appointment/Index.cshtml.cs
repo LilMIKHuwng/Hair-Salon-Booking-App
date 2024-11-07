@@ -29,17 +29,22 @@ namespace HairSalon.RazorPage.Pages.Appointment
                 var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
 
                 // Check if the user has "Admin" or "Manager" roles
-                if (!userRoles.Any(role => role == "Admin" || role == "Manager" || role == "User"))
+                if (!userRoles.Any(role => role == "Admin" || role == "Manager" || role == "User" || role == "Stylist"))
                 {
                     TempData["ErrorMessage"] = "You do not have permission to view this page.";
                     return Page(); // Show error message on the same page
                 }
 
-                if(userRoles.Any(roles => roles == "User"))
+                if (userRoles.Any(roles => roles == "User"))
                 {
                     userId = Guid.Parse(HttpContext.Session.GetString("UserId"));
                 }
-            }
+
+				if (userRoles.Any(roles => roles == "Stylist"))
+				{
+					stylistId = Guid.Parse(HttpContext.Session.GetString("UserId"));
+				}
+			}
             else
             {
                 TempData["ErrorMessage"] = "You do not have permission to view this page.";

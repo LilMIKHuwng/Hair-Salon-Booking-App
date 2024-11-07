@@ -1,6 +1,9 @@
+using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.AppointmentModelViews;
-using HairSalon.ModelViews.RoleModelViews;
+using HairSalon.ModelViews.ComboModelViews;
+using HairSalon.ModelViews.ServiceModelViews;
+using HairSalon.Services.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
@@ -10,11 +13,20 @@ namespace HairSalon.RazorPage.Pages.Appointment
     public class DetailModel : PageModel
     {
         private readonly IAppointmentService _appointmentService;
+        private readonly IServiceService _serviceService;
+        private readonly IComboService _comboService;
 
-        public DetailModel(IAppointmentService appointmentService)
+        public DetailModel(IAppointmentService appointmentService, IServiceService serviceService, IComboService comboService)
         {
             _appointmentService = appointmentService;
+            _serviceService = serviceService;
+            _comboService = comboService;
         }
+
+        public List<ComboAppointment> ComboAppointment { get; set; }
+        public List<ServiceAppointment> ServiceAppointment { get; set; }
+        public List<ServiceModelView> Services { get; set; }
+        public List<ComboModelView> Combos { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public string Id { get; set; }
@@ -38,21 +50,18 @@ namespace HairSalon.RazorPage.Pages.Appointment
                 return Page();// Redirect to a different page with a denied message
             }
 
-            var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
-
-            // Check if the user has "Admin" or "Manager" roles
-            //if (!userRoles.Any(role => role == "Admin"))
-            //{
-            //    TempData["DeniedMessage"] = "You do not have permission to add a role.";
-            //    return Page(); // Redirect to a different page with a denied message
-            //}
-
             Appointment = await _appointmentService.GetAppointmentByIdAsync(Id);
             if (Appointment == null)
             {
                 TempData["ErrorMessage"] = "Role not found.";
                 return RedirectToPage("/Role/Index");
             }
+
+            ComboAppointment = await _appointmentService.GetAllComboAppointment(Id);
+            ServiceAppointment = await _appointmentService.GetAllServiceAppointment(Id);
+            Services = await _serviceService.GetAllServicesAsync();
+            Combos = await _comboService.GetAllComboAsync();
+
             return Page();
         }
     }
