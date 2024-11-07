@@ -58,7 +58,7 @@ namespace HairSalonBE.API.Controllers
 		[HttpDelete("delete/{id}")]
 		public async Task<ActionResult<string>> DeleteService(string id)
         {
-            string result = await _serviceService.DeleteServiceAsync(id);
+            string result = await _serviceService.DeleteServiceAsync(id, null);
             return Ok(new { Message = result });
         }
 

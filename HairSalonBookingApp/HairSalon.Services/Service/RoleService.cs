@@ -27,6 +27,7 @@ namespace HairSalon.Services.Service
         {
             // Initialize the query for roles, filtering out roles that have a DeletedTime 
             IQueryable<ApplicationRoles> roleQuery = _unitOfWork.GetRepository<ApplicationRoles>().Entities
+                .AsNoTracking()
                 .Where(p => !p.DeletedTime.HasValue);
 
             // If an ID filter is provided, apply it to the query

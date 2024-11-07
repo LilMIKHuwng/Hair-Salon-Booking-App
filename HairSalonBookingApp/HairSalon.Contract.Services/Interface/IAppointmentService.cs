@@ -1,6 +1,7 @@
 ﻿using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Core;
 using HairSalon.ModelViews.AppointmentModelViews;
+using HairSalon.ModelViews.ShopModelViews;
 using HairSalon.ModelViews.RoleModelViews;
 
 namespace HairSalon.Contract.Services.Interface
