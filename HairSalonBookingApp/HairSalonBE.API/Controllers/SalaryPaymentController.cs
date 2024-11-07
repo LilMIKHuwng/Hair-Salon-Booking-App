@@ -36,7 +36,7 @@ namespace HairSalonBE.API.Controllers
                                     ([FromQuery] CreateSalaryPaymentModelView model)
         {
             
-            string result = await _salaryPaymentService.CreateSalaryPaymentAsync(model);
+            string result = await _salaryPaymentService.CreateSalaryPaymentAsync(model, null);
             return Ok(result);
         }
 
@@ -47,7 +47,7 @@ namespace HairSalonBE.API.Controllers
         public async Task<IActionResult> UpdateSalaryPayment(string id, [FromQuery] UpdatedSalaryPaymentModelView model)
         {
 
-            string result = await _salaryPaymentService.UpdateSalaryPaymentAsync(id, model);
+            string result = await _salaryPaymentService.UpdateSalaryPaymentAsync(id, null, model);
             return Ok(result);
         }
 
@@ -57,7 +57,7 @@ namespace HairSalonBE.API.Controllers
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteSalaryPayment(string id)
         {
-            string result = await _salaryPaymentService.DeleteSalaryPaymentAsync(id);
+            string result = await _salaryPaymentService.DeleteSalaryPaymentAsync(id, null);
             return Ok(result);
         }
 

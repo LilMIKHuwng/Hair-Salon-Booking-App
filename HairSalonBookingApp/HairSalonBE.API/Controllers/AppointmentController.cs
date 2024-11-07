@@ -24,7 +24,7 @@ namespace HairSalonBE.API.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateAppointment([FromQuery] CreateAppointmentModelView model)
         {
-            var result = await _appointmentService.AddAppointmentAsync(model);
+            var result = await _appointmentService.AddAppointmentAsync(model, null);
 
             return Ok(result);
         }
@@ -47,7 +47,7 @@ namespace HairSalonBE.API.Controllers
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateAppointment(string id, [FromQuery] UpdateAppointmentModelView model)
         {
-            var result = await _appointmentService.UpdateAppointmentAsync(id, model);
+            var result = await _appointmentService.UpdateAppointmentAsync(id, model, null);
             return Ok(result);
         }
 
@@ -57,7 +57,7 @@ namespace HairSalonBE.API.Controllers
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteAppointment(string id)
         {
-            var result = await _appointmentService.DeleteAppointmentAsync(id);
+            var result = await _appointmentService.DeleteAppointmentAsync(id, null);
             return Ok(result);
         }
 
@@ -68,7 +68,7 @@ namespace HairSalonBE.API.Controllers
         [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> MarkAppointmentCompleted(string id)
         {
-            var result = await _appointmentService.MarkCompleted(id);
+            var result = await _appointmentService.MarkCompleted(id, null);
             return Ok(result);
         }
 
@@ -79,7 +79,7 @@ namespace HairSalonBE.API.Controllers
         [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> MarkAppointmentConfirmed(string id)
         {
-            var result = await _appointmentService.MarkConfirmed(id);
+            var result = await _appointmentService.MarkConfirmed(id, null);
             return Ok(result);
         }
     }
