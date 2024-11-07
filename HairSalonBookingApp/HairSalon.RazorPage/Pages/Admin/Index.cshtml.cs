@@ -38,7 +38,7 @@ public class StaffManagementModel : PageModel
         // If authorized, retrieve staff data with pagination and optional filters
         
         StaffList = await _userService.GetAllAppUserAsync(id, pageNumber, pageSize);
-        if (!userRoles.Any(role => role == "Admin"))
+        if (!userRoles.Any(role => role == "Admin" || role == "Manager"))
         {
             id = HttpContext.Session.GetString("UserId");
             StaffList = await _userService.GetAllAppUserAsync(id, pageNumber, pageSize);
