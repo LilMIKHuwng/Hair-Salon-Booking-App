@@ -56,7 +56,7 @@ namespace HairSalon.Services.Service
             return new BasePaginatedList<RoleModelView>(roleModelViews, totalCount, pageNumber, pageSize);
         }
 
-        public async Task<string> AddRoleAsync(CreateRoleModelView model)
+        public async Task<string> AddRoleAsync(CreateRoleModelView model, string? userId)
         {
             // Check if the role already exists by querying the database for a role with the same name
             var existedRole = await _unitOfWork.GetRepository<ApplicationRoles>()
@@ -73,9 +73,15 @@ namespace HairSalon.Services.Service
             ApplicationRoles newRole = _mapper.Map<ApplicationRoles>(model);
 
             // Assign additional properties: CreatedBy and LastUpdatedBy from the current user's information
-            newRole.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            if (userId != null)
+            {
+                newRole.CreatedBy = userId;
+            }
+            else 
+            {
+                newRole.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            }
             newRole.CreatedTime = DateTimeOffset.UtcNow;
-            newRole.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 
             // Insert the new role into the database
             await _unitOfWork.GetRepository<ApplicationRoles>().InsertAsync(newRole);
@@ -88,7 +94,7 @@ namespace HairSalon.Services.Service
         }
 
         // Update an existing role
-        public async Task<string> UpdateRoleAsync(string id, UpdatedRoleModelView model)
+        public async Task<string> UpdateRoleAsync(string id, UpdatedRoleModelView model, string? userId)
         {
             // Check if the provided Role ID is valid (non-empty and non-whitespace)
             if (string.IsNullOrWhiteSpace(id))
@@ -129,7 +135,14 @@ namespace HairSalon.Services.Service
             // If there were any updates, update the LastUpdatedBy and LastUpdatedTime fields
             if (isUpdated)
             {
-                existingRole.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                if (userId != null)
+                {
+                    existingRole.LastUpdatedBy = userId;
+                }
+                else
+                {
+                    existingRole.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                }
                 existingRole.LastUpdatedTime = DateTimeOffset.UtcNow;
 
                 // Save the updated role to the repository
@@ -142,7 +155,7 @@ namespace HairSalon.Services.Service
         }
 
         // Soft delete a role
-        public async Task<string> DeleteRoleAsync(string id)
+        public async Task<string> DeleteRoleAsync(string id, string? userId)
         {
             // Check if the provided Role ID is valid (non-empty and non-whitespace)
             if (string.IsNullOrWhiteSpace(id))
@@ -164,7 +177,14 @@ namespace HairSalon.Services.Service
             existingRole.DeletedTime = DateTimeOffset.UtcNow;
 
             // Record the ID of the user performing the deletion action
-            existingRole.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            if (userId != null)
+            {
+                existingRole.DeletedBy = userId;
+            }
+            else
+            {
+                existingRole.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            }
 
             // Update the repository with the modified role
             await _unitOfWork.GetRepository<ApplicationRoles>().UpdateAsync(existingRole);

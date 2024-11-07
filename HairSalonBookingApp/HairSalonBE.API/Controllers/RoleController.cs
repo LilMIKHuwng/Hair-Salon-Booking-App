@@ -35,7 +35,7 @@ namespace HairSalonBE.API.Controllers
         [HttpPost("create")]
 		public async Task<ActionResult<string>> CreateRole([FromQuery] CreateRoleModelView model)
 		{
-			string result = await _roleService.AddRoleAsync(model);
+			string result = await _roleService.AddRoleAsync(model, null);
 			return Ok(new { Message = result });
 		}
 
@@ -45,7 +45,7 @@ namespace HairSalonBE.API.Controllers
         [HttpPut("update/{id}")]
 		public async Task<ActionResult<string>> UpdateRole(string id, [FromQuery] UpdatedRoleModelView model)
 		{
-			string result = await _roleService.UpdateRoleAsync(id, model);
+			string result = await _roleService.UpdateRoleAsync(id, model, null);
 			return Ok(new { Message = result });
 		}
 
@@ -55,7 +55,7 @@ namespace HairSalonBE.API.Controllers
         [HttpDelete("delete/{id}")]
 		public async Task<ActionResult<string>> DeleteRole(string id)
 		{
-			string result = await _roleService.DeleteRoleAsync(id);
+			string result = await _roleService.DeleteRoleAsync(id, null);
 			return Ok(new { Message = result });
 		}
 	}
