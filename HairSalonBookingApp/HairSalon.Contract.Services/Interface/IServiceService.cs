@@ -1,4 +1,5 @@
 ﻿using HairSalon.Core;
+using HairSalon.ModelViews.RoleModelViews;
 using HairSalon.ModelViews.ServiceModelViews;
 
 namespace HairSalon.Contract.Services.Interface
@@ -9,7 +10,6 @@ namespace HairSalon.Contract.Services.Interface
 
 		Task<string> AddServiceAsync(CreateServiceModelView model);
 
-        Task<string> UpdateServiceAsync(string id, UpdatedServiceModelView model);
 
         Task<string> DeleteServiceAsync(string id);
 

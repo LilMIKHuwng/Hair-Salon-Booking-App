@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿    using AutoMapper;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.ServiceModelViews;
@@ -91,7 +91,15 @@ namespace HairSalon.Services.Service
                 newService.ServiceImage = firebaseUrl;
 
                 newService.Id = Guid.NewGuid().ToString("N");
-                newService.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+              
+                if (userId != null)
+                {
+                    newService.CreatedBy = userId;
+                }
+                else
+                {
+                    newService.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                }
                 newService.CreatedTime = DateTimeOffset.UtcNow;
 
                 await _unitOfWork.GetRepository<ServiceEntity>().InsertAsync(newService);
@@ -110,7 +118,7 @@ namespace HairSalon.Services.Service
         }
 
         //Update an existing service
-        public async Task<string> UpdateServiceAsync(string id, UpdatedServiceModelView model)
+        public async Task<string> UpdateServiceAsync(string id, UpdatedServiceModelView model, string userId)
         {
             try
             {
@@ -187,7 +195,7 @@ namespace HairSalon.Services.Service
         }
 
         // Soft delete a service
-        public async Task<string> DeleteServiceAsync(string id)
+        public async Task<string> DeleteServiceAsync(string id, string? userId)
         {
             // Check if the provided id is null, empty, or whitespace
             if (string.IsNullOrWhiteSpace(id))
@@ -205,7 +213,16 @@ namespace HairSalon.Services.Service
             }
 
             existingService.DeletedTime = DateTimeOffset.Now;
-            existingService.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+          // existingService.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            if (userId != null)
+            {
+                existingService.DeletedBy = userId;
+            }
+            else
+            {
+                existingService.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            }
+
 
             await _unitOfWork.GetRepository<ServiceEntity>().UpdateAsync(existingService);
             await _unitOfWork.SaveAsync();

@@ -38,7 +38,7 @@ namespace HairSalonBE.API.Controllers
 		[HttpPost("create")]
 		public async Task<ActionResult<string>> CreateService([FromQuery] CreateServiceModelView model)
         {
-            string result = await _serviceService.AddServiceAsync(model);
+            string result = await _serviceService.AddServiceAsync(model,null);
             return Ok(new { Message = result });
         }
 
@@ -48,7 +48,7 @@ namespace HairSalonBE.API.Controllers
 		[HttpPut("update/{id}")]
 		public async Task<ActionResult<string>> UpdateService(string id, [FromQuery] UpdatedServiceModelView model)
         {
-            string result = await _serviceService.UpdateServiceAsync(id, model);
+            string result = await _serviceService.UpdateServiceAsync(id, model, null);
             return Ok(new { Message = result }); 
         }
 
