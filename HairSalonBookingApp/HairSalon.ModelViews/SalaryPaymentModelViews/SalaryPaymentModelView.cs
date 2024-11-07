@@ -16,5 +16,6 @@ namespace HairSalon.ModelViews.SalaryPaymentModelViews
         public int DayOffNoPermitted { get; set; }
 		public decimal DeductedSalary { get; set; }
 		public decimal BonusSalary { get; set; }
-	}
+        public string FullName { get; set; }
+    }
 }
