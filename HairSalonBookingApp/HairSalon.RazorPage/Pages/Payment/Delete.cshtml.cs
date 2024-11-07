@@ -66,7 +66,7 @@ namespace HairSalon.RazorPage.Pages.Payment
         public async Task<IActionResult> OnPostAsync()
         {
             var userId = HttpContext.Session.GetString("UserId");
-            string response = await _paymentService.DeletePaymentpAsync(Id, userId);
+            string response = await _paymentService.DeletePaymentAsync(Id, userId);
             if (response == "Payment deleted successfully.")
             {
                 ResponseMessage = response;

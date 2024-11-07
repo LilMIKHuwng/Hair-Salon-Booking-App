@@ -1,4 +1,4 @@
-using AutoMapper;
+ï»¿using AutoMapper;
 using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
@@ -7,6 +7,7 @@ using HairSalon.ModelViews.PaymentModelViews;
 using HairSalon.ModelViews.ShopModelViews;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using HairSalon.ModelViews.AppointmentModelViews;
 
 namespace HairSalon.Services.Service
 {
@@ -64,7 +65,7 @@ namespace HairSalon.Services.Service
 		}
 
 		// Soft delete a payment
-		public async Task<string> DeletePaymentpAsync(string id, string? userId)
+		public async Task<string> DeletePaymentAsync(string id, string? userId)
 		{
 			// Validate Payment ID
 			if (string.IsNullOrWhiteSpace(id))
@@ -106,7 +107,7 @@ namespace HairSalon.Services.Service
                 return null; // Or you could throw an exception or return an error message
             }
 
-            // Try to find the payment by its ID, ensuring it hasn’t been marked as deleted
+            // Try to find the payment by its ID, ensuring it hasnï¿½t been marked as deleted
             var paymentEntity = await _unitOfWork.GetRepository<Payment>().Entities
                 .FirstOrDefaultAsync(payment => payment.Id == id && !payment.DeletedTime.HasValue);
 

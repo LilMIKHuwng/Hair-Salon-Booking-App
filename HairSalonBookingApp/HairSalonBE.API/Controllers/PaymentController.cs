@@ -63,7 +63,7 @@ namespace HairSalonBE.API.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<string>> DeletePayment(string id)
         {
-            string result = await _paymentService.DeletePaymentpAsync(id, null);
+            string result = await _paymentService.DeletePaymentAsync(id, null);
             return Ok(new { Message = result });
         }
 

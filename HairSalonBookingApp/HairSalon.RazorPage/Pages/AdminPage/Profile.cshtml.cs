@@ -1,12 +1,53 @@
-using Microsoft.AspNetCore.Mvc;
+using HairSalon.Contract.Services.Interface;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using HairSalon.ModelViews.ApplicationUserModelViews;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
-namespace HairSalon.RazorPage.Pages.AminPage
+namespace HairSalon.RazorPage.Pages.AdminPage
 {
-    public class AdminProfilePageModel : PageModel
-    {
-        public void OnGet()
-        {
-        }
-    }
+	public class AdminProfilePageModel : PageModel
+	{
+		private readonly IAppUserService _userService;
+
+		public AdminProfilePageModel(IAppUserService userService)
+		{
+			_userService = userService;
+		}
+
+		public GetInforAppUserModelView UserInfo { get; set; }
+
+		public async Task<IActionResult> OnGetAsync()
+		{
+			var userRolesJson = HttpContext.Session.GetString("UserRoles");
+
+			if (userRolesJson == null)
+			{
+				TempData["ErrorMessage"] = "You do not have permission to view this page.";
+				return Page();
+			}
+
+			var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
+
+			// Check if the user has "Admin" or "Manager" roles
+			if (!userRoles.Any(role => role == "Admin" || role == "Manager"))
+			{
+				TempData["ErrorMessage"] = "You do not have permission to view this page.";
+				return Page(); // Show error message on the same page
+			}
+
+			// Retrieve Username from session
+			var username = HttpContext.Session.GetString("Username");
+
+			// Use Username to get user information
+			UserInfo = await _userService.GetMyInforUsersAsync(username);
+			if (UserInfo == null)
+			{
+				TempData["ErrorMessage"] = "Failed to retrieve user information";
+				return Page();
+			}
+
+			return Page();
+		}
+	}
 }

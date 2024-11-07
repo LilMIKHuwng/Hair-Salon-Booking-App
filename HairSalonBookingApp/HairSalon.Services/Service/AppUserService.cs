@@ -7,6 +7,7 @@ using HairSalon.Core.Base;
 using HairSalon.Core.Utils;
 using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalon.ModelViews.AuthModelViews;
+using HairSalon.ModelViews.ComboModelViews;
 using HairSalon.Repositories.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -281,22 +282,22 @@ namespace HairSalon.Services.Service
         }
 
         public async Task<string> DeleteAppUserAsync(string id)
-		{
-			if (string.IsNullOrWhiteSpace(id))
-			{
-				return "Please provide a valid Application User ID.";
-			}
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return "Please provide a valid Application User ID.";
+            }
 
-			var existingUser = await _unitOfWork.GetRepository<ApplicationUsers>().Entities
-				.FirstOrDefaultAsync(s => s.Id == Guid.Parse(id) && !s.DeletedTime.HasValue);
+            var existingUser = await _unitOfWork.GetRepository<ApplicationUsers>().Entities
+                .FirstOrDefaultAsync(s => s.Id == Guid.Parse(id) && !s.DeletedTime.HasValue);
 
-			if (existingUser == null)
-			{
-				return "The Application User cannot be found or has been deleted!";
-			}
+            if (existingUser == null)
+            {
+                return "The Application User cannot be found or has been deleted!";
+            }
 
-			existingUser.DeletedTime = DateTimeOffset.UtcNow;
-			existingUser.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            existingUser.DeletedTime = DateTimeOffset.UtcNow;
+            existingUser.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 
             await _unitOfWork.GetRepository<ApplicationUsers>().UpdateAsync(existingUser);
             await _unitOfWork.SaveAsync();
@@ -387,7 +388,7 @@ namespace HairSalon.Services.Service
                     isUpdated = true;
                 }
 
-                if(model.UserImage != null)
+                if (model.UserImage != null)
                 {
                     var imageHelper = new HairSalon.Core.Utils.Firebase.ImageHelper(_configuration);
                     string firebaseUrl = await imageHelper.Upload(model.UserImage);
@@ -500,43 +501,43 @@ namespace HairSalon.Services.Service
         }
 
         public async Task<BasePaginatedList<AppUserModelView>> GetAllAppUserAsync(int pageNumber, int pageSize, string id, string email, string phoneNumber)
-		{
-			// Start building the query
-			IQueryable<ApplicationUsers> userQuery = _unitOfWork.GetRepository<ApplicationUsers>().Entities
-				.Where(p => !p.DeletedTime.HasValue)
-				.OrderByDescending(s => s.CreatedTime);
+        {
+            // Start building the query
+            IQueryable<ApplicationUsers> userQuery = _unitOfWork.GetRepository<ApplicationUsers>().Entities
+                .Where(p => !p.DeletedTime.HasValue)
+                .OrderByDescending(s => s.CreatedTime);
 
-			// Apply filtering by Id, Email, and PhoneNumber if provided
-			if (!string.IsNullOrWhiteSpace(id))
-			{
-				userQuery = userQuery.Where(p => p.Id.ToString() == id);
-			}
+            // Apply filtering by Id, Email, and PhoneNumber if provided
+            if (!string.IsNullOrWhiteSpace(id))
+            {
+                userQuery = userQuery.Where(p => p.Id.ToString() == id);
+            }
 
-			if (!string.IsNullOrWhiteSpace(email))
-			{
-				userQuery = userQuery.Where(p => p.Email.Contains(email));
-			}
+            if (!string.IsNullOrWhiteSpace(email))
+            {
+                userQuery = userQuery.Where(p => p.Email.Contains(email));
+            }
 
-			if (!string.IsNullOrWhiteSpace(phoneNumber))
-			{
-				userQuery = userQuery.Where(p => p.PhoneNumber.Contains(phoneNumber));
-			}
+            if (!string.IsNullOrWhiteSpace(phoneNumber))
+            {
+                userQuery = userQuery.Where(p => p.PhoneNumber.Contains(phoneNumber));
+            }
 
-			// Get total count of records after filtering
-			int totalCount = await userQuery.CountAsync();
+            // Get total count of records after filtering
+            int totalCount = await userQuery.CountAsync();
 
-			// Apply pagination
-			List<ApplicationUsers> paginatedUsers = await userQuery
-				.Skip((pageNumber - 1) * pageSize)
-				.Take(pageSize)
-				.ToListAsync();
+            // Apply pagination
+            List<ApplicationUsers> paginatedUsers = await userQuery
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
 
-			// Map entities to model views
-			List<AppUserModelView> appUserModelViews = _mapper.Map<List<AppUserModelView>>(paginatedUsers);
+            // Map entities to model views
+            List<AppUserModelView> appUserModelViews = _mapper.Map<List<AppUserModelView>>(paginatedUsers);
 
-			// Return the paginated list with users
-			return new BasePaginatedList<AppUserModelView>(appUserModelViews, totalCount, pageNumber, pageSize);
-		}
+            // Return the paginated list with users
+            return new BasePaginatedList<AppUserModelView>(appUserModelViews, totalCount, pageNumber, pageSize);
+        }
 
         public async Task<string> ForgotPasswordAsync(ForgotPasswordModelView model)
         {
@@ -556,7 +557,7 @@ namespace HairSalon.Services.Service
 
             return "OTP has been sent to your email.";
         }
-        
+
         public async Task<string> ResetPasswordAsync(ResetPasswordModelView model)
         {
             var accountRepo = _unitOfWork.GetRepository<ApplicationUsers>();
@@ -612,12 +613,12 @@ namespace HairSalon.Services.Service
         public async Task<GetInforAppUserModelView> GetMyInforUsersAsync(string username)
         {
             var appUser = await _userManager.Users
-        .Include(u => u.UserInfo) // Bao gồm bảng liên quan
-        .FirstOrDefaultAsync(u => u.UserName == username);
+                            .Include(u => u.UserInfo) // Bao gồm bảng liên quan
+                            .FirstOrDefaultAsync(u => u.UserName == username);
 
             if (appUser == null)
             {
-                return null; 
+                return null;
             }
 
             // Tạo DTO để trả về thông tin người dùng và thông tin từ UserInfo
@@ -627,14 +628,54 @@ namespace HairSalon.Services.Service
                 UserName = appUser.UserName,
                 Email = appUser.Email,
                 PhoneNumber = appUser.PhoneNumber,
-                FirstName = appUser.UserInfo?.Firstname, 
-                LastName = appUser.UserInfo?.Lastname,   
+                FirstName = appUser.UserInfo?.Firstname,
+                LastName = appUser.UserInfo?.Lastname,
                 BankAccount = appUser.UserInfo?.BankAccount,
                 E_Wallet = appUser.E_Wallet,
                 Point = (int)(appUser.UserInfo?.Point),
                 Roles = await _userManager.GetRolesAsync(appUser)
             };
             return userinfor;
+        }
+
+        public async Task<List<AppUserModelView>> GetAllStylistAsync()
+        {
+            // Try to find all stylists not deleted
+            var list = await _unitOfWork.GetRepository<ApplicationUsers>().Entities
+                .Where(a => !a.DeletedTime.HasValue)
+                .Where(u => u.UserRoles.Any(ur => ur.Role.Name == "Stylist"))
+                .ToListAsync();
+
+            // If list combos is not found, return null
+            if (list == null)
+            {
+                return null;
+            }
+
+            // Map the service entity to a ServiceModelView and return it
+            var listStylist = _mapper.Map<List<AppUserModelView>>(list);
+
+            return listStylist;
+        }
+
+        // Retrieve a Stylist by NameRole
+        public async Task<List<AppUserModelView>> GetUsersByRoleAsync(string roleName)
+        {
+            // Get SalaryPayments for users with the specified role
+            var salaryPayments = await _unitOfWork.GetRepository<ApplicationUsers>()
+                .Entities
+                .Where(p => p.UserRoles.Any(ur => ur.Role.Name == roleName)) // Ensure the user has the "Stylist" role
+                .Include(u => u.UserInfo) // Include UserInfo for FullName
+                .ToListAsync();
+
+            // Map SalaryPayments to SalaryPaymentModelView and return the result
+            return salaryPayments.Select(s => new AppUserModelView
+            {
+                Id = s.Id.ToString(), // Assuming UserId is of type Guid
+                FullName = s.UserInfo != null
+                            ? $"{s.UserInfo.Firstname} {s.UserInfo.Lastname}"
+                            : "N/A"
+            }).ToList();
         }
     }
 }

@@ -27,6 +27,7 @@ namespace HairSalon.Services.Service
         {
             // Initialize the query for roles, filtering out roles that have a DeletedTime 
             IQueryable<ApplicationRoles> roleQuery = _unitOfWork.GetRepository<ApplicationRoles>().Entities
+                .AsNoTracking()
                 .Where(p => !p.DeletedTime.HasValue);
 
             // If an ID filter is provided, apply it to the query
@@ -203,7 +204,7 @@ namespace HairSalon.Services.Service
                 return null; // Or you could throw an exception or return an error message
             }
 
-            // Try to find the role by its ID, ensuring it hasn’t been marked as deleted
+            // Try to find the role by its ID, ensuring it hasnâ€™t been marked as deleted
             var roleEntity = await _unitOfWork.GetRepository<ApplicationRoles>().Entities
                 .FirstOrDefaultAsync(role => role.Id == Guid.Parse(id) && !role.DeletedTime.HasValue);
 

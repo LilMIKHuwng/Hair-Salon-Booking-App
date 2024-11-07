@@ -39,7 +39,7 @@ namespace HairSalonBE.API.Controllers
         [HttpPost("create")]
         public async Task<ActionResult<string>> CreateFeedback([FromQuery] CreateFeedbackModelView model)
         {
-            string result = await _feedbackService.AddFeedbackAsync(model);
+            string result = await _feedbackService.AddFeedbackAsync(model, null);
             return Ok(new { Message = result });
         }
 
@@ -59,7 +59,7 @@ namespace HairSalonBE.API.Controllers
         [HttpDelete("delete/{id}")]
         public async Task<ActionResult<string>> DeleteFeedback(string id)
         {
-            string result = await _feedbackService.DeleteFeedbackpAsync(id);
+            string result = await _feedbackService.DeleteFeedbackpAsync(id, null);
             return Ok(new { Message = result });
         }
 

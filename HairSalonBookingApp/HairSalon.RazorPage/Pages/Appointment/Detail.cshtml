@@ -1,0 +1,153 @@
+﻿@page
+@model HairSalon.RazorPage.Pages.Appointment.DetailModel
+@{
+    ViewData["Title"] = "Appointment Details";
+}
+
+<style>
+    /* General Page Styling */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h2 {
+        color: #3f51b5;
+        border-bottom: 2px solid #3f51b5;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+
+    /* Details Container Styling */
+    .details-container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        margin: 0 auto 20px;
+    }
+
+    .details-container p {
+        font-size: 16px;
+        line-height: 1.6;
+    }
+
+    .details-container p strong {
+        color: #3f51b5;
+    }
+
+    /* Table Styling */
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin-top: 10px;
+    }
+
+    th, td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #f1f1f1;
+        font-weight: bold;
+    }
+
+    /* Button Styling */
+    .btn-container {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        color: #ffffff;
+        background-color: #3f51b5;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+        display: inline-block;
+        text-align: center;
+    }
+
+    .btn:hover {
+        background-color: #2c3e91;
+    }
+</style>
+
+@if (TempData["DeniedMessage"] != null)
+{
+            <div class="alert alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
+}
+else
+{
+            <h2>@ViewData["Title"]</h2>
+
+            <div class="details-container">
+                <p><strong>Appointment ID:</strong> @Model.Appointment.Id</p>
+                <p><strong>User ID:</strong> @Model.Appointment.UserId</p>
+                <p><strong>Stylist ID:</strong> @Model.Appointment.StylistId</p>
+                <p><strong>Status:</strong> @Model.Appointment.StatusForAppointment</p>
+                <p><strong>Points Earned:</strong> @Model.Appointment.PointsEarned</p>
+                <p><strong>Total Time:</strong> @Model.Appointment.TotalTime minutes</p>
+                <p><strong>Total Amount:</strong> @Model.Appointment.TotalAmount</p>
+                <p><strong>Appointment Date:</strong> @Model.Appointment.AppointmentDate.ToString("MM/dd/yyyy hh:mm tt")</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                                <th>Selected Services</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var service in Model.Services)
+                        {
+                            if (Model.ServiceAppointment.Any(sa => sa.ServiceId == service.Id))
+                            {
+                                <tr>
+                                    <td>@service.Name</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Selected Combos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var combo in Model.Combos)
+                        {
+                            if (Model.ComboAppointment.Any(ca => ca.ComboId == combo.Id))
+                            {
+                                <tr>
+                                    <td>@combo.Name</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="btn-container">
+                <a asp-page="/Appointment/Update" asp-route-id="@Model.Appointment.Id" class="btn">Update Appointment</a>
+                <a asp-page="/Appointment/Index" class="btn">Back to Appointment List</a>
+            </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+                                <div class="alert-danger">@TempData["ErrorMessage"]</div>
+    }
+}

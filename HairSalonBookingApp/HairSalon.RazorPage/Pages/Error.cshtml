@@ -59,6 +59,13 @@
         </div>
     }
 
+    @if (TempData["DeniedMessage"] != null)
+    {
+        <div class="error-message">
+            @TempData["DeniedMessage"]
+        </div>
+    }
+
     @if (Model.ShowRequestId)
     {
         <p>
