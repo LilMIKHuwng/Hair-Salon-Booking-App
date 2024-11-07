@@ -34,7 +34,7 @@ public class Delete : PageModel
         if (userRolesJson == null)
         {
             TempData["DeniedMessage"] = "You do not have permission to view user details.";
-            return Page(); // Redirect to a different page with a denied message
+            return RedirectToPage("/Error");
         }
 
         var result = await _userService.GetAllAppUserAsync(Id, 1, 1);

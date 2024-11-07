@@ -49,7 +49,7 @@ namespace HairSalon.RazorPage.Pages.Appointment
             else
             {
                 TempData["ErrorMessage"] = "You do not have permission to view this page.";
-                return Page();
+                return RedirectToPage("/Error");
             }
 
             Appointment = await _appointmentService.GetAppointmentByIdAsync(Id);

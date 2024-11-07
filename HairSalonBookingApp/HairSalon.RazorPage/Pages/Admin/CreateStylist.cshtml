@@ -1,5 +1,5 @@
 ﻿@page
-@model HairSalon.RazorPage.Pages.Login.CreateUserModel
+@model HairSalon.RazorPage.Pages.Admin.CreateStylistModel
 @{
     ViewData["Title"] = "Create User";
     Layout = null; // Disable layout
@@ -96,67 +96,74 @@
 </head>
 <body>
 
-    <h2>Create New User</h2>
-
-    @if (TempData["ErrorMessage"] != null)
+    @if (TempData["DeniedMessage"] != null)
     {
-        <div class="alert-danger">@TempData["ErrorMessage"]</div>
+        <div class="alert alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
     }
+    else
+    {
+        <h2>Create New User</h2>
 
-    <form method="post" enctype="multipart/form-data">
-        <div class="form-group">
-            <label asp-for="UserModel.FirstName"></label>
-            <input asp-for="UserModel.FirstName" required />
-            <span asp-validation-for="UserModel.FirstName" class="text-danger"></span>
-        </div>
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert-danger">@TempData["ErrorMessage"]</div>
+        }
 
-        <div class="form-group">
-            <label asp-for="UserModel.LastName"></label>
-            <input asp-for="UserModel.LastName" required />
-            <span asp-validation-for="UserModel.LastName" class="text-danger"></span>
-        </div>
+        <form method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label asp-for="UserModel.FirstName"></label>
+                <input asp-for="UserModel.FirstName" required />
+                <span asp-validation-for="UserModel.FirstName" class="text-danger"></span>
+            </div>
 
-        <div class="form-group">
-            <label asp-for="UserModel.UserName"></label>
-            <input asp-for="UserModel.UserName" required />
-            <span asp-validation-for="UserModel.UserName" class="text-danger"></span>
-        </div>
+            <div class="form-group">
+                <label asp-for="UserModel.LastName"></label>
+                <input asp-for="UserModel.LastName" required />
+                <span asp-validation-for="UserModel.LastName" class="text-danger"></span>
+            </div>
 
-        <div class="form-group">
-            <label asp-for="UserModel.Email"></label>
-            <input asp-for="UserModel.Email" required />
-            <span asp-validation-for="UserModel.Email" class="text-danger"></span>
-        </div>
+            <div class="form-group">
+                <label asp-for="UserModel.UserName"></label>
+                <input asp-for="UserModel.UserName" required />
+                <span asp-validation-for="UserModel.UserName" class="text-danger"></span>
+            </div>
 
-        <div class="form-group">
-            <label asp-for="UserModel.Password"></label>
-            <input asp-for="UserModel.Password" type="password" required />
-            <span asp-validation-for="UserModel.Password" class="text-danger"></span>
-        </div>
+            <div class="form-group">
+                <label asp-for="UserModel.Email"></label>
+                <input asp-for="UserModel.Email" required />
+                <span asp-validation-for="UserModel.Email" class="text-danger"></span>
+            </div>
 
-        <div class="form-group">
-            <label asp-for="UserModel.PhoneNumber"></label>
-            <input asp-for="UserModel.PhoneNumber" required />
-            <span asp-validation-for="UserModel.PhoneNumber" class="text-danger"></span>
-        </div>
+            <div class="form-group">
+                <label asp-for="UserModel.Password"></label>
+                <input asp-for="UserModel.Password" type="password" required />
+                <span asp-validation-for="UserModel.Password" class="text-danger"></span>
+            </div>
 
-        <div class="form-group">
-            <label asp-for="UserModel.RoleName"></label>
-            <input asp-for="UserModel.RoleName" value="Stylist" readonly />
-            <span asp-validation-for="UserModel.RoleName" class="text-danger"></span>
-        </div>
+            <div class="form-group">
+                <label asp-for="UserModel.PhoneNumber"></label>
+                <input asp-for="UserModel.PhoneNumber" required />
+                <span asp-validation-for="UserModel.PhoneNumber" class="text-danger"></span>
+            </div>
 
-        <div class="form-group">
-            <label asp-for="UserModel.UserImage"></label>
-            <input asp-for="UserModel.UserImage" type="file" required />
-            <span asp-validation-for="UserModel.UserImage" class="text-danger"></span>
-        </div>
+            <div class="form-group">
+                <label asp-for="UserModel.RoleName"></label>
+                <input asp-for="UserModel.RoleName" value="Stylist" readonly />
+                <span asp-validation-for="UserModel.RoleName" class="text-danger"></span>
+            </div>
 
-        <button type="submit" class="btn-primary">Create User</button>
-    </form>
+            <div class="form-group">
+                <label asp-for="UserModel.StylistImage"></label>
+                <input asp-for="UserModel.StylistImage" type="file" required />
+                <span asp-validation-for="UserModel.StylistImage" class="text-danger"></span>
+            </div>
 
-    @section Scripts {
+            <button type="submit" class="btn-primary">Create User</button>
+        </form>
+
+        @section Scripts {
         <partial name="_ValidationScriptsPartial" />
+        }
     }
 </body>
 </html>

@@ -42,8 +42,8 @@ namespace HairSalon.RazorPage.Pages.Combo
 			if (userRolesJson == null)
 			{
 				TempData["DeniedMessage"] = "You do not have permission";
-				return Page();// Redirect to a different page with a denied message
-			}
+                return RedirectToPage("/Error");
+            }
 
 			var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
 
