@@ -1,5 +1,6 @@
 ﻿@page
 @model HairSalon.RazorPage.Pages.SalaryPayments.UpdateModel
+@using HairSalon.ModelViews.ApplicationUserModelViews
 @{
     ViewData["Title"] = "Update Salary Payment";
 }
@@ -137,10 +138,23 @@ else
             <p>@Model.Id</p>
         </div>
 
-        <div>
-            <label asp-for="UpdatedSalary.UserId">User ID</label>
-            <input asp-for="UpdatedSalary.UserId" placeholder="Enter User ID" required />
-            <span asp-validation-for="UpdatedSalary.UserId" class="text-danger"></span>
+        <div class="form-group">
+            <label asp-for="SalaryPayment.UserId">User ID</label>
+            <select asp-for="SalaryPayment.UserId" class="form-control" required>
+                <option value="">Select a Stylist</option>
+                @if (ViewData["Stylists"] != null && ((List<AppUserModelView>)ViewData["Stylists"]).Any())
+                {
+                    @foreach (var stylist in (List<AppUserModelView>)ViewData["Stylists"])
+                    {
+                        <option value="@stylist.Id">@stylist.FullName</option>
+                    }
+                }
+                else
+                {
+                    <p>No stylists found.</p>
+                }
+            </select>
+            <span asp-validation-for="SalaryPayment.UserId" class="text-danger"></span>
         </div>
 
         <div>

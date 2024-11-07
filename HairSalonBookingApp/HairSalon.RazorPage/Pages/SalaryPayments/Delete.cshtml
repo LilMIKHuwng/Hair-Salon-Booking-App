@@ -124,6 +124,8 @@ else
     <div class="details-container">
         <p><strong>Salary Payment ID:</strong> @Model.SalaryPayment.Id</p>
         <p><strong>Stylist Name:</strong> @Model.SalaryPayment.FullName</p>
+        <p><strong>BaseSalary:</strong> @Model.SalaryPayment.BaseSalary</p>
+        <p><strong>PaymentDate:</strong> @Model.SalaryPayment.PaymentDate.ToString("MMMM dd, yyyy")</p>
     </div>
 
     <p class="confirmation-text">Are you sure you want to delete this salary payment? This action cannot be undone.</p>

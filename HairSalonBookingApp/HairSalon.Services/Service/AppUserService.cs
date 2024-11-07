@@ -657,5 +657,25 @@ namespace HairSalon.Services.Service
 
             return listStylist;
         }
+
+        // Retrieve a Stylist by NameRole
+        public async Task<List<AppUserModelView>> GetUsersByRoleAsync(string roleName)
+        {
+            // Get SalaryPayments for users with the specified role
+            var salaryPayments = await _unitOfWork.GetRepository<ApplicationUsers>()
+                .Entities
+                .Where(p => p.UserRoles.Any(ur => ur.Role.Name == roleName)) // Ensure the user has the "Stylist" role
+                .Include(u => u.UserInfo) // Include UserInfo for FullName
+                .ToListAsync();
+
+            // Map SalaryPayments to SalaryPaymentModelView and return the result
+            return salaryPayments.Select(s => new AppUserModelView
+            {
+                Id = s.Id.ToString(), // Assuming UserId is of type Guid
+                FullName = s.UserInfo != null
+                            ? $"{s.UserInfo.Firstname} {s.UserInfo.Lastname}"
+                            : "N/A"
+            }).ToList();
+        }
     }
 }

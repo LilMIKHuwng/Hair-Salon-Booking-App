@@ -38,7 +38,7 @@ namespace HairSalon.Services.Service
             IQueryable<SalaryPayment> salaryPaymentQuery = _unitOfWork.GetRepository<SalaryPayment>().Entities
                 .Where(p => !p.DeletedTime.HasValue);
 
-            // Apply filters if provided
+            // Apply additional filters if provided
             if (!string.IsNullOrEmpty(id))
             {
                 salaryPaymentQuery = salaryPaymentQuery.Where(p => p.Id == id);
@@ -530,6 +530,5 @@ namespace HairSalon.Services.Service
 
             return salaryModelView;
         }
-
     }
 }
