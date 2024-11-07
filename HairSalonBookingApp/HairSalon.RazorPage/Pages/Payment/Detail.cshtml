@@ -1,0 +1,84 @@
+﻿@page
+@model HairSalon.RazorPage.Pages.Payment.DetailModel
+@{
+    ViewData["Title"] = "Payment Details";
+}
+
+<style>
+    /* General Page Styling */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h2 {
+        color: #3f51b5;
+        border-bottom: 2px solid #3f51b5;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+
+    /* Details Container Styling */
+    .details-container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        margin: 0 auto 20px;
+    }
+
+        .details-container p {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+            .details-container p strong {
+                color: #3f51b5;
+            }
+
+    /* Button Styling */
+    .btn-container {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        color: #ffffff;
+        background-color: #3f51b5;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+        display: inline-block;
+        text-align: center;
+    }
+
+        .btn:hover {
+            background-color: #2c3e91;
+        }
+</style>
+
+<div class="details-container">
+    <p><strong>Payment ID:</strong> @Model.PaymentDetail.Id</p>
+    <p><strong>Appointment ID:</strong> @Model.PaymentDetail.AppointmentId</p>
+    <p><strong>Total Amount:</strong> @Model.PaymentDetail.TotalAmount</p>
+    <p><strong>Payment Time:</strong> @Model.PaymentDetail.PaymentTime</p>
+    <p><strong>Payment Method:</strong> @Model.PaymentDetail.PaymentMethod</p>
+    <p><strong>Bank Code:</strong> @Model.PaymentDetail.BankCode</p>
+    <p><strong>Bank Transaction No:</strong> @Model.PaymentDetail.BankTranNo</p>
+    <p><strong>Card Type:</strong> @Model.PaymentDetail.CardType</p>
+    <p><strong>Response Code:</strong> @Model.PaymentDetail.ResponseCode</p>
+    <p><strong>Transaction No:</strong> @Model.PaymentDetail.TransactionNo</p>
+    <p><strong>Transaction Status:</strong> @Model.PaymentDetail.TransactionStatus</p>
+</div>
+
+<div class="btn-container">
+    @* <a asp-page="/Payment/Update" asp-route-id="@Model.PaymentDetail.Id" class="btn">Update Payment</a> *@
+    <a asp-page="/Payment/Index" class="btn">Back to Payment List</a>
+</div>

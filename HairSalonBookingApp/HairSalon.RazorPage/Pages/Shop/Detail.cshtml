@@ -1,0 +1,93 @@
+﻿@page
+@model HairSalon.RazorPage.Pages.Shop.DetailModel
+@{
+    ViewData["Title"] = "Shop Details";
+}
+
+<style>
+    /* General Page Styling */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h2 {
+        color: #3f51b5;
+        border-bottom: 2px solid #3f51b5;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+
+    /* Details Container Styling */
+    .details-container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        margin: 0 auto 20px;
+    }
+
+        .details-container p {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+            .details-container p strong {
+                color: #3f51b5;
+            }
+
+    /* Button Styling */
+    .btn-container {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        color: #ffffff;
+        background-color: #3f51b5;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+        display: inline-block;
+        text-align: center;
+    }
+
+        .btn:hover {
+            background-color: #2c3e91;
+        }
+
+    /* Image Styling */
+    .shop-image {
+        max-width: 200px; /* Set your desired max width */
+        max-height: 150px; /* Set your desired max height */
+        width: auto; /* Maintain aspect ratio */
+        height: auto; /* Maintain aspect ratio */
+    }
+</style>
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="details-container">
+    <p><strong>Shop ID:</strong> @Model.ShopDetail?.Id</p>
+    <p><strong>Shop Name:</strong> @Model.ShopDetail?.Name</p>
+    <p><strong>Address:</strong> @Model.ShopDetail?.Address</p>
+    <p><strong>Email:</strong> @Model.ShopDetail?.ShopEmail</p>
+    <p><strong>Phone:</strong> @Model.ShopDetail?.ShopPhone</p>
+    <p><strong>Open Time:</strong> @Model.ShopDetail?.OpenTime.ToString("hh\\:mm")</p>
+    <p><strong>Close Time:</strong> @Model.ShopDetail?.CloseTime.ToString("hh\\:mm")</p>
+    <p><strong>Title:</strong> @Model.ShopDetail?.Title</p>
+    <p><strong>Image:</strong> <img src="@Model.ShopDetail?.ShopImage" alt="Shop Image" class="shop-image" /></p>
+</div>
+
+<div class="btn-container">
+    <a asp-page="/Shop/Update" asp-route-id="@Model.ShopDetail.Id" class="btn">Update Shop</a>
+    <a asp-page="/Shop/Index" class="btn">Back to Shop List</a>
+</div>
+

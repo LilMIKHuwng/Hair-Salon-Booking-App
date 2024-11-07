@@ -18,7 +18,7 @@ namespace HairSalon.ModelViews.ShopModelViews
 
         public string? Title { get; set; }
 
-		public IFormFile? ShopImage { get; set; }
+        public IFormFile? ShopImage { get; set; }
 
-	}
+    }
 }

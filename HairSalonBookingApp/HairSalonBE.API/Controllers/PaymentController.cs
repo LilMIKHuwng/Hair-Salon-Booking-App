@@ -42,7 +42,7 @@ namespace HairSalonBE.API.Controllers
         [HttpPost("create")]
         public async Task<ActionResult<string>> CreatePayment([FromQuery] PaymentResponseModelView model)
         {
-            string result = await _vpnPayService.ExcutePayment(model);
+            string result = await _vpnPayService.ExcutePayment(model, null);
             return Ok(new { Message = result });
         }
 
@@ -63,7 +63,7 @@ namespace HairSalonBE.API.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<string>> DeletePayment(string id)
         {
-            string result = await _paymentService.DeletePaymentpAsync(id);
+            string result = await _paymentService.DeletePaymentAsync(id, null);
             return Ok(new { Message = result });
         }
 

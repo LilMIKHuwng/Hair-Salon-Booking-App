@@ -9,6 +9,7 @@ using HairSalon.Core.Base;
 using Microsoft.AspNetCore.Http;
 using Azure.Core;
 using Microsoft.Extensions.Configuration;
+using HairSalon.ModelViews.RoleModelViews;
 
 namespace HairSalon.Services.Service
 {
@@ -67,7 +68,7 @@ namespace HairSalon.Services.Service
         }
 
 
-        public async Task<string> AddShopAsync(CreateShopModelView model)
+        public async Task<string> AddShopAsync(CreateShopModelView model, string? userId)
         {
             try
             {
@@ -78,15 +79,22 @@ namespace HairSalon.Services.Service
                 newShop.Id = Guid.NewGuid().ToString("N");
 
                 // Set the CreatedBy field to the current user's ID from the HttpContext
-                newShop.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                if (userId != null)
+                {
+                    newShop.CreatedBy = userId;
+                }
+                else
+                {
+                    newShop.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                }
 
                 // Set the CreatedTime and LastUpdatedTime to the current UTC time
                 newShop.CreatedTime = DateTimeOffset.UtcNow;
                 newShop.LastUpdatedTime = DateTimeOffset.UtcNow;
 
 
-				var imageHelper = new HairSalon.Core.Utils.Firebase.ImageHelper(_configuration);
-				string firebaseUrl = await imageHelper.Upload(model.ShopImage);
+                var imageHelper = new HairSalon.Core.Utils.Firebase.ImageHelper(_configuration);
+                string firebaseUrl = await imageHelper.Upload(model.ShopImage);
                 newShop.ShopImage = firebaseUrl;
 
                 // Insert the new shop entity into the repository
@@ -108,7 +116,7 @@ namespace HairSalon.Services.Service
             }
         }
 
-        public async Task<string> UpdateShopAsync(string id, UpdatedShopModelView model)
+        public async Task<string> UpdateShopAsync(string id, UpdatedShopModelView model, string? userId)
         {
             try
             {
@@ -149,23 +157,45 @@ namespace HairSalon.Services.Service
                 {
                     existingShop.OpenTime = (TimeSpan)model.OpenTime;
                 }
+
                 if (model.CloseTime != null && model.CloseTime != existingShop.CloseTime)
                 {
                     existingShop.CloseTime = (TimeSpan)model.CloseTime;
                 }
+
+                /*if (model.CloseTime != null)
+                {
+                    // Check that CloseTime is not earlier than OpenTime
+                    if (model.OpenTime != null && model.CloseTime < model.OpenTime)
+                    {
+                        return "Close time cannot be earlier than open time.";
+                    }
+                    if (model.CloseTime != existingShop.CloseTime)
+                    {
+                        existingShop.CloseTime = (TimeSpan)model.CloseTime;
+                    }
+                }*/
+
                 if (!string.IsNullOrWhiteSpace(model.Title) && model.Title != existingShop.Title)
                 {
                     existingShop.Title = model.Title;
                 }
                 if (model.ShopImage != null)
                 {
-					var imageHelper = new HairSalon.Core.Utils.Firebase.ImageHelper(_configuration);
-					string firebaseUrl = await imageHelper.Upload(model.ShopImage);
-					existingShop.ShopImage = firebaseUrl;
-				}
+                    var imageHelper = new HairSalon.Core.Utils.Firebase.ImageHelper(_configuration);
+                    string firebaseUrl = await imageHelper.Upload(model.ShopImage);
+                    existingShop.ShopImage = firebaseUrl;
+                }
 
                 // Update audit fields with the current user and timestamp
-                existingShop.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                if (userId != null)
+                {
+                    existingShop.LastUpdatedBy = userId;
+                }
+                else
+                {
+                    existingShop.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                }
                 existingShop.LastUpdatedTime = DateTimeOffset.UtcNow;
 
                 // Update the shop entity in the repository
@@ -187,7 +217,7 @@ namespace HairSalon.Services.Service
             }
         }
 
-        public async Task<string> DeleteShopAsync(string id)
+        public async Task<string> DeleteShopAsync(string id, string? userId)
         {
             try
             {
@@ -211,7 +241,14 @@ namespace HairSalon.Services.Service
                 existingShop.DeletedTime = DateTimeOffset.UtcNow;
 
                 // Record the ID of the user performing the deletion action
-                existingShop.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                if (userId != null)
+                {
+                    existingShop.DeletedBy = userId;
+                }
+                else
+                {
+                    existingShop.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                }
 
                 // Update the shop entity in the repository
                 await _unitOfWork.GetRepository<Shop>().UpdateAsync(existingShop);
@@ -220,7 +257,7 @@ namespace HairSalon.Services.Service
                 await _unitOfWork.SaveAsync();
 
                 // Return a success message
-                return "Deleted shop successfully!";
+                return "Deleted shop successfully";
             }
             catch (BaseException.BadRequestException ex)
             {
@@ -232,6 +269,30 @@ namespace HairSalon.Services.Service
                 // Return a generic error message if any other exception occurs
                 return "An error occurred while deleting the shop.";
             }
+        }
+
+        // Retrieve a shop by its ID
+        public async Task<ShopModelView?> GetShopByIdAsync(string id)
+        {
+            // Check if the provided Role ID is valid (non-empty and non-whitespace)
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return null; // Or you could throw an exception or return an error message
+            }
+
+            // Try to find the role by its ID, ensuring it hasn’t been marked as deleted
+            var shopEntity = await _unitOfWork.GetRepository<Shop>().Entities
+                .FirstOrDefaultAsync(shop => shop.Id == id && !shop.DeletedTime.HasValue);
+
+            // If the role is not found, return null
+            if (shopEntity == null)
+            {
+                return null;
+            }
+
+            // Map the ApplicationRoles entity to a RoleModelView and return it
+            ShopModelView shopModelView = _mapper.Map<ShopModelView>(shopEntity);
+            return shopModelView;
         }
     }
 }

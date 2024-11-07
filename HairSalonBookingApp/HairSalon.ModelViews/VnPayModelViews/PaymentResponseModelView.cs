@@ -19,5 +19,6 @@ namespace HairSalon.ModelViews.VnPayModelViews
         public string? TransactionNo { get; set; }
         public string? TransactionStatus { get; set; }
         public string Method { get; set; }
+        public Guid? UserId { get; set; }
     }
 }

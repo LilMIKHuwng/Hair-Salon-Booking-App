@@ -4,6 +4,7 @@ using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
 using HairSalon.ModelViews.PaymentModelViews;
+using HairSalon.ModelViews.ShopModelViews;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using HairSalon.ModelViews.AppointmentModelViews;
@@ -64,7 +65,7 @@ namespace HairSalon.Services.Service
 		}
 
 		// Soft delete a payment
-		public async Task<string> DeletePaymentpAsync(string id)
+		public async Task<string> DeletePaymentAsync(string id, string? userId)
 		{
 			// Validate Payment ID
 			if (string.IsNullOrWhiteSpace(id))
@@ -81,15 +82,44 @@ namespace HairSalon.Services.Service
 			}
 
 			existingPayment.DeletedTime = DateTimeOffset.UtcNow;
-			existingPayment.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            if (userId != null)
+            {
+                existingPayment.DeletedBy = userId;
+            }
+            else
+            {
+                existingPayment.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            }
 
-			// Mark the payment as deleted
-			await _unitOfWork.GetRepository<Payment>().UpdateAsync(existingPayment);
+            // Mark the payment as deleted
+            await _unitOfWork.GetRepository<Payment>().UpdateAsync(existingPayment);
 			await _unitOfWork.SaveAsync();
 
 			return "Payment deleted successfully.";
 		}
 
+        // Retrieve a payment by its ID
+        public async Task<PaymentModelView?> GetPaymentByIdAsync(string id)
+        {
+            // Check if the provided Role ID is valid (non-empty and non-whitespace)
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return null; // Or you could throw an exception or return an error message
+            }
 
-	}
+            // Try to find the payment by its ID, ensuring it hasn�t been marked as deleted
+            var paymentEntity = await _unitOfWork.GetRepository<Payment>().Entities
+                .FirstOrDefaultAsync(payment => payment.Id == id && !payment.DeletedTime.HasValue);
+
+            // If the payment is not found, return null
+            if (paymentEntity == null)
+            {
+                return null;
+            }
+
+            // Map the ApplicationRoles entity to a RoleModelView and return it
+            PaymentModelView paymentModelView = _mapper.Map<PaymentModelView>(paymentEntity);
+            return paymentModelView;
+        }
+    }
 }
