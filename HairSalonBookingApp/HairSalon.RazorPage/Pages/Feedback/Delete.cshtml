@@ -1,7 +1,7 @@
 ﻿@page
-@model HairSalon.RazorPage.Pages.Appointment.DeleteModel
+@model HairSalon.RazorPage.Pages.Feedback.DeleteModel
 @{
-    ViewData["Title"] = "Delete Appointment";
+    ViewData["Title"] = "Delete Feedback";
 }
 
 <style>
@@ -29,14 +29,14 @@
         margin: 0 auto 20px;
     }
 
-    .details-container p {
-        font-size: 16px;
-        line-height: 1.6;
-    }
+        .details-container p {
+            font-size: 16px;
+            line-height: 1.6;
+        }
 
-    .details-container p strong {
-        color: #3f51b5;
-    }
+            .details-container p strong {
+                color: #3f51b5;
+            }
 
     p.confirmation-text {
         font-size: 1.1em;
@@ -70,17 +70,17 @@
         border: none;
     }
 
-    button[type="submit"]:hover {
-        background-color: #c9302c;
-    }
+        button[type="submit"]:hover {
+            background-color: #c9302c;
+        }
 
     .btn-cancel {
-        background-color: #5bc0de;
+        background-color: #5bc0de; /* Blue color for cancel button */
     }
 
-    .btn-cancel:hover {
-        background-color: #31b0d5;
-    }
+        .btn-cancel:hover {
+            background-color: #31b0d5;
+        }
 
     .alert-danger {
         background-color: #f2dede;
@@ -95,32 +95,40 @@
 
 @if (TempData["DeniedMessage"] != null)
 {
-        <div class="alert alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
+    <div class="alert alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
 }
 else
 {
-        <h2>Delete Appointment</h2>
+    <h2>Delete Feedback</h2>
 
-    <div class="details-container">
-        <p><strong>Appointment ID:</strong> @Model.Appointment.Id</p>
-        <p><strong>User ID:</strong> @Model.Appointment.UserId</p>
-        <p><strong>Stylist ID:</strong> @Model.Appointment.StylistId</p>
-        <p><strong>Status:</strong> @Model.Appointment.StatusForAppointment</p>
-        <p><strong>Points Earned:</strong> @Model.Appointment.PointsEarned</p>
-        <p><strong>Total Time:</strong> @Model.Appointment.TotalTime minutes</p>
-        <p><strong>Total Amount:</strong> @Model.Appointment.TotalAmount</p>
-        <p><strong>Appointment Date:</strong> @Model.Appointment.AppointmentDate.ToString("MM/dd/yyyy hh:mm tt")</p>
-    </div>
+    
+    @if (Model.Feedback != null)
+    {
+        <div class="details-container">
+            <p><strong>Feedback ID:</strong> @Model.Feedback.Id</p>
+            <p><strong>Feedback Name:</strong> @Model.Feedback.AppointmentId</p>
+            <p><strong>Feedback Rate:</strong> @Model.Feedback.Rate</p>
+            <p><strong>Feedback Comment:</strong> @Model.Feedback.Comment</p>
+        </div>
 
-    <p class="confirmation-text">Are you sure you want to delete this appointment?</p>
+        <p class="confirmation-text">Are you sure you want to delete this Feedback?</p>
 
-    <form method="post">
-        <button type="submit">Delete</button>
-        <a asp-page="/Appointment/Index" class="btn-cancel">Cancel</a>
-    </form>
+        <form method="post">
+            <button type="submit">Delete</button>
+            <a asp-page="/Feedback/Index" class="btn-cancel">Cancel</a>
+        </form>
+    }
+    else
+    {
+        <p class="alert-danger">No feedback details available.</p>
+    }
+
+    
 
     @if (TempData["ErrorMessage"] != null)
     {
-                <div class="alert-danger">@TempData["ErrorMessage"]</div>
+        <div class="alert-danger">@TempData["ErrorMessage"]</div>
     }
 }
+
+

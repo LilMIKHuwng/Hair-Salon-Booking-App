@@ -43,7 +43,7 @@ public class Update : PageModel
         if (userRolesJson == null)
         {
             TempData["DeniedMessage"] = "You do not have permission to update a user.";
-            return Page(); // Redirect to a different page with a denied message
+            return RedirectToPage("/Error");
         }
 
 

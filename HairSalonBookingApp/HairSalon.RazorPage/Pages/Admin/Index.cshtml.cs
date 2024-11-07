@@ -32,7 +32,7 @@ public class StaffManagementModel : PageModel
         else
         {
             TempData["ErrorMessage"] = "You do not have permission to view this page.";
-            return Page();
+            return RedirectToPage("/Error");
         }
 
         // If authorized, retrieve staff data with pagination and optional filters

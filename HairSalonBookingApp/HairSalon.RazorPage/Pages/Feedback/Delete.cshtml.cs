@@ -1,29 +1,26 @@
-using HairSalon.Contract.Services.Interface;
-using HairSalon.ModelViews.RoleModelViews;
+﻿using HairSalon.Contract.Services.Interface;
+using HairSalon.ModelViews.FeedBackModeViews;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 
-namespace HairSalon.RazorPage.Pages.Role
+namespace HairSalon.RazorPage.Pages.Feedback
 {
-    public class UpdateModel : PageModel
+    public class DeleteModel : PageModel
     {
-        private readonly IRoleService _roleService;
+        private readonly IFeedbackService _feedbackService;
 
-        public UpdateModel(IRoleService roleService)
+        public DeleteModel(IFeedbackService feedbackService)
         {
-            _roleService = roleService;
+            _feedbackService = feedbackService;
         }
 
         [BindProperty(SupportsGet = true)]
         public string Id { get; set; }
 
-        [BindProperty]
-        public RoleModelView Role { get; set; }
+        public FeedBackModelView Feedback { get; set; }
 
-        [BindProperty] // Bind UpdatedRole to be populated from the form
-        public UpdatedRoleModelView UpdatedRole { get; set; }
-
+        // Property to store response or success messages
         [TempData]
         public string ResponseMessage { get; set; }
 
@@ -32,7 +29,7 @@ namespace HairSalon.RazorPage.Pages.Role
             // Check if Id is provided
             if (string.IsNullOrEmpty(Id))
             {
-                TempData["ErrorMessage"] = "Invalid Role ID.";
+                TempData["ErrorMessage"] = "Invalid Feedback ID.";
                 return RedirectToPage("/Error"); // Redirect to error page if Id is missing
             }
 
@@ -41,7 +38,7 @@ namespace HairSalon.RazorPage.Pages.Role
             if (userRolesJson == null)
             {
                 TempData["DeniedMessage"] = "You do not have permission";
-                return RedirectToPage("/Error");
+                return Page();// Redirect to a different page with a denied message
             }
 
             var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
@@ -53,15 +50,12 @@ namespace HairSalon.RazorPage.Pages.Role
                 return Page(); // Redirect to a different page with a denied message
             }
 
-            Role = await _roleService.GetRoleByIdAsync(Id);
-            if (Role == null)
+            Feedback = await _feedbackService.GetFeedBackByIdAsync(Id);
+            if (Feedback == null)
             {
-                TempData["ErrorMessage"] = "Role not found.";
-                return RedirectToPage("/Role/Index");
+                TempData["ErrorMessage"] = "Feedback Not Found";
+                return Redirect("/Feedback/Index"); // Redirect if role is not found
             }
-
-            // Initialize UpdatedRole with existing role name for display in the form
-            UpdatedRole = new UpdatedRoleModelView { Name = Role.Name };
             return Page();
         }
 
@@ -69,13 +63,13 @@ namespace HairSalon.RazorPage.Pages.Role
         {
             var userId = HttpContext.Session.GetString("UserId");
 
-            var response = await _roleService.UpdateRoleAsync(Id, UpdatedRole, userId);
-            if (response == "Role successfully updated")
+            string response = await _feedbackService.DeleteFeedbackpAsync(Id, userId);
+            if (response == "Feedback deleted successfully.")
             {
                 ResponseMessage = response;
-                return RedirectToPage("/Role/Index");
+                return Redirect("/Feedback/Index");
             }
-
+            // Set ErrorMessage if deletion fails
             TempData["ErrorMessage"] = response;
             return Page();
         }

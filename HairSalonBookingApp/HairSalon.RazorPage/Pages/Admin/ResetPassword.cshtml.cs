@@ -2,6 +2,7 @@
 using HairSalon.ModelViews.ApplicationUserModelViews;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Newtonsoft.Json;
 
 namespace HairSalon.RazorPage.Pages.Admin;
 
@@ -16,10 +17,31 @@ public class ResetPasswordModel : PageModel
     [BindProperty]
     public ResetPasswordAdminModelView Model { get; set; }
 
-    public void OnGet()
+    public async Task<IActionResult> OnGetAsync()
     {
+
         Model = new ResetPasswordAdminModelView();
+
+        // Retrieve user roles from session
+        var userRolesJson = HttpContext.Session.GetString("UserRoles");
+        if (userRolesJson == null)
+        {
+            TempData["DeniedMessage"] = "You do not have permission";
+            return RedirectToPage("/Error");
+        }
+
+        var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
+
+        // Check if the user has "Admin" or "Manager" roles
+        if (!userRoles.Any(role => role == "Admin"))
+        {
+            TempData["DeniedMessage"] = "You do not have permission";
+            return Page(); // Redirect to a different page with a denied message
+        }
+
+        return Page(); // Allow access to the page if the user has the correct role
     }
+
     public async Task<IActionResult> OnPost()
     {
         if (!ModelState.IsValid)
