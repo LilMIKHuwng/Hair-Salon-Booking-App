@@ -66,8 +66,21 @@ namespace HairSalon.Services.Service
             return new BasePaginatedList<ServiceModelView>(serviceModelViews, totalCount, pageNumber, pageSize);
         }
 
-        // Add a new service
-        public async Task<string> AddServiceAsync(CreateServiceModelView model, string? userId)
+		//Get all without pagination
+		public async Task<List<ServiceModelView>> GetAllServiceAsync()
+        {
+			List<ServiceEntity> serviceList = _unitOfWork.GetRepository<ServiceEntity>().Entities
+				.Where(p => !p.DeletedTime.HasValue)
+				.OrderByDescending(s => s.CreatedTime)
+                .ToList();
+
+			List<ServiceModelView> serviceModelViews = _mapper.Map<List<ServiceModelView>>(serviceList);
+
+			return serviceModelViews;
+		}
+
+		// Add a new service
+		public async Task<string> AddServiceAsync(CreateServiceModelView model)
         {
             try
             {
@@ -216,29 +229,38 @@ namespace HairSalon.Services.Service
             return "Service deleted successfully";
         }
 
-
-        public async Task<ServiceModelView?> GetServiceByIdAsync(string id)
+        // Get a service by multiple IDs
+        public async Task<IEnumerable<ServiceModelView>> GetByIdsAsync(string[] ids)
         {
-            if (string.IsNullOrWhiteSpace(id))
+            if (ids == null || ids.Length == 0)
             {
-                return null; // Hoặc bạn có thể ném ngoại lệ hoặc trả về thông báo lỗi
+                return Enumerable.Empty<ServiceModelView>();
             }
 
-            // Cố gắng tìm dịch vụ theo ID, đảm bảo dịch vụ chưa bị xóa
-            var serviceEntity = await _unitOfWork.GetRepository<ServiceEntity>().Entities
-                .FirstOrDefaultAsync(service => service.Id == id && !service.DeletedTime.HasValue);
+            var services = await _unitOfWork.GetRepository<ServiceEntity>().Entities
+                .Where(s => ids.Contains(s.Id) && !s.DeletedTime.HasValue)
+                .ToListAsync();
 
-            // Nếu dịch vụ không tìm thấy, trả về null
-            if (serviceEntity == null)
-            {
-                return null;
-            }
-
-            // Chuyển đổi đối tượng ServiceEntity thành ServiceModelView và trả về
-            ServiceModelView ServiceModelView = _mapper.Map<ServiceModelView>(serviceEntity);
-            return ServiceModelView;
+            return _mapper.Map<List<ServiceModelView>>(services);
         }
 
-    }
-  }
+		public async Task<List<ServiceModelView>> GetAllServicesAsync()
+		{
+			// Try to find all services not deleted
+			var list = await _unitOfWork.GetRepository<HairSalon.Contract.Repositories.Entity.Service>().Entities
+				.Where(a => !a.DeletedTime.HasValue)
+				.ToListAsync();
 
+			// If the services is not found, return null
+			if (list == null)
+			{
+				return null;
+			}
+
+			// Map the service entity to a ServiceModelView and return it
+			var serviceModelViews = _mapper.Map<List<ServiceModelView>>(list);
+
+			return serviceModelViews;
+		}
+	}
+}

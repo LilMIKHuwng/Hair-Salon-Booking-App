@@ -57,7 +57,7 @@ namespace HairSalonBE.API.Controllers
         public async Task<ActionResult<BasePaginatedList<ServiceModelView>>> GetMonthlyServiceStatistics([FromQuery] int? year, [FromQuery] int? month,
                                                                                                       int pageNumber = 1, int pageSize = 5)
         {
-            var result = await _service.MonthlyServiceStatistics(pageNumber, pageSize, year, month);
+            var result = await _service.MonthlyServiceStatistics(pageNumber, pageSize, month, year);
             return Ok(result);
         }
     }

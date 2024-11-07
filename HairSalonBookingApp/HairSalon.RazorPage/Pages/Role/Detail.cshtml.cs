@@ -33,8 +33,8 @@ namespace HairSalon.RazorPage.Pages.Role
             var userRolesJson = HttpContext.Session.GetString("UserRoles");
             if (userRolesJson == null)
             {
-                TempData["DeniedMessage"] = "You do not have permission to add a role.";
-                return Page();// Redirect to a different page with a denied message
+                TempData["DeniedMessage"] = "You do not have permission";
+                return RedirectToPage("/Error");
             }
 
             var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
@@ -42,7 +42,7 @@ namespace HairSalon.RazorPage.Pages.Role
             // Check if the user has "Admin" or "Manager" roles
             if (!userRoles.Any(role => role == "Admin"))
             {
-                TempData["DeniedMessage"] = "You do not have permission to add a role.";
+                TempData["DeniedMessage"] = "You do not have permission";
                 return Page(); // Redirect to a different page with a denied message
             }
 

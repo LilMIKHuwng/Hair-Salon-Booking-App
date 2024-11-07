@@ -1,6 +1,7 @@
 ﻿using HairSalon.Core;
 using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalon.ModelViews.AuthModelViews;
+using HairSalon.ModelViews.SalaryPaymentModelViews;
 using HairSalon.Repositories.Entity;
 
 namespace HairSalon.Contract.Services.Interface
@@ -18,5 +19,7 @@ namespace HairSalon.Contract.Services.Interface
         Task<string> ResetPasswordAsync(ResetPasswordModelView model);
         Task<string> ResetPasswordAdminAsync(ResetPasswordAdminModelView model);
         Task<GetInforAppUserModelView> GetMyInforUsersAsync(string username);
+        Task<List<AppUserModelView>> GetAllStylistAsync();
+        Task<List<AppUserModelView>> GetUsersByRoleAsync(string roleName);
     }
 }

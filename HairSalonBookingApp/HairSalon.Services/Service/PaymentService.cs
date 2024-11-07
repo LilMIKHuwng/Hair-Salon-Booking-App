@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
@@ -6,6 +6,7 @@ using HairSalon.Core;
 using HairSalon.ModelViews.PaymentModelViews;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using HairSalon.ModelViews.AppointmentModelViews;
 
 namespace HairSalon.Services.Service
 {
@@ -88,5 +89,7 @@ namespace HairSalon.Services.Service
 
 			return "Payment deleted successfully.";
 		}
+
+
 	}
 }

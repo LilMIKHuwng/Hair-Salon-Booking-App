@@ -10,5 +10,6 @@
 		public int TotalTime { get; set; }
 		public decimal TotalAmount { get; set; }
 		public DateTime AppointmentDate { get; set; }
+        public string UserName { get; set; }
     }
 }

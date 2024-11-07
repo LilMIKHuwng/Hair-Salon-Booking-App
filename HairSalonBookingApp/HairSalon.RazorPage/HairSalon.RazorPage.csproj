@@ -7,11 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\css\Dashboard\**" />
+    <Content Remove="wwwroot\css\Dashboard\**" />
+    <EmbeddedResource Remove="wwwroot\css\Dashboard\**" />
+    <None Remove="wwwroot\css\Dashboard\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.10">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.6" />
   </ItemGroup>
 
@@ -23,12 +26,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\css\Dashboard\dashboard.css" />
-    <None Include="wwwroot\css\Dashboard\responsive.css" />
+    <Folder Include="wwwroot\image\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\image\" />
+    <_ContentIncludedByDefault Remove="Pages\Feedback\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Pages\Feedback\Delete.cshtml" />
+    <_ContentIncludedByDefault Remove="Pages\Feedback\Details.cshtml" />
+    <_ContentIncludedByDefault Remove="Pages\Feedback\Edit.cshtml" />
+    <_ContentIncludedByDefault Remove="Pages\Feedback\Index.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
