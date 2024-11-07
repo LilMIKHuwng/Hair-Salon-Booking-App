@@ -25,7 +25,7 @@ namespace HairSalon.RazorPage.Pages.Combo
             if (userRolesJson == null)
             {
                 TempData["ErrorMessage"] = "You do not have permission to view this page.";
-                return Page();
+                return RedirectToPage("/Error");
             }
 
             var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿    using AutoMapper;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.ServiceModelViews;
@@ -80,7 +80,7 @@ namespace HairSalon.Services.Service
 		}
 
 		// Add a new service
-		public async Task<string> AddServiceAsync(CreateServiceModelView model)
+		public async Task<string> AddServiceAsync(CreateServiceModelView model,string? userId)
         {
             try
             {
@@ -91,7 +91,15 @@ namespace HairSalon.Services.Service
                 newService.ServiceImage = firebaseUrl;
 
                 newService.Id = Guid.NewGuid().ToString("N");
-                newService.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+              
+                if (userId != null)
+                {
+                    newService.CreatedBy = userId;
+                }
+                else
+                {
+                    newService.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                }
                 newService.CreatedTime = DateTimeOffset.UtcNow;
 
                 await _unitOfWork.GetRepository<ServiceEntity>().InsertAsync(newService);
@@ -110,7 +118,7 @@ namespace HairSalon.Services.Service
         }
 
         //Update an existing service
-        public async Task<string> UpdateServiceAsync(string id, UpdatedServiceModelView model)
+        public async Task<string> UpdateServiceAsync(string id, UpdatedServiceModelView model, string userId)
         {
             try
             {
@@ -168,7 +176,16 @@ namespace HairSalon.Services.Service
                     existingService.ServiceImage = firebaseUrl;
                 }
 
-                existingService.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                if (userId != null)
+                {
+                    existingService.LastUpdatedBy = userId;
+                }
+                else
+                {
+                    existingService.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                }
+
+               
                 existingService.LastUpdatedTime = DateTimeOffset.UtcNow;
 
                 await _unitOfWork.GetRepository<ServiceEntity>().UpdateAsync(existingService);
@@ -187,7 +204,7 @@ namespace HairSalon.Services.Service
         }
 
         // Soft delete a service
-        public async Task<string> DeleteServiceAsync(string id)
+        public async Task<string> DeleteServiceAsync(string id, string? userId)
         {
             // Check if the provided id is null, empty, or whitespace
             if (string.IsNullOrWhiteSpace(id))
@@ -205,7 +222,16 @@ namespace HairSalon.Services.Service
             }
 
             existingService.DeletedTime = DateTimeOffset.Now;
-            existingService.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+          // existingService.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            if (userId != null)
+            {
+                existingService.DeletedBy = userId;
+            }
+            else
+            {
+                existingService.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            }
+
 
             await _unitOfWork.GetRepository<ServiceEntity>().UpdateAsync(existingService);
             await _unitOfWork.SaveAsync();
@@ -245,5 +271,27 @@ namespace HairSalon.Services.Service
 
 			return serviceModelViews;
 		}
-	}
+        public async Task<ServiceModelView?> GetServiceByIdAsync(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return null; // Hoặc bạn có thể ném ngoại lệ hoặc trả về thông báo lỗi
+            }
+
+            // Cố gắng tìm dịch vụ theo ID, đảm bảo dịch vụ chưa bị xóa
+            var serviceEntity = await _unitOfWork.GetRepository<ServiceEntity>().Entities
+                .FirstOrDefaultAsync(service => service.Id == id && !service.DeletedTime.HasValue);
+
+            // Nếu dịch vụ không tìm thấy, trả về null
+            if (serviceEntity == null)
+            {
+                return null;
+            }
+
+            // Chuyển đổi đối tượng ServiceEntity thành ServiceModelView và trả về
+            ServiceModelView ServiceModelView = _mapper.Map<ServiceModelView>(serviceEntity);
+            return ServiceModelView;
+        }
+    }
+
 }

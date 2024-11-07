@@ -41,8 +41,6 @@ namespace HairSalon.RazorPage.Pages.Appointment
 
         [TempData]
         public string ResponseMessage { get; set; }
-        [TempData]
-        public string DeniedMessage { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -56,9 +54,9 @@ namespace HairSalon.RazorPage.Pages.Appointment
             if (userRolesJson == null || !JsonConvert.DeserializeObject<List<string>>(userRolesJson)
                 .Any(role => role == "Admin" || role == "Manager" || role == "User"))
             {
-                DeniedMessage = "You do not have permission to update this appointment.";
-                return RedirectToPage("/Denied");
-            }
+				TempData["DeniedMessage"] = "You do not have permission to update a appointment.";
+				return Page(); // Redirect to a different page with a denied message
+			}
 
             Appointment = await _appointmentService.GetAppointmentByIdAsync(Id);
             if (Appointment == null)
