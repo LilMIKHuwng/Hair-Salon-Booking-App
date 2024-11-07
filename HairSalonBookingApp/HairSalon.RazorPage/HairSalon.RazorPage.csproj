@@ -31,4 +31,11 @@
     <Folder Include="wwwroot\image\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Pages\Services\Update.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
