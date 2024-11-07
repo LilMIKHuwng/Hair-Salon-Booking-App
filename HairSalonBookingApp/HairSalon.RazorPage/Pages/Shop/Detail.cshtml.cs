@@ -1,8 +1,10 @@
 using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.RoleModelViews;
 using HairSalon.ModelViews.ShopModelViews;
+using HairSalon.Services.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Newtonsoft.Json;
 
 namespace HairSalon.RazorPage.Pages.Shop
 {
@@ -22,6 +24,30 @@ namespace HairSalon.RazorPage.Pages.Shop
 
         public async Task<IActionResult> OnGetAsync()
         {
+            // Check if Id is provided
+            if (string.IsNullOrEmpty(Id))
+            {
+                TempData["ErrorMessage"] = "Invalid Shop ID.";
+                return RedirectToPage("/Error"); // Redirect to error page if Id is missing
+            }
+
+            // Retrieve user roles from session
+            var userRolesJson = HttpContext.Session.GetString("UserRoles");
+            if (userRolesJson == null)
+            {
+                TempData["DeniedMessage"] = "You do not have permission";
+                return Page();// Redirect to a different page with a denied message
+            }
+
+            var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
+
+            // Check if the user has "Admin" or "Manager" roles
+            if (!userRoles.Any(role => role == "Admin"))
+            {
+                TempData["DeniedMessage"] = "You do not have permission";
+                return Page(); // Redirect to a different page with a denied message
+            }
+
             ShopDetail = await _shopService.GetShopByIdAsync(Id);
             if (ShopDetail == null)
             {

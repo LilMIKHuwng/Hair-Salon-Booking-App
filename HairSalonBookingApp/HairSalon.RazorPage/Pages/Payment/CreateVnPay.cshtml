@@ -1,7 +1,7 @@
 ﻿@page
-@model HairSalon.RazorPage.Pages.Payment.CreateModel
+@model HairSalon.RazorPage.Pages.Payment.CreateVnPayModel
 @{
-    ViewData["Title"] = "Create Payment";
+    ViewData["Title"] = "Create VnPay Payment";
 }
 
 <style>
@@ -119,7 +119,6 @@
         border-radius: 5px;
         padding: 10px;
     }
-
 </style>
 
 @if (TempData["DeniedMessage"] != null)
@@ -200,5 +199,3 @@ else
         <div class="alert alert-danger mt-3 text-center">@TempData["ErrorMessage"]</div>
     }
 }
-
-

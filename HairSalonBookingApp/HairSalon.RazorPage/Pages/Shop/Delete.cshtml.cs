@@ -3,6 +3,7 @@ using HairSalon.ModelViews.RoleModelViews;
 using HairSalon.ModelViews.ShopModelViews;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Newtonsoft.Json;
 
 namespace HairSalon.RazorPage.Pages.Shop
 {
@@ -30,6 +31,30 @@ namespace HairSalon.RazorPage.Pages.Shop
 
         public async Task<IActionResult> OnGetAsync()
         {
+            // Check if Id is provided
+            if (string.IsNullOrEmpty(Id))
+            {
+                TempData["ErrorMessage"] = "Invalid Role ID.";
+                return RedirectToPage("/Error"); // Redirect to error page if Id is missing
+            }
+
+            // Retrieve user roles from session
+            var userRolesJson = HttpContext.Session.GetString("UserRoles");
+            if (userRolesJson == null)
+            {
+                TempData["DeniedMessage"] = "You do not have permission";
+                return Page();// Redirect to a different page with a denied message
+            }
+
+            var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
+
+            // Check if the user has "Admin" or "Manager" roles
+            if (!userRoles.Any(role => role == "Admin"))
+            {
+                TempData["DeniedMessage"] = "You do not have permission";
+                return Page(); // Redirect to a different page with a denied message
+            }
+
             Shop = await _shopService.GetShopByIdAsync(Id);
             if (Shop == null)
             {
@@ -41,7 +66,8 @@ namespace HairSalon.RazorPage.Pages.Shop
 
         public async Task<IActionResult> OnPostAsync()
         {
-            string response = await _shopService.DeleteShopAsync(Id);
+            var userId = HttpContext.Session.GetString("UserId");
+            string response = await _shopService.DeleteShopAsync(Id, userId);
             if (response == "Deleted shop successfully")
             {
                 ResponseMessage = response;

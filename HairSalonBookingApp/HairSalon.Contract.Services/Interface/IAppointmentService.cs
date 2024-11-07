@@ -1,5 +1,6 @@
 ﻿using HairSalon.Core;
 using HairSalon.ModelViews.AppointmentModelViews;
+using HairSalon.ModelViews.ShopModelViews;
 
 namespace HairSalon.Contract.Services.Interface
 {
@@ -11,5 +12,6 @@ namespace HairSalon.Contract.Services.Interface
         Task<string> DeleteAppointmentAsync(string id);
         Task<string> MarkCompleted(string id);
         Task<string> MarkConfirmed(string id);
+        
     }
 }

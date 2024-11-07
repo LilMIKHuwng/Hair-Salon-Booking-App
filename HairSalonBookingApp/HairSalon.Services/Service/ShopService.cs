@@ -68,7 +68,7 @@ namespace HairSalon.Services.Service
         }
 
 
-        public async Task<string> AddShopAsync(CreateShopModelView model)
+        public async Task<string> AddShopAsync(CreateShopModelView model, string? userId)
         {
             try
             {
@@ -79,7 +79,14 @@ namespace HairSalon.Services.Service
                 newShop.Id = Guid.NewGuid().ToString("N");
 
                 // Set the CreatedBy field to the current user's ID from the HttpContext
-                newShop.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                if (userId != null)
+                {
+                    newShop.CreatedBy = userId;
+                }
+                else
+                {
+                    newShop.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                }
 
                 // Set the CreatedTime and LastUpdatedTime to the current UTC time
                 newShop.CreatedTime = DateTimeOffset.UtcNow;
@@ -109,7 +116,7 @@ namespace HairSalon.Services.Service
             }
         }
 
-        public async Task<string> UpdateShopAsync(string id, UpdatedShopModelView model)
+        public async Task<string> UpdateShopAsync(string id, UpdatedShopModelView model, string? userId)
         {
             try
             {
@@ -181,7 +188,14 @@ namespace HairSalon.Services.Service
                 }
 
                 // Update audit fields with the current user and timestamp
-                existingShop.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                if (userId != null)
+                {
+                    existingShop.LastUpdatedBy = userId;
+                }
+                else
+                {
+                    existingShop.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                }
                 existingShop.LastUpdatedTime = DateTimeOffset.UtcNow;
 
                 // Update the shop entity in the repository
@@ -203,7 +217,7 @@ namespace HairSalon.Services.Service
             }
         }
 
-        public async Task<string> DeleteShopAsync(string id)
+        public async Task<string> DeleteShopAsync(string id, string? userId)
         {
             try
             {
@@ -227,7 +241,14 @@ namespace HairSalon.Services.Service
                 existingShop.DeletedTime = DateTimeOffset.UtcNow;
 
                 // Record the ID of the user performing the deletion action
-                existingShop.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                if (userId != null)
+                {
+                    existingShop.DeletedBy = userId;
+                }
+                else
+                {
+                    existingShop.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+                }
 
                 // Update the shop entity in the repository
                 await _unitOfWork.GetRepository<Shop>().UpdateAsync(existingShop);

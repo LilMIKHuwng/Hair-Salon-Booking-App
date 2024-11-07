@@ -137,6 +137,22 @@
         margin-top: 20px;
         gap: 10px;
     }
+
+    /* VNPay Button Styling */
+    .btn-vnpay {
+        color: #ffffff;
+        background-color: #4caf50; 
+        padding: 5px 10px;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+        margin-left: 10px;
+        display: inline-block;
+    }
+
+        .btn-vnpay:hover {
+            background-color: #388e3c;
+        }
 </style>
 
 @if (TempData["ErrorMessage"] != null)
@@ -148,6 +164,8 @@ else
     <h2>@ViewData["Title"]</h2>
 
     <a asp-page="/Payment/Create" class="btn">Add New Payment</a>
+
+    <a asp-page="/Payment/VnPay" class="btn">VnPay Payment</a>
 
     <h3>Payment List</h3>
 
@@ -166,12 +184,6 @@ else
                     <th>Total Amount</th>
                     <th>Payment Time</th>
                     <th>Payment Method</th>
-                    @* <th>Bank Code</th>
-                    <th>Bank Transaction No</th>
-                    <th>Card Type</th>
-                    <th>Response Code</th>
-                    <th>Transaction No</th>
-                    <th>Transaction Status</th> *@
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -184,14 +196,7 @@ else
                         <td>@payment.TotalAmount</td>
                         <td>@payment.PaymentTime</td>
                         <td>@payment.PaymentMethod</td>
-                        @* <td>@payment.BankCode</td>
-                        <td>@payment.BankTranNo</td>
-                        <td>@payment.CardType</td>
-                        <td>@payment.ResponseCode</td>
-                        <td>@payment.TransactionNo</td>
-                        <td>@payment.TransactionStatus</td> *@
                         <td>
-                            @* <a asp-page="/Payment/Update" asp-route-id="@payment.Id" class="btn-update">Update</a> *@
                             <a asp-page="/Payment/Detail" asp-route-id="@payment.Id" class="btn-detail">Detail</a>
                             <a asp-page="/Payment/Delete" asp-route-id="@payment.Id" class="btn-delete">Delete</a>
                         </td>

@@ -64,7 +64,7 @@ namespace HairSalon.Services.Service
 		}
 
 		// Soft delete a payment
-		public async Task<string> DeletePaymentpAsync(string id)
+		public async Task<string> DeletePaymentpAsync(string id, string? userId)
 		{
 			// Validate Payment ID
 			if (string.IsNullOrWhiteSpace(id))
@@ -81,10 +81,17 @@ namespace HairSalon.Services.Service
 			}
 
 			existingPayment.DeletedTime = DateTimeOffset.UtcNow;
-			existingPayment.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            if (userId != null)
+            {
+                existingPayment.DeletedBy = userId;
+            }
+            else
+            {
+                existingPayment.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            }
 
-			// Mark the payment as deleted
-			await _unitOfWork.GetRepository<Payment>().UpdateAsync(existingPayment);
+            // Mark the payment as deleted
+            await _unitOfWork.GetRepository<Payment>().UpdateAsync(existingPayment);
 			await _unitOfWork.SaveAsync();
 
 			return "Payment deleted successfully.";

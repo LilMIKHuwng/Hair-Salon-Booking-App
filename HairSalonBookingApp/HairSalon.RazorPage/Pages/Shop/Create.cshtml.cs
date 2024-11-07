@@ -37,16 +37,16 @@ namespace HairSalon.RazorPage.Pages.Shop
             var userRolesJson = HttpContext.Session.GetString("UserRoles");
             if (userRolesJson == null)
             {
-                DeniedMessage = "You do not have permission to add a role.";
+                TempData["DeniedMessage"] = "You do not have permission";
                 return Page();// Redirect to a different page with a denied message
             }
 
             var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
 
             // Check if the user has "Admin" or "Manager" roles
-            if (!userRoles.Any(role => role == "Admin" || role == "Manager"))
+            if (!userRoles.Any(role => role == "Admin"))
             {
-                DeniedMessage = "You do not have permission to add a role.";
+                TempData["DeniedMessage"] = "You do not have permission";
                 return Page(); // Redirect to a different page with a denied message
             }
 
@@ -57,7 +57,8 @@ namespace HairSalon.RazorPage.Pages.Shop
         {
             if (ModelState.IsValid)
             {
-                string response = await _shopService.AddShopAsync(NewShop);
+                var userId = HttpContext.Session.GetString("UserId");
+                string response = await _shopService.AddShopAsync(NewShop, userId);
                 if (response == "Added new shop successfully!")
                 {
                     ResponseMessage = response;
