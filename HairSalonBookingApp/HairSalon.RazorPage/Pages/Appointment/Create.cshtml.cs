@@ -35,10 +35,6 @@ namespace HairSalon.RazorPage.Pages.Appointment
         [TempData]
         public string ResponseMessage { get; set; }
 
-        // Property to store denied access messages
-        [TempData]
-        public string DeniedMessage { get; set; }
-
         public async Task<IActionResult> OnGetAsync(int pageNumber = 1, int pageSize = 5)
         {
             // Retrieve user roles from session
@@ -54,7 +50,7 @@ namespace HairSalon.RazorPage.Pages.Appointment
             // Check if the user has "Admin" or "Manager" or "User" roles
             if (!userRoles.Any(role => role == "Admin" || role == "Manager" || role == "User"))
             {
-                DeniedMessage = "You do not have permission to add a appointment.";
+                TempData["DeniedMessage"] = "You do not have permission to add a appointment.";
                 return Page(); // Redirect to a different page with a denied message
             }
 
