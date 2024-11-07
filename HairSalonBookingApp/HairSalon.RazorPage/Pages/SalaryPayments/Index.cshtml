@@ -179,7 +179,7 @@ else
                         <td>@salary.Id</td>
                         <td>@salary.FullName</td>
                         <td>@salary.BaseSalary</td>
-                        <td>@salary.PaymentDate</td>
+                        <td>@salary.PaymentDate.ToString("MMMM dd, yyyy")</td>
                         <td>
                             <a asp-page="/SalaryPayments/Update" asp-route-id="@salary.Id" class="btn-update">Update</a>
                             <a asp-page="/SalaryPayments/Detail" asp-route-id="@salary.Id" class="btn-detail">Detail</a>

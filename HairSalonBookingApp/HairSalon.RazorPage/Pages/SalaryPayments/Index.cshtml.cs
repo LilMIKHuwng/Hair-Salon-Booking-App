@@ -25,7 +25,7 @@ public class SalaryManagentModel : PageModel
         {
             var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
 
-            if (!userRoles.Any(role => role == "Admin"))
+            if (!userRoles.Any(role => role == "Admin" || role == "Manager"))
             {
                 TempData["ErrorMessage"] = "You do not have permission to view this page.";
                 return Page();

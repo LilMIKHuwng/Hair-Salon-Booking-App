@@ -1,4 +1,5 @@
 using HairSalon.Contract.Services.Interface;
+using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalon.ModelViews.RoleModelViews;
 using HairSalon.ModelViews.SalaryPaymentModelViews;
 using Microsoft.AspNetCore.Mvc;
@@ -10,10 +11,12 @@ namespace HairSalon.RazorPage.Pages.SalaryPayments
     public class UpdateModel : PageModel
     {
         private readonly ISalaryPaymentService _salaryService;
+        private readonly IAppUserService _appUserService;
 
-        public UpdateModel(ISalaryPaymentService salaryService)
+        public UpdateModel(ISalaryPaymentService salaryService, IAppUserService appUserService)
         {
             _salaryService = salaryService;
+            _appUserService = appUserService;
         }
 
         [BindProperty(SupportsGet = true)]
@@ -22,7 +25,7 @@ namespace HairSalon.RazorPage.Pages.SalaryPayments
         [BindProperty]
         public SalaryPaymentModelView SalaryPayment { get; set; }
 
-        [BindProperty] // Bind UpdatedRole to be populated from the form
+        [BindProperty]
         public UpdatedSalaryPaymentModelView UpdatedSalary { get; set; }
 
         [TempData]
@@ -30,46 +33,49 @@ namespace HairSalon.RazorPage.Pages.SalaryPayments
 
         public async Task<IActionResult> OnGetAsync()
         {
-            // Check if Id is provided
-            if (string.IsNullOrEmpty(Id))
-            {
-                TempData["ErrorMessage"] = "Invalid ID.";
-                return RedirectToPage("/Error"); // Redirect to error page if Id is missing
-            }
-
-            // Retrieve user roles from session
             var userRolesJson = HttpContext.Session.GetString("UserRoles");
             if (userRolesJson == null)
             {
-                TempData["DeniedMessage"] = "You do not have permission to add a role.";
-                return Page();// Redirect to a different page with a denied message
+                TempData["DeniedMessage"] = "You do not have permission to update a SalaryPayment.";
+                return Page();
             }
 
             var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
-
-            // Check if the user has "Admin" or "Manager" roles
-            if (!userRoles.Any(role => role == "Admin"))
+            if (!userRoles.Any(role => role == "Admin" || role == "Manager"))
             {
-                TempData["DeniedMessage"] = "You do not have permission to add a role.";
-                return Page(); // Redirect to a different page with a denied message
+                TempData["DeniedMessage"] = "You do not have permission to update a SalaryPayment.";
+                return Page();
             }
 
-            SalaryPayment = await _salaryService.GetSalaryByIdAsync(Id);
-            if (SalaryPayment == null)
+            try
             {
-                TempData["ErrorMessage"] = "SalaryPayment not found.";
-                return RedirectToPage("/SalaryPayments/Index");
-            }
+                // Fetch stylists (Users with 'Stylist' role)
+                var stylistUsers = await _appUserService.GetUsersByRoleAsync("Stylist");
+                ViewData["Stylists"] = stylistUsers ?? new List<AppUserModelView>();
 
-            // Initialize UpdatedRole with existing role name for display in the form
-            UpdatedSalary = new UpdatedSalaryPaymentModelView
+                // Retrieve salary payment details
+                SalaryPayment = await _salaryService.GetSalaryByIdAsync(Id);
+                if (SalaryPayment == null)
+                {
+                    TempData["ErrorMessage"] = "SalaryPayment not found.";
+                    return RedirectToPage("/SalaryPayments/Index");
+                }
+
+                // Initialize UpdatedSalary with existing values
+                UpdatedSalary = new UpdatedSalaryPaymentModelView
+                {
+                    UserId = Guid.TryParse(SalaryPayment.UserId, out var userId) ? userId : (Guid?)null,
+                    BaseSalary = SalaryPayment.BaseSalary,
+                    PaymentDate = SalaryPayment.PaymentDate,
+                    DayOffPermitted = SalaryPayment.DayOffPermitted,
+                    DayOffNoPermitted = SalaryPayment.DayOffNoPermitted
+                };
+            }
+            catch (Exception ex)
             {
-                UserId = Guid.TryParse(SalaryPayment.UserId, out var userId) ? userId : (Guid?)null,
-                BaseSalary = SalaryPayment.BaseSalary,
-                PaymentDate = SalaryPayment.PaymentDate,
-                DayOffPermitted = SalaryPayment.DayOffPermitted,
-                DayOffNoPermitted = SalaryPayment.DayOffNoPermitted
-            };
+                ViewData["Stylists"] = new List<AppUserModelView>();
+                TempData["ErrorMessage"] = "An error occurred while fetching data: " + ex.Message;
+            }
 
             return Page();
         }
