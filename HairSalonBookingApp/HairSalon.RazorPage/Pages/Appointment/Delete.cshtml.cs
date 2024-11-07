@@ -2,6 +2,7 @@ using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.AppointmentModelViews;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Newtonsoft.Json;
 
 namespace HairSalon.RazorPage.Pages.Appointment
 {
@@ -25,6 +26,29 @@ namespace HairSalon.RazorPage.Pages.Appointment
 
         public async Task<IActionResult> OnGetAsync()
         {
+			if (string.IsNullOrEmpty(Id))
+			{
+				TempData["ErrorMessage"] = "Invalid Appointment ID.";
+				return RedirectToPage("/Error");
+			}
+
+			// Retrieve user roles from session
+			var userRolesJson = HttpContext.Session.GetString("UserRoles");
+			if (userRolesJson == null)
+			{
+				TempData["ErrorMessage"] = "You do not have permission to delete a appointment.";
+				return RedirectToPage("/Error");
+			}
+
+			var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
+
+            // Check if the user has "Admin" or "Manager" or "User" roles
+            if (!userRoles.Any(role => role == "Admin" || role == "Manager" || role == "User"))
+            {
+                TempData["DeniedMessage"] = "You do not have permission to delete a appointment.";
+                return Page(); // Redirect to a different page with a denied message
+            }
+
             Appointment = await _appointmentService.GetAppointmentByIdAsync(Id);
             if (Appointment == null)
             {

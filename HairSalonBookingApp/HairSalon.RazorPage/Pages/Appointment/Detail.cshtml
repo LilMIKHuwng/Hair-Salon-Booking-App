@@ -40,6 +40,25 @@
         color: #3f51b5;
     }
 
+    /* Table Styling */
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin-top: 10px;
+    }
+
+    th, td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #f1f1f1;
+        font-weight: bold;
+    }
+
     /* Button Styling */
     .btn-container {
         display: flex;
@@ -66,27 +85,69 @@
 
 @if (TempData["DeniedMessage"] != null)
 {
-        <div class="alert alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
+            <div class="alert alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
 }
 else
 {
-        <h2>@ViewData["Title"]</h2>
+            <h2>@ViewData["Title"]</h2>
 
-        <div class="details-container">
-            <p><strong>Appointment ID:</strong> @Model.Appointment.Id</p>
-            <p><strong>User ID:</strong> @Model.Appointment.UserId</p>
-            <p><strong>Stylist ID:</strong> @Model.Appointment.StylistId</p>
-            <p><strong>Status:</strong> @Model.Appointment.StatusForAppointment</p>
-            <p><strong>Points Earned:</strong> @Model.Appointment.PointsEarned</p>
-            <p><strong>Total Time:</strong> @Model.Appointment.TotalTime minutes</p>
-            <p><strong>Total Amount:</strong> @Model.Appointment.TotalAmount</p>
-            <p><strong>Appointment Date:</strong> @Model.Appointment.AppointmentDate.ToString("MM/dd/yyyy hh:mm tt")</p>
-        </div>
+            <div class="details-container">
+                <p><strong>Appointment ID:</strong> @Model.Appointment.Id</p>
+                <p><strong>User ID:</strong> @Model.Appointment.UserId</p>
+                <p><strong>Stylist ID:</strong> @Model.Appointment.StylistId</p>
+                <p><strong>Status:</strong> @Model.Appointment.StatusForAppointment</p>
+                <p><strong>Points Earned:</strong> @Model.Appointment.PointsEarned</p>
+                <p><strong>Total Time:</strong> @Model.Appointment.TotalTime minutes</p>
+                <p><strong>Total Amount:</strong> @Model.Appointment.TotalAmount</p>
+                <p><strong>Appointment Date:</strong> @Model.Appointment.AppointmentDate.ToString("MM/dd/yyyy hh:mm tt")</p>
 
-        <div class="btn-container">
-            <a asp-page="/Appointment/Update" asp-route-id="@Model.Appointment.Id" class="btn">Update Appointment</a>
-            <a asp-page="/Appointment/Index" class="btn">Back to Appointment List</a>
-        </div>
+                <table>
+                    <thead>
+                        <tr>
+                                <th>Selected Services</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var service in Model.Services)
+                        {
+                            if (Model.ServiceAppointment.Any(sa => sa.ServiceId == service.Id))
+                            {
+                                <tr>
+                                    <td>@service.Name</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Selected Combos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var combo in Model.Combos)
+                        {
+                            if (Model.ComboAppointment.Any(ca => ca.ComboId == combo.Id))
+                            {
+                                <tr>
+                                    <td>@combo.Name</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="btn-container">
+                <a asp-page="/Appointment/Update" asp-route-id="@Model.Appointment.Id" class="btn">Update Appointment</a>
+                <a asp-page="/Appointment/Index" class="btn">Back to Appointment List</a>
+            </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+                                <div class="alert-danger">@TempData["ErrorMessage"]</div>
+    }
 }
-
-

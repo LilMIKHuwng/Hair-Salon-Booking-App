@@ -667,13 +667,17 @@ namespace HairSalon.Services.Service
 
         public async Task<List<ServiceAppointment>> GetAllServiceAppointment(string appointmentId)
         {
-            List<ServiceAppointment> list = _unitOfWork.GetRepository<ServiceAppointment>().Entities.Where(s => s.AppointmentId == appointmentId).ToList();
+            List<ServiceAppointment> list = _unitOfWork.GetRepository<ServiceAppointment>().Entities
+                                                                .Where(s => s.AppointmentId == appointmentId && !s.DeletedTime.HasValue)
+                                                                .ToList();
             return list;
         }
 
 		public async Task<List<ComboAppointment>> GetAllComboAppointment(string appointmentId)
 		{
-			List<ComboAppointment> list = _unitOfWork.GetRepository<ComboAppointment>().Entities.Where(s => s.AppointmentId == appointmentId).ToList();
+			List<ComboAppointment> list = _unitOfWork.GetRepository<ComboAppointment>().Entities
+                                                                .Where(s => s.AppointmentId == appointmentId && !s.DeletedTime.HasValue)
+                                                                .ToList();
 			return list;
 		}
 
