@@ -42,6 +42,14 @@ else
 							<label class="labels"><strong>Roles</strong></label>
 							<input type="text" class="form-control" value="@string.Join(", ", Model.UserInfo?.Roles ?? new List<string>())" readonly>
 						</div>
+						<div>
+							<label class="labels"><strong>Wallet</strong></label>
+							<input type="text" class="form-control" value="@Model.UserInfo?.E_Wallet" readonly>
+						</div>
+						<div>
+							<label class="labels"><strong>Point</strong></label>
+							<input type="text" class="form-control" value="@Model.UserInfo?.Point" readonly>
+						</div>
 					</div>
 					<div>
 						<div>

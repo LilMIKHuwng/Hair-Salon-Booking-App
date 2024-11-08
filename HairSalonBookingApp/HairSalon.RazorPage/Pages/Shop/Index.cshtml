@@ -170,10 +170,6 @@
     }
 </style>
 
-<h2>@ViewData["Title"]</h2>
-
-<a asp-page="/Shop/Create" class="btn">Add New Shop</a>
-
 <h3>Shop List</h3>
 @if (TempData["ErrorMessage"] != null)
 {
@@ -181,6 +177,10 @@
 }
 else
 {
+    <h2>@ViewData["Title"]</h2>
+
+    <a asp-page="/Shop/Create" class="btn">Add New Shop</a>
+
     @if (TempData["ResponseMessage"] != null)
     {
         <div class="alert alert-info mt-3 text-center">@TempData["ResponseMessage"]</div>
