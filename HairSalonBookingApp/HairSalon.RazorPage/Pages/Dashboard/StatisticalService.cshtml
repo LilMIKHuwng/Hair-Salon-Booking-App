@@ -4,7 +4,61 @@
     ViewData["Title"] = "Service Usage Statistics";
 }
 
+<style>
+    .tabs {
+        justify-content: center; /* Centers the tabs horizontally */
+        margin-bottom: 20px;
+        margin-top: 20px;
+    }
+
+    .tab {
+        padding: 12px 30px; /* Adds more padding for better spacing */
+        background-color: #f1f1f1;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        color: #333;
+        margin: 0 10px; /* Adds horizontal spacing between the tabs */
+        transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition for hover effect */
+    }
+
+        .tab:hover {
+            background-color: #e2e2e2;
+            transform: scale(1.05); /* Slight zoom effect on hover */
+        }
+
+        .tab.active {
+            background-color: #007bff;
+            color: white;
+            transform: scale(1.05); /* Slight zoom effect for the active tab */
+        }
+
+        .tab:focus {
+            outline: none; /* Remove the outline on focus */
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add a focus shadow */
+        }
+
+        /* Optional: Adds a line below the active tab for more emphasis */
+        .tab.active::after {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 3px;
+            background-color: #007bff;
+            margin-top: 5px;
+        }
+</style>
+
 <h2>Service Usage Statistics</h2>
+
+<div class="tabs">
+    <!-- Tab Links -->
+    <a href="/Dashboard/AppointmentStatistic" class="tab" id="appointmentStatisticsTab">Appointment Statistics</a>
+    <a href="/Dashboard/TopUsers" class="tab" id="topUsersTab">Top Users</a>
+    <a href="/Dashboard/StatisticalService" class="tab" id="topUsersTab">Top Services</a>
+    <a href="/Dashboard/StatisticalCombo" class="tab" id="topUsersTab">Top Combos</a>
+</div>
 
 <form method="get" class="filter-form">
     <div class="input-group">
