@@ -98,79 +98,87 @@
 
 </style>
 
-<h2>Top Users</h2>
-
-<div class="tabs">
-    <!-- Tab Links -->
-    <a href="/Dashboard/AppointmentStatistic" class="tab" id="appointmentStatisticsTab">Appointment Statistics</a>
-    <a href="/Dashboard/TopUsers" class="tab" id="topUsersTab">Top Users</a>
-    <a href="/Dashboard/StatisticalService" class="tab" id="topUsersTab">Top Services</a>
-    <a href="/Dashboard/StatisticalCombo" class="tab" id="topUsersTab">Top Combos</a>
-</div>
-
-<!-- Filter for the top users -->
-<div class="filter">
-    <form method="get">
-        <label for="top">Show Top</label>
-        <input type="number" id="top" name="top" value="@Model.Top" min="1" />
-        <button type="submit">Apply</button>
-    </form>
-</div>
-
-@if (Model.TopUsers != null && Model.TopUsers.Items.Any())
+@if (TempData["DeniedMessage"] != null)
 {
-    <!-- Display the Top Users in a Table -->
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Top</th> 
-                <th>Username</th>
-                <th>Total Amount</th>
-                <th>Total Feedback</th>
-                <th>Total Appointments</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var user in Model.TopUsers.Items.Select((user, index) => new { user, index }))
-            {
-                <tr>
-                    <td>@(user.index + 1)</td> 
-                    <td>@user.user.UserName</td>
-                    <td>@user.user.TotalAmount VNĐ</td>
-                    <td>@user.user.TotalFeedback</td>
-                    <td>@user.user.TotalAppointment</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-
-    <!-- Pagination Controls -->
-    <div class="pagination">
-        <!-- Previous Page Link -->
-        @if (Model.TopUsers.HasPreviousPage)
-        {
-            <a href="/Dashboard/TopUsers?pageNumber=@(Model.TopUsers.CurrentPage - 1)&top=@Model.Top">Previous</a>
-        }
-        else
-        {
-            <span class="disabled">Previous</span>
-        }
-
-        <!-- Page Information -->
-        <span class="page-info">Page @Model.TopUsers.CurrentPage of @Model.TopUsers.TotalPages</span>
-
-        <!-- Next Page Link -->
-        @if (Model.TopUsers.HasNextPage)
-        {
-            <a href="/Dashboard/TopUsers?pageNumber=@(Model.TopUsers.CurrentPage + 1)&top=@Model.Top">Next</a>
-        }
-        else
-        {
-            <span class="disabled">Next</span>
-        }
-    </div>
+    <div class="alert alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
 }
 else
 {
-    <p>No top users found.</p>
+    <h2>Top Users</h2>
+
+    <div class="tabs">
+        <!-- Tab Links -->
+        <a href="/Dashboard/AppointmentStatistic" class="tab" id="appointmentStatisticsTab">Appointment Statistics</a>
+        <a href="/Dashboard/TopUsers" class="tab" id="topUsersTab">Top Users</a>
+        <a href="/Dashboard/StatisticalService" class="tab" id="topUsersTab">Top Services</a>
+        <a href="/Dashboard/StatisticalCombo" class="tab" id="topUsersTab">Top Combos</a>
+    </div>
+
+    <!-- Filter for the top users -->
+    <div class="filter">
+        <form method="get">
+            <label for="top">Show Top</label>
+            <input type="number" id="top" name="top" value="@Model.Top" min="1" />
+            <button type="submit">Apply</button>
+        </form>
+    </div>
+
+    @if (Model.TopUsers != null && Model.TopUsers.Items.Any())
+    {
+        <!-- Display the Top Users in a Table -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Top</th>
+                    <th>Username</th>
+                    <th>Total Amount</th>
+                    <th>Total Feedback</th>
+                    <th>Total Appointments</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model.TopUsers.Items.Select((user, index) => new { user, index }))
+                {
+                    <tr>
+                        <td>@(user.index + 1)</td>
+                        <td>@user.user.UserName</td>
+                        <td>@user.user.TotalAmount VNĐ</td>
+                        <td>@user.user.TotalFeedback</td>
+                        <td>@user.user.TotalAppointment</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- Pagination Controls -->
+        <div class="pagination">
+            <!-- Previous Page Link -->
+            @if (Model.TopUsers.HasPreviousPage)
+            {
+                <a href="/Dashboard/TopUsers?pageNumber=@(Model.TopUsers.CurrentPage - 1)&top=@Model.Top">Previous</a>
+            }
+            else
+            {
+                <span class="disabled">Previous</span>
+            }
+
+            <!-- Page Information -->
+            <span class="page-info">Page @Model.TopUsers.CurrentPage of @Model.TopUsers.TotalPages</span>
+
+            <!-- Next Page Link -->
+            @if (Model.TopUsers.HasNextPage)
+            {
+                <a href="/Dashboard/TopUsers?pageNumber=@(Model.TopUsers.CurrentPage + 1)&top=@Model.Top">Next</a>
+            }
+            else
+            {
+                <span class="disabled">Next</span>
+            }
+        </div>
+    }
+    else
+    {
+        <p>No top users found.</p>
+    }
 }
+

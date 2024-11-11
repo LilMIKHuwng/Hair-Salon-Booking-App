@@ -33,24 +33,24 @@ namespace HairSalon.RazorPage.Pages.Dashboard
 
         public async Task<IActionResult> OnGetAsync(int pageNumber = 1, int pageSize = 10)
         {
-            // Retrieve user roles from session
-            var userRolesJson = HttpContext.Session.GetString("UserRoles");
-            if (userRolesJson == null)
-            {
-                TempData["ErrorMessage"] = "You do not have permission to view this page.";
-                return RedirectToPage("/Error");
-            }
+			// Retrieve user roles from session
+			var userRolesJson = HttpContext.Session.GetString("UserRoles");
+			if (userRolesJson == null)
+			{
+				TempData["ErrorMessage"] = "You do not have permission to view this page.";
+				return RedirectToPage("/Error");
+			}
 
-            var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
+			var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
 
-            // Check if the user has "Admin" or "Manager" or "User" roles
-            if (!userRoles.Any(role => role == "Admin" || role == "Manager" || role == "User" || role == "Stylist"))
-            {
-                TempData["DeniedMessage"] = "You do not have permission to view this page.";
-                return Page(); // Redirect to a different page with a denied message
-            }
+			// Check if the user has "Admin" or "Manager" or "User" roles
+			if (!userRoles.Any(role => role == "Admin" || role == "Manager"))
+			{
+				TempData["DeniedMessage"] = "You do not have permission to view this page.";
+				return Page(); // Redirect to a different page with a denied message
+			}
 
-            var result = await _dashBoardService.MonthlyServiceStatistics(pageNumber, pageSize, InputMonth, InputYear);
+			var result = await _dashBoardService.MonthlyServiceStatistics(pageNumber, pageSize, InputMonth, InputYear);
             if (!result.Items.Any())
             {
                 NoDataForSelectedMonth = true;

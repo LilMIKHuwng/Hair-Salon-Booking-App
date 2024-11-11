@@ -50,38 +50,46 @@
         }
 </style>
 
-<h2>Service Usage Statistics</h2>
-
-<div class="tabs">
-    <!-- Tab Links -->
-    <a href="/Dashboard/AppointmentStatistic" class="tab" id="appointmentStatisticsTab">Appointment Statistics</a>
-    <a href="/Dashboard/TopUsers" class="tab" id="topUsersTab">Top Users</a>
-    <a href="/Dashboard/StatisticalService" class="tab" id="topUsersTab">Top Services</a>
-    <a href="/Dashboard/StatisticalCombo" class="tab" id="topUsersTab">Top Combos</a>
-</div>
-
-<form method="get" class="filter-form">
-    <div class="input-group">
-        <label for="month">Month:</label>
-        <input type="number" id="month" name="InputMonth" min="1" max="12" value="@Model.InputMonth" />
-
-        <label for="year">Year:</label>
-        <input type="number" id="year" name="InputYear" min="2000" max="2100" value="@Model.InputYear" />
-
-        <button type="submit">Get Statistics</button>
-    </div>
-</form>
-
-@if (Model.NoDataForSelectedMonth)
+@if (TempData["DeniedMessage"] != null)
 {
-        <p class="no-data-message">No service usage data available for the selected month and year.</p>
+    <div class="alert alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
 }
 else
 {
+    <h2>Service Usage Statistics</h2>
+
+    <div class="tabs">
+        <!-- Tab Links -->
+        <a href="/Dashboard/AppointmentStatistic" class="tab" id="appointmentStatisticsTab">Appointment Statistics</a>
+        <a href="/Dashboard/TopUsers" class="tab" id="topUsersTab">Top Users</a>
+        <a href="/Dashboard/StatisticalService" class="tab" id="topUsersTab">Top Services</a>
+        <a href="/Dashboard/StatisticalCombo" class="tab" id="topUsersTab">Top Combos</a>
+    </div>
+
+    <form method="get" class="filter-form">
+        <div class="input-group">
+            <label for="month">Month:</label>
+            <input type="number" id="month" name="InputMonth" min="1" max="12" value="@Model.InputMonth" />
+
+            <label for="year">Year:</label>
+            <input type="number" id="year" name="InputYear" min="2000" max="2100" value="@Model.InputYear" />
+
+            <button type="submit">Get Statistics</button>
+        </div>
+    </form>
+
+    @if (Model.NoDataForSelectedMonth)
+    {
+        <p class="no-data-message">No service usage data available for the selected month and year.</p>
+    }
+    else
+    {
         <div>
             <canvas id="serviceUsageChart" width="800" height="400"></canvas>
         </div>
+    }
 }
+
 
 @section Scripts {
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
