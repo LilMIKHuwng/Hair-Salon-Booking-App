@@ -114,61 +114,70 @@
 		}
 </style>
 
-<div class="dashboard">
-	<h2>Appointment Statistics</h2>
+@if (TempData["DeniedMessage"] != null)
+{
+	<div class="alert alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
+} 
+else
+{
+	<div class="dashboard">
+		<h2>Appointment Statistics</h2>
 
-	<div class="tabs">
-		<!-- Tab Links -->
-		<a href="/Dashboard/AppointmentStatistic" class="tab" id="appointmentStatisticsTab">Appointment Statistics</a>
-		<a href="/Dashboard/TopUsers" class="tab" id="topUsersTab">Top Users</a>
-		<a href="/Dashboard/StatisticalService" class="tab" id="topUsersTab">Top Services</a>
-		<a href="/Dashboard/StatisticalCombo" class="tab" id="topUsersTab">Top Combos</a>
-	</div>
-
-	<!-- Filter Form -->
-	<form method="get" class="form-container">
-		<div class="form-row">
-			<div class="form-group">
-				<label for="startPeriod">Start Period:</label>
-				<input type="date" id="startPeriod" name="startPeriod" class="form-control"
-					   value="@(Model.StartPeriod ?? DateTime.Now.ToString("yyyy-MM-dd"))">
-			</div>
-
-			<div class="form-group">
-				<label for="endPeriod">End Period:</label>
-				<input type="date" id="endPeriod" name="endPeriod" class="form-control"
-					   value="@(Model.EndPeriod ?? DateTime.Now.ToString("yyyy-MM-dd"))">
-			</div>
-
-			<div class="form-group">
-				<label for="periodName">Period Name:</label>
-				<select id="periodName" name="periodName" class="form-control">
-					<option value="day" selected="@("day" == Model.PeriodName)">Day</option>
-					<option value="month" selected="@("month" == Model.PeriodName)">Month</option>
-					<option value="year" selected="@("year" == Model.PeriodName)">Year</option>
-				</select>
-			</div>
+		<div class="tabs">
+			<!-- Tab Links -->
+			<a href="/Dashboard/AppointmentStatistic" class="tab" id="appointmentStatisticsTab">Appointment Statistics</a>
+			<a href="/Dashboard/TopUsers" class="tab" id="topUsersTab">Top Users</a>
+			<a href="/Dashboard/StatisticalService" class="tab" id="topUsersTab">Top Services</a>
+			<a href="/Dashboard/StatisticalCombo" class="tab" id="topUsersTab">Top Combos</a>
 		</div>
 
-		<button type="submit" class="submit-btn">Get Statistics</button>
-	</form>
+		<!-- Filter Form -->
+		<form method="get" class="form-container">
+			<div class="form-row">
+				<div class="form-group">
+					<label for="startPeriod">Start Period:</label>
+					<input type="date" id="startPeriod" name="startPeriod" class="form-control"
+						   value="@(Model.StartPeriod ?? DateTime.Now.ToString("yyyy-MM-dd"))">
+				</div>
 
-	<!-- Total Amount Chart -->
-	<div class="chart-container">
-		<canvas id="totalAmountChart"></canvas>
+				<div class="form-group">
+					<label for="endPeriod">End Period:</label>
+					<input type="date" id="endPeriod" name="endPeriod" class="form-control"
+						   value="@(Model.EndPeriod ?? DateTime.Now.ToString("yyyy-MM-dd"))">
+				</div>
+
+				<div class="form-group">
+					<label for="periodName">Period Name:</label>
+					<select id="periodName" name="periodName" class="form-control">
+						<option value="day" selected="@("day" == Model.PeriodName)">Day</option>
+						<option value="month" selected="@("month" == Model.PeriodName)">Month</option>
+						<option value="year" selected="@("year" == Model.PeriodName)">Year</option>
+					</select>
+				</div>
+			</div>
+
+			<button type="submit" class="submit-btn">Get Statistics</button>
+		</form>
+
+		<!-- Total Amount Chart -->
+		<div class="chart-container">
+			<canvas id="totalAmountChart"></canvas>
+		</div>
+
+		<!-- Total Feedback Chart -->
+		<div class="chart-container">
+			<canvas id="totalFeedbackChart"></canvas>
+		</div>
+
+		<!-- Total Appointment Chart -->
+		<div class="chart-container">
+			<canvas id="totalAppointmentChart"></canvas>
+		</div>
+
 	</div>
+}
 
-	<!-- Total Feedback Chart -->
-	<div class="chart-container">
-		<canvas id="totalFeedbackChart"></canvas>
-	</div>
 
-	<!-- Total Appointment Chart -->
-	<div class="chart-container">
-		<canvas id="totalAppointmentChart"></canvas>
-	</div>
-
-</div>
 
 @section Scripts {
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
