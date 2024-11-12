@@ -216,22 +216,22 @@
         </member>
         <member name="M:HairSalonBE.API.Controllers.RoleController.GetAllRoles(System.String,System.String,System.Int32,System.Int32)">
             <summary>
-            	Lấy tất cả vai trò 
+                Get all roles with pagination and optional filters
             </summary>
         </member>
         <member name="M:HairSalonBE.API.Controllers.RoleController.CreateRole(HairSalon.ModelViews.RoleModelViews.CreateRoleModelView)">
             <summary>
-            	Tạo vai trò
+                Create a new role
             </summary>
         </member>
         <member name="M:HairSalonBE.API.Controllers.RoleController.UpdateRole(System.String,HairSalon.ModelViews.RoleModelViews.UpdatedRoleModelView)">
             <summary>
-            	Cập nhật vai trò
+                Update a role
             </summary>
         </member>
         <member name="M:HairSalonBE.API.Controllers.RoleController.DeleteRole(System.String)">
             <summary>
-            	Xóa vai trò
+                Delete a role
             </summary>
         </member>
         <member name="M:HairSalonBE.API.Controllers.SalaryPaymentController.GetAllSalaryPayments(System.String,System.Nullable{System.Guid},System.Nullable{System.DateTime},System.Nullable{System.Decimal},System.Int32,System.Int32)">
@@ -261,22 +261,22 @@
         </member>
         <member name="M:HairSalonBE.API.Controllers.ServiceController.GetAllServices(System.String,System.String,System.String,System.Int32,System.Int32)">
             <summary>
-            	Lấy tất cả dịch vụ
+                Get all services with pagination and optional filters
             </summary>
         </member>
         <member name="M:HairSalonBE.API.Controllers.ServiceController.CreateService(HairSalon.ModelViews.ServiceModelViews.CreateServiceModelView)">
             <summary>
-            	Tạo dịch vụ
+                Create a new service
             </summary>
         </member>
         <member name="M:HairSalonBE.API.Controllers.ServiceController.UpdateService(System.String,HairSalon.ModelViews.ServiceModelViews.UpdatedServiceModelView)">
             <summary>
-            	Cập nhật dịch vụ
+                Update a service
             </summary>
         </member>
         <member name="M:HairSalonBE.API.Controllers.ServiceController.DeleteService(System.String)">
             <summary>
-            	Xóa dịch vụ
+                Delete a service
             </summary>
         </member>
         <member name="M:HairSalonBE.API.Controllers.ShopController.GetAllShops(System.String,System.String,System.Int32,System.Int32)">

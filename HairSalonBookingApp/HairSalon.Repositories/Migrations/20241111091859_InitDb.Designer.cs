@@ -4,6 +4,7 @@ using HairSalon.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HairSalon.Repositories.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20241111091859_InitDb")]
+    partial class InitDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1378,7 +1381,6 @@ namespace HairSalon.Repositories.Migrations
                             PasswordHash = "AQAAAAIAAYagAAAAEEo1jIx83wTcofn5ie6njux9Rh11muNj5sYmNypALIvLgIPsF8lVGwgxQtMsQulSTQ==",
                             PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            SecurityStamp = "a",
                             TwoFactorEnabled = false,
                             UserInfoId = "1076e7b1-b572-4fb1-824a-37b24a56db82",
                             UserName = "admin"
@@ -1402,7 +1404,6 @@ namespace HairSalon.Repositories.Migrations
                             PasswordHash = "AQAAAAIAAYagAAAAENnAo75ckkZwY2vj2L3fbgVwKgWNxKbcSfwZHtMqbNO12e7nBQsbE9DNdxfM6m3M8Q==",
                             PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            SecurityStamp = "b",
                             TwoFactorEnabled = false,
                             UserInfoId = "93aa14fe-790a-4c26-bd75-4d113db754d0",
                             UserName = "user"
@@ -1426,7 +1427,6 @@ namespace HairSalon.Repositories.Migrations
                             PasswordHash = "AQAAAAIAAYagAAAAEH+2DvPF+n/ivKZM1xI4JzjcVdTBmQr8V9865kmH460MD/J/9FPh/2ad/0hawDxhaQ==",
                             PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            SecurityStamp = "c",
                             TwoFactorEnabled = false,
                             UserInfoId = "69025ec8-2c67-499f-beab-3f97bc112f50",
                             UserName = "manager"
@@ -1450,7 +1450,6 @@ namespace HairSalon.Repositories.Migrations
                             PasswordHash = "AQAAAAIAAYagAAAAED06czFNPB+dnFSsLlLeaXO3JbvAVilPl0Vw5dVmsqAE1if8BIbFRsocC37dDwNGRw==",
                             PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            SecurityStamp = "d",
                             TwoFactorEnabled = false,
                             UserInfoId = "0e505ca4-b326-4429-82a5-ae2ce4aaca31",
                             UserName = "stylist"
@@ -1474,7 +1473,6 @@ namespace HairSalon.Repositories.Migrations
                             PasswordHash = "AQAAAAIAAYagAAAAEN9AS36Q7tzboNHHri5i8cO4dGOBJOtQtA8wGwSwPUf0Yg2yJ51cdv4wNVDCcvJ1Ww==",
                             PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            SecurityStamp = "e",
                             TwoFactorEnabled = false,
                             UserInfoId = "1076e7b1-b572-4fb1-824a-37b24a56db82",
                             UserName = "user2"
@@ -1498,7 +1496,6 @@ namespace HairSalon.Repositories.Migrations
                             PasswordHash = "AQAAAAIAAYagAAAAENsbYOy+R7MUJvv0uhtu7ZDLwmlJtRGYTGUpP7uVXG7lXikVktvWio50+ZL6LcR88Q==",
                             PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            SecurityStamp = "f",
                             TwoFactorEnabled = false,
                             UserInfoId = "93aa14fe-790a-4c26-bd75-4d113db754d0",
                             UserName = "user3"
@@ -1522,7 +1519,6 @@ namespace HairSalon.Repositories.Migrations
                             PasswordHash = "AQAAAAIAAYagAAAAEPkMp5lwXhq8Si9Ru3URIkrsQVPkOLkjUd6hiHZwx0S1GHN1oJOUxhTOjS/JFXA40Q==",
                             PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            SecurityStamp = "g",
                             TwoFactorEnabled = false,
                             UserInfoId = "69025ec8-2c67-499f-beab-3f97bc112f50",
                             UserName = "user4"
@@ -1546,7 +1542,6 @@ namespace HairSalon.Repositories.Migrations
                             PasswordHash = "AQAAAAIAAYagAAAAEKWoMUjU8GWblpfGNUQykvyN7c2kxh41MKNAm1N5atbxlIAaPp21iGyWyD5GuSbL/w==",
                             PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            SecurityStamp = "h",
                             TwoFactorEnabled = false,
                             UserInfoId = "0e505ca4-b326-4429-82a5-ae2ce4aaca31",
                             UserName = "user5"

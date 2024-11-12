@@ -132,15 +132,21 @@ namespace HairSalonBE.API
 			});
 		}
 
-		// Add Redis Configuration
-		public static void ConfigureRedis(this IServiceCollection services, IConfiguration configuration)
-		{
-			services.AddStackExchangeRedisCache(options =>
-			{
-				options.Configuration = configuration.GetSection("Redis:ConnectionString").Value;
-				options.InstanceName = configuration.GetSection("Redis:InstanceName").Value;
-			});
-		}
+        // Add Redis Configuration
+        public static void ConfigureRedis(this IServiceCollection services, IConfiguration configuration)
+        {
+            // Register StackExchange.Redis connection multiplexer as a singleton
+            services.AddSingleton<IConnectionMultiplexer>(sp =>
+                ConnectionMultiplexer.Connect(configuration.GetSection("Redis:ConnectionString").Value));
 
-	}
+            // Register IDistributedCache with Redis cache
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = configuration.GetSection("Redis:ConnectionString").Value;
+                options.InstanceName = configuration.GetSection("Redis:InstanceName").Value;
+            });
+        }
+
+
+    }
 }
