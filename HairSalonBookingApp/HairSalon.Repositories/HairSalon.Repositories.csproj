@@ -9,13 +9,20 @@
   <ItemGroup>
     <Compile Remove="Data\**" />
     <Compile Remove="data_access\**" />
-    <Compile Remove="Migrations\**" />
     <EmbeddedResource Remove="Data\**" />
     <EmbeddedResource Remove="data_access\**" />
-    <EmbeddedResource Remove="Migrations\**" />
     <None Remove="Data\**" />
     <None Remove="data_access\**" />
-    <None Remove="Migrations\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Migrations\.vs\Migrations\v17\DocumentLayout.json" />
+    <Content Include="Migrations\.vs\ProjectSettings.json" />
+    <Content Include="Migrations\.vs\VSWorkspaceState.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Migrations\.vs\slnx.sqlite" />
   </ItemGroup>
 
   <ItemGroup>
