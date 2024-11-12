@@ -261,22 +261,22 @@
         </member>
         <member name="M:HairSalonBE.API.Controllers.ServiceController.GetAllServices(System.String,System.String,System.String,System.Int32,System.Int32)">
             <summary>
-            	Lấy tất cả dịch vụ
+                Get all services with pagination and optional filters
             </summary>
         </member>
         <member name="M:HairSalonBE.API.Controllers.ServiceController.CreateService(HairSalon.ModelViews.ServiceModelViews.CreateServiceModelView)">
             <summary>
-            	Tạo dịch vụ
+                Create a new service
             </summary>
         </member>
         <member name="M:HairSalonBE.API.Controllers.ServiceController.UpdateService(System.String,HairSalon.ModelViews.ServiceModelViews.UpdatedServiceModelView)">
             <summary>
-            	Cập nhật dịch vụ
+                Update a service
             </summary>
         </member>
         <member name="M:HairSalonBE.API.Controllers.ServiceController.DeleteService(System.String)">
             <summary>
-            	Xóa dịch vụ
+                Delete a service
             </summary>
         </member>
         <member name="M:HairSalonBE.API.Controllers.ShopController.GetAllShops(System.String,System.String,System.Int32,System.Int32)">
