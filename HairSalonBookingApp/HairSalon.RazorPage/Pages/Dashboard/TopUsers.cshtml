@@ -1,0 +1,184 @@
+﻿@page "/Dashboard/TopUsers"
+@model HairSalon.RazorPage.Pages.Dashboard.TopUsersModel
+
+<style>
+	.tabs {
+		justify-content: center; /* Centers the tabs horizontally */
+		margin-bottom: 20px;
+		margin-top: 20px;
+	}
+
+	.tab {
+		padding: 12px 30px; /* Adds more padding for better spacing */
+		background-color: #f1f1f1;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		cursor: pointer;
+		text-decoration: none;
+		color: #333;
+		margin: 0 10px; /* Adds horizontal spacing between the tabs */
+		transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition for hover effect */
+	}
+
+		.tab:hover {
+			background-color: #e2e2e2;
+			transform: scale(1.05); /* Slight zoom effect on hover */
+		}
+
+		.tab.active {
+			background-color: #007bff;
+			color: white;
+			transform: scale(1.05); /* Slight zoom effect for the active tab */
+		}
+
+		.tab:focus {
+			outline: none; /* Remove the outline on focus */
+			box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add a focus shadow */
+		}
+
+		/* Optional: Adds a line below the active tab for more emphasis */
+		.tab.active::after {
+			content: '';
+			display: block;
+			width: 100%;
+			height: 3px;
+			background-color: #007bff;
+			margin-top: 5px;
+		}
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        gap: 15px;
+    }
+
+        .pagination a, .pagination span {
+            padding: 8px 15px;
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+            .pagination a:hover {
+                background-color: #007bff;
+                color: white;
+                transform: scale(1.1); /* Slight zoom effect on hover */
+            }
+
+        .pagination span {
+            color: #007bff;
+        }
+
+        .pagination .active {
+            background-color: #007bff;
+            color: white;
+            transform: scale(1.05);
+            font-weight: bold;
+        }
+
+        .pagination a.disabled {
+            background-color: #e2e2e2;
+            color: #aaa;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .pagination .page-info {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+</style>
+
+@if (TempData["DeniedMessage"] != null)
+{
+    <div class="alert alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
+}
+else
+{
+    <h2>Top Users</h2>
+
+    <div class="tabs">
+        <!-- Tab Links -->
+        <a href="/Dashboard/AppointmentStatistic" class="tab" id="appointmentStatisticsTab">Appointment Statistics</a>
+        <a href="/Dashboard/TopUsers" class="tab" id="topUsersTab">Top Users</a>
+        <a href="/Dashboard/StatisticalService" class="tab" id="topUsersTab">Top Services</a>
+        <a href="/Dashboard/StatisticalCombo" class="tab" id="topUsersTab">Top Combos</a>
+    </div>
+
+    <!-- Filter for the top users -->
+    <div class="filter">
+        <form method="get">
+            <label for="top">Show Top</label>
+            <input type="number" id="top" name="top" value="@Model.Top" min="1" />
+            <button type="submit">Apply</button>
+        </form>
+    </div>
+
+    @if (Model.TopUsers != null && Model.TopUsers.Items.Any())
+    {
+        <!-- Display the Top Users in a Table -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Top</th>
+                    <th>Username</th>
+                    <th>Total Amount</th>
+                    <th>Total Feedback</th>
+                    <th>Total Appointments</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model.TopUsers.Items.Select((user, index) => new { user, index }))
+                {
+                    <tr>
+                        <td>@(user.index + 1)</td>
+                        <td>@user.user.UserName</td>
+                        <td>@user.user.TotalAmount VNĐ</td>
+                        <td>@user.user.TotalFeedback</td>
+                        <td>@user.user.TotalAppointment</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- Pagination Controls -->
+        <div class="pagination">
+            <!-- Previous Page Link -->
+            @if (Model.TopUsers.HasPreviousPage)
+            {
+                <a href="/Dashboard/TopUsers?pageNumber=@(Model.TopUsers.CurrentPage - 1)&top=@Model.Top">Previous</a>
+            }
+            else
+            {
+                <span class="disabled">Previous</span>
+            }
+
+            <!-- Page Information -->
+            <span class="page-info">Page @Model.TopUsers.CurrentPage of @Model.TopUsers.TotalPages</span>
+
+            <!-- Next Page Link -->
+            @if (Model.TopUsers.HasNextPage)
+            {
+                <a href="/Dashboard/TopUsers?pageNumber=@(Model.TopUsers.CurrentPage + 1)&top=@Model.Top">Next</a>
+            }
+            else
+            {
+                <span class="disabled">Next</span>
+            }
+        </div>
+    }
+    else
+    {
+        <p>No top users found.</p>
+    }
+}
+

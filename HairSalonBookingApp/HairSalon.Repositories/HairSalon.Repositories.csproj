@@ -16,6 +16,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Migrations\.vs\Migrations\v17\DocumentLayout.json" />
+    <Content Include="Migrations\.vs\ProjectSettings.json" />
+    <Content Include="Migrations\.vs\VSWorkspaceState.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Migrations\.vs\slnx.sqlite" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="ClosedXML" Version="0.104.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />

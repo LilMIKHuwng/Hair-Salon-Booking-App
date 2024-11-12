@@ -29,13 +29,6 @@ namespace HairSalon.RazorPage.Pages.AdminPage
 
 			var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
 
-			// Check if the user has "Admin" or "Manager" roles
-			if (!userRoles.Any(role => role == "Admin" || role == "Manager"))
-			{
-				TempData["ErrorMessage"] = "You do not have permission to view this page.";
-				return Page(); // Show error message on the same page
-			}
-
 			// Retrieve Username from session
 			var username = HttpContext.Session.GetString("Username");
 
