@@ -216,22 +216,22 @@
         </member>
         <member name="M:HairSalonBE.API.Controllers.RoleController.GetAllRoles(System.String,System.String,System.Int32,System.Int32)">
             <summary>
-            	Lấy tất cả vai trò 
+                Get all roles with pagination and optional filters
             </summary>
         </member>
         <member name="M:HairSalonBE.API.Controllers.RoleController.CreateRole(HairSalon.ModelViews.RoleModelViews.CreateRoleModelView)">
             <summary>
-            	Tạo vai trò
+                Create a new role
             </summary>
         </member>
         <member name="M:HairSalonBE.API.Controllers.RoleController.UpdateRole(System.String,HairSalon.ModelViews.RoleModelViews.UpdatedRoleModelView)">
             <summary>
-            	Cập nhật vai trò
+                Update a role
             </summary>
         </member>
         <member name="M:HairSalonBE.API.Controllers.RoleController.DeleteRole(System.String)">
             <summary>
-            	Xóa vai trò
+                Delete a role
             </summary>
         </member>
         <member name="M:HairSalonBE.API.Controllers.SalaryPaymentController.GetAllSalaryPayments(System.String,System.Nullable{System.Guid},System.Nullable{System.DateTime},System.Nullable{System.Decimal},System.Int32,System.Int32)">
