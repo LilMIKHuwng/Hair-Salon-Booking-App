@@ -44,5 +44,30 @@ namespace HairSalon.RazorPage.Pages.Service
             Services = await _serviceService.GetAllServiceAsync(pageNumber, pageSize, id, name, type);
             return Page();
         }
+
+        public async Task<IActionResult> OnPostAsync(string id, string action)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                TempData["ErrorMessage"] = "Service ID is required.";
+                return RedirectToPage();
+            }
+
+            //Save roleId to tempdata
+            TempData["ServiceId"] = id;
+
+            switch (action?.ToLower())
+            {
+                case "update":
+                    return RedirectToPage("/Services/Update");
+                case "detail":
+                    return RedirectToPage("/Services/Detail");
+                case "delete":
+                    return RedirectToPage("/Services/Delete");
+                default:
+                    TempData["ErrorMessage"] = "Invalid action.";
+                    return RedirectToPage();
+            }
+        }
     }
 }

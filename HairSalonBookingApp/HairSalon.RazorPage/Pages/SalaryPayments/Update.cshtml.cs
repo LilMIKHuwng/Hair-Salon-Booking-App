@@ -49,6 +49,12 @@ namespace HairSalon.RazorPage.Pages.SalaryPayments
 
             try
             {
+                // Get Id from TempData
+                if (TempData.ContainsKey("SalaryId"))
+                {
+                    Id = TempData["SalaryId"].ToString();
+                }
+
                 // Fetch stylists (Users with 'Stylist' role)
                 var stylistUsers = await _appUserService.GetUsersByRoleAsync("Stylist");
                 ViewData["Stylists"] = stylistUsers ?? new List<AppUserModelView>();

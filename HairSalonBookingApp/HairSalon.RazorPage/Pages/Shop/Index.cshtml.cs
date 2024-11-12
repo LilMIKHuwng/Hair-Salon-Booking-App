@@ -41,5 +41,30 @@ namespace HairSalon.RazorPage.Pages.Shop
             Shops = await _shopService.GetAllShopAsync(pageNumber, pageSize, id, name);
             return Page();
         }
+
+        public async Task<IActionResult> OnPostAsync(string id, string action)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                TempData["ErrorMessage"] = "Shop ID is required.";
+                return RedirectToPage();
+            }
+
+            //Save roleId to tempdata
+            TempData["ShopId"] = id;
+
+            switch (action?.ToLower())
+            {
+                case "update":
+                    return RedirectToPage("/Shop/Update");
+                case "detail":
+                    return RedirectToPage("/Shop/Detail");
+                case "delete":
+                    return RedirectToPage("/Shop/Delete");
+                default:
+                    TempData["ErrorMessage"] = "Invalid action.";
+                    return RedirectToPage();
+            }
+        }
     }
 }

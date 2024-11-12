@@ -35,8 +35,14 @@ namespace HairSalon.RazorPage.Pages.Appointment
 
         public async Task<IActionResult> OnGetAsync()
         {
-            // Check if Id is provided
-            if (string.IsNullOrEmpty(Id))
+			// Get Id from TempData
+			if (TempData.ContainsKey("AppointmentId"))
+			{
+				Id = TempData["AppointmentId"].ToString();
+			}
+
+			// Check if Id is provided
+			if (string.IsNullOrEmpty(Id))
             {
                 TempData["ErrorMessage"] = "Invalid Appointment ID.";
                 return RedirectToPage("/Error"); // Redirect to error page if Id is missing

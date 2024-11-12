@@ -23,6 +23,13 @@ namespace HairSalon.RazorPage.Pages.Payment
 
         public async Task<IActionResult> OnGetAsync()
         {
+
+            // Get Id from TempData
+            if (TempData.ContainsKey("PaymentId"))
+            {
+                Id = TempData["PaymentId"].ToString();
+            }
+
             // Check if Id is provided
             if (string.IsNullOrEmpty(Id))
             {

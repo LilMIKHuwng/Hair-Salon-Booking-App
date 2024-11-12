@@ -43,5 +43,31 @@ namespace HairSalon.RazorPage.Pages.Feedback
             Feedback = await _FeedbackService.GetAllFeedbackAsync(pageNumber, pageSize, id, AppointmentId);
             return Page();
         }
-    }
+
+		public async Task<IActionResult> OnPostAsync(string id, string action)
+		{
+			if (string.IsNullOrEmpty(id))
+			{
+				TempData["ErrorMessage"] = "Feedback ID is required.";
+				return RedirectToPage();
+			}
+
+			//Save roleId to tempdata
+			TempData["FeedbackId"] = id;
+
+			switch (action?.ToLower())
+			{
+				case "update":
+					return RedirectToPage("/Feedback/Update");
+				case "detail":
+					return RedirectToPage("/Feedback/Detail");
+				case "delete":
+					return RedirectToPage("/Feedback/Delete");
+				default:
+					TempData["ErrorMessage"] = "Invalid action.";
+					return RedirectToPage();
+			}
+		}
+
+	}
 }

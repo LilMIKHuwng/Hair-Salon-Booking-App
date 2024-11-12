@@ -49,4 +49,30 @@ public class StaffManagementModel : PageModel
         }
         return Page();
     }
+
+	public async Task<IActionResult> OnPostAsync(string id, string action)
+	{
+		if (string.IsNullOrEmpty(id))
+		{
+			TempData["ErrorMessage"] = "User ID is required.";
+			return RedirectToPage();
+		}
+
+		//Save roleId to tempdata
+		TempData["UserId"] = id;
+
+		switch (action?.ToLower())
+		{
+			case "update":
+				return RedirectToPage("/Admin/Update");
+			case "detail":
+				return RedirectToPage("/Admin/Detail");
+			case "delete":
+				return RedirectToPage("/Admin/Delete");
+			default:
+				TempData["ErrorMessage"] = "Invalid action.";
+				return RedirectToPage();
+		}
+	}
+
 }

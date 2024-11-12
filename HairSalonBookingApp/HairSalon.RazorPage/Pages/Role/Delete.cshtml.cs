@@ -26,8 +26,14 @@ namespace HairSalon.RazorPage.Pages.Role
 
         public async Task<IActionResult> OnGetAsync()
         {
-            // Check if Id is provided
-            if (string.IsNullOrEmpty(Id))
+			// Get roleId from TempData
+			if (TempData.ContainsKey("RoleId"))
+			{
+				Id = TempData["RoleId"].ToString();
+			}
+
+			// Check if Id is provided
+			if (string.IsNullOrEmpty(Id))
             {
                 TempData["ErrorMessage"] = "Invalid Role ID.";
                 return RedirectToPage("/Error"); // Redirect to error page if Id is missing

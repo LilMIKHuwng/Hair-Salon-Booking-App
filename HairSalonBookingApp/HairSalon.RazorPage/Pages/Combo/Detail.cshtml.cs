@@ -35,14 +35,20 @@ namespace HairSalon.RazorPage.Pages.Combo
                 return RedirectToPage("/Error");
             }
 
-			// Check if Id is provided
-			if (string.IsNullOrEmpty(Id))
+            // Get Id from TempData
+            if (TempData.ContainsKey("ComboId"))
+            {
+                Id = TempData["ComboId"].ToString();
+            }
+
+            // Check if Id is provided
+            if (string.IsNullOrEmpty(Id))
 			{
 				TempData["ErrorMessage"] = "Invalid Combo ID.";
 				return RedirectToPage("/Error"); // Redirect to error page if Id is missing
 			}
-			
-			var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
+
+            var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
 
 			// Check if the user has "Admin" or "Manager" roles
 			if (!userRoles.Any(role => role == "Admin"))

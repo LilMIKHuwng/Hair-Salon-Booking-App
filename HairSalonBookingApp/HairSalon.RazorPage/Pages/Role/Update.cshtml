@@ -108,13 +108,15 @@ else
 {
     <h2>@ViewData["Title"]</h2>
 
+    <div>
+        <label>Role ID:</label>
+        <p>@Model.Id</p> <!-- Display ID as non-editable text -->
+    </div>
+    
     <form method="post">
         <!-- Hidden field for required Id -->
         <input type="hidden" asp-for="Id" />
-        <div>
-            <label>Role ID:</label>
-            <p>@Model.Id</p> <!-- Display ID as non-editable text -->
-        </div>
+        
         <div>
             <label asp-for="UpdatedRole.Name">Role Name</label>
             <!-- Display Role.Name in the input -->

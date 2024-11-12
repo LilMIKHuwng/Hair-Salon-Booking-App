@@ -41,5 +41,31 @@ namespace HairSalon.RazorPage.Pages.Combo
             Combos = await _comboService.GetAllCombosAsync(pageNumber, pageSize, id, name);
             return Page();
         }
+
+
+        public async Task<IActionResult> OnPostAsync(string id, string action)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                TempData["ErrorMessage"] = "Combo ID is required.";
+                return RedirectToPage();
+            }
+
+            //Save roleId to tempdata
+            TempData["ComboId"] = id;
+
+            switch (action?.ToLower())
+            {
+                case "update":
+                    return RedirectToPage("/Combo/Update");
+                case "detail":
+                    return RedirectToPage("/Combo/Detail");
+                case "delete":
+                    return RedirectToPage("/Combo/Delete");
+                default:
+                    TempData["ErrorMessage"] = "Invalid action.";
+                    return RedirectToPage();
+            }
+        }
     }
 }
