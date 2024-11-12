@@ -95,7 +95,7 @@ namespace HairSalon.Services.Service
             {
                 return isStartPeriod
                     ? new DateTime(year, 1, 1) // Start of the given year
-        : new DateTime(year, 12, 31, 23, 59, 59); // End of the given year
+                    : new DateTime(year, 12, 31, 23, 59, 59); // End of the given year
             }
             else if (dateStr.Length == 7 && DateTime.TryParseExact(dateStr, "yyyy-MM", null, System.Globalization.DateTimeStyles.None, out DateTime month))
             {

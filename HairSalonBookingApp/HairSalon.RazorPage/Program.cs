@@ -53,7 +53,7 @@ namespace HairSalon.RazorPage
                 // Redirect root URL to the login page
                 endpoints.MapGet("/", context =>
                 {
-                    context.Response.Redirect("/Login/Login");
+                    context.Response.Redirect("/Login");
                     return Task.CompletedTask;
                 });
             });

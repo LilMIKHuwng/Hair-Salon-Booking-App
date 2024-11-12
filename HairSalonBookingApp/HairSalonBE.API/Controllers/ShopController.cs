@@ -34,7 +34,7 @@ namespace HairSalonBE.API.Controllers
         [HttpPost("create")]
         public async Task<ActionResult<ShopModelView>> CreateShop([FromQuery] CreateShopModelView model)
         {
-            string result = await _shopService.AddShopAsync(model);
+            string result = await _shopService.AddShopAsync(model, null);
             return Ok(result);
         }
 
@@ -44,7 +44,7 @@ namespace HairSalonBE.API.Controllers
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateShop(string id, [FromQuery] UpdatedShopModelView model)
         {
-            string result = await _shopService.UpdateShopAsync(id, model);
+            string result = await _shopService.UpdateShopAsync(id, model, null);
             return Ok(result);
         }
 
@@ -54,7 +54,7 @@ namespace HairSalonBE.API.Controllers
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteShop(string id)
         {
-            string result = await _shopService.DeleteShopAsync(id);
+            string result = await _shopService.DeleteShopAsync(id, null);
             return Ok(result);
 
         }

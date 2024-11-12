@@ -1,0 +1,266 @@
+﻿@page "/Dashboard/AppointmentStatistic"
+@model HairSalon.RazorPage.Pages.Dashboard.AppointmentStatisticModel
+@{
+}
+
+<style>
+	/* General styling for the form */
+	.form-container {
+		max-width: 800px;
+		margin: 0 auto;
+		background-color: #f9f9f9;
+		padding: 20px;
+		border-radius: 8px;
+		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	}
+
+	.form-row {
+		display: flex;
+		justify-content: space-between; /* Align fields in row */
+		gap: 20px;
+		flex-wrap: wrap; /* Ensure it wraps on small screens */
+	}
+
+	.form-group {
+		flex: 1;
+		min-width: 200px;
+	}
+
+		.form-group label {
+			font-weight: bold;
+			color: #333;
+			display: block;
+			margin-bottom: 5px;
+		}
+
+	.form-control {
+		width: 100%;
+		padding: 10px;
+		border-radius: 4px;
+		border: 1px solid #ccc;
+		box-sizing: border-box;
+		font-size: 16px;
+	}
+
+		.form-control:focus {
+			border-color: #007bff;
+			outline: none;
+		}
+
+	.submit-btn {
+		width: 100%;
+		padding: 12px;
+		background-color: #007bff;
+		color: #fff;
+		border: none;
+		border-radius: 4px;
+		font-size: 16px;
+		cursor: pointer;
+		transition: background-color 0.3s ease;
+		margin-top: 20px;
+	}
+
+		.submit-btn:hover {
+			background-color: #0056b3;
+		}
+
+	.chart-container {
+		width: 80%;
+		margin: 30px auto;
+	}
+
+	.tabs {
+		justify-content: center; /* Centers the tabs horizontally */
+		margin-bottom: 20px;
+		margin-top: 20px;
+	}
+
+	.tab {
+		padding: 12px 30px; /* Adds more padding for better spacing */
+		background-color: #f1f1f1;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		cursor: pointer;
+		text-decoration: none;
+		color: #333;
+		margin: 0 10px; /* Adds horizontal spacing between the tabs */
+		transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition for hover effect */
+	}
+
+		.tab:hover {
+			background-color: #e2e2e2;
+			transform: scale(1.05); /* Slight zoom effect on hover */
+		}
+
+		.tab.active {
+			background-color: #007bff;
+			color: white;
+			transform: scale(1.05); /* Slight zoom effect for the active tab */
+		}
+
+		.tab:focus {
+			outline: none; /* Remove the outline on focus */
+			box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add a focus shadow */
+		}
+
+		/* Optional: Adds a line below the active tab for more emphasis */
+		.tab.active::after {
+			content: '';
+			display: block;
+			width: 100%;
+			height: 3px;
+			background-color: #007bff;
+			margin-top: 5px;
+		}
+</style>
+
+@if (TempData["DeniedMessage"] != null)
+{
+	<div class="alert alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
+} 
+else
+{
+	<div class="dashboard">
+		<h2>Appointment Statistics</h2>
+
+		<div class="tabs">
+			<!-- Tab Links -->
+			<a href="/Dashboard/AppointmentStatistic" class="tab" id="appointmentStatisticsTab">Appointment Statistics</a>
+			<a href="/Dashboard/TopUsers" class="tab" id="topUsersTab">Top Users</a>
+			<a href="/Dashboard/StatisticalService" class="tab" id="topUsersTab">Top Services</a>
+			<a href="/Dashboard/StatisticalCombo" class="tab" id="topUsersTab">Top Combos</a>
+		</div>
+
+		<!-- Filter Form -->
+		<form method="get" class="form-container">
+			<div class="form-row">
+				<div class="form-group">
+					<label for="startPeriod">Start Period:</label>
+					<input type="date" id="startPeriod" name="startPeriod" class="form-control"
+						   value="@(Model.StartPeriod ?? DateTime.Now.ToString("yyyy-MM-dd"))">
+				</div>
+
+				<div class="form-group">
+					<label for="endPeriod">End Period:</label>
+					<input type="date" id="endPeriod" name="endPeriod" class="form-control"
+						   value="@(Model.EndPeriod ?? DateTime.Now.ToString("yyyy-MM-dd"))">
+				</div>
+
+				<div class="form-group">
+					<label for="periodName">Period Name:</label>
+					<select id="periodName" name="periodName" class="form-control">
+						<option value="day" selected="@("day" == Model.PeriodName)">Day</option>
+						<option value="month" selected="@("month" == Model.PeriodName)">Month</option>
+						<option value="year" selected="@("year" == Model.PeriodName)">Year</option>
+					</select>
+				</div>
+			</div>
+
+			<button type="submit" class="submit-btn">Get Statistics</button>
+		</form>
+
+		<!-- Total Amount Chart -->
+		<div class="chart-container">
+			<canvas id="totalAmountChart"></canvas>
+		</div>
+
+		<!-- Total Feedback Chart -->
+		<div class="chart-container">
+			<canvas id="totalFeedbackChart"></canvas>
+		</div>
+
+		<!-- Total Appointment Chart -->
+		<div class="chart-container">
+			<canvas id="totalAppointmentChart"></canvas>
+		</div>
+
+	</div>
+}
+
+
+
+@section Scripts {
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script>
+		// Data from Model
+		const labels = @Html.Raw(Json.Serialize(Model.AppointmentStatistics.Items.Select(i => i.PeriodTime).ToArray()));
+		const totalAmountData = @Html.Raw(Json.Serialize(Model.AppointmentStatistics.Items.Select(i => i.TotalAmount).ToArray()));
+		const totalFeedbackData = @Html.Raw(Json.Serialize(Model.AppointmentStatistics.Items.Select(i => i.TotalFeedback).ToArray()));
+		const totalAppointmentData = @Html.Raw(Json.Serialize(Model.AppointmentStatistics.Items.Select(i => i.TotalAppointment).ToArray()));
+
+		// Total Amount Chart
+		const totalAmountCtx = document.getElementById('totalAmountChart').getContext('2d');
+		new Chart(totalAmountCtx, {
+			type: 'bar',
+			data: {
+				labels: labels,
+				datasets: [{
+					label: 'Total Amount',
+					data: totalAmountData,
+					backgroundColor: 'rgba(75, 192, 192, 0.2)',
+					borderColor: 'rgba(75, 192, 192, 1)',
+					borderWidth: 1
+				}]
+			},
+			options: {
+				scales: {
+					y: {
+						beginAtZero: true
+					}
+				},
+				responsive: true,
+				maintainAspectRatio: false
+			}
+		});
+
+		// Total Feedback Chart
+		const totalFeedbackCtx = document.getElementById('totalFeedbackChart').getContext('2d');
+		new Chart(totalFeedbackCtx, {
+			type: 'bar',
+			data: {
+				labels: labels,
+				datasets: [{
+					label: 'Total Feedback',
+					data: totalFeedbackData,
+					backgroundColor: 'rgba(153, 102, 255, 0.2)',
+					borderColor: 'rgba(153, 102, 255, 1)',
+					borderWidth: 1
+				}]
+			},
+			options: {
+				scales: {
+					y: {
+						beginAtZero: true
+					}
+				},
+				responsive: true,
+				maintainAspectRatio: false
+			}
+		});
+
+		// Total Appointment Chart
+		const totalAppointmentCtx = document.getElementById('totalAppointmentChart').getContext('2d');
+		new Chart(totalAppointmentCtx, {
+			type: 'bar',
+			data: {
+				labels: labels,
+				datasets: [{
+					label: 'Total Appointments',
+					data: totalAppointmentData,
+					backgroundColor: 'rgba(255, 159, 64, 0.2)',
+					borderColor: 'rgba(255, 159, 64, 1)',
+					borderWidth: 1
+				}]
+			},
+			options: {
+				scales: {
+					y: {
+						beginAtZero: true
+					}
+				},
+				responsive: true,
+				maintainAspectRatio: false
+			}
+		});
+	</script>
+}
