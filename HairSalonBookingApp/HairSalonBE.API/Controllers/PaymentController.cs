@@ -73,7 +73,7 @@ namespace HairSalonBE.API.Controllers
         [HttpPost("deposit")]
         public async Task<ActionResult<string>> Deposit([FromQuery] VnPayDepositWalletRequestModelView model)
         {
-            string result = await _vpnPayService.DepositWallet(model, HttpContext);
+            string result = await _vpnPayService.DepositWallet(model, HttpContext, null);
             return Ok(new { Url = result });
         }
 
@@ -81,9 +81,9 @@ namespace HairSalonBE.API.Controllers
         ///     Thực hiện gửi tiền vào ví
         /// </summary>
         [HttpPost("execute-deposit")]
-        public async Task<ActionResult<string>> ExecuteDeposit([FromQuery] double amount)
+        public async Task<ActionResult<string>> ExecuteDeposit(Guid userId, [FromQuery] double amount)
         {
-            string result = await _vpnPayService.ExcuteDepositToWallet(amount);
+            string result = await _vpnPayService.ExcuteDepositToWallet(userId, amount);
             return Ok(new { Url = result });
         }
     }

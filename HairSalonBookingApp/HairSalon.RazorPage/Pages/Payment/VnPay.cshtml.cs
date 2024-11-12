@@ -13,12 +13,10 @@ namespace HairSalon.RazorPage.Pages.Payment
     public class VnPayModel : PageModel
     {
         private readonly IVnPayService _paymentService;
-        private readonly IConfiguration _configuration;
 
-        public VnPayModel(IVnPayService paymentService, IConfiguration configuration)
+        public VnPayModel(IVnPayService paymentService)
         {
             _paymentService = paymentService;
-            _configuration = configuration;
         }
 
         [BindProperty(SupportsGet = true)]
@@ -41,7 +39,7 @@ namespace HairSalon.RazorPage.Pages.Payment
             var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
 
             // Check if the user has "Admin" or "Manager" roles
-            if (!userRoles.Any(role => role == "Admin"))
+            if (!userRoles.Any(role => role == "Admin" || role == "User"))
             {
                 TempData["DeniedMessage"] = "You do not have permission";
                 return Page(); // Redirect to a different page with a denied message
@@ -67,7 +65,6 @@ namespace HairSalon.RazorPage.Pages.Payment
                 return Page();
             }
 
-            // Ti?p t?c g?i hàm CreatePaymentUrl n?u c?u hình h?p l?
             var paymentRequest = new PaymentRequestModelView { AppoinmentId = AppointmentId.Id };
             string paymentUrl = _paymentService.CreatePaymentUrl(paymentRequest, HttpContext);
 
@@ -81,21 +78,16 @@ namespace HairSalon.RazorPage.Pages.Payment
         }
         public IActionResult OnGetPaymentCallbackAsync()
         {
-            // L?y các tham s? tr? v? t? VNPay
             var vnpResponseCode = Request.Query["vnp_ResponseCode"];
             var vnpTransactionStatus = Request.Query["vnp_TransactionStatus"];
             
-
-            // Ki?m tra mã ph?n h?i t? VNPay (là "00" n?u thành công)
             if (vnpResponseCode == "00" && vnpTransactionStatus == "00")
             {
-                // Thanh toán thành công, ?i?u h??ng v? trang Index
                 TempData["SuccessMessage"] = "Payment successful!";
                 return RedirectToPage("/Payment/Index");
             }
             else
             {
-                // Thanh toán không thành công
                 TempData["ErrorMessage"] = "Payment failed or invalid response. Please try again.";
                 return RedirectToPage("/Payment/Index");
             }

@@ -2,6 +2,7 @@
 using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalon.ModelViews.AuthModelViews;
 using HairSalon.ModelViews.SalaryPaymentModelViews;
+using HairSalon.ModelViews.ShopModelViews;
 using HairSalon.Repositories.Entity;
 
 namespace HairSalon.Contract.Services.Interface
@@ -21,5 +22,6 @@ namespace HairSalon.Contract.Services.Interface
         Task<GetInforAppUserModelView> GetMyInforUsersAsync(string username);
         Task<List<AppUserModelView>> GetAllStylistAsync();
         Task<List<AppUserModelView>> GetUsersByRoleAsync(string roleName);
+        Task<AppUserModelView?> GetUserByIdAsync(string id);
     }
 }

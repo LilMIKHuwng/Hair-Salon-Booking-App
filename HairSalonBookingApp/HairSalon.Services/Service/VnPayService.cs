@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
@@ -47,12 +48,18 @@ namespace HairSalon.Services.Service
             vnpay.AddRequestData("vnp_TxnRef", DateTime.Now.ToString("yyyyMMddHHmmss"));
 
             string paymentUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html" + vnpay.CreateRequestUrl(_configuration["VnPay:PaymentUrl"], _configuration["VnPay:HashSecret"]);
+
             return paymentUrl;
         }
 
-        public async Task<string> DepositWallet(VnPayDepositWalletRequestModelView model, HttpContext context)
+        public async Task<string> DepositWallet(VnPayDepositWalletRequestModelView model, HttpContext context, string? userId)
         {
-            string userId = _httpContextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            if(userId == null)
+            {
+                userId = _httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
+            }
+            /*var user = _unitOfWork.GetRepository<ApplicationUsers>().Entities.FirstOrDefault(user => user.Id == Guid.Parse());
+            if (user == null) return "User not found.";*/
             var vnpay = new VNPayLibrary();
             vnpay.AddRequestData("vnp_Command", "pay");
             vnpay.AddRequestData("vnp_Version", "2.1.0");
@@ -63,11 +70,12 @@ namespace HairSalon.Services.Service
             vnpay.AddRequestData("vnp_CurrCode", "VND");
             vnpay.AddRequestData("vnp_IpAddr", "165.225.230.115");
             vnpay.AddRequestData("vnp_Locale", "vn");
-            vnpay.AddRequestData("vnp_OrderInfo", "nap tien vao vi" + userId);
+            vnpay.AddRequestData("vnp_OrderInfo", userId);
             vnpay.AddRequestData("vnp_OrderType", "other");
-            vnpay.AddRequestData("vnp_ReturnUrl", _configuration["VnPay:ReturnUrl"]);
+            vnpay.AddRequestData("vnp_ReturnUrl", _configuration["VnPay:ReturnUrl2"]);
             vnpay.AddRequestData("vnp_TxnRef", DateTime.Now.ToString("yyyyMMddHHmmss"));
             string paymentUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html" + vnpay.CreateRequestUrl(_configuration["VnPay:PaymentUrl"], _configuration["VnPay:HashSecret"]);
+
             return paymentUrl;
         }
 
@@ -165,13 +173,14 @@ namespace HairSalon.Services.Service
             return "Payment added successfully.";
         }
 
-        public async Task<string> ExcuteDepositToWallet(double amount)
+
+
+        public async Task<string> ExcuteDepositToWallet(Guid userId, double amount)
         {
-            Guid userId = Guid.Parse(_httpContextAccessor.HttpContext?.User?.FindFirst("userId")?.Value);
             var user = _unitOfWork.GetRepository<ApplicationUsers>().GetById(userId);
             if (user == null)
             {
-                return "Can't find user!";
+                return "User not found!";
             }
 
             user.E_Wallet += (decimal)amount;
@@ -179,6 +188,7 @@ namespace HairSalon.Services.Service
             await _unitOfWork.SaveAsync();
             return "Success!";
         }
+
         public async Task<AppointmentModelView?> GetAppointmentByIdAsync(string id)
         {
             // Check if the provided Role ID is valid (non-empty and non-whitespace)
@@ -201,5 +211,20 @@ namespace HairSalon.Services.Service
             AppointmentModelView appointmentModelView = _mapper.Map<AppointmentModelView>(appointmentEntity);
             return appointmentModelView;
         }
+
+        /*public async Task<string> DepositToWalletWithVnPay(double amount)
+        {
+            Guid userId = Guid.Parse(_httpContextAccessor.HttpContext?.User?.FindFirst("userId")?.Value);
+            var user = _unitOfWork.GetRepository<ApplicationUsers>().GetById(userId);
+            if (user == null)
+            {
+                return "Can't find user!";
+            }
+
+            user.E_Wallet += (decimal)amount;
+            _unitOfWork.GetRepository<ApplicationUsers>().Update(user);
+            await _unitOfWork.SaveAsync();
+            return "Success!";
+        }*/
     }
 }

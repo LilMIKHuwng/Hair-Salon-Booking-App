@@ -28,22 +28,30 @@ namespace HairSalon.RazorPage.Pages.Payment
             {
                 var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
 
-                // Check if the user has "Admin" or "Manager" roles
-                if (!userRoles.Any(role => role == "Admin"))
+                // Check if the user has "Admin" role
+                if (userRoles.Contains("Admin"))
                 {
-                    TempData["ErrorMessage"] = "You do not have permission to view this page.";
-                    return Page(); // Show error message on the same page
+                    // If the user is an Admin, retrieve all payments with filters
+                    Payment = await _paymentService.GetAllPaymentAsync(pageNumber, pageSize, id, appointmentId, paymentMethod);
+                    return Page();
                 }
+
+                // Check if the user has "User" role
+                if (userRoles.Contains("User"))
+                {
+                    TempData["InfoMessage"] = "You have access to this page, but you are not allowed to view all payments.";
+                    return Page(); // Show message on the same page
+                }
+
+                // If the user has neither Admin nor User role
+                TempData["ErrorMessage"] = "You do not have permission to view this page.";
+                return Page();
             }
             else
             {
                 TempData["ErrorMessage"] = "You do not have permission to view this page.";
                 return Page();
             }
-
-            // If authorized, retrieve paginated payments with filters
-            Payment = await _paymentService.GetAllPaymentAsync(pageNumber, pageSize, id, appointmentId, paymentMethod);
-            return Page();
         }
     }
 }
