@@ -17,8 +17,9 @@ namespace HairSalon.RazorPage.Pages.Payment
             _paymentService = paymentService;
         }
 
-        public BasePaginatedList<PaymentModelView> Payment { get; set; }
+        public bool IsAdmin { get; set; }
 
+        public BasePaginatedList<PaymentModelView> Payment { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int pageNumber = 1, int pageSize = 5, string? id = null, string? appointmentId = null, string? paymentMethod = null)
         {
@@ -31,27 +32,25 @@ namespace HairSalon.RazorPage.Pages.Payment
                 // Check if the user has "Admin" role
                 if (userRoles.Contains("Admin"))
                 {
+                    IsAdmin = true;
                     // If the user is an Admin, retrieve all payments with filters
                     Payment = await _paymentService.GetAllPaymentAsync(pageNumber, pageSize, id, appointmentId, paymentMethod);
                     return Page();
                 }
-
+                var userID = HttpContext.Session.GetString("UserId");
                 // Check if the user has "User" role
                 if (userRoles.Contains("User"))
                 {
-                    TempData["InfoMessage"] = "You have access to this page, but you are not allowed to view all payments.";
+                    IsAdmin = false;
+                    Payment = await _paymentService.GetAllPaymentByUserIdAsync(userID, pageNumber, pageSize);
                     return Page(); // Show message on the same page
                 }
+            }
 
-                // If the user has neither Admin nor User role
-                TempData["ErrorMessage"] = "You do not have permission to view this page.";
-                return Page();
-            }
-            else
-            {
-                TempData["ErrorMessage"] = "You do not have permission to view this page.";
-                return Page();
-            }
+            // If the user has neither Admin nor User role
+            TempData["ErrorMessage"] = "You do not have permission to view this page.";
+            return Page();
         }
+
     }
 }

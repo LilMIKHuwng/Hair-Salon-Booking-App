@@ -20,6 +20,8 @@ namespace HairSalon.RazorPage.Pages.Payment
         [BindProperty]
         public PaymentResponseModelView NewPayment { get; set; }
 
+        public bool IsUserRole { get; set; }
+
         // TempData for messages
         [TempData]
         public string ErrorMessage { get; set; }
@@ -44,17 +46,19 @@ namespace HairSalon.RazorPage.Pages.Payment
             var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
 
             // Check if the user has "Admin" or "Manager" roles
-            if (!userRoles.Any(role => role == "Admin"))
+            if (!userRoles.Any(role => role == "Admin" || role == "User"))
             {
                 TempData["DeniedMessage"] = "You do not have permission";
                 return Page(); // Redirect to a different page with a denied message
             }
 
+            IsUserRole = !userRoles.Contains("Admin") && userRoles.Contains("User");
+
             // Extract query parameters and assign to NewPayment object
             NewPayment = new PaymentResponseModelView
             {
                 AppointmentId = Request.Query["vnp_OrderInfo"],
-                TotalAmount = Convert.ToDecimal(Request.Query["vnp_Amount"]),
+                TotalAmount = Convert.ToDecimal(Request.Query["vnp_Amount"]) / 100,
                 BankCode = Request.Query["vnp_BankCode"],
                 BankTranNo = Request.Query["vnp_BankTranNo"],
                 CardType = Request.Query["vnp_CardType"],

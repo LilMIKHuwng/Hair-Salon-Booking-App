@@ -86,5 +86,18 @@ namespace HairSalonBE.API.Controllers
             string result = await _vpnPayService.ExcuteDepositToWallet(userId, amount);
             return Ok(new { Url = result });
         }
+
+        /// <summary>
+        ///     Lấy tất cả thông tin payment by userId
+        /// </summary>
+        [HttpGet("all-userId")]
+        public async Task<ActionResult<BasePaginatedList<PaymentModelView>>> GetAllPaymentsByUserId(
+                                                                                     [FromQuery] string userId,
+                                                                                    int pageNumber = 1,
+                                                                                    int pageSize = 5)
+        {
+            var result = await _paymentService.GetAllPaymentByUserIdAsync(userId, pageNumber, pageSize);
+            return Ok(result);
+        }
     }
 }

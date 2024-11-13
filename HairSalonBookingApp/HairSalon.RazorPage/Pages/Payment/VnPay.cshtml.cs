@@ -1,9 +1,6 @@
-using DocumentFormat.OpenXml.Office2010.Excel;
 using HairSalon.Contract.Services.Interface;
-using HairSalon.Core;
 using HairSalon.ModelViews.AppointmentModelViews;
 using HairSalon.ModelViews.VnPayModelViews;
-using HairSalon.Services.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
@@ -13,18 +10,20 @@ namespace HairSalon.RazorPage.Pages.Payment
     public class VnPayModel : PageModel
     {
         private readonly IVnPayService _paymentService;
-
-        public VnPayModel(IVnPayService paymentService)
+        private readonly IAppointmentService _appointmentService; 
+        private readonly IPaymentService _checkPaymentService;
+        public VnPayModel(IVnPayService paymentService, IAppointmentService appointmentService, IPaymentService checkPaymentService)
         {
             _paymentService = paymentService;
+            _appointmentService = appointmentService;
+            _checkPaymentService = checkPaymentService;
         }
 
         [BindProperty(SupportsGet = true)]
         public string Id { get; set; }
 
         public PaymentRequestModelView Payment { get; set; }
-
-        public AppointmentModelView AppointmentId { get; set; }
+        public List<AppointmentModelView> Appointments { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -33,7 +32,7 @@ namespace HairSalon.RazorPage.Pages.Payment
             if (userRolesJson == null)
             {
                 TempData["DeniedMessage"] = "You do not have permission";
-                return Page();// Redirect to a different page with a denied message
+                return Page(); // Redirect to a different page with a denied message
             }
 
             var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
@@ -45,8 +44,30 @@ namespace HairSalon.RazorPage.Pages.Payment
                 return Page(); // Redirect to a different page with a denied message
             }
 
+            // Get the userId (You need to retrieve this based on your app's context)
+            var userId = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(userId))
+            {
+                TempData["DeniedMessage"] = "User not found.";
+                return Page();
+            }
+
+            // Call service to get appointments for the user
+            var allAppointments = await _appointmentService.GetAppointmentsByUserIdAsync(userId);
+
+            // Filter out the appointments that have already been paid
+            Appointments = new List<AppointmentModelView>();
+            foreach (var appointment in allAppointments)
+            {
+                bool isPaid = await _checkPaymentService.IsAppointmentPaidAsync(appointment.Id);
+                if (!isPaid) // Only add appointments that are not paid
+                {
+                    Appointments.Add(appointment);
+                }
+            }
 
             return Page();
+
         }
 
         // Handler to generate and redirect to the VNPay URL
@@ -58,14 +79,14 @@ namespace HairSalon.RazorPage.Pages.Payment
                 return Page();
             }
 
-            AppointmentId = await _paymentService.GetAppointmentByIdAsync(Id);
-            if (AppointmentId == null)
+            var appointment = await _paymentService.GetAppointmentByIdAsync(Id);
+            if (appointment == null)
             {
                 TempData["ErrorMessage"] = "AppointmentId not found.";
                 return Page();
             }
 
-            var paymentRequest = new PaymentRequestModelView { AppoinmentId = AppointmentId.Id };
+            var paymentRequest = new PaymentRequestModelView { AppoinmentId = appointment.Id };
             string paymentUrl = _paymentService.CreatePaymentUrl(paymentRequest, HttpContext);
 
             if (paymentUrl == "Appointment not found." || paymentUrl == "Appointment has not been completed.")
@@ -76,11 +97,12 @@ namespace HairSalon.RazorPage.Pages.Payment
 
             return Redirect(paymentUrl);
         }
+
         public IActionResult OnGetPaymentCallbackAsync()
         {
             var vnpResponseCode = Request.Query["vnp_ResponseCode"];
             var vnpTransactionStatus = Request.Query["vnp_TransactionStatus"];
-            
+
             if (vnpResponseCode == "00" && vnpTransactionStatus == "00")
             {
                 TempData["SuccessMessage"] = "Payment successful!";
@@ -94,3 +116,5 @@ namespace HairSalon.RazorPage.Pages.Payment
         }
     }
 }
+
+

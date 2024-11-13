@@ -32,6 +32,7 @@ namespace HairSalon.Services.Service
             var appoinment = _unitOfWork.GetRepository<Appointment>().Entities.FirstOrDefault(x => x.Id == model.AppoinmentId);
             if (appoinment == null) return "Appointment not found.";
             if (!string.Equals(appoinment.StatusForAppointment, "Completed")) return "Appointment has not been completed.";
+
             var vnpay = new VNPayLibrary();
             vnpay.AddRequestData("vnp_Command", "pay");
             vnpay.AddRequestData("vnp_Version", "2.1.0");
@@ -91,7 +92,13 @@ namespace HairSalon.Services.Service
                 }
                 var appointment = await _unitOfWork.GetRepository<Appointment>().Entities
                .FirstOrDefaultAsync(ui => ui.Id == model.AppointmentId);
-                if(appointment.StatusForAppointment != "Completed")
+
+                if (appointment == null)
+                {
+                    return "Appointment not found.";
+                }
+
+                if (appointment.StatusForAppointment != "Completed")
                 {
                     return "Appointment don't complete";
                 }
