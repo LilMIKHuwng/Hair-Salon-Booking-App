@@ -1,4 +1,4 @@
-﻿    using AutoMapper;
+﻿using AutoMapper;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.ServiceModelViews;
@@ -8,8 +8,6 @@ using HairSalon.Core;
 using Microsoft.AspNetCore.Http;
 using HairSalon.Core.Base;
 using Microsoft.Extensions.Configuration;
-using HairSalon.Core.Utils;
-using HairSalon.Core.Utils.Firebase;
 
 namespace HairSalon.Services.Service
 {

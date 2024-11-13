@@ -54,26 +54,6 @@
                 Lấy thông tin người dùng hiện tại
             </summary>
         </member>
-        <member name="M:HairSalonBE.API.Controllers.ApplicationUserRoleController.CreateAppUserRole(HairSalon.ModelViews.AppUserRoleViewModels.CreateAppUserRoleModelView)">
-            <summary>
-                Tạo vai trò cho người dùng
-            </summary>
-        </member>
-        <member name="M:HairSalonBE.API.Controllers.ApplicationUserRoleController.GetAllApplicationUserRoles(System.Int32,System.Int32,System.String,System.String)">
-            <summary>
-                Lấy tất cả người dùng có vai trò
-            </summary>
-        </member>
-        <member name="M:HairSalonBE.API.Controllers.ApplicationUserRoleController.UpdateApplicationUserRole(System.String,System.String,HairSalon.ModelViews.AppUserRoleViewModels.UpdateAppUserRoleModelView)">
-            <summary>
-                Cập nhật vai trò của người dùng
-            </summary>
-        </member>
-        <member name="M:HairSalonBE.API.Controllers.ApplicationUserRoleController.DeleteApplicationUserRole(System.String,System.String)">
-            <summary>
-                Xóa người dùng với vai trò đó
-            </summary>
-        </member>
         <member name="M:HairSalonBE.API.Controllers.AppointmentController.CreateAppointment(HairSalon.ModelViews.AppointmentModelViews.CreateAppointmentModelView)">
             <summary>
                 Tạo lịch hẹn

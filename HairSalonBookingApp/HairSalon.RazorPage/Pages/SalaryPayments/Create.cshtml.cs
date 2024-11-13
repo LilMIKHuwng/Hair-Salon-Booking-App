@@ -1,12 +1,9 @@
 ﻿using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.ApplicationUserModelViews;
-using HairSalon.ModelViews.RoleModelViews;
 using HairSalon.ModelViews.SalaryPaymentModelViews;
-using HairSalon.Services.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
-using System.Linq;
 
 namespace HairSalon.RazorPage.Pages.SalaryPayments
 {

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 using System.Globalization;
-using System.Security.Claims;
 
 namespace HairSalon.RazorPage.Pages.Payment
 {

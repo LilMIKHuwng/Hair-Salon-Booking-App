@@ -24,7 +24,6 @@ namespace HairSalonBE.API
             services.ConfigJwt(configuration);
             services.Configure<CookiePolicyOptions>(options =>
             {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => true;
             });
 
@@ -66,7 +65,6 @@ namespace HairSalonBE.API
         public static void AddServices(this IServiceCollection services)
         {
             services
-                //.AddScoped<IUserService, UserService>()
                 .AddScoped<IRoleService, RoleService>()
                 .AddScoped<IShopService, ShopService>()
                 .AddScoped<ISalaryPaymentService, SalaryPaymentService>()

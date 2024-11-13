@@ -1,7 +1,6 @@
 ﻿using HairSalon.Core;
 using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalon.ModelViews.AuthModelViews;
-using HairSalon.ModelViews.SalaryPaymentModelViews;
 using HairSalon.Repositories.Entity;
 
 namespace HairSalon.Contract.Services.Interface

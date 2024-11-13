@@ -2,7 +2,6 @@ using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.ApplicationUserModelViews;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Newtonsoft.Json;
 
 namespace HairSalon.RazorPage.Pages.Admin;
 
