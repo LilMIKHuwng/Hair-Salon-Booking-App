@@ -9,6 +9,8 @@ namespace HairSalon.RazorPage
 			var builder = WebApplication.CreateBuilder(args);
 			var configuration = builder.Configuration;
 			builder.Services.AddHttpContextAccessor();
+            // Add services to the container.
+            builder.Services.AddRazorPages();
 			builder.Services.AddRazorPages();
             builder.Services.AddConfig(builder.Configuration);
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -37,9 +39,8 @@ namespace HairSalon.RazorPage
 
             app.UseRouting();
 
-			app.UseAuthorization();
-
-            
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

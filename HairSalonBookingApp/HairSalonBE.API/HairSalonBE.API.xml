@@ -189,9 +189,14 @@
                 Tạo thông tin để nạp tiền vào ví
             </summary>
         </member>
-        <member name="M:HairSalonBE.API.Controllers.PaymentController.ExecuteDeposit(System.Double)">
+        <member name="M:HairSalonBE.API.Controllers.PaymentController.ExecuteDeposit(System.Guid,System.Double)">
             <summary>
                 Thực hiện gửi tiền vào ví
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.PaymentController.GetAllPaymentsByUserId(System.String,System.Int32,System.Int32)">
+            <summary>
+                Lấy tất cả thông tin payment by userId
             </summary>
         </member>
         <member name="M:HairSalonBE.API.Controllers.RoleController.GetAllRoles(System.String,System.String,System.Int32,System.Int32)">

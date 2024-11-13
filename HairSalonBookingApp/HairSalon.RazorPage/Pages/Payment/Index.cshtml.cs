@@ -16,8 +16,9 @@ namespace HairSalon.RazorPage.Pages.Payment
             _paymentService = paymentService;
         }
 
-        public BasePaginatedList<PaymentModelView> Payment { get; set; }
+        public bool IsAdmin { get; set; }
 
+        public BasePaginatedList<PaymentModelView> Payment { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int pageNumber = 1, int pageSize = 5, string? id = null, string? appointmentId = null, string? paymentMethod = null)
         {
@@ -27,21 +28,26 @@ namespace HairSalon.RazorPage.Pages.Payment
             {
                 var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
 
-                // Check if the user has "Admin" or "Manager" roles
-                if (!userRoles.Any(role => role == "Admin"))
+                // Check if the user has "Admin" role
+                if (userRoles.Contains("Admin"))
                 {
-                    TempData["ErrorMessage"] = "You do not have permission to view this page.";
-                    return Page(); // Show error message on the same page
+                    IsAdmin = true;
+                    // If the user is an Admin, retrieve all payments with filters
+                    Payment = await _paymentService.GetAllPaymentAsync(pageNumber, pageSize, id, appointmentId, paymentMethod);
+                    return Page();
+                }
+                var userID = HttpContext.Session.GetString("UserId");
+                // Check if the user has "User" role
+                if (userRoles.Contains("User"))
+                {
+                    IsAdmin = false;
+                    Payment = await _paymentService.GetAllPaymentByUserIdAsync(userID, pageNumber, pageSize);
+                    return Page(); // Show message on the same page
                 }
             }
-            else
-            {
-                TempData["ErrorMessage"] = "You do not have permission to view this page.";
-                return Page();
-            }
 
-            // If authorized, retrieve paginated payments with filters
-            Payment = await _paymentService.GetAllPaymentAsync(pageNumber, pageSize, id, appointmentId, paymentMethod);
+            // If the user has neither Admin nor User role
+            TempData["ErrorMessage"] = "You do not have permission to view this page.";
             return Page();
         }
 

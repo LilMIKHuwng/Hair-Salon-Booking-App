@@ -7,6 +7,8 @@ using HairSalon.Core.Base;
 using HairSalon.Core.Utils;
 using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalon.ModelViews.AuthModelViews;
+using HairSalon.ModelViews.ComboModelViews;
+using HairSalon.ModelViews.ShopModelViews;
 using HairSalon.Repositories.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -675,6 +677,29 @@ namespace HairSalon.Services.Service
                             ? $"{s.UserInfo.Firstname} {s.UserInfo.Lastname}"
                             : "N/A"
             }).ToList();
+        }
+
+        public async Task<AppUserModelView?> GetUserByIdAsync(string id)
+        {
+            // Check if the provided User ID is valid (non-empty and non-whitespace)
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return null; // Or you could throw an exception or return an error message
+            }
+
+            // Try to find the role by its ID, ensuring it hasn’t been marked as deleted
+            var userEntity = await _unitOfWork.GetRepository<ApplicationUsers>().Entities
+                .FirstOrDefaultAsync(user => user.Id == Guid.Parse(id) && !user.DeletedTime.HasValue);
+
+            // If the role is not found, return null
+            if (userEntity == null)
+            {
+                return null;
+            }
+
+            // Map the ApplicationRoles entity to a RoleModelView and return it
+            AppUserModelView userModelView = _mapper.Map<AppUserModelView>(userEntity);
+            return userModelView;
         }
     }
 }

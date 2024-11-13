@@ -19,7 +19,8 @@ namespace HairSalon.RazorPage.Pages.Payment
         [BindProperty]
         public PaymentResponseModelView NewPayment { get; set; }
 
-        // TempData for messages
+        public bool IsUserRole { get; set; }
+
         [TempData]
         public string ErrorMessage { get; set; }
 
@@ -29,7 +30,6 @@ namespace HairSalon.RazorPage.Pages.Payment
         [TempData]
         public string DeniedMessage { get; set; }
 
-        // Method for handling GET request
         public async Task<IActionResult> OnGetAsync()
         {
             // Retrieve user roles from session
@@ -43,30 +43,30 @@ namespace HairSalon.RazorPage.Pages.Payment
             var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
 
             // Check if the user has "Admin" or "Manager" roles
-            if (!userRoles.Any(role => role == "Admin"))
+            if (!userRoles.Any(role => role == "Admin" || role == "User"))
             {
                 TempData["DeniedMessage"] = "You do not have permission";
                 return Page(); // Redirect to a different page with a denied message
             }
 
-            // Extract query parameters and assign to NewPayment object
+            IsUserRole = !userRoles.Contains("Admin") && userRoles.Contains("User");
+
             NewPayment = new PaymentResponseModelView
             {
                 AppointmentId = Request.Query["vnp_OrderInfo"],
-                TotalAmount = Convert.ToDecimal(Request.Query["vnp_Amount"]),
+                TotalAmount = Convert.ToDecimal(Request.Query["vnp_Amount"]) / 100,
                 BankCode = Request.Query["vnp_BankCode"],
                 BankTranNo = Request.Query["vnp_BankTranNo"],
                 CardType = Request.Query["vnp_CardType"],
                 ResponseCode = Request.Query["vnp_ResponseCode"],
                 TransactionNo = Request.Query["vnp_TransactionNo"],
                 TransactionStatus = Request.Query["vnp_TransactionStatus"],
-                Method = "VnPay", // You can map other fields accordingly
+                Method = "VnPay",
                 PaymentTime = DateTime.ParseExact(Request.Query["vnp_PayDate"], "yyyyMMddHHmmss", CultureInfo.InvariantCulture) // You can parse the date correctly
             };
 
             return Page();
         }
-
 
         // Method for handling POST request
         public async Task<IActionResult> OnPostAsync()

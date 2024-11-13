@@ -82,5 +82,31 @@ namespace HairSalonBE.API.Controllers
             var result = await _appointmentService.MarkConfirmed(id, null);
             return Ok(result);
         }
+
+        [HttpGet("appointment")]
+        public async Task<IActionResult> GetAppointmentsByUserIdAsync(string userId)
+        {
+            try
+            {
+                var appointments = await _appointmentService.GetAppointmentsByUserIdAsync(userId);
+
+                if (appointments == null || !appointments.Any())
+                {
+                    return NotFound(new { message = "No completed appointments found for this user." });
+                }
+
+                return Ok(appointments);
+            }
+            catch (ArgumentException ex)
+            {
+                // Invalid userId
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                // General error
+                return StatusCode(500, new { message = "An error occurred while retrieving appointments.", details = ex.Message });
+            }
+        }
     }
 }
