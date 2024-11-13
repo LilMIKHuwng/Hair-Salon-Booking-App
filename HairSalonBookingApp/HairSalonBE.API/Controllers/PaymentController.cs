@@ -14,11 +14,13 @@ namespace HairSalonBE.API.Controllers
     {
         private readonly IPaymentService _paymentService;
         private readonly IVnPayService _vpnPayService;
+        private readonly IPayOSService _payOSService;
 
-        public PaymentController(IPaymentService paymentService, IVnPayService vpnPayService)
+        public PaymentController(IPaymentService paymentService, IVnPayService vpnPayService, IPayOSService payOsService)
         {
             _paymentService = paymentService;
             _vpnPayService = vpnPayService;
+            _payOSService = payOsService;
         }
 
         /// <summary>
@@ -76,7 +78,15 @@ namespace HairSalonBE.API.Controllers
             string result = await _vpnPayService.DepositWallet(model, HttpContext);
             return Ok(new { Url = result });
         }
-
+        /// <summary>
+        ///     Tạo link PayOS
+        /// </summary>
+        [HttpPost("create-payos")]
+        public async Task<ActionResult> CreatePayOsLink(PaymentRequestModelView model)
+        {
+            var paymentUrl = _payOSService.CreatePaymentLink(model);
+            return Ok(new { Url = paymentUrl });
+        }
         /// <summary>
         ///     Thực hiện gửi tiền vào ví
         /// </summary>
