@@ -3,7 +3,6 @@ using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.AppointmentModelViews;
-using HairSalon.ModelViews.ShopModelViews;
 using HairSalon.ModelViews.VnPayModelViews;
 using HairSalon.Repositories.Entity;
 using HairSalon.Services.VNPay;

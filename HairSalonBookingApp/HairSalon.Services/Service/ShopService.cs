@@ -7,9 +7,7 @@ using HairSalon.ModelViews.ShopModelViews;
 using Microsoft.EntityFrameworkCore;
 using HairSalon.Core.Base;
 using Microsoft.AspNetCore.Http;
-using Azure.Core;
 using Microsoft.Extensions.Configuration;
-using HairSalon.ModelViews.RoleModelViews;
 
 namespace HairSalon.Services.Service
 {

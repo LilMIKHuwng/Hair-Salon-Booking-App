@@ -3,10 +3,8 @@ using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.AppointmentModelViews;
 using HairSalon.ModelViews.ComboModelViews;
 using HairSalon.ModelViews.ServiceModelViews;
-using HairSalon.Services.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Newtonsoft.Json;
 
 namespace HairSalon.RazorPage.Pages.Appointment
 {

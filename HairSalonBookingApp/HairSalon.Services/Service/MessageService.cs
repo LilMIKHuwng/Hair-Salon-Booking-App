@@ -6,11 +6,6 @@ using HairSalon.Core.Base;
 using HairSalon.ModelViews.Message;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using HairSalon.Core;
 
 namespace HairSalon.Services.Service

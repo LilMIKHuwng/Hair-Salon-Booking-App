@@ -1,4 +1,3 @@
-using HairSalon.Contract.Services.Interface;
 using HairSalon.Services.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;

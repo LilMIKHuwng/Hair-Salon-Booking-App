@@ -1,5 +1,4 @@
 using HairSalon.Contract.Services.Interface;
-using HairSalon.Core;
 using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalon.ModelViews.AppointmentModelViews;
 using HairSalon.ModelViews.ComboModelViews;

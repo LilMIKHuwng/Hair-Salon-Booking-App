@@ -4,15 +4,10 @@ using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
-using HairSalon.Core.Utils;
-using HairSalon.ModelViews.ApplicationUserModelViews;
-using HairSalon.ModelViews.RoleModelViews;
 using HairSalon.ModelViews.SalaryPaymentModelViews;
-using HairSalon.Repositories.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
-using System.Linq;
 
 namespace HairSalon.Services.Service
 {

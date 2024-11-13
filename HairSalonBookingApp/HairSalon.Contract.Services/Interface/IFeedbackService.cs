@@ -2,7 +2,6 @@
 using HairSalon.ModelViews.AppointmentModelViews;
 using HairSalon.ModelViews.FeedbackModeViews;
 using HairSalon.ModelViews.FeedBackModeViews;
-using HairSalon.ModelViews.RoleModelViews;
 
 namespace HairSalon.Contract.Services.Interface
 {
