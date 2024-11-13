@@ -1,6 +1,5 @@
 using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.PaymentModelViews;
-using HairSalon.ModelViews.RoleModelViews;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
@@ -48,7 +47,7 @@ namespace HairSalon.RazorPage.Pages.Payment
             var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
 
             // Check if the user has "Admin" or "Manager" roles
-            if (!userRoles.Any(role => role == "Admin"))
+            if (!userRoles.Any(role => role == "Admin" || role == "User"))
             {
                 TempData["DeniedMessage"] = "You do not have permission";
                 return Page(); // Redirect to a different page with a denied message

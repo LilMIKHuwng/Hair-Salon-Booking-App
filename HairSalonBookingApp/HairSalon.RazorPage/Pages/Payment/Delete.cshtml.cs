@@ -1,6 +1,5 @@
 using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.PaymentModelViews;
-using HairSalon.ModelViews.ShopModelViews;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
@@ -21,11 +20,9 @@ namespace HairSalon.RazorPage.Pages.Payment
 
         public PaymentModelView Payment { get; set; }
 
-        // Property to store error messages
         [TempData]
         public string ErrorMessage { get; set; }
 
-        // Property to store response or success messages
         [TempData]
         public string ResponseMessage { get; set; }
 

@@ -25,44 +25,37 @@ namespace HairSalon.Services.Cache
                 return default;
             }
 
-            // Deserialize directly
             return JsonSerializer.Deserialize<T>(cachedData);
         }
 
         public async Task SetAsync<T>(string key, T value, TimeSpan expiration, string prefix = null)
         {
-            // Serialize the data to be cached
             var serializedData = JsonSerializer.Serialize(value);
 
-            // Set the cache value with expiration
             await _cache.SetStringAsync(key, serializedData, new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = expiration
             });
 
-            // If a prefix is provided, add the key to a Redis Set to track it by prefix
             if (!string.IsNullOrEmpty(prefix))
             {
                 var db = _redis.GetDatabase();
-                await db.SetAddAsync($"{prefix}_keys", key);  // Add key to the set
+                await db.SetAddAsync($"{prefix}_keys", key); 
             }
         }
 
         public async Task RemoveByPrefixAsync(string prefix)
         {
             var db = _redis.GetDatabase();
-            var keySet = $"{prefix}_keys";  // Set name that stores keys with the given prefix
+            var keySet = $"{prefix}_keys"; 
 
-            // Retrieve all keys in the set associated with the prefix
             var keys = await db.SetMembersAsync(keySet);
 
-            // Remove each key individually from the cache
             foreach (var key in keys)
             {
                 await _cache.RemoveAsync(key.ToString());
             }
 
-            // Delete the key set after removing all associated keys
             await db.KeyDeleteAsync(keySet);
         }
 

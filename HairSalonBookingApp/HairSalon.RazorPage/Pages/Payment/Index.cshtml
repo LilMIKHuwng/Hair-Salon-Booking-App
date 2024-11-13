@@ -76,18 +76,18 @@
             background-color: #c0392b;
         }
 
-/*     .btn-update {
-        color: #ffffff;
-        background-color: #f39c12;
-        padding: 5px 10px;
-        border-radius: 5px;
-        text-decoration: none;
-        transition: background-color 0.3s ease;
-    }
+    /*     .btn-update {
+                color: #ffffff;
+                background-color: #f39c12;
+                padding: 5px 10px;
+                border-radius: 5px;
+                text-decoration: none;
+                transition: background-color 0.3s ease;
+            }
 
-        .btn-update:hover {
-            background-color: #d68910;
-        } */
+                .btn-update:hover {
+                    background-color: #d68910;
+                } */
 
     .btn-detail {
         color: #ffffff;
@@ -141,7 +141,7 @@
     /* VNPay Button Styling */
     .btn-vnpay {
         color: #ffffff;
-        background-color: #4caf50; 
+        background-color: #4caf50;
         padding: 5px 10px;
         border-radius: 5px;
         text-decoration: none;
@@ -166,6 +166,12 @@ else
     <a asp-page="/Payment/Create" class="btn">Add New Payment</a>
 
     <a asp-page="/Payment/VnPay" class="btn">VnPay Payment</a>
+
+    <a asp-page="/Payment/DepositWallet" class="btn">Deposit Wallet</a>
+
+    <a asp-page="/Payment/DepositWalletWithVnPay" class="btn">Deposit Wallet With VnPay</a>
+
+    <a asp-page="/Payment/PaymentByWallet" class="btn">Payment by wallet</a>
 
     <h3>Payment List</h3>
 
@@ -197,6 +203,11 @@ else
                         <td>@payment.PaymentTime</td>
                         <td>@payment.PaymentMethod</td>
                         <td>
+                            <a asp-page="/Payment/Detail" asp-route-id="@payment.Id" class="btn-detail">Detail</a>
+                            @if (Model.IsAdmin)
+                            {
+                                <a asp-page="/Payment/Delete" asp-route-id="@payment.Id" class="btn-delete">Delete</a>
+                            }
                             <!-- Form Update -->
                             <form method="post" asp-route-id="@payment.Id" asp-route-action="detail" style="display:inline;">
                                 <button type="submit" class="btn-update">Detail</button>

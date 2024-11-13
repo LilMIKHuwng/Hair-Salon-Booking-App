@@ -30,7 +30,7 @@ namespace HairSalonBE.API
 			services.AddInfrastructure(configuration);
 			services.AddServices();
 			services.ConfigJwt(configuration);
-			services.ConfigureRedis(configuration);  // Add Redis configuration
+			services.ConfigureRedis(configuration); 
 			services.Configure<CookiePolicyOptions>(options =>
 			{
 				options.CheckConsentNeeded = context => true;

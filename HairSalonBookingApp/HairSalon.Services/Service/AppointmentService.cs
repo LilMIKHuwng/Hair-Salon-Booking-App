@@ -1,12 +1,9 @@
 using AutoMapper;
-using DocumentFormat.OpenXml.InkML;
 using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
 using HairSalon.ModelViews.AppointmentModelViews;
-using HairSalon.ModelViews.ShopModelViews;
-using HairSalon.ModelViews.RoleModelViews;
 using HairSalon.Repositories.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -292,7 +289,7 @@ namespace HairSalon.Services.Service
 
             // Map data to model
             List<AppointmentModelView> appointmentModelViews = _mapper.Map<List<AppointmentModelView>>(paginatedAppointments);
-            foreach(var  appointmentModelView in appointmentModelViews)
+            foreach (var appointmentModelView in appointmentModelViews)
             {
                 var user = await _unitOfWork.GetRepository<ApplicationUsers>().GetByIdAsync(Guid.Parse(appointmentModelView.UserId));
                 appointmentModelView.UserName = user.UserName;
@@ -304,7 +301,7 @@ namespace HairSalon.Services.Service
         // Update Appointment
         public async Task<string> UpdateAppointmentAsync(string id, UpdateAppointmentModelView model, string? userId)
         {
-            if(userId ==  null)
+            if (userId == null)
             {
                 userId = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
             }
@@ -493,7 +490,7 @@ namespace HairSalon.Services.Service
         // Delete an appointment
         public async Task<string> DeleteAppointmentAsync(string id, string? userId)
         {
-            if(userId == null)
+            if (userId == null)
             {
                 userId = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
             }
@@ -571,7 +568,7 @@ namespace HairSalon.Services.Service
 
             // set status Completed and save
             existingAppointment.StatusForAppointment = "Completed";
-            if(userId != null)
+            if (userId != null)
             {
                 existingAppointment.LastUpdatedBy = userId;
             }
@@ -649,7 +646,7 @@ namespace HairSalon.Services.Service
             // Check if the provided Appointment ID is valid (non-empty and non-whitespace)
             if (string.IsNullOrWhiteSpace(id))
             {
-                return null; 
+                return null;
             }
 
             // Try to find the appointment by its ID, ensuring it hasn’t been marked as deleted
@@ -675,16 +672,16 @@ namespace HairSalon.Services.Service
             return list;
         }
 
-		public async Task<List<ComboAppointment>> GetAllComboAppointment(string appointmentId)
-		{
-			List<ComboAppointment> list = _unitOfWork.GetRepository<ComboAppointment>().Entities
+        public async Task<List<ComboAppointment>> GetAllComboAppointment(string appointmentId)
+        {
+            List<ComboAppointment> list = _unitOfWork.GetRepository<ComboAppointment>().Entities
                                                                 .Where(s => s.AppointmentId == appointmentId && !s.DeletedTime.HasValue)
                                                                 .ToList();
-			return list;
-		}
+            return list;
+        }
 
 
-    public async Task<List<AppointmentModelView>> GetAppointmentsForDropdownAsync()
+        public async Task<List<AppointmentModelView>> GetAppointmentsForDropdownAsync()
         {
             // L?y t?t c? appointments t? repository
             var appointments = await _unitOfWork.GetRepository<Appointment>().Entities
@@ -699,5 +696,29 @@ namespace HairSalon.Services.Service
             // Chuy?n ??i sang AppointmentModelView
             return _mapper.Map<List<AppointmentModelView>>(appointments);
         }
+        public async Task<List<AppointmentModelView>> GetAppointmentsByUserIdAsync(string userId)
+        {
+            // If userId is not provided or is invalid, throw an exception
+            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out Guid userGuid))
+            {
+                throw new ArgumentException("A valid userId must be provided.");
+            }
+
+            // Query appointments where the userId matches and StatusForAppointment is 'Completed', excluding deleted appointments
+            var appointments = await _unitOfWork.GetRepository<Appointment>().Entities
+                .Where(a => a.UserId == userGuid && // Filter by userId
+                            a.StatusForAppointment == "Completed" && // Filter by Completed status
+                            !a.DeletedTime.HasValue) // Only include non-deleted appointments
+                .ToListAsync();
+
+            if (appointments == null || !appointments.Any())
+            {
+                return new List<AppointmentModelView>();
+            }
+
+            // Map the results to AppointmentModelView
+            return _mapper.Map<List<AppointmentModelView>>(appointments);
+        }
+
     }
 }

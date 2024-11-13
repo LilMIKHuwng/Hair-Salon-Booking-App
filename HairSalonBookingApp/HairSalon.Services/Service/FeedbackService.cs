@@ -6,8 +6,6 @@ using HairSalon.Core;
 using HairSalon.ModelViews.AppointmentModelViews;
 using HairSalon.ModelViews.FeedbackModeViews;
 using HairSalon.ModelViews.FeedBackModeViews;
-using HairSalon.ModelViews.RoleModelViews;
-using HairSalon.Repositories.UOW;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 

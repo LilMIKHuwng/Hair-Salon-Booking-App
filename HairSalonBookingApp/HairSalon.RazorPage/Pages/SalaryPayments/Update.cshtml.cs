@@ -1,6 +1,5 @@
 using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.ApplicationUserModelViews;
-using HairSalon.ModelViews.RoleModelViews;
 using HairSalon.ModelViews.SalaryPaymentModelViews;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;

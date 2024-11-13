@@ -8,8 +8,9 @@ namespace HairSalon.Contract.Services.Interface
     {
         string CreatePaymentUrl(PaymentRequestModelView model, HttpContext context);
         Task<string> ExcutePayment(PaymentResponseModelView collections, string? userId);
-        Task<string> ExcuteDepositToWallet(double amount);
-        Task<string> DepositWallet(VnPayDepositWalletRequestModelView model, HttpContext context);
+        Task<string> ExcuteDepositToWallet(Guid userId, double amount);
+        Task<string> DepositWallet(VnPayDepositWalletRequestModelView model, HttpContext context, string? userId);
         Task<AppointmentModelView?> GetAppointmentByIdAsync(string id);
+        /*Task<string> DepositToWalletWithVnPay(double amount);*/
     }
 }

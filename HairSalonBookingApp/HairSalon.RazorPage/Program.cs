@@ -9,22 +9,22 @@ namespace HairSalon.RazorPage
 			var builder = WebApplication.CreateBuilder(args);
 			var configuration = builder.Configuration;
 			builder.Services.AddHttpContextAccessor();
-			// Add services to the container.
+            // Add services to the container.
+            builder.Services.AddRazorPages();
 			builder.Services.AddRazorPages();
             builder.Services.AddConfig(builder.Configuration);
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             // Add session services
-            builder.Services.AddDistributedMemoryCache(); // Required for session management
+            builder.Services.AddDistributedMemoryCache(); 
             builder.Services.AddSession(options => {
-                options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout
-                options.Cookie.HttpOnly = true; // Set cookie as HTTP only
-                options.Cookie.IsEssential = true; // Mark cookie as essential
+                options.IdleTimeout = TimeSpan.FromMinutes(30); 
+                options.Cookie.HttpOnly = true; 
+                options.Cookie.IsEssential = true; 
             });
 
             var app = builder.Build();
 
-			// Configure the HTTP request pipeline.
 			if (!app.Environment.IsDevelopment())
 			{
 				app.UseExceptionHandler("/Error");
@@ -35,14 +35,12 @@ namespace HairSalon.RazorPage
 			app.UseHttpsRedirection();
 			app.UseStaticFiles();
 
-            // Use session middleware
             app.UseSession();
 
             app.UseRouting();
 
-			app.UseAuthorization();
-
-            
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
