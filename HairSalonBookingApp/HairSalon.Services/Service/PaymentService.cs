@@ -4,10 +4,8 @@ using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
 using HairSalon.ModelViews.PaymentModelViews;
-using HairSalon.ModelViews.ShopModelViews;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using HairSalon.ModelViews.AppointmentModelViews;
 
 namespace HairSalon.Services.Service
 {

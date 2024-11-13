@@ -2,7 +2,6 @@ using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.ApplicationUserModelViews;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Newtonsoft.Json;
 
 namespace HairSalon.RazorPage.Pages.Admin;
 
@@ -20,8 +19,14 @@ public class Detail : PageModel
 
     public async Task<IActionResult> OnGetAsync()
     {
-        // Check if Id is provided
-        if (string.IsNullOrEmpty(Id))
+		// Get Id from TempData
+		if (TempData.ContainsKey("UserId"))
+		{
+			Id = TempData["UserId"].ToString();
+		}
+
+		// Check if Id is provided
+		if (string.IsNullOrEmpty(Id))
         {
             TempData["ErrorMessage"] = "Invalid User ID.";
             return RedirectToPage("/Error"); // Redirect to error page if Id is missing

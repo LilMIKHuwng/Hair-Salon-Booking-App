@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "/Feedbacks"
 @model FeedbackManagementModel
 @{
     ViewData["Title"] = "Feedback Management";
@@ -175,9 +175,20 @@ else
                         <td>@fb.Rate</td>
                         <td>@fb.Comment</td>
                         <td>
-                            <a asp-page="/Feedback/Update" asp-route-id="@fb.Id" class="btn-update">Update</a>
-                            <a asp-page="/Feedback/Detail" asp-route-id="@fb.Id" class="btn-detail">Detail</a>
-                            <a asp-page="/Feedback/Delete" asp-route-id="@fb.Id" class="btn-delete">Delete</a>
+                            <!-- Form Update -->
+                            <form method="post" asp-route-id="@fb.Id" asp-route-action="update" style="display:inline;">
+                                <button type="submit" class="btn-update">Update</button>
+                            </form>
+
+                            <!-- Form Detail -->
+                            <form method="post" asp-route-id="@fb.Id" asp-route-action="detail" style="display:inline;">
+                                <button type="submit" class="btn-detail">Detail</button>
+                            </form>
+
+                            <!-- Form Delete -->
+                            <form method="post" asp-route-id="@fb.Id" asp-route-action="delete" style="display:inline;">
+                                <button type="submit" class="btn-delete">Delete</button>
+                            </form>
                         </td>
                     </tr>
                 }

@@ -1,7 +1,5 @@
 using HairSalon.Contract.Services.Interface;
-using HairSalon.ModelViews.RoleModelViews;
 using HairSalon.ModelViews.ShopModelViews;
-using HairSalon.Services.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
@@ -24,6 +22,12 @@ namespace HairSalon.RazorPage.Pages.Shop
 
         public async Task<IActionResult> OnGetAsync()
         {
+            // Get roleId from TempData
+            if (TempData.ContainsKey("ShopId"))
+            {
+                Id = TempData["ShopId"].ToString();
+            }
+
             // Check if Id is provided
             if (string.IsNullOrEmpty(Id))
             {

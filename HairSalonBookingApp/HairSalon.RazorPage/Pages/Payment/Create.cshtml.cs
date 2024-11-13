@@ -1,10 +1,8 @@
 using HairSalon.Contract.Services.Interface;
-using HairSalon.ModelViews.ShopModelViews;
 using HairSalon.ModelViews.VnPayModelViews;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
-using System.Security.Claims;
 
 namespace HairSalon.RazorPage.Pages.Payment
 {
@@ -20,15 +18,12 @@ namespace HairSalon.RazorPage.Pages.Payment
         [BindProperty]
         public PaymentResponseModelView NewPayment { get; set; }
 
-        // Property to store error messages
         [TempData]
         public string ErrorMessage { get; set; }
 
-        // Property to store response or success messages
         [TempData]
         public string ResponseMessage { get; set; }
 
-        // Property to store denied access messages
         [TempData]
         public string DeniedMessage { get; set; }
 

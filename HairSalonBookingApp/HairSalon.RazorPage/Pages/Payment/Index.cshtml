@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "/Payments"
 @model PaymentManagementModel
 @{
     ViewData["Title"] = "Payment Management";
@@ -208,6 +208,16 @@ else
                             {
                                 <a asp-page="/Payment/Delete" asp-route-id="@payment.Id" class="btn-delete">Delete</a>
                             }
+                            <!-- Form Update -->
+                            <form method="post" asp-route-id="@payment.Id" asp-route-action="detail" style="display:inline;">
+                                <button type="submit" class="btn-update">Detail</button>
+                            </form>
+
+                            <!-- Form Detail -->
+                            <form method="post" asp-route-id="@payment.Id" asp-route-action="delete" style="display:inline;">
+                                <button type="submit" class="btn-detail">Delete</button>
+                            </form>
+
                         </td>
                     </tr>
                 }

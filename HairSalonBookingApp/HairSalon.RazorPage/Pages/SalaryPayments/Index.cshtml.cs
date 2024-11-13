@@ -41,4 +41,29 @@ public class SalaryManagentModel : PageModel
 
         return Page();
     }
+
+    public async Task<IActionResult> OnPostAsync(string id, string action)
+    {
+        if (string.IsNullOrEmpty(id))
+        {
+            TempData["ErrorMessage"] = "Salary ID is required.";
+            return RedirectToPage();
+        }
+
+        //Save roleId to tempdata
+        TempData["SalaryId"] = id;
+
+        switch (action?.ToLower())
+        {
+            case "update":
+                return RedirectToPage("/SalaryPayments/Update");
+            case "detail":
+                return RedirectToPage("/SalaryPayments/Detail");
+            case "delete":
+                return RedirectToPage("/SalaryPayments/Delete");
+            default:
+                TempData["ErrorMessage"] = "Invalid action.";
+                return RedirectToPage();
+        }
+    }
 }

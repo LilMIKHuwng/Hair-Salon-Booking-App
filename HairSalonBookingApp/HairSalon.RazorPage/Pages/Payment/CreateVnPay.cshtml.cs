@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 using System.Globalization;
-using System.Security.Claims;
 
 namespace HairSalon.RazorPage.Pages.Payment
 {
@@ -22,7 +21,6 @@ namespace HairSalon.RazorPage.Pages.Payment
 
         public bool IsUserRole { get; set; }
 
-        // TempData for messages
         [TempData]
         public string ErrorMessage { get; set; }
 
@@ -32,7 +30,6 @@ namespace HairSalon.RazorPage.Pages.Payment
         [TempData]
         public string DeniedMessage { get; set; }
 
-        // Method for handling GET request
         public async Task<IActionResult> OnGetAsync()
         {
             // Retrieve user roles from session
@@ -54,7 +51,6 @@ namespace HairSalon.RazorPage.Pages.Payment
 
             IsUserRole = !userRoles.Contains("Admin") && userRoles.Contains("User");
 
-            // Extract query parameters and assign to NewPayment object
             NewPayment = new PaymentResponseModelView
             {
                 AppointmentId = Request.Query["vnp_OrderInfo"],
@@ -65,13 +61,12 @@ namespace HairSalon.RazorPage.Pages.Payment
                 ResponseCode = Request.Query["vnp_ResponseCode"],
                 TransactionNo = Request.Query["vnp_TransactionNo"],
                 TransactionStatus = Request.Query["vnp_TransactionStatus"],
-                Method = "VnPay", // You can map other fields accordingly
+                Method = "VnPay",
                 PaymentTime = DateTime.ParseExact(Request.Query["vnp_PayDate"], "yyyyMMddHHmmss", CultureInfo.InvariantCulture) // You can parse the date correctly
             };
 
             return Page();
         }
-
 
         // Method for handling POST request
         public async Task<IActionResult> OnPostAsync()

@@ -1,5 +1,4 @@
 ﻿using HairSalon.Contract.Services.Interface;
-using HairSalon.Core;
 using HairSalon.ModelViews.ComboModelViews;
 using HairSalon.ModelViews.ServiceModelViews;
 using Microsoft.AspNetCore.Mvc;
@@ -37,8 +36,14 @@ namespace HairSalon.RazorPage.Pages.Combo
 
         public async Task<IActionResult> OnGetAsync()
         {
-			// Check if Id is provided
-			if (string.IsNullOrEmpty(Id))
+            // Get Id from TempData
+            if (TempData.ContainsKey("ComboId"))
+            {
+                Id = TempData["ComboId"].ToString();
+            }
+
+            // Check if Id is provided
+            if (string.IsNullOrEmpty(Id))
 			{
 				TempData["ErrorMessage"] = "Invalid Combo ID.";
 				return RedirectToPage("/Error"); // Redirect to error page if Id is missing

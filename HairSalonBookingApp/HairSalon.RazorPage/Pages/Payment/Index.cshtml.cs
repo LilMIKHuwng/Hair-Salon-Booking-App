@@ -1,7 +1,6 @@
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
 using HairSalon.ModelViews.PaymentModelViews;
-using HairSalon.ModelViews.RoleModelViews;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
@@ -52,5 +51,27 @@ namespace HairSalon.RazorPage.Pages.Payment
             return Page();
         }
 
+        public async Task<IActionResult> OnPostAsync(string id, string action)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                TempData["ErrorMessage"] = "Payment ID is required.";
+                return RedirectToPage();
+            }
+
+            //Save roleId to tempdata
+            TempData["PaymentId"] = id;
+
+            switch (action?.ToLower())
+            {
+                case "detail":
+                    return RedirectToPage("/Payment/Detail");
+                case "delete":
+                    return RedirectToPage("/Payment/Delete");
+                default:
+                    TempData["ErrorMessage"] = "Invalid action.";
+                    return RedirectToPage();
+            }
+        }
     }
 }

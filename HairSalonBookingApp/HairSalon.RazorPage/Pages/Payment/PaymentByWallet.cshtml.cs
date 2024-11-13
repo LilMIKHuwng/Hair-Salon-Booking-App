@@ -27,15 +27,12 @@ namespace HairSalon.RazorPage.Pages.Payment
 
         public List<AppointmentModelView> Appointments { get; set; }
 
-        // Property to store error messages
         [TempData]
         public string ErrorMessage { get; set; }
 
-        // Property to store response or success messages
         [TempData]
         public string ResponseMessage { get; set; }
 
-        // Property to store denied access messages
         [TempData]
         public string DeniedMessage { get; set; }
 

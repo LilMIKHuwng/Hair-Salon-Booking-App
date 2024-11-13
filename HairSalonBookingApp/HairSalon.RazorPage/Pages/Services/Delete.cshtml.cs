@@ -26,6 +26,12 @@ namespace HairSalon.RazorPage.Pages.Service
 
         public async Task<IActionResult> OnGetAsync()
         {
+            // Get roleId from TempData
+            if (TempData.ContainsKey("ServiceId"))
+            {
+                Id = TempData["ServiceId"].ToString();
+            }
+
             // Check if Id is provided
             if (string.IsNullOrEmpty(Id))
             {

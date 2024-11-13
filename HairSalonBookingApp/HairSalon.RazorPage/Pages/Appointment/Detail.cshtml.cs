@@ -3,10 +3,8 @@ using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.AppointmentModelViews;
 using HairSalon.ModelViews.ComboModelViews;
 using HairSalon.ModelViews.ServiceModelViews;
-using HairSalon.Services.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Newtonsoft.Json;
 
 namespace HairSalon.RazorPage.Pages.Appointment
 {
@@ -35,8 +33,14 @@ namespace HairSalon.RazorPage.Pages.Appointment
 
         public async Task<IActionResult> OnGetAsync()
         {
-            // Check if Id is provided
-            if (string.IsNullOrEmpty(Id))
+			// Get Id from TempData
+			if (TempData.ContainsKey("AppointmentId"))
+			{
+				Id = TempData["AppointmentId"].ToString();
+			}
+
+			// Check if Id is provided
+			if (string.IsNullOrEmpty(Id))
             {
                 TempData["ErrorMessage"] = "Invalid Appointment ID.";
                 return RedirectToPage("/Error"); // Redirect to error page if Id is missing

@@ -2,9 +2,6 @@ using HairSalon.Contract.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace HairSalon.RazorPage.Pages.Dashboard
 {

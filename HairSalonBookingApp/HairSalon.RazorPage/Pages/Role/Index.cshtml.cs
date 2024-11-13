@@ -18,6 +18,7 @@ namespace HairSalon.RazorPage.Pages.Role
 
         public BasePaginatedList<RoleModelView> Roles { get; set; }
 
+        public string roleId { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int pageNumber = 1, int pageSize = 5, string? id = null, string? name = null)
         {
@@ -44,5 +45,30 @@ namespace HairSalon.RazorPage.Pages.Role
             Roles = await _roleService.GetAllRoleAsync(pageNumber, pageSize, id, name);
             return Page();
         }
-    }
+
+		public async Task<IActionResult> OnPostAsync(string id, string action)
+		{
+			if (string.IsNullOrEmpty(id))
+			{
+				TempData["ErrorMessage"] = "Role ID is required.";
+				return RedirectToPage(); 
+			}
+
+            //Save roleId to tempdata
+			TempData["RoleId"] = id;
+
+			switch (action?.ToLower())
+			{
+				case "update":
+					return RedirectToPage("/Role/Update");
+				case "detail":
+					return RedirectToPage("/Role/Detail");
+				case "delete":
+					return RedirectToPage("/Role/Delete");
+				default:
+					TempData["ErrorMessage"] = "Invalid action.";
+					return RedirectToPage();
+			}
+		}
+	}
 }

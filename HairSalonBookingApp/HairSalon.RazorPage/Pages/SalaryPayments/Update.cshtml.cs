@@ -1,6 +1,5 @@
 using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.ApplicationUserModelViews;
-using HairSalon.ModelViews.RoleModelViews;
 using HairSalon.ModelViews.SalaryPaymentModelViews;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -49,6 +48,12 @@ namespace HairSalon.RazorPage.Pages.SalaryPayments
 
             try
             {
+                // Get Id from TempData
+                if (TempData.ContainsKey("SalaryId"))
+                {
+                    Id = TempData["SalaryId"].ToString();
+                }
+
                 // Fetch stylists (Users with 'Stylist' role)
                 var stylistUsers = await _appUserService.GetUsersByRoleAsync("Stylist");
                 ViewData["Stylists"] = stylistUsers ?? new List<AppUserModelView>();

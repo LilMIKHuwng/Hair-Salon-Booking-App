@@ -1,6 +1,5 @@
 using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Services.Interface;
-using HairSalon.Core;
 using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalon.ModelViews.AppointmentModelViews;
 using HairSalon.ModelViews.ComboModelViews;
@@ -44,7 +43,13 @@ namespace HairSalon.RazorPage.Pages.Appointment
 
         public async Task<IActionResult> OnGetAsync()
         {
-            if (string.IsNullOrEmpty(Id))
+			// Get Id from TempData
+			if (TempData.ContainsKey("AppointmentId"))
+			{
+				Id = TempData["AppointmentId"].ToString();
+			}
+
+			if (string.IsNullOrEmpty(Id))
             {
                 TempData["ErrorMessage"] = "Invalid Appointment ID.";
                 return RedirectToPage("/Error"); 

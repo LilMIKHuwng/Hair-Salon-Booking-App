@@ -1,5 +1,4 @@
 using HairSalon.Contract.Services.Interface;
-using HairSalon.ModelViews.RoleModelViews;
 using HairSalon.ModelViews.SalaryPaymentModelViews;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -23,6 +22,12 @@ namespace HairSalon.RazorPage.Pages.SalaryPayments
 
         public async Task<IActionResult> OnGetAsync()
         {
+            // Get Id from TempData
+            if (TempData.ContainsKey("SalaryId"))
+            {
+                Id = TempData["SalaryId"].ToString();
+            }
+
             // Check if Id is provided
             if (string.IsNullOrEmpty(Id))
             {

@@ -21,10 +21,8 @@ namespace HairSalon.RazorPage.Pages.Payment
 
         [BindProperty(SupportsGet = true)]
         public string Id { get; set; }
-
         public PaymentRequestModelView Payment { get; set; }
         public List<AppointmentModelView> Appointments { get; set; }
-
         public async Task<IActionResult> OnGetAsync()
         {
             // Retrieve user roles from session

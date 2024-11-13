@@ -32,7 +32,13 @@ namespace HairSalon.RazorPage.Pages.Feedback
 
         public async Task<IActionResult> OnGetAsync()
         {
-            Feedback = await _feedbackService.GetFeedBackByIdAsync(Id);
+			// Get Id from TempData
+			if (TempData.ContainsKey("FeedbackId"))
+			{
+				Id = TempData["FeedbackId"].ToString();
+			}
+
+			Feedback = await _feedbackService.GetFeedBackByIdAsync(Id);
             if (Feedback == null)
             {
                 ErrorMessage = "Feedback not found.";

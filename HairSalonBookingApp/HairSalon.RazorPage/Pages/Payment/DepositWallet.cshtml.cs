@@ -21,8 +21,6 @@ namespace HairSalon.RazorPage.Pages.Payment
 
         [BindProperty]
         public DepositWalletModelView DepositWalletRequest { get; set; }
-
-        // Property to check if the user is in "User" role
         public bool IsUserRole { get; set; }
 
         [TempData]
