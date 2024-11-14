@@ -68,7 +68,7 @@ namespace HairSalon.RazorPage.Pages.Combo
 
                 {
 					ResponseMessage = response;
-					return Redirect("/Combos"); // Redirect back to the combo list page
+					return RedirectToPage("/Combos"); // Redirect back to the combo list page
 				}
 				// Set ErrorMessage if there’s an error
 				ErrorMessage = response;

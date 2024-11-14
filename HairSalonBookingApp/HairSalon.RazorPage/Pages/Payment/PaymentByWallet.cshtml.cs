@@ -107,7 +107,7 @@ namespace HairSalon.RazorPage.Pages.Payment
                 if (response == "Payment added successfully.")
                 {
                     ResponseMessage = response;
-                    return Redirect("/Payment/Index"); // Redirect back to the payment list page
+                    return RedirectToPage("/Payment/Index"); // Redirect back to the payment list page
                 }
                 // Set ErrorMessage if there’s an error
                 TempData["ErrorMessage"] = response;

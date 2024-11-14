@@ -57,10 +57,10 @@ public class Delete : PageModel
         if (response == "Role successfully deleted")
         {
             ResponseMessage = response;
-            return Redirect("/Admin/Index");
+            return RedirectToPage("/Admin/Index");
         }
         // Set ErrorMessage if deletion fails
         TempData["ErrorMessage"] = response;
-        return Redirect("/Admin/Index");
+        return RedirectToPage("/Admin/Index");
     }
 }

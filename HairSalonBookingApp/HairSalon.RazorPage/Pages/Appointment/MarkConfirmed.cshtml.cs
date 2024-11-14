@@ -62,7 +62,7 @@ namespace HairSalon.RazorPage.Pages.Appointment
             if (Appointment == null)
             {
                 TempData["ErrorMessage"] = "Appointment Not Found";
-                return Redirect("/Appointment/Index"); // Redirect if appointment is not found
+                return RedirectToPage("/Appointment/Index"); // Redirect if appointment is not found
             }
             return Page();
         }
@@ -75,7 +75,7 @@ namespace HairSalon.RazorPage.Pages.Appointment
             if (response == "success")
             {
                 ResponseMessage = response;
-                return Redirect("/Appointment/Index");
+                return RedirectToPage("/Appointment/Index");
             }
             // Set ErrorMessage if deletion fails
             TempData["ErrorMessage"] = response;

@@ -60,7 +60,7 @@ namespace HairSalon.RazorPage.Pages.SalaryPayments
             if (SalaryPayment == null)
             {
                 TempData["ErrorMessage"] = "SalaryPayment Not Found";
-                return Redirect("/SalaryPayments/Index"); // Redirect if SalaryPayment is not found
+                return RedirectToPage("/SalaryPayments/Index"); // Redirect if SalaryPayment is not found
             }
             return Page();
         }
@@ -73,7 +73,7 @@ namespace HairSalon.RazorPage.Pages.SalaryPayments
             if (response == "Deleted salary payment successfully!")
             {
                 ResponseMessage = response;
-                return Redirect("/SalaryPayments/Index");
+                return RedirectToPage("/SalaryPayments/Index");
             }
             // Set ErrorMessage if deletion fails
             TempData["ErrorMessage"] = response;
