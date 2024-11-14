@@ -76,19 +76,6 @@
             background-color: #c0392b;
         }
 
-    /*     .btn-update {
-                color: #ffffff;
-                background-color: #f39c12;
-                padding: 5px 10px;
-                border-radius: 5px;
-                text-decoration: none;
-                transition: background-color 0.3s ease;
-            }
-
-                .btn-update:hover {
-                    background-color: #d68910;
-                } */
-
     .btn-detail {
         color: #ffffff;
         background-color: #3498db;
@@ -208,16 +195,6 @@ else
                             {
                                 <a asp-page="/Payment/Delete" asp-route-id="@payment.Id" class="btn-delete">Delete</a>
                             }
-                            <!-- Form Update -->
-                            <form method="post" asp-route-id="@payment.Id" asp-route-action="detail" style="display:inline;">
-                                <button type="submit" class="btn-update">Detail</button>
-                            </form>
-
-                            <!-- Form Detail -->
-                            <form method="post" asp-route-id="@payment.Id" asp-route-action="delete" style="display:inline;">
-                                <button type="submit" class="btn-detail">Delete</button>
-                            </form>
-
                         </td>
                     </tr>
                 }
