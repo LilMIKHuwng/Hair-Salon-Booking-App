@@ -178,8 +178,6 @@ namespace HairSalon.Services.Service
             return "Payment added successfully.";
         }
 
-
-
         public async Task<string> ExcuteDepositToWallet(Guid userId, double amount)
         {
             var user = _unitOfWork.GetRepository<ApplicationUsers>().GetById(userId);
