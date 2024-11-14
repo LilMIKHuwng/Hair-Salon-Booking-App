@@ -29,7 +29,7 @@ namespace HairSalon.RazorPage.Pages.Service
             if (userRolesJson == null)
             {
                 TempData["DeniedMessage"] = "You do not have permission to add a service.";
-                return Page();
+                return RedirectToPage("/Error");
             }
 
             var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);

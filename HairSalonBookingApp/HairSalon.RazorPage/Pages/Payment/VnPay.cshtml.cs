@@ -30,7 +30,7 @@ namespace HairSalon.RazorPage.Pages.Payment
             if (userRolesJson == null)
             {
                 TempData["DeniedMessage"] = "You do not have permission";
-                return Page(); // Redirect to a different page with a denied message
+                return RedirectToPage("/Error"); // Redirect to a different page with a denied message
             }
 
             var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
@@ -74,7 +74,7 @@ namespace HairSalon.RazorPage.Pages.Payment
             if (string.IsNullOrEmpty(Id))
             {
                 TempData["ErrorMessage"] = "Appointment ID is required.";
-                return Page();
+                return RedirectToPage("/Error");
             }
 
             var appointment = await _paymentService.GetAppointmentByIdAsync(Id);

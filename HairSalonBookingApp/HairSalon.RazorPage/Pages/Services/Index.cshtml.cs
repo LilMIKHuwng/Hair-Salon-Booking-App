@@ -37,7 +37,7 @@ namespace HairSalon.RazorPage.Pages.Service
             else
             {
                 TempData["ErrorMessage"] = "You do not have permission to view this page.";
-                return Page();
+                return RedirectToPage("/Error");
             }
 
             // If authorized, retrieve roles data
