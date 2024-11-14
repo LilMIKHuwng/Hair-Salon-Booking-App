@@ -71,7 +71,7 @@ namespace HairSalon.RazorPage.Pages.Appointment
                 if (response == "Appointment successfully created.")
                 {
                     ResponseMessage = response;
-                    return Redirect("/Appointment/Index"); // Redirect back to the appointment list page
+                    return RedirectToPage("/Appointment/Index"); // Redirect back to the appointment list page
                 }
                 else
                 {

@@ -1,4 +1,5 @@
-﻿using HairSalon.Contract.Services.Interface;
+﻿using HairSalon.Contract.Repositories.Entity;
+using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.AppointmentModelViews;
 using HairSalon.ModelViews.FeedBackModeViews;
 using Microsoft.AspNetCore.Mvc;
@@ -41,7 +42,7 @@ namespace HairSalon.RazorPage.Pages.Feedback
             var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
 
             // Check if the user has the "Admin" role
-            if (!userRoles.Any(role => role == "Admin"))
+            if (!userRoles.Any(role => role == "Admin" || role == "Manager" || role == "User" || role == "Stylist"))
             {
                 TempData["DeniedMessage"] = "You do not have permission";
                 return Page();

@@ -50,7 +50,7 @@ namespace HairSalon.RazorPage.Pages.Feedback
             var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
 
             // Check if the user has "Admin" or "Manager" roles
-            if (!userRoles.Any(role => role == "Admin"))
+            if (!userRoles.Any(role => role == "Admin" || role == "Manager" || role == "User" || role == "Stylist"))
             {
                 TempData["DeniedMessage"] = "You do not have permission";
                 return Page(); // Redirect to a different page with a denied message

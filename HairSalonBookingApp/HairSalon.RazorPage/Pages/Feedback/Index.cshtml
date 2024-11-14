@@ -199,7 +199,7 @@ else
         <div class="pagination">
             @if (Model.Feedback.HasPreviousPage)
             {
-                <a asp-page="/Role/Index" asp-route-pageNumber="@(Model.Feedback.CurrentPage - 1)" class="btn">Previous</a>
+                <a asp-page="/Feedback/Index" asp-route-pageNumber="@(Model.Feedback.CurrentPage - 1)" class="btn">Previous</a>
             }
 
             <span>Page @Model.Feedback.CurrentPage of @Model.Feedback.TotalPages</span>

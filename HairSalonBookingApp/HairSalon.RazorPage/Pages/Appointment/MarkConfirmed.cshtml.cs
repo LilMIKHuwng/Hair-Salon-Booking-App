@@ -35,7 +35,7 @@ namespace HairSalon.RazorPage.Pages.Appointment
 			if (string.IsNullOrEmpty(Id))
 			{
 				TempData["ErrorMessage"] = "Invalid Appointment ID.";
-				return RedirectToPage("/Error");
+				return Page();
 			}
 
 			//Retrieve user roles from session

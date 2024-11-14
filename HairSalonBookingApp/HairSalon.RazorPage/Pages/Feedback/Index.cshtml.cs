@@ -27,7 +27,7 @@ namespace HairSalon.RazorPage.Pages.Feedback
                 var userFeedbacks = JsonConvert.DeserializeObject<List<string>>(userFeedbacksJson);
 
                 // Check if the user has "Admin" or "Manager" feedback
-                if (!userFeedbacks.Any(feedback => feedback == "Admin" || feedback == "Manager"))
+                if (!userFeedbacks.Any(feedback => feedback == "Admin" || feedback == "Manager" || feedback == "User" || feedback == "Stylist"))
                 {
                     TempData["ErrorMessage"] = "You do not have permission to view this page.";
                     return Page(); // Show error message on the same page
