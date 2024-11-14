@@ -48,7 +48,7 @@ namespace HairSalon.RazorPage.Pages.Payment
 
             // If the user has neither Admin nor User role
             TempData["ErrorMessage"] = "You do not have permission to view this page.";
-            return Page();
+            return RedirectToPage("/Error");
         }
 
         public async Task<IActionResult> OnPostAsync(string id, string action)

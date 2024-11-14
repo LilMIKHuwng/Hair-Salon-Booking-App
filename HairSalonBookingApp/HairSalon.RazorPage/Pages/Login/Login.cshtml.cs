@@ -57,7 +57,7 @@ namespace HairSalon.RazorPage.Pages.Login
                 return Page();
             }
 
-            return RedirectToPage("/Index"); // Redirect to Index on successful login
+            return Redirect("/Index"); // Redirect to Index on successful login
         }
     }
 }

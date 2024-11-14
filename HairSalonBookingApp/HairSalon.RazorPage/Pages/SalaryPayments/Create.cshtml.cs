@@ -33,7 +33,7 @@ namespace HairSalon.RazorPage.Pages.SalaryPayments
             if (userRolesJson == null)
             {
                 TempData["DeniedMessage"] = "You do not have permission to add a SalaryPayment.";
-                return Page();
+                return RedirectToPage("/Error");
             }
 
             var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);

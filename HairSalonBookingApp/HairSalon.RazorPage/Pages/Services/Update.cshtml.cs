@@ -45,7 +45,7 @@ namespace HairSalon.RazorPage.Pages.Service
             if (userRolesJson == null)
             {
                 TempData["DeniedMessage"] = "You do not have permission to update a service.";
-                return Page(); // Redirect to a different page with a denied message
+                return RedirectToPage("/Error");// Redirect to a different page with a denied message
             }
 
             var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);

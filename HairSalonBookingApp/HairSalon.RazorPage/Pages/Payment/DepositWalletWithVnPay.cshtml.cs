@@ -41,7 +41,7 @@ namespace HairSalon.RazorPage.Pages.Payment
             if (userRolesJson == null)
             {
                 TempData["DeniedMessage"] = "You do not have permission";
-                return Page();
+                return RedirectToPage("/Error");
             }
 
             var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
