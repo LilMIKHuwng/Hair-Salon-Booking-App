@@ -179,8 +179,6 @@ namespace HairSalon.Services.Service
             return "Payment added successfully.";
         }
 
-
-
         public async Task<string> ExcuteDepositToWallet(Guid userId, double amount)
         {
             var user = _unitOfWork.GetRepository<ApplicationUsers>().GetById(userId);
@@ -217,20 +215,5 @@ namespace HairSalon.Services.Service
             AppointmentModelView appointmentModelView = _mapper.Map<AppointmentModelView>(appointmentEntity);
             return appointmentModelView;
         }
-
-        /*public async Task<string> DepositToWalletWithVnPay(double amount)
-        {
-            Guid userId = Guid.Parse(_httpContextAccessor.HttpContext?.User?.FindFirst("userId")?.Value);
-            var user = _unitOfWork.GetRepository<ApplicationUsers>().GetById(userId);
-            if (user == null)
-            {
-                return "Can't find user!";
-            }
-
-            user.E_Wallet += (decimal)amount;
-            _unitOfWork.GetRepository<ApplicationUsers>().Update(user);
-            await _unitOfWork.SaveAsync();
-            return "Success!";
-        }*/
     }
 }
