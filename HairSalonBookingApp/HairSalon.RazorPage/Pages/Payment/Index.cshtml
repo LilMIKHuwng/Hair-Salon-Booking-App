@@ -203,20 +203,18 @@ else
                         <td>@payment.PaymentTime</td>
                         <td>@payment.PaymentMethod</td>
                         <td>
-                            <a asp-page="/Payment/Detail" asp-route-id="@payment.Id" class="btn-detail">Detail</a>
-                            @if (Model.IsAdmin)
-                            {
-                                <a asp-page="/Payment/Delete" asp-route-id="@payment.Id" class="btn-delete">Delete</a>
-                            }
-                            <!-- Form Update -->
+                            <!-- Form Detail -->
                             <form method="post" asp-route-id="@payment.Id" asp-route-action="detail" style="display:inline;">
-                                <button type="submit" class="btn-update">Detail</button>
+                                <button type="submit" class="btn-detail">Detail</button>
                             </form>
 
-                            <!-- Form Detail -->
-                            <form method="post" asp-route-id="@payment.Id" asp-route-action="delete" style="display:inline;">
-                                <button type="submit" class="btn-detail">Delete</button>
-                            </form>
+                            @if (Model.IsAdmin)
+                            {
+                                <!-- Form Delete -->
+                                <form method="post" asp-route-id="@payment.Id" asp-route-action="delete" style="display:inline;">
+                                    <button type="submit" class="btn-delete">Delete</button>
+                                </form>
+                            }
 
                         </td>
                     </tr>
