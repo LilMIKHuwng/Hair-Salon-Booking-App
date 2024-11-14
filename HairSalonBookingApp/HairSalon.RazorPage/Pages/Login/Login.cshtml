@@ -1,0 +1,102 @@
+﻿@page "/Login"
+@model HairSalon.RazorPage.Pages.Login.LoginModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = null; // Remove layout for Login page
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - HairSalon.RazorPage</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        body {
+            background-color: #f5f5f5;
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+            .login-header img {
+                max-width: 100px;
+                margin-bottom: 10px;
+            }
+
+        .btn-primary {
+            width: 100%;
+            font-weight: 600;
+        }
+
+        .forgot-password-link,
+        .create-user-link {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+            .forgot-password-link:hover,
+            .create-user-link:hover {
+                text-decoration: underline;
+            }
+
+        .alert {
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container login-container">
+        <div class="login-header">
+            <a href="/Login">
+                <img src="~/image/HairSalonBlack.jpg" alt="Hair Salon Logo" class="rounded-circle" />
+            </a>
+            <h2>Login to HairSalon</h2>
+        </div>
+
+        <form method="post">
+            <div class="form-group mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input id="username" name="LoginModelView.Username" class="form-control" type="text" placeholder="Enter your username" required />
+            </div>
+            <div class="form-group mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input id="password" name="LoginModelView.Password" class="form-control" type="password" placeholder="Enter your password" required />
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Login</button>
+        </form>
+
+        <a href="/Login/CreateUser" class="create-user-link">Create an Account</a>
+        <a href="/Login/ForgotPassword" class="forgot-password-link">Forgot Password?</a>
+
+        @if (TempData["ResponseMessage"] != null)
+        {
+            <div class="alert alert-info mt-3 text-center">@TempData["ResponseMessage"]</div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger mt-3 text-center">@TempData["ErrorMessage"]</div>
+        }
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+﻿@page
+@model HairSalon.RazorPage.Pages.Login.LogoutModel
+@{
+    ViewData["Title"] = "Logout";
+}
+
+@if (TempData["DeniedMessage"] != null)
+{
+    <div class="alert alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
+}
+else
+{
+    <div class="container mt-5">
+        <h3>Are you sure you want to log out?</h3>
+        <div class="mt-3">
+            <form method="post">
+                <button type="submit" class="btn btn-danger">Yes, Logout</button>
+                <a href="~/Index" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger mt-3 text-center">@TempData["ErrorMessage"]</div>
+        }
+    </div>
+}
+
+

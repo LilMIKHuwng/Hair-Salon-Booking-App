@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="wwwroot\css\Dashboard\**" />
+    <Content Remove="wwwroot\css\Dashboard\**" />
+    <EmbeddedResource Remove="wwwroot\css\Dashboard\**" />
+    <None Remove="wwwroot\css\Dashboard\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.6" />
+    <PackageReference Include="payOS" Version="1.0.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HairSalon.Contract.Services\HairSalon.Contract.Services.csproj" />
+    <ProjectReference Include="..\HairSalon.ModelViews\HairSalon.ModelViews.csproj" />
+    <ProjectReference Include="..\HairSalon.Repositories\HairSalon.Repositories.csproj" />
+    <ProjectReference Include="..\HairSalon.Services\HairSalon.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Pages\Dashboard\" />
+    <Folder Include="wwwroot\image\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\Feedback\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Pages\Feedback\Delete.cshtml" />
+    <_ContentIncludedByDefault Remove="Pages\Feedback\Details.cshtml" />
+    <_ContentIncludedByDefault Remove="Pages\Feedback\Edit.cshtml" />
+    <_ContentIncludedByDefault Remove="Pages\Feedback\Index.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Pages\Services\Update.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

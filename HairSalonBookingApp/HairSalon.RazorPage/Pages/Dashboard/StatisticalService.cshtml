@@ -1,0 +1,199 @@
+﻿@page
+@model HairSalon.RazorPage.Pages.Dashboard.StatisticalServiceModel
+@{
+    ViewData["Title"] = "Service Usage Statistics";
+}
+
+<style>
+    .tabs {
+        justify-content: center; /* Centers the tabs horizontally */
+        margin-bottom: 20px;
+        margin-top: 20px;
+    }
+
+    .tab {
+        padding: 12px 30px; /* Adds more padding for better spacing */
+        background-color: #f1f1f1;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        color: #333;
+        margin: 0 10px; /* Adds horizontal spacing between the tabs */
+        transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition for hover effect */
+    }
+
+        .tab:hover {
+            background-color: #e2e2e2;
+            transform: scale(1.05); /* Slight zoom effect on hover */
+        }
+
+        .tab.active {
+            background-color: #007bff;
+            color: white;
+            transform: scale(1.05); /* Slight zoom effect for the active tab */
+        }
+
+        .tab:focus {
+            outline: none; /* Remove the outline on focus */
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add a focus shadow */
+        }
+
+        /* Optional: Adds a line below the active tab for more emphasis */
+        .tab.active::after {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 3px;
+            background-color: #007bff;
+            margin-top: 5px;
+        }
+</style>
+
+@if (TempData["DeniedMessage"] != null)
+{
+    <div class="alert alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
+}
+else
+{
+    <h2>Service Usage Statistics</h2>
+
+    <div class="tabs">
+        <!-- Tab Links -->
+        <a href="/Dashboard/AppointmentStatistic" class="tab" id="appointmentStatisticsTab">Appointment Statistics</a>
+        <a href="/Dashboard/TopUsers" class="tab" id="topUsersTab">Top Users</a>
+        <a href="/Dashboard/StatisticalService" class="tab" id="topUsersTab">Top Services</a>
+        <a href="/Dashboard/StatisticalCombo" class="tab" id="topUsersTab">Top Combos</a>
+    </div>
+
+    <form method="get" class="filter-form">
+        <div class="input-group">
+            <label for="month">Month:</label>
+            <input type="number" id="month" name="InputMonth" min="1" max="12" value="@Model.InputMonth" />
+
+            <label for="year">Year:</label>
+            <input type="number" id="year" name="InputYear" min="2000" max="2100" value="@Model.InputYear" />
+
+            <button type="submit">Get Statistics</button>
+        </div>
+    </form>
+
+    @if (Model.NoDataForSelectedMonth)
+    {
+        <p class="no-data-message">No service usage data available for the selected month and year.</p>
+    }
+    else
+    {
+        <div>
+            <canvas id="serviceUsageChart" width="800" height="400"></canvas>
+        </div>
+    }
+}
+
+
+@section Scripts {
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            const serviceNames = @Html.Raw(Json.Serialize(Model.ServiceNames));
+            const serviceCounts = @Html.Raw(Json.Serialize(Model.ServiceCounts));
+
+            const ctx = document.getElementById('serviceUsageChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: serviceNames,
+                    datasets: [{
+                        label: 'Total Service Usage',
+                        data: serviceCounts,
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        </script>
+}
+
+<style>
+    /* Styling for the filter form */
+.filter-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Styling for each input group (month, year, and button) */
+.input-group {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Styling for labels */
+.input-group label {
+    font-weight: bold;
+    color: #333;
+    font-size: 14px;
+}
+
+/* Styling for the input fields (month and year) */
+.input-group input[type="number"] {
+    width: 80px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    color: #495057;
+    text-align: center;
+    background-color: #fff;
+}
+
+/* Input field focus styling */
+.input-group input[type="number"]:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
+}
+
+/* Styling for the submit button */
+.input-group button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/* Button hover effect */
+.input-group button:hover {
+    background-color: #0056b3;
+}
+
+/* Styling for the no data message */
+.no-data-message {
+    color: #ff3333;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 20px;
+}
+
+</style>

@@ -1,8 +1,9 @@
 ﻿using HairSalon.Core;
+using System.Linq.Expressions;
 
 namespace HairSalon.Contract.Repositories.Interface
 {
-    public interface IGenericRepository<T> where T : class
+    public interface IGenericRepository<T> where T: class
     {
         // query
         IQueryable<T> Entities { get; }
@@ -15,6 +16,7 @@ namespace HairSalon.Contract.Repositories.Interface
         void Update(T obj);
         void Delete(object id);
         void Save();
+       // T GetByEntity(R obj);
 
         // async
         Task<IList<T>> GetAllAsync();
@@ -24,5 +26,7 @@ namespace HairSalon.Contract.Repositories.Interface
         Task UpdateAsync(T obj);
         Task DeleteAsync(object id);
         Task SaveAsync();
+
+        
     }
 }

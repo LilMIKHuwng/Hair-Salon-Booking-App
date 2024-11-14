@@ -1,0 +1,213 @@
+﻿@page "/Update"
+@model HairSalon.RazorPage.Pages.Combo.UpdateModel
+@{
+	ViewData["Title"] = "Update Combo";
+}
+
+<style>
+	h2 {
+		color: #3f51b5;
+		margin-bottom: 20px;
+		border-bottom: 2px solid #3f51b5;
+		padding-bottom: 5px;
+	}
+
+	/* Form and Input Styling */
+	form {
+		margin: 0 auto;
+		padding: 20px;
+		background-color: #ffffff;
+		border-radius: 8px;
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		text-align: center;
+		max-width: 500px; /* Giới hạn chiều rộng cho form */
+	}
+
+	input[type="text"] {
+		width: 100%;
+		padding: 10px;
+		margin: 10px 0;
+		border-radius: 5px;
+		border: 1px solid #ddd;
+		font-size: 16px;
+	}
+
+	input[type="file"], .service-selection {
+		display: flex;
+	}
+
+	label {
+		display: flex;
+		margin-bottom: 5px;
+		font-weight: bold;
+	}
+
+	/* Button Styling */
+	button[type="submit"],
+	.btn-cancel {
+		display: inline-block;
+		width: 100%;
+		padding: 10px;
+		margin-top: 10px;
+		font-size: 16px;
+		font-weight: bold;
+		color: #ffffff;
+		border-radius: 5px;
+		border: none;
+		cursor: pointer;
+		transition: background-color 0.3s ease;
+	}
+
+	button[type="submit"] {
+		background-color: #3f51b5;
+	}
+
+		button[type="submit"]:hover {
+			background-color: #2c3e91;
+		}
+
+	.btn-cancel {
+		background-color: #d9534f;
+		margin-top: 10px;
+		text-align: center;
+		text-decoration: none;
+	}
+
+		.btn-cancel:hover {
+			background-color: #c9302c;
+		}
+
+	/* Alert Styling */
+	.alert-danger {
+		background-color: #f2dede;
+		color: #a94442;
+		border: 1px solid #ebccd1;
+		padding: 10px;
+		border-radius: 5px;
+		margin-top: 10px;
+		text-align: center;
+	}
+
+	/* Validation Message Styling */
+	.text-danger {
+		color: #e74c3c;
+		font-size: 0.9em;
+	}
+
+	/* Table Styling */
+	.table {
+		width: 100%;
+		border-collapse: collapse;
+		margin-top: 20px;
+	}
+
+		.table th, .table td {
+			padding: 12px 15px;
+			text-align: left;
+			border: 1px solid #ddd;
+		}
+
+		.table th {
+			background-color: #f2f2f2;
+			font-weight: bold;
+		}
+
+		.table tr:hover {
+			background-color: #f5f5f5;
+		}
+
+		.table td input[type="checkbox"] {
+			transform: scale(1.5);
+			margin: 0;
+		}
+
+	/* Custom Flexbox Styling */
+	.con {
+		display: flex;
+	}
+
+	.item2 {
+		margin-left: 30%;
+	}
+</style>
+@if (TempData["DeniedMessage"] != null)
+{
+	<div class="alert alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
+}
+else
+{
+	<h2>@ViewData["Title"]</h2>
+
+	<form method="post" enctype="multipart/form-data">
+		<input type="hidden" asp-for="Id" />
+		<div>
+			<label>Combo ID:</label>
+			<p>@Model.Id</p>
+		</div>
+		<div>
+			<label asp-for="UpdatedCombo.Name">Combo Name</label>
+			<input asp-for="UpdatedCombo.Name" placeholder="Combo Name" required />
+			<span asp-validation-for="UpdatedCombo.Name" class="text-danger"></span>
+		</div>
+
+		<!-- Button to toggle service table -->
+		<label>Combo Services:</label>
+		<div>
+			<button class="service-selection" type="button" id="toggleServicesButton">Select Services</button>
+		</div>
+
+		<div id="servicesTable" style="display:none;">
+			<h4>Select Services:</h4>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Select</th>
+						<th>Service Name</th>
+						<th>Service Time (min)</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var service in Model.AvailableServices)
+					{
+						<tr>
+							<td>
+								<input type="checkbox" name="UpdatedCombo.ServiceIds" value="@service.Id"
+								@(Model.UpdatedCombo.ServiceIds.Contains(service.Id) ? "checked" : "") />
+							</td>
+							<td>@service.Name</td>
+							<td>@service.TimeService</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+			<span asp-validation-for="UpdatedCombo.ServiceIds" class="text-danger"></span>
+		</div>
+
+		<div>
+			<label asp-for="UpdatedCombo.ComboImage">Combo Image</label>
+			<input asp-for="UpdatedCombo.ComboImage" type="file" />
+			<span asp-validation-for="UpdatedCombo.ComboImage" class="text-danger"></span>
+		</div>
+		<button type="submit">Save Changes</button>
+		<a href="~/Combos" class="btn-cancel">Cancel</a>
+	</form>
+
+	@if (TempData["ErrorMessage"] != null)
+	{
+		<div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+	}
+
+	<script>
+		// Open/Close services table when click
+		document.getElementById('toggleServicesButton').addEventListener('click', function () {
+			var servicesTable = document.getElementById('servicesTable');
+			if (servicesTable.style.display === 'none') {
+				servicesTable.style.display = 'block';
+				this.innerText = 'Hide Services';
+			} else {
+				servicesTable.style.display = 'none';
+				this.innerText = 'Select Services';
+			}
+		});
+	</script>
+}
