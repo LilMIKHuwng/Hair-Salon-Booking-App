@@ -37,7 +37,7 @@ namespace HairSalon.RazorPage.Pages.Login
             {
                 // Store ResponseMessage in TempData and redirect to the Login page
                 ResponseMessage = response;
-                return Redirect("/Login/Login");
+                return RedirectToPage("/Login/Login");
             }
 
             return Page();

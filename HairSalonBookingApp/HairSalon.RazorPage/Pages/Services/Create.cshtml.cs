@@ -55,7 +55,7 @@ namespace HairSalon.RazorPage.Pages.Service
                 if (response == "Service added successfully")
                 {
                     ResponseMessage = response;
-                    return Redirect("/Services/Index");
+                    return RedirectToPage("/Services/Index");
                 }
 
                 TempData["ErrorMessage"] = response;

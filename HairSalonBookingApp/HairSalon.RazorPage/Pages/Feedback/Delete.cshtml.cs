@@ -60,7 +60,7 @@ namespace HairSalon.RazorPage.Pages.Feedback
             if (Feedback == null)
             {
                 TempData["ErrorMessage"] = "Feedback Not Found";
-                return Redirect("/Feedback/Index"); // Redirect if role is not found
+                return RedirectToPage("/Feedback/Index"); // Redirect if role is not found
             }
             return Page();
         }
@@ -73,7 +73,7 @@ namespace HairSalon.RazorPage.Pages.Feedback
             if (response == "Feedback deleted successfully.")
             {
                 ResponseMessage = response;
-                return Redirect("/Feedback/Index");
+                return RedirectToPage("/Feedback/Index");
             }
             // Set ErrorMessage if deletion fails
             TempData["ErrorMessage"] = response;

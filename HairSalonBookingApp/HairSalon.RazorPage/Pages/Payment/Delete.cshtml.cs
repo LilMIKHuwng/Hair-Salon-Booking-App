@@ -61,7 +61,7 @@ namespace HairSalon.RazorPage.Pages.Payment
             if (Payment == null)
             {
                 ErrorMessage = "Payment Not Found";
-                return Redirect("/Payment/Index"); // Redirect if Payment is not found
+                return RedirectToPage("/Payment/Index"); // Redirect if Payment is not found
             }
             return Page();
         }
@@ -73,7 +73,7 @@ namespace HairSalon.RazorPage.Pages.Payment
             if (response == "Payment deleted successfully.")
             {
                 ResponseMessage = response;
-                return Redirect("/Payment/Index");
+                return RedirectToPage("/Payment/Index");
             }
             // Set ErrorMessage if deletion fails
             TempData["ErrorMessage"] = response;

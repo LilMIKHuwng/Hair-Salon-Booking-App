@@ -60,7 +60,7 @@ namespace HairSalon.RazorPage.Pages.Role
             if (Role == null)
             {
                 TempData["ErrorMessage"] = "Role Not Found";
-                return Redirect("/Role/Index"); // Redirect if role is not found
+                return RedirectToPage("/Role/Index"); // Redirect if role is not found
             }
             return Page();
         }
@@ -73,7 +73,7 @@ namespace HairSalon.RazorPage.Pages.Role
             if (response == "Role successfully deleted")
             {
                 ResponseMessage = response;
-                return Redirect("/Role/Index");
+                return RedirectToPage("/Role/Index");
             }
             // Set ErrorMessage if deletion fails
             TempData["ErrorMessage"] = response;

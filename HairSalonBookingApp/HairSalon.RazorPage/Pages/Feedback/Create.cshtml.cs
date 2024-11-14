@@ -69,7 +69,7 @@ namespace HairSalon.RazorPage.Pages.Feedback
                 if (response == "Feedback added successfully.")
                 {
                     TempData["ResponseMessage"] = response; // Success message
-                    return Redirect("/Feedback/Index"); // Redirect back to the feedback list page
+                    return RedirectToPage("/Feedback/Index"); // Redirect back to the feedback list page
                 }
                 TempData["ErrorMessage"] = response; // Error message for issues
             }

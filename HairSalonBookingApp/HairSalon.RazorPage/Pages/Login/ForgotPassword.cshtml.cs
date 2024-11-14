@@ -35,7 +35,7 @@ namespace HairSalon.RazorPage.Pages.Login
                 ResponseMessage = response;
                 TempData["Email"] = Email;
                 // Use Redirect to pass the email to the EnterOtp page as a query parameter
-                return Redirect("/Login/EnterOtp");
+                return RedirectToPage("/Login/EnterOtp");
             }
 
             return Page();

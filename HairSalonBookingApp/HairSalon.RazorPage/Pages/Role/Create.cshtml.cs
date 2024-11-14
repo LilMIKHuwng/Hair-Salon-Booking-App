@@ -54,7 +54,7 @@ namespace HairSalon.RazorPage.Pages.Role
                 if (response == "Role successfully added")
                 {
                     ResponseMessage = response;
-                    return Redirect("/Role/Index"); // Redirect back to the role list page
+                    return RedirectToPage("/Role/Index"); // Redirect back to the role list page
                 }
                 // Set ErrorMessage if there’s an error
                 TempData["ErrorMessage"] = response;
