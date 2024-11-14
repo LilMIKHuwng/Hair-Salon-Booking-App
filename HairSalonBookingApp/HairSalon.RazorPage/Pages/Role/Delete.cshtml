@@ -108,7 +108,7 @@ else
 
     <p class="confirmation-text">Are you sure you want to delete this role?</p>
 
-    <form method="post">
+    <form method="post" asp-route-id="@Model.Id">
         <button type="submit">Delete</button>
         <a asp-page="/Role/Index" class="btn-cancel">Cancel</a>
     </form>

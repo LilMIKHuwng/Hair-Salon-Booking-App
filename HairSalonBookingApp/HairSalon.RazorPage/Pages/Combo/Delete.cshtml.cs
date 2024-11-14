@@ -64,7 +64,7 @@ namespace HairSalon.RazorPage.Pages.Combo
             if (Combo == null)
             {
                 ErrorMessage = "Combo Not Found";
-                return RedirectToPage("/Combos");
+                return RedirectToPage("/Combo/Index");
             }
             return Page();
         }
@@ -77,7 +77,7 @@ namespace HairSalon.RazorPage.Pages.Combo
             if (response == "Deleted combo successfully!")
             {
                 ResponseMessage = response;
-                return RedirectToPage("/Combos");
+                return RedirectToPage("/Combo/Index");
             }
             // Set ErrorMessage if deletion fails
             ErrorMessage = response;
