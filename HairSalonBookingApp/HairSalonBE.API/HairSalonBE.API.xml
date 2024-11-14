@@ -1,0 +1,293 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>HairSalonBE.API</name>
+    </assembly>
+    <members>
+        <member name="M:HairSalonBE.API.Controllers.ApplicationUserController.CreateAppUser(HairSalon.ModelViews.ApplicationUserModelViews.CreateAppUserModelView)">
+            <summary>
+                Tạo người dùng
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.ApplicationUserController.CreateAppStylist(HairSalon.ModelViews.ApplicationUserModelViews.CreateAppStylistModelView)">
+            <summary>
+                Tạo thợ làm tóc
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.ApplicationUserController.ConfirmEmail(HairSalon.ModelViews.ApplicationUserModelViews.ConfirmEmailModelView)">
+            <summary>
+                Xác nhận Email
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.ApplicationUserController.GetAllApplicationUsers(System.String,System.Int32,System.Int32)">
+            <summary>
+                Lấy tất cả người dùng
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.ApplicationUserController.UpdateApplicationUser(System.String,HairSalon.ModelViews.ApplicationUserModelViews.UpdateAppUserModelView)">
+            <summary>
+                Cập nhật người dùng
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.ApplicationUserController.DeleteApplicationUser(System.String)">
+            <summary>
+                Xóa người dùng
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.ApplicationUserController.ForgotPassword(HairSalon.ModelViews.ApplicationUserModelViews.ForgotPasswordModelView)">
+            <summary>
+                Quên mật khẩu
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.ApplicationUserController.ResetPassword(HairSalon.ModelViews.ApplicationUserModelViews.ResetPasswordModelView)">
+            <summary>
+                Đổi lại mật khẩu người dùng
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.ApplicationUserController.ResetPasswordAdminAsync(HairSalon.ModelViews.ApplicationUserModelViews.ResetPasswordAdminModelView)">
+            <summary>
+                Đổi lại mật khẩu Admin
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.ApplicationUserController.GetMyInforUsersAsync">
+            <summary>
+                Lấy thông tin người dùng hiện tại
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.AppointmentController.CreateAppointment(HairSalon.ModelViews.AppointmentModelViews.CreateAppointmentModelView)">
+            <summary>
+                Tạo lịch hẹn
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.AppointmentController.GetAllAppointments(System.Int32,System.Int32,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.String,System.Nullable{System.Guid},System.Nullable{System.Guid},System.String)">
+            <summary>
+                Lấy tất cả lịch hẹn
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.AppointmentController.UpdateAppointment(System.String,HairSalon.ModelViews.AppointmentModelViews.UpdateAppointmentModelView)">
+            <summary>
+                Cập nhật lịch hẹn
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.AppointmentController.DeleteAppointment(System.String)">
+            <summary>
+                Xóa lịch hẹn
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.AppointmentController.MarkAppointmentCompleted(System.String)">
+            <summary>
+                Thay đổi trạng thái "thành công" của lịch hẹn
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.AppointmentController.MarkAppointmentConfirmed(System.String)">
+            <summary>
+                Thay đổi trạng thái "xác nhận" của lịch hẹn
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.AuthController.Login(HairSalon.ModelViews.AuthModelViews.LoginModelView)">
+            <summary>
+                Đăng nhập
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.AuthController.RefreshToken(HairSalon.ModelViews.TokenModelViews.TokenModelView)">
+            <summary>
+                Lấy refresh token
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.AuthController.Logout(System.String)">
+            <summary>
+                Đăng xuất
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.ComboController.CreateCombo(HairSalon.ModelViews.ComboModelViews.CreateComboModelView)">
+            <summary>
+                Tạo combo
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.ComboController.GetAllCombos(System.Int32,System.Int32,System.String,System.String)">
+            <summary>
+                Lấy tất cả combo
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.ComboController.UpdateCombo(System.String,HairSalon.ModelViews.ComboModelViews.UpdateComboModelView)">
+            <summary>
+                Cập nhật combo
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.ComboController.DeleteCombo(System.String)">
+            <summary>
+                Xóa combo
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.DashboardController.GetAppointmentStatistic(System.String,System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+                Thống kê tổng các lịch hẹn thành công, feedback và tiền dịch vụ của các lịch hẹn đó
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.DashboardController.GetTopUsersByTotalAmount(System.Nullable{System.Int32},System.Int32,System.Int32)">
+            <summary>
+                Thống kê người dùng có tổng feedback, tiền đã chi cho dịch vụ và các lịch hẹn
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.DashboardController.GetCombosStatistical(System.Int32,System.Int32,System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+                Thống kê tổng các combo hiện có
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.DashboardController.GetMonthlyServiceStatistics(System.Nullable{System.Int32},System.Nullable{System.Int32},System.Int32,System.Int32)">
+            <summary>
+                Thống kê tổng các service hiện có
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.FeedbackController.GetAllFeedbacks(System.Int32,System.Int32,System.String,System.String)">
+            <summary>
+                Lấy tất cả feedback
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.FeedbackController.CreateFeedback(HairSalon.ModelViews.FeedBackModeViews.CreateFeedbackModelView)">
+            <summary>
+            	Tạo feedback
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.FeedbackController.UpdateFeedback(System.String,HairSalon.ModelViews.FeedbackModeViews.UpdatedFeedbackModelView)">
+            <summary>
+            	Cập nhật feedback
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.FeedbackController.DeleteFeedback(System.String)">
+            <summary>
+            	Xóa feedback
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.FeedbackController.GetAllFeedbackOfService(System.Int32,System.Int32,System.String,System.String)">
+            <summary>
+            	Lấy tất cả feedback của dịch vụ
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.PaymentController.GetAllPayments(System.Int32,System.Int32,System.String,System.String,System.String)">
+            <summary>
+                Lấy tất cả thông tin payment
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.PaymentController.CreatePayment(HairSalon.ModelViews.VnPayModelViews.PaymentResponseModelView)">
+            <summary>
+                Thực hiện thanh toán
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.PaymentController.CreateVnPay(HairSalon.ModelViews.VnPayModelViews.PaymentRequestModelView)">
+            <summary>
+                Tạo link VNPay
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.PaymentController.DeletePayment(System.String)">
+            <summary>
+                Xóa payment
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.PaymentController.Deposit(HairSalon.ModelViews.VnPayModelViews.VnPayDepositWalletRequestModelView)">
+            <summary>
+                Tạo thông tin để nạp tiền vào ví
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.PaymentController.CreatePayOsLink(HairSalon.ModelViews.VnPayModelViews.PaymentRequestModelView)">
+            <summary>
+                Tạo link PayOS
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.PaymentController.ExecuteDeposit(System.Guid,System.Double)">
+            <summary>
+                Thực hiện gửi tiền vào ví
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.PaymentController.GetAllPaymentsByUserId(System.String,System.Int32,System.Int32)">
+            <summary>
+                Lấy tất cả thông tin payment by userId
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.RoleController.GetAllRoles(System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+                Get all roles with pagination and optional filters
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.RoleController.CreateRole(HairSalon.ModelViews.RoleModelViews.CreateRoleModelView)">
+            <summary>
+                Create a new role
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.RoleController.UpdateRole(System.String,HairSalon.ModelViews.RoleModelViews.UpdatedRoleModelView)">
+            <summary>
+                Update a role
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.RoleController.DeleteRole(System.String)">
+            <summary>
+                Delete a role
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.SalaryPaymentController.GetAllSalaryPayments(System.String,System.Nullable{System.Guid},System.Nullable{System.DateTime},System.Nullable{System.Decimal},System.Int32,System.Int32)">
+            <summary>
+            	Lấy tất cả lương
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.SalaryPaymentController.CreateSalaryPayment(HairSalon.ModelViews.SalaryPaymentModelViews.CreateSalaryPaymentModelView)">
+            <summary>
+            	Tạo lương cho nhân viên
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.SalaryPaymentController.UpdateSalaryPayment(System.String,HairSalon.ModelViews.SalaryPaymentModelViews.UpdatedSalaryPaymentModelView)">
+            <summary>
+            	Cập nhật lương
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.SalaryPaymentController.DeleteSalaryPayment(System.String)">
+            <summary>
+            	Xóa lương
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.SalaryPaymentController.ExportToExcel(System.Nullable{System.Guid},System.String)">
+            <summary>
+            	Xuất tạo File Excel kiểm tra lương Stylist
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.ServiceController.GetAllServices(System.String,System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+                Get all services with pagination and optional filters
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.ServiceController.CreateService(HairSalon.ModelViews.ServiceModelViews.CreateServiceModelView)">
+            <summary>
+                Create a new service
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.ServiceController.UpdateService(System.String,HairSalon.ModelViews.ServiceModelViews.UpdatedServiceModelView)">
+            <summary>
+                Update a service
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.ServiceController.DeleteService(System.String)">
+            <summary>
+                Delete a service
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.ShopController.GetAllShops(System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+            	Lấy tất cả thông tin shop
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.ShopController.CreateShop(HairSalon.ModelViews.ShopModelViews.CreateShopModelView)">
+            <summary>
+            	Tạo thông tin shop
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.ShopController.UpdateShop(System.String,HairSalon.ModelViews.ShopModelViews.UpdatedShopModelView)">
+            <summary>
+            	Cập nhật thông tin shop
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.ShopController.DeleteShop(System.String)">
+            <summary>
+            	Xóa shop
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -21,5 +21,20 @@ namespace HairSalon.Contract.Repositories.Entity
 		[Required]
 		public DateTime PaymentDate { get; set; }
 
+		[Required]
+		public int DayOffPermitted { get; set; }
+
+		[Required]
+		public int DayOffNoPermitted { get; set; }
+
+		[Required]
+		[Column(TypeName = "decimal(10, 2)")]
+		public decimal DeductedSalary { get; set; }
+
+		[Required]
+		[Column(TypeName = "decimal(10, 2)")]
+		public decimal BonusSalary { get; set; }
+
+
 	}
 }

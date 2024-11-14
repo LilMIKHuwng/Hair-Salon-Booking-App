@@ -19,10 +19,5 @@ namespace HairSalon.Contract.Repositories.Entity
 		[MaxLength(255)]
 		public string? Description { get; set; }
 
-		[Range(1, 5)]
-		public int? Rate { get; set; }
-
-		[MaxLength(255)]
-		public string? Comment { get; set; }
 	}
 }

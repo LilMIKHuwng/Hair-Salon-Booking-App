@@ -1,0 +1,117 @@
+﻿@page
+@model HairSalon.RazorPage.Pages.Payment.DepositWalletModel
+@{
+    ViewData["Title"] = "Create Deposit Wallet";
+}
+
+<style>
+    /* Centering and styling the main container */
+    form {
+        max-width: 400px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        background-color: #f9f9f9;
+    }
+
+    /* Page heading styling */
+    h2 {
+        text-align: center;
+        color: #333;
+    }
+
+    /* Label styling */
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #555;
+    }
+
+    /* Input field styling */
+    input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        transition: border-color 0.3s ease;
+    }
+
+        /* Input focus effect */
+        input[type="text"]:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+    /* Button styling */
+    .btn-vnpay {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        color: #fff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        text-align: center;
+    }
+
+        /* Button hover effect */
+        .btn-vnpay:hover {
+            background-color: #0056b3;
+        }
+
+    /* Alert styling */
+    .alert {
+        margin-top: 10px;
+        padding: 10px;
+        border-radius: 4px;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    .alert-danger {
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+    }
+</style>
+
+<h2>Create New Payment</h2>
+
+@if (TempData["DeniedMessage"] != null)
+{
+    <div class="alert alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
+}
+else
+{
+    <h2>Deposit Wallet Payment</h2>
+
+    <form method="post" asp-page-handler="PayWithVnPay">
+        <div>
+            <label for="UserId">User ID:</label>
+            <input type="text" id="UserId" name="UserId"
+                   value="@Model.DepositWalletRequest.UserId"
+            @(Model.IsUserRole ? "readonly" : "") required />
+        </div>
+        <div>
+            <label for="Amount">Amount: </label>
+            <input type="text" id="Amount" name="Amount"
+                   value="@Model.DepositWalletRequest.Amount"
+            @(@Model.IsUserRole ? "readonly" : "") required />
+        </div>
+        <button type="submit" class="btn-vnpay">Add money to the wallet.</button>
+    </form>
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger mt-3 text-center">@TempData["ErrorMessage"]</div>
+    }
+}
+

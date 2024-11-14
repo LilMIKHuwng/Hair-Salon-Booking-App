@@ -18,5 +18,7 @@
 
         public string Title { get; set; }
 
+        public string ShopImage { get; set; }
+
     }
 }

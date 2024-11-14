@@ -1,11 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace HairSalon.ModelViews.ApplicationUserModelViews
 {
 	public class UpdateAppUserModelView
 	{
-		public string? UserInfoId { get; set; }
-
 		public string? FirstName { get; set; }
 
 		public string? LastName { get; set; }
@@ -15,5 +13,7 @@ namespace HairSalon.ModelViews.ApplicationUserModelViews
 		public string? Password { get; set; }
 
 		public string? PhoneNumber { get; set; }
+
+		public IFormFile? UserImage { get; set; }
 	}
 }

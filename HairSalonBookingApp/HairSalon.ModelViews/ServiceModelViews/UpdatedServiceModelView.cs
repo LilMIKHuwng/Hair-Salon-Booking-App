@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace HairSalon.ModelViews.ServiceModelViews
 {
@@ -12,6 +12,10 @@ namespace HairSalon.ModelViews.ServiceModelViews
 
         public string? Description { get; set; }
 
+        public int? TimeService { get; set; }
+
         public string? ShopId { get; set; }
+
+        public IFormFile? ServiceImage { get; set; }
     }
 }

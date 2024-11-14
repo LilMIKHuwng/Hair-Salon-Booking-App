@@ -1,0 +1,172 @@
+﻿@page
+@model HairSalon.RazorPage.Pages.SalaryPayments.CreateModel
+@using HairSalon.ModelViews.ApplicationUserModelViews
+@{
+    ViewData["Title"] = "Create Salary Payment";
+}
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+        padding: 20px;
+        line-height: 1.5;
+    }
+
+    h2 {
+        color: #3f51b5;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #3f51b5;
+        padding-bottom: 10px;
+        text-align: center;
+    }
+
+    form {
+        max-width: 450px;
+        margin: 0 auto;
+        padding: 30px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        text-align: left;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        font-weight: bold;
+        color: #555;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    input[type="text"], input[type="date"], input[type="number"] {
+        width: 100%;
+        padding: 12px;
+        margin: 5px 0 10px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+    }
+
+        input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus {
+            border-color: #3f51b5;
+            outline: none;
+        }
+
+    button[type="submit"], .btn-cancel {
+        display: inline-block;
+        width: calc(50% - 5px);
+        padding: 12px;
+        margin-top: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        color: #ffffff;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    button[type="submit"] {
+        background-color: #3f51b5;
+    }
+
+        button[type="submit"]:hover {
+            background-color: #2c3e91;
+        }
+
+    .btn-cancel {
+        background-color: #d9534f;
+        margin-top: 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-cancel:hover {
+            background-color: #c9302c;
+            color: #ffffff;
+        }
+
+    .alert-danger {
+        background-color: #f2dede;
+        color: #a94442;
+        border: 1px solid #ebccd1;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    .text-danger {
+        color: #e74c3c;
+        font-size: 0.9em;
+    }
+</style>
+
+@if (TempData["DeniedMessage"] != null)
+{
+    <div class="alert alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
+}
+else
+{
+    <h2>Create New Salary Payment</h2>
+
+    <form method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label asp-for="SalaryPayment.UserId">User ID</label>
+            <select asp-for="SalaryPayment.UserId" class="form-control" required>
+                <option value="">Select a Stylist</option>
+                @if (ViewData["Stylists"] != null && ((List<AppUserModelView>)ViewData["Stylists"]).Any())
+                {
+                    @foreach (var stylist in (List<AppUserModelView>)ViewData["Stylists"])
+                    {
+                        <option value="@stylist.Id">@stylist.FullName</option>
+                    }
+                }
+                else
+                {
+                    <p>No stylists found.</p>
+                }
+            </select>
+            <span asp-validation-for="SalaryPayment.UserId" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="SalaryPayment.BaseSalary">Base Salary</label>
+            <input asp-for="SalaryPayment.BaseSalary" type="number" placeholder="Enter Base Salary" required />
+            <span asp-validation-for="SalaryPayment.BaseSalary" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="SalaryPayment.PaymentDate">Payment Date</label>
+            <input asp-for="SalaryPayment.PaymentDate" type="date" required />
+            <span asp-validation-for="SalaryPayment.PaymentDate" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="SalaryPayment.DayOffPermitted">Days Off Permitted</label>
+            <input asp-for="SalaryPayment.DayOffPermitted" type="number" placeholder="Enter Days Off Permitted" required />
+            <span asp-validation-for="SalaryPayment.DayOffPermitted" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="SalaryPayment.DayOffNoPermitted">Days Off Not Permitted</label>
+            <input asp-for="SalaryPayment.DayOffNoPermitted" type="number" placeholder="Enter Days Off Not Permitted" required />
+            <span asp-validation-for="SalaryPayment.DayOffNoPermitted" class="text-danger"></span>
+        </div>
+
+        <button type="submit">Add Salary Payment</button>
+        <a asp-page="/SalaryPayments/Index" class="btn-cancel">Cancel</a>
+    </form>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger mt-3 text-center">@TempData["ErrorMessage"]</div>
+    }
+}

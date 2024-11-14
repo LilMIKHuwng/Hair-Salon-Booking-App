@@ -1,0 +1,147 @@
+﻿@page
+@model HairSalon.RazorPage.Pages.SalaryPayments.DeleteModel
+@{
+    ViewData["Title"] = "Delete Salary Payment";
+}
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+        padding: 30px;
+        line-height: 1.6;
+    }
+
+    h2 {
+        color: #3f51b5;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #3f51b5;
+        padding-bottom: 10px;
+        text-align: center;
+    }
+
+    .details-container {
+        background-color: #fff;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        margin: 0 auto 30px;
+        transition: transform 0.2s ease;
+    }
+
+        .details-container p {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+            .details-container p strong {
+                color: #3f51b5;
+            }
+
+    p.confirmation-text {
+        font-size: 1.1em;
+        color: #555;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+
+    button[type="submit"],
+    a {
+        padding: 15px 25px;
+        border-radius: 5px;
+        color: #ffffff;
+        text-decoration: none;
+        font-size: 18px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        width: 100%;
+        max-width: 250px;
+        text-align: center;
+    }
+
+    button[type="submit"] {
+        background-color: #d9534f;
+        border: none;
+        cursor: pointer;
+    }
+
+        button[type="submit"]:hover {
+            background-color: #c9302c;
+            transform: translateY(-2px);
+        }
+
+    .btn-cancel {
+        background-color: #5bc0de;
+        cursor: pointer;
+    }
+
+        .btn-cancel:hover {
+            background-color: #31b0d5;
+            transform: translateY(-2px);
+            color: #ffffff;
+        }
+
+    .alert-danger {
+        background-color: #f2dede;
+        color: #a94442;
+        border: 1px solid #ebccd1;
+        padding: 15px;
+        border-radius: 5px;
+        margin-top: 20px;
+        text-align: center;
+        font-size: 1.1em;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+        padding: 15px;
+        border-radius: 5px;
+        margin-top: 20px;
+        text-align: center;
+        font-size: 1.1em;
+    }
+
+</style>
+
+@if (TempData["DeniedMessage"] != null)
+{
+    <div class="alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
+}
+else
+{
+    <h2>Delete Salary Payment</h2>
+
+    <div class="details-container">
+        <p><strong>Salary Payment ID:</strong> @Model.SalaryPayment.Id</p>
+        <p><strong>Stylist Name:</strong> @Model.SalaryPayment.FullName</p>
+        <p><strong>BaseSalary:</strong> @Model.SalaryPayment.BaseSalary</p>
+        <p><strong>PaymentDate:</strong> @Model.SalaryPayment.PaymentDate.ToString("MMMM dd, yyyy")</p>
+    </div>
+
+    <p class="confirmation-text">Are you sure you want to delete this salary payment? This action cannot be undone.</p>
+
+    <form method="post" asp-route-id="@Model.Id">
+        <button type="submit">Delete</button>
+        <a asp-page="/SalaryPayments/Index" class="btn-cancel">Cancel</a>
+    </form>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    @if (TempData["ResponseMessage"] != null)
+    {
+        <div class="alert-success">@TempData["ResponseMessage"]</div>
+    }
+}

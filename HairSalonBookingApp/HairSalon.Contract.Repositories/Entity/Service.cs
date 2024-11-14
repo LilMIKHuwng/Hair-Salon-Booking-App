@@ -19,7 +19,9 @@ namespace HairSalon.Contract.Repositories.Entity
 
 		[MaxLength(255)]
 		public string? Description { get; set; }
+		public required int TimeService { get; set; }
 
+		public string? ServiceImage { get; set; }
 		public string? ShopId { get; set; }
 
 		[ForeignKey("ShopId")]
@@ -27,5 +29,7 @@ namespace HairSalon.Contract.Repositories.Entity
 		public virtual Shop Shop { get; set; }
 
 		public virtual ICollection<ServiceAppointment>? ServiceAppointments { get; set; }
+
+		public virtual ICollection<ComboServices>? ComboServices { get; set; }
 	}
 }

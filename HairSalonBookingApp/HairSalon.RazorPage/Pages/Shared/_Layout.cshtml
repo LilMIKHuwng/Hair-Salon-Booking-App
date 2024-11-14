@@ -1,0 +1,72 @@
+﻿﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - HairSalon.RazorPage</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<style>
+    .logout-link {
+        color: red;
+        font-weight: bold;
+    }
+
+        .logout-link:hover {
+            background-color: #ffe6e6; /* Light red background on hover */
+            color: darkred;
+        }
+</style>
+<body>
+    <div class="d-flex" id="wrapper">
+        <!-- Add the #wrapper ID here -->
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper" class="bg-light border-right">
+            <div class="sidebar-heading">Hair Salon</div>
+            <div class="list-group list-group-flush">
+                <a href="~/Index" class="list-group-item list-group-item-action bg-light">Home</a>
+                <a href="~/Admin/Profile" class="list-group-item list-group-item-action bg-light">Profile</a>
+                <a href="~/Dashboard/AppointmentStatistic" class="list-group-item list-group-item-action bg-light">Dashboard</a>
+                <a href="~/Roles" class="list-group-item list-group-item-action bg-light">Role</a>
+                <a href="~/Shops" class="list-group-item list-group-item-action bg-light">Shop</a>
+                <a href="~/Payments" class="list-group-item list-group-item-action bg-light">Payment</a>
+                <a href="~/Feedbacks" class="list-group-item list-group-item-action bg-light">Feedback</a>
+                <a href="~/Admin" class="list-group-item list-group-item-action bg-light">Admin</a>
+                <a href="~/SalaryPayments" class="list-group-item list-group-item-action bg-light">SalaryPayments</a>
+                <a href="~/Services" class="list-group-item list-group-item-action bg-light">Service</a>
+                <a href="~/Appointments" class="list-group-item list-group-item-action bg-light">Appointment</a>
+                <a href="~/Combos" class="list-group-item list-group-item-action bg-light">Combo</a>
+                <a href="~/Login/Logout" class="list-group-item list-group-item-action bg-light logout-link">Logout</a> <!-- Logout link added here -->
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper" class="w-100">
+            <!-- Navbar for mobile toggle -->
+            <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+                <button class="btn btn-primary" id="menu-toggle">☰ Menu</button>
+                <a class="navbar-brand ms-3" href="~/Index">Hair Salon</a>
+            </nav>
+
+            <main role="main" class="container pt-3">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        // Toggle sidebar visibility
+        $("#menu-toggle").click(function (e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -70,7 +70,7 @@ namespace HairSalon.Services.Service
                 existingUserRole.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
 
                 // save changes
-                _unitOfWork.GetRepository<ApplicationUserRoles>().Update(existingUserRole);
+                await _unitOfWork.GetRepository<ApplicationUserRoles>().UpdateAsync(existingUserRole);
                 await _unitOfWork.SaveAsync();
 
                 return "Deleted";

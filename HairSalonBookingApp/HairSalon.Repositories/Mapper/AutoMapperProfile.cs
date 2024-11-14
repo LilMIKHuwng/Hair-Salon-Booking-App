@@ -11,6 +11,10 @@ using HairSalon.Repositories.Entity;
 using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalon.ModelViews.AppUserRoleViewModels;
 using HairSalon.ModelViews.ServiceAppointmentModelViews;
+using HairSalon.ModelViews.FeedBackModeViews;
+using HairSalon.ModelViews.FeedbackModeViews;
+using HairSalon.ModelViews.ComboModelViews;
+using HairSalon.ModelViews.Message;
 
 namespace HairSalon.Repositories.Mapper
 {
@@ -25,10 +29,7 @@ namespace HairSalon.Repositories.Mapper
             CreateMap<CreateShopModelView, Shop>();
 
             CreateMap<Payment, PaymentModelView>();
-            CreateMap<Payment, CreatePaymentModelView>();
-            CreateMap<Payment, UpdatedPaymentModelView>();
-            CreateMap<UpdatedPaymentModelView, Payment>();
-            CreateMap<CreatePaymentModelView, Payment>();
+            
 
             CreateMap<Appointment, AppointmentModelView>();
             CreateMap<Appointment, CreateAppointmentModelView>();
@@ -42,6 +43,7 @@ namespace HairSalon.Repositories.Mapper
             CreateMap<UpdatedServiceModelView, Service>();
             CreateMap<CreateServiceModelView, Service>();
             CreateMap<CreateServiceModelView, ServiceModelView>();
+            CreateMap<Service, StatisticalServiceModelView>();
             
 			CreateMap<ApplicationRoles, RoleModelView>();
 			CreateMap<ApplicationRoles, CreateRoleModelView>();
@@ -77,7 +79,26 @@ namespace HairSalon.Repositories.Mapper
             CreateMap<ServiceAppointment, EditServiceAppointmentModelView>();
             CreateMap<ServiceAppointment, CreatServiceAppointmentModelView>();
             CreateMap<EditServiceAppointmentModelView, ServiceAppointment>();
-            CreateMap<CreateAppointmentModelView, ServiceAppointment>();
+            CreateMap<CreatServiceAppointmentModelView, ServiceAppointment>();
+
+            CreateMap<Feedback, FeedBackModelView>();
+            CreateMap<Feedback, CreateFeedbackModelView>();
+            CreateMap<Feedback, UpdatedFeedbackModelView>();
+            CreateMap<CreateFeedbackModelView, Feedback>();
+            CreateMap<UpdatedFeedbackModelView, Feedback>();
+            CreateMap<Feedback, ServiceFeedbackModelView>();
+
+            CreateMap<Combo, ComboModelView>();
+            CreateMap<Combo, CreateComboModelView>();
+            CreateMap<Combo, UpdateComboModelView>();
+            CreateMap<CreateComboModelView, Combo>();
+            CreateMap<UpdateComboModelView, Combo>();
+
+            CreateMap<MessageViewModel, Message>();
+            CreateMap<Message, MessageViewModel>();
+            CreateMap<Message, CreateMessageViewModel>();
+            CreateMap<CreateMessageViewModel, Message>();
+            
         }
     }
 }

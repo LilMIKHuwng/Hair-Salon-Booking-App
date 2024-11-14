@@ -1,0 +1,71 @@
+﻿@page "/Admin/Profile"
+@model HairSalon.RazorPage.Pages.AdminPage.AdminProfilePageModel
+@{
+	Layout = "_Layout";
+}
+
+<style>
+	.profile-button {
+		margin: 20px 0px 0px 80%;
+	}
+</style>
+
+@if (TempData["ErrorMessage"] != null)
+{
+	<div class="alert alert-danger mt-3 text-center">@TempData["ErrorMessage"]</div>
+}
+else
+{
+	<div>
+		<div>
+			<div>
+				<div>
+					<img width="150px" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg" alt="Profile Picture">
+					<span>@Model.UserInfo?.UserName</span>
+				</div>
+			</div>
+			<div>
+				<div>
+					<div>
+						<h4>Profile Settings</h4>
+					</div>
+					<div>
+						<div>
+							<label class="labels"><strong>UserName</strong></label>
+							<input type="text" class="form-control" value="@Model.UserInfo?.UserName" readonly>
+						</div>
+						<div>
+							<label class="labels"><strong>Email</strong></label>
+							<input type="text" class="form-control" value="@Model.UserInfo?.Email" readonly>
+						</div>
+						<div>
+							<label class="labels"><strong>Roles</strong></label>
+							<input type="text" class="form-control" value="@string.Join(", ", Model.UserInfo?.Roles ?? new List<string>())" readonly>
+						</div>
+						<div>
+							<label class="labels"><strong>Wallet</strong></label>
+							<input type="text" class="form-control" value="@Model.UserInfo?.E_Wallet" readonly>
+						</div>
+						<div>
+							<label class="labels"><strong>Point</strong></label>
+							<input type="text" class="form-control" value="@Model.UserInfo?.Point" readonly>
+						</div>
+					</div>
+					<div>
+						<div>
+							<label class="labels"><strong>FirstName</strong></label>
+							<input type="text" class="form-control" value="@Model.UserInfo?.FirstName" placeholder="Enter FirstName">
+						</div>
+						<div>
+							<label class="labels"><strong>LastName</strong></label>
+							<input type="text" class="form-control" value="@Model.UserInfo?.LastName" placeholder="Enter LastName">
+						</div>
+					</div>
+					<div>
+						<button class="profile-button" type="button">Save Profile</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}

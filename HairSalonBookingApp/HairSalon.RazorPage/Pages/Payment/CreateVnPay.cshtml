@@ -1,0 +1,212 @@
+﻿@page
+@model HairSalon.RazorPage.Pages.Payment.CreateVnPayModel
+@{
+    ViewData["Title"] = "Create VnPay Payment";
+}
+
+<style>
+    /* Page Layout */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+        padding: 20px;
+    }
+
+    h2 {
+        color: #3f51b5;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #3f51b5;
+        padding-bottom: 5px;
+    }
+
+    /* Form and Input Styling */
+    form {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        font-size: 16px;
+    }
+
+    /* Button Styling */
+    button[type="submit"], .btn-cancel, .btn-delete {
+        display: inline-block;
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        color: #ffffff;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    button[type="submit"] {
+        background-color: #3f51b5;
+    }
+
+        button[type="submit"]:hover {
+            background-color: #2c3e91;
+        }
+
+    .btn-cancel {
+        background-color: #d9534f;
+        margin-top: 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-cancel:hover {
+            background-color: #c9302c;
+        }
+
+    .btn-delete {
+        background-color: #e74c3c;
+    }
+
+        .btn-delete:hover {
+            background-color: #c0392b;
+        }
+
+    /* Alert Styling */
+    .alert-danger {
+        background-color: #f2dede;
+        color: #a94442;
+        border: 1px solid #ebccd1;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    /* Validation Message Styling */
+    .text-danger {
+        color: #e74c3c;
+        font-size: 0.9em;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="datetime-local"] {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        font-size: 16px;
+    }
+
+    /* Specific styling for TotalAmount field to match AppointmentId */
+    input[name="NewPayment.TotalAmount"] {
+        font-size: 16px;
+        color: #333;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+    }
+</style>
+
+@if (TempData["DeniedMessage"] != null)
+{
+    <div class="alert alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
+}
+else
+{
+    <h2>Create New Payment</h2>
+
+    <form method="post">
+        <div>
+            <label asp-for="NewPayment.AppointmentId">Appointment ID</label>
+            <input asp-for="NewPayment.AppointmentId" placeholder="Enter Appointment ID"
+                   readonly="@(Model.IsUserRole ? "readonly" : null)" required />
+            <span asp-validation-for="NewPayment.AppointmentId" class="text-danger"></span>
+        </div>
+
+        <div>
+            <label asp-for="NewPayment.TotalAmount">Total Amount</label>
+            <input asp-for="NewPayment.TotalAmount" type="number" step="0.01" placeholder="Enter Total Amount"
+                   readonly="@(Model.IsUserRole ? "readonly" : null)" required />
+            <span asp-validation-for="NewPayment.TotalAmount" class="text-danger"></span>
+        </div>
+
+        <div>
+            <label asp-for="NewPayment.PaymentTime">Payment Time</label>
+            <input asp-for="NewPayment.PaymentTime" type="datetime-local" placeholder="Enter Payment Time"
+                   readonly="@(Model.IsUserRole ? "readonly" : null)" required />
+            <span asp-validation-for="NewPayment.PaymentTime" class="text-danger"></span>
+        </div>
+
+        <div>
+            <label asp-for="NewPayment.BankCode">Bank Code</label>
+            <input asp-for="NewPayment.BankCode" placeholder="Enter Bank Code"
+                   readonly="@(Model.IsUserRole ? "readonly" : null)" />
+            <span asp-validation-for="NewPayment.BankCode" class="text-danger"></span>
+        </div>
+
+        <div>
+            <label asp-for="NewPayment.BankTranNo">Bank Transaction Number</label>
+            <input asp-for="NewPayment.BankTranNo" placeholder="Enter Bank Transaction Number"
+                   readonly="@(Model.IsUserRole ? "readonly" : null)" />
+            <span asp-validation-for="NewPayment.BankTranNo" class="text-danger"></span>
+        </div>
+
+        <div>
+            <label asp-for="NewPayment.CardType">Card Type</label>
+            <input asp-for="NewPayment.CardType" placeholder="Enter Card Type"
+                   readonly="@(Model.IsUserRole ? "readonly" : null)" />
+            <span asp-validation-for="NewPayment.CardType" class="text-danger"></span>
+        </div>
+
+        <div>
+            <label asp-for="NewPayment.ResponseCode">Response Code</label>
+            <input asp-for="NewPayment.ResponseCode" placeholder="Enter Response Code"
+                   readonly="@(Model.IsUserRole ? "readonly" : null)" />
+            <span asp-validation-for="NewPayment.ResponseCode" class="text-danger"></span>
+        </div>
+
+        <div>
+            <label asp-for="NewPayment.TransactionNo">Transaction Number</label>
+            <input asp-for="NewPayment.TransactionNo" placeholder="Enter Transaction Number"
+                   readonly="@(Model.IsUserRole ? "readonly" : null)" />
+            <span asp-validation-for="NewPayment.TransactionNo" class="text-danger"></span>
+        </div>
+
+        <div>
+            <label asp-for="NewPayment.TransactionStatus">Transaction Status</label>
+            <input asp-for="NewPayment.TransactionStatus" placeholder="Enter Transaction Status"
+                   readonly="@(Model.IsUserRole ? "readonly" : null)" />
+            <span asp-validation-for="NewPayment.TransactionStatus" class="text-danger"></span>
+        </div>
+
+        <div>
+            <label asp-for="NewPayment.Method">Method</label>
+            <input asp-for="NewPayment.Method" placeholder="Enter Method"
+                   readonly="@(Model.IsUserRole ? "readonly" : null)" required />
+            <span asp-validation-for="NewPayment.Method" class="text-danger"></span>
+        </div>
+
+        <button type="submit">Add Payment</button>
+        <a asp-page="/Payment/Index" class="btn-cancel">Cancel</a>
+    </form>
+
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger mt-3 text-center">@TempData["ErrorMessage"]</div>
+    }
+}

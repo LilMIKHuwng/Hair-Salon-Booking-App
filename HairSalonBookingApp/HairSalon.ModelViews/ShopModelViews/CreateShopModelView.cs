@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace HairSalon.ModelViews.ShopModelViews
 {
@@ -17,10 +18,10 @@ namespace HairSalon.ModelViews.ShopModelViews
         [Required(ErrorMessage = "Phone number is required.")]
         [Phone(ErrorMessage = "Invalid Phone Number.")]
         [StringLength(20, ErrorMessage = "Phone number cannot be longer than 20 characters.")]
-        public string ShopPhone { get; set; } 
+        public string ShopPhone { get; set; }
 
         [Required(ErrorMessage = "Open Time is required.")]
-        public TimeSpan OpenTime { get; set; } 
+        public TimeSpan OpenTime { get; set; }
 
         [Required(ErrorMessage = "Close Time is required.")]
         public TimeSpan CloseTime { get; set; } 
@@ -29,13 +30,7 @@ namespace HairSalon.ModelViews.ShopModelViews
         [StringLength(100, ErrorMessage = "Title cannot be longer than 100 characters.")]
         public string Title { get; set; }
 
-
-        //public string? CreatedBy { get; set; }
-
-        //[Required(ErrorMessage = "CreatedTime is required.")]
-        //public DateTimeOffset CreatedTime { get; set; }
-
-        //[Required(ErrorMessage = "Title is required.")]
-        //public DateTimeOffset LastUpdatedTime { get; set; }
+        /*[Required(ErrorMessage = "Cần Thêm Hình Loại Sản Phẩm")]*/
+        public IFormFile ShopImage { get; set; }
     }
 }
