@@ -57,8 +57,8 @@ namespace HairSalon.Services.Service
             {
                 userId = _httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
             }
-            /*var user = _unitOfWork.GetRepository<ApplicationUsers>().Entities.FirstOrDefault(user => user.Id == Guid.Parse());
-            if (user == null) return "User not found.";*/
+            var user = _unitOfWork.GetRepository<ApplicationUsers>().Entities.FirstOrDefault(user => user.Id == Guid.Parse(userId));
+            if (user == null) return "User not found.";
             var vnpay = new VNPayLibrary();
             vnpay.AddRequestData("vnp_Command", "pay");
             vnpay.AddRequestData("vnp_Version", "2.1.0");
@@ -216,20 +216,5 @@ namespace HairSalon.Services.Service
             AppointmentModelView appointmentModelView = _mapper.Map<AppointmentModelView>(appointmentEntity);
             return appointmentModelView;
         }
-
-        /*public async Task<string> DepositToWalletWithVnPay(double amount)
-        {
-            Guid userId = Guid.Parse(_httpContextAccessor.HttpContext?.User?.FindFirst("userId")?.Value);
-            var user = _unitOfWork.GetRepository<ApplicationUsers>().GetById(userId);
-            if (user == null)
-            {
-                return "Can't find user!";
-            }
-
-            user.E_Wallet += (decimal)amount;
-            _unitOfWork.GetRepository<ApplicationUsers>().Update(user);
-            await _unitOfWork.SaveAsync();
-            return "Success!";
-        }*/
     }
 }
