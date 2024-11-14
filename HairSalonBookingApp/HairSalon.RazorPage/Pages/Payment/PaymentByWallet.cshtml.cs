@@ -1,8 +1,6 @@
-using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.AppointmentModelViews;
 using HairSalon.ModelViews.VnPayModelViews;
-using HairSalon.Services.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
@@ -109,7 +107,7 @@ namespace HairSalon.RazorPage.Pages.Payment
                 if (response == "Payment added successfully.")
                 {
                     ResponseMessage = response;
-                    return Redirect("/Payment/Index"); // Redirect back to the payment list page
+                    return RedirectToPage("/Payment/Index"); // Redirect back to the payment list page
                 }
                 // Set ErrorMessage if there’s an error
                 TempData["ErrorMessage"] = response;

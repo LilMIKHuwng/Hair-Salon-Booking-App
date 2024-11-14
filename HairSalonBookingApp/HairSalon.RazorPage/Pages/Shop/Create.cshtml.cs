@@ -61,7 +61,7 @@ namespace HairSalon.RazorPage.Pages.Shop
                 if (response == "Added new shop successfully!")
                 {
                     ResponseMessage = response;
-                    return Redirect("/Shop/Index"); // Redirect back to the role list page
+                    return RedirectToPage("/Shop/Index"); // Redirect back to the role list page
                 }
                 // Set ErrorMessage if there’s an error
                 ErrorMessage = response;

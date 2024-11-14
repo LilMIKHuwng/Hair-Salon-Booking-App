@@ -88,7 +88,7 @@ namespace HairSalon.RazorPage.Pages.SalaryPayments
                 if (response == "Add new salary payment successfully!")
                 {
                     ResponseMessage = response;
-                    return Redirect("/SalaryPayments/Index");
+                    return RedirectToPage("/SalaryPayments/Index");
                 }
                 else
                 {

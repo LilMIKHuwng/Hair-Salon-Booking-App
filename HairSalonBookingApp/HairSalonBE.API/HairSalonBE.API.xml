@@ -189,6 +189,11 @@
                 Tạo thông tin để nạp tiền vào ví
             </summary>
         </member>
+        <member name="M:HairSalonBE.API.Controllers.PaymentController.CreatePayOsLink(HairSalon.ModelViews.VnPayModelViews.PaymentRequestModelView)">
+            <summary>
+                Tạo link PayOS
+            </summary>
+        </member>
         <member name="M:HairSalonBE.API.Controllers.PaymentController.ExecuteDeposit(System.Guid,System.Double)">
             <summary>
                 Thực hiện gửi tiền vào ví

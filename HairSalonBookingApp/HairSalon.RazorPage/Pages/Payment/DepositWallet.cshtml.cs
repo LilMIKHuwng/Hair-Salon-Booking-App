@@ -1,12 +1,8 @@
-using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Services.Interface;
-using HairSalon.ModelViews.AppointmentModelViews;
 using HairSalon.ModelViews.VnPayModelViews;
-using HairSalon.Services.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
-using System.Globalization;
 
 namespace HairSalon.RazorPage.Pages.Payment
 {

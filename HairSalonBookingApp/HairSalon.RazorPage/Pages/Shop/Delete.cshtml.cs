@@ -64,7 +64,7 @@ namespace HairSalon.RazorPage.Pages.Shop
             if (Shop == null)
             {
                 ErrorMessage = "Shop Not Found";
-                return Redirect("/Shop/Index"); // Redirect if role is not found
+                return RedirectToPage("/Shop/Index"); // Redirect if role is not found
             }
             return Page();
         }
@@ -76,7 +76,7 @@ namespace HairSalon.RazorPage.Pages.Shop
             if (response == "Deleted shop successfully")
             {
                 ResponseMessage = response;
-                return Redirect("/Shop/Index");
+                return RedirectToPage("/Shop/Index");
             }
             // Set ErrorMessage if deletion fails
             ErrorMessage = response;

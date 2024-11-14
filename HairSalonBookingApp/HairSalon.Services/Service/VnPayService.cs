@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using DocumentFormat.OpenXml.Office2010.Excel;
 using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
@@ -58,8 +57,8 @@ namespace HairSalon.Services.Service
             {
                 userId = _httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
             }
-            /*var user = _unitOfWork.GetRepository<ApplicationUsers>().Entities.FirstOrDefault(user => user.Id == Guid.Parse());
-            if (user == null) return "User not found.";*/
+            var user = _unitOfWork.GetRepository<ApplicationUsers>().Entities.FirstOrDefault(user => user.Id == Guid.Parse(userId));
+            if (user == null) return "User not found.";
             var vnpay = new VNPayLibrary();
             vnpay.AddRequestData("vnp_Command", "pay");
             vnpay.AddRequestData("vnp_Version", "2.1.0");
