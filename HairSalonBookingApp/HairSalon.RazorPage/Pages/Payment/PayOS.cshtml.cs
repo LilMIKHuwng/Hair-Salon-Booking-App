@@ -92,7 +92,7 @@ namespace HairSalon.RazorPage.Pages.Payment
 
             var paymentRequest = new PaymentRequestModelView { AppoinmentId = appointment.Id };
             var paymentUrl = await _payOsService.CreatePaymentLink(paymentRequest);
-
+            HttpContext.Session.SetString("AppointmentId", appointment.Id);
             if (paymentUrl == "Appointment not found." || paymentUrl == "Appointment has not been completed.")
             {
                 TempData["ErrorMessage"] = paymentUrl;
@@ -104,10 +104,10 @@ namespace HairSalon.RazorPage.Pages.Payment
 
         public IActionResult OnGetPaymentCallbackAsync()
         {
-            var vnpResponseCode = Request.Query["vnp_ResponseCode"];
-            var vnpTransactionStatus = Request.Query["vnp_TransactionStatus"];
+            var vnpResponseCode = Request.Query["code"];
+            var vnpTransactionStatus = Request.Query["status"];
 
-            if (vnpResponseCode == "00" && vnpTransactionStatus == "00")
+            if (vnpResponseCode == "00" && vnpTransactionStatus == "PAID")
             {
                 TempData["SuccessMessage"] = "Payment successful!";
                 return RedirectToPage("/Payment/Index");
