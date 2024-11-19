@@ -107,7 +107,7 @@ Task.Run(async () =>
         }
 
         // Wait for 24 hours before sending the next batch of emails
-        await Task.Delay(TimeSpan.FromHours(1));
+        await Task.Delay(TimeSpan.FromHours(12));
     }
 });
 
