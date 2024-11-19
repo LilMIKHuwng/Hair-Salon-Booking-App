@@ -35,7 +35,7 @@ namespace HairSalon.Contract.Repositories.Entity
 
         public string? PromotionId { get; set; }
 
-        [ForeignKey("AppointmentId")]
+        [ForeignKey("PromotionId")]
 
         public virtual Promotion? Promotion { get; set; }
 
