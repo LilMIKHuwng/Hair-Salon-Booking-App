@@ -71,7 +71,7 @@ namespace HairSalon.RazorPage.Pages.Appointment
         {
             var userId = HttpContext.Session.GetString("UserId");
 
-            string response = await _appointmentService.MarkConfirmed(Id,userId);
+            string response = await _appointmentService.MarkConfirmed(Id,userId, null);
             if (response == "success")
             {
                 ResponseMessage = response;

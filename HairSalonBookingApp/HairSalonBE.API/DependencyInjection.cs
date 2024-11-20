@@ -93,7 +93,8 @@ namespace HairSalonBE.API
 				.AddScoped<IDashboardService, DashboardService>()
 				.AddScoped<ICacheService, RedisCacheService>()
 				.AddScoped<IPayOSService, PayOSService>()
-				.AddSignalR();
+                .AddScoped<IPromotionService, PromotionService>()
+                .AddSignalR();
 		}
 
 		public static void ConfigJwt(this IServiceCollection services, IConfiguration configuration)
