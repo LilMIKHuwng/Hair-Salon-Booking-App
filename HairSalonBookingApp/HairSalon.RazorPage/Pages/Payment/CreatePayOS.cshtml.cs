@@ -27,7 +27,7 @@ namespace HairSalon.RazorPage.Pages.Payment
                 var paymentLinkInformation = await _payOsService.GetInformationPayment(int.Parse(orderCode));
 
                 var appointmentId = HttpContext.Session.GetString("AppointmentId");
-                var totalAmount = paymentLinkInformation.amount;
+                var totalAmount = paymentLinkInformation.amount * 100;
                 var bankCode = "00";
                 var bankTranNo = paymentLinkInformation.transactions.FirstOrDefault().counterAccountName ?? "testBank" ;
                 var cardType = "ATM";

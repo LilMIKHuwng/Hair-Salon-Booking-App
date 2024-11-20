@@ -140,6 +140,34 @@
         margin-top: 20px;
         gap: 10px;
     }
+
+    .sort-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #3f51b5;
+        color: white;
+        border: none;
+        padding: 5px 8px;
+        border-radius: 5px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-left: 5px;
+    }
+
+        .sort-btn:hover {
+            background-color: #2c3e91;
+        }
+
+    .sort-arrows {
+        font-size: 12px;
+    }
+
+    .sort-btn.active {
+        background-color: #ff9800;
+        color: #fff;
+    }
 </style>
 
 @if (TempData["ErrorMessage"] != null)
@@ -162,17 +190,37 @@ else
 
     @if (Model.SalaryPayments != null && Model.SalaryPayments.Items.Any())
     {
-        <table>
+        <table id="salaryPaymentsTable">
             <thead>
                 <tr>
-                    <th>SalaryPayment ID</th>
-                    <th>Full Name</th>
-                    <th>BaseSalary</th>
-                    <th>PaymentDate</th>
+                    <th>
+                        SalaryPayment ID
+                        <button class="sort-btn" data-sort="id">
+                            <span class="sort-arrows">▲▼</span>
+                        </button>
+                    </th>
+                    <th>
+                        Full Name
+                        <button class="sort-btn" data-sort="fullName">
+                            <span class="sort-arrows">▲▼</span>
+                        </button>
+                    </th>
+                    <th>
+                        Base Salary
+                        <button class="sort-btn" data-sort="baseSalary">
+                            <span class="sort-arrows">▲▼</span>
+                        </button>
+                    </th>
+                    <th>
+                        Payment Date
+                        <button class="sort-btn" data-sort="paymentDate">
+                            <span class="sort-arrows">▲▼</span>
+                        </button>
+                    </th>
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="salaryPaymentsTableBody">
                 @foreach (var salary in Model.SalaryPayments.Items)
                 {
                     <tr>
@@ -221,3 +269,64 @@ else
         <div class="alert alert-info">No Salary Payments available.</div>
     }
 }
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tableBody = document.querySelector("#salaryPaymentsTableBody");
+
+        // Xử lý sự kiện click cho các nút sắp xếp
+        document.querySelectorAll(".sort-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                const sortKey = this.getAttribute("data-sort");
+                const rows = Array.from(tableBody.querySelectorAll("tr"));
+
+                // Xác định thứ tự sắp xếp
+                const isAscending = this.classList.toggle("asc");
+
+                // Sắp xếp các hàng
+                rows.sort((a, b) => {
+                    const aValue = a.querySelector(`td:nth-child(${getColumnIndex(sortKey)})`).textContent.trim();
+                    const bValue = b.querySelector(`td:nth-child(${getColumnIndex(sortKey)})`).textContent.trim();
+
+                    if (sortKey === "baseSalary") {
+                        // Sắp xếp số
+                        return isAscending ? parseFloat(aValue) - parseFloat(bValue) : parseFloat(bValue) - parseFloat(aValue);
+                    } else if (sortKey === "paymentDate") {
+                        // Sắp xếp ngày
+                        return isAscending
+                            ? new Date(aValue) - new Date(bValue)
+                            : new Date(bValue) - new Date(aValue);
+                    } else {
+                        // Sắp xếp chuỗi
+                        return isAscending
+                            ? aValue.localeCompare(bValue, undefined, { numeric: true })
+                            : bValue.localeCompare(aValue, undefined, { numeric: true });
+                    }
+                });
+
+                // Cập nhật lại thứ tự các hàng trong bảng
+                rows.forEach(row => tableBody.appendChild(row));
+
+                // Reset trạng thái các nút khác
+                document.querySelectorAll(".sort-btn").forEach(btn => {
+                    if (btn !== this) btn.classList.remove("asc", "desc");
+                });
+
+                // Đổi trạng thái nút hiện tại
+                this.classList.toggle("desc", !isAscending);
+            });
+        });
+
+        // Định nghĩa cột theo key sắp xếp
+        function getColumnIndex(sortKey) {
+            switch (sortKey) {
+                case "id": return 1;
+                case "fullName": return 2;
+                case "baseSalary": return 3;
+                case "paymentDate": return 4;
+                default: return 1;
+            }
+        }
+    });
+</script>
+
