@@ -18,7 +18,7 @@ namespace HairSalon.RazorPage.Pages.Shop
 
         public BasePaginatedList<ShopModelView> Shops { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int pageNumber = 1, int pageSize = 5, string? id = null, string? name = null)
+        public async Task<IActionResult> OnGetAsync(int pageNumber = 1, int pageSize = 5, string? name = null, string? id = null)
         {
             var userRolesJson = HttpContext.Session.GetString("UserRoles");
 
@@ -38,7 +38,7 @@ namespace HairSalon.RazorPage.Pages.Shop
                 TempData["ErrorMessage"] = "You do not have permission to view this page.";
                 return Page();
             }
-            Shops = await _shopService.GetAllShopAsync(pageNumber, pageSize, id, name);
+            Shops = await _shopService.GetAllShopAsync(pageNumber, pageSize, name, id);
             return Page();
         }
 

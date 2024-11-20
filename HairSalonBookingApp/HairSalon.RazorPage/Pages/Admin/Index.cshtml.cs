@@ -18,7 +18,7 @@ public class StaffManagementModel : PageModel
 
     public BasePaginatedList<AppUserModelView> StaffList { get; set; }
     
-    public async Task<IActionResult> OnGetAsync(int pageNumber = 1, int pageSize = 5, string? id = null, string? name = null)
+    public async Task<IActionResult> OnGetAsync(int pageNumber = 1, int pageSize = 5, string? id = null, string? username = null)
     {
         // Check user roles from session
         var userRolesJson = HttpContext.Session.GetString("UserRoles");
@@ -37,11 +37,11 @@ public class StaffManagementModel : PageModel
 
         // If authorized, retrieve staff data with pagination and optional filters
         
-        StaffList = await _userService.GetAllAppUserAsync(id, pageNumber, pageSize);
+        StaffList = await _userService.GetAllAppUserAsync(id, pageNumber, pageSize, username);
         if (!userRoles.Any(role => role == "Admin" || role == "Manager"))
         {
             id = HttpContext.Session.GetString("UserId");
-            StaffList = await _userService.GetAllAppUserAsync(id, pageNumber, pageSize);
+            StaffList = await _userService.GetAllAppUserAsync(id, pageNumber, pageSize, username);
         }
         else
         {
