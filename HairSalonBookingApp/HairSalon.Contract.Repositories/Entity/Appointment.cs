@@ -32,7 +32,7 @@ namespace HairSalon.Contract.Repositories.Entity
 		public DateTime AppointmentDate { get; set; }
 
 		public bool EmailSent { get; set; } = false;
-
+		public bool PhoneSent { get; set; } = false;
         public string? PromotionId { get; set; }
 
         [ForeignKey("PromotionId")]
