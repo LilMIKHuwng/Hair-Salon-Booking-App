@@ -4,6 +4,7 @@ using HairSalonBE.API;
 using Microsoft.OpenApi.Models;
 using HairSalon.ModelViews.Message;
 using HairSalon.Services.SignalIR;
+using HairSalon.Contract.Services.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,7 @@ builder.Configuration
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
+builder.Services.AddHttpClient();
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<IDictionary<string, UserRoomConnection>>(opt =>
@@ -37,7 +39,8 @@ builder.Services.AddSwaggerGen(option =>
         BearerFormat = "JWT",
         Scheme = "Bearer"
     });
-    option.AddSecurityRequirement(new OpenApiSecurityRequirement
+
+	option.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
@@ -55,13 +58,13 @@ builder.Services.AddSwaggerGen(option =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder =>
-    {
-        builder.WithOrigins("http://localhost:4200")
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
-    });
+	options.AddDefaultPolicy(builder =>
+	{
+		builder.WithOrigins("http://localhost:4200")
+			.AllowAnyHeader()
+			.AllowAnyMethod()
+			.AllowCredentials();
+	});
 });
 
 
@@ -82,10 +85,34 @@ app.UseSwaggerUI();
 app.UseCors();
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapHub<ChatHub>("/chat");
 
 app.MapControllers();
+
+// Run the email task in a background thread
+Task.Run(async () =>
+{
+    using var scope = app.Services.CreateScope();
+    var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
+
+    while (true)
+    {
+        try
+        {
+            await emailService.SendEmailToConfirmDateAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error during email sending: {ex.Message}");
+        }
+
+        // Wait for 24 hours before sending the next batch of emails
+        await Task.Delay(TimeSpan.FromHours(12));
+    }
+});
 
 app.Run();

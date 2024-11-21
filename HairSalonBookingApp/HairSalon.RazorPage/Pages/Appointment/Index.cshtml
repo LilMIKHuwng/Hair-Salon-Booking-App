@@ -196,6 +196,70 @@
 		font-weight: bold;
 	}
 
+
+	.sort-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		background-color: #3f51b5;
+		color: white;
+		border: none;
+		padding: 5px 8px;
+		border-radius: 5px;
+		font-size: 12px;
+		cursor: pointer;
+		transition: background-color 0.3s ease;
+		margin-left: 5px;
+	}
+
+		.sort-btn:hover {
+			background-color: #2c3e91;
+		}
+
+	.sort-arrows {
+		font-size: 12px;
+	}
+
+	.sort-btn.active {
+		background-color: #ff9800;
+		color: #fff;
+	}
+
+	.search-form {
+		display: flex;
+		align-items: center;
+		margin-bottom: 20px;
+		gap: 10px;
+	}
+
+	.search-input {
+		padding: 8px;
+		border: 1px solid #ddd;
+		border-radius: 5px;
+		width: 250px;
+		font-size: 14px;
+	}
+
+	.btn-search {
+		padding: 8px 15px;
+		background-color: #3f51b5;
+		color: white;
+		border: none;
+		border-radius: 5px;
+		cursor: pointer;
+		font-size: 14px;
+	}
+
+		.btn-search:hover {
+			background-color: #2c3e91;
+		}
+
+	.search-add-container {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 20px;
+	}
 </style>
 
 @if (TempData["ErrorMessage"] != null)
@@ -206,7 +270,18 @@ else
 {
 	<h2>@ViewData["Title"]</h2>
 
-	<a asp-page="/Appointment/Create" class="btn">Add New Appointment</a>
+	<div class="search-add-container">
+		<a asp-page="/Appointment/Create" class="btn">Add New Appointment</a>
+
+		<form method="get" class="search-form" id="searchForm">
+			<select asp-for="StatusForAppointment" class="search-input" onchange="this.form.submit()">
+				<option value="">All Status</option>
+				<option value="Scheduled">Scheduled</option>
+				<option value="Confirmed">Confirmed</option>
+				<option value="Completed">Completed</option>
+			</select>
+		</form>
+	</div>
 
 	<h3>Appointment List</h3>
 
@@ -220,13 +295,48 @@ else
 		<table>
 			<thead>
 				<tr>
-					<th>Appointment ID</th>
-					<th>User</th>
-					<th>Status</th>
-					<th>Points Earned</th>
-					<th>Total Time (min)</th>
-					<th>Total Amount</th>
-					<th>Date</th>
+					<th>
+						Appointment ID
+						<button class="sort-btn" data-sort="id">
+							<span class="sort-arrows">▲▼</span>
+						</button>
+					</th>
+					<th>
+						User
+						<button class="sort-btn" data-sort="user">
+							<span class="sort-arrows">▲▼</span>
+						</button>
+					</th>
+					<th>
+						Status
+						<button class="sort-btn" data-sort="status">
+							<span class="sort-arrows">▲▼</span>
+						</button>
+					</th>
+					<th>
+						Points Earned
+						<button class="sort-btn" data-sort="points">
+							<span class="sort-arrows">▲▼</span>
+						</button>
+					</th>
+					<th>
+						Total Time (min)
+						<button class="sort-btn" data-sort="time">
+							<span class="sort-arrows">▲▼</span>
+						</button>
+					</th>
+					<th>
+						Total Amount
+						<button class="sort-btn" data-sort="amount">
+							<span class="sort-arrows">▲▼</span>
+						</button>
+					</th>
+					<th>
+						Date
+						<button class="sort-btn" data-sort="date">
+							<span class="sort-arrows">▲▼</span>
+						</button>
+					</th>
 					<th>Actions</th>
 				</tr>
 			</thead>
@@ -297,5 +407,65 @@ else
 		<div class="alert alert-info text-center">No appointments available.</div>
 	}
 }
+
+<script>
+	document.addEventListener("DOMContentLoaded", () => {
+		const tableBody = document.querySelector("table tbody");
+
+		const getRows = () => Array.from(tableBody.querySelectorAll("tr"));
+
+		const sortTable = (columnIndex, order) => {
+			const rows = getRows();
+			const sortedRows = rows.sort((a, b) => {
+				const aText = a.children[columnIndex].innerText.trim();
+				const bText = b.children[columnIndex].innerText.trim();
+
+				// Custom sorting for numeric or date fields
+				if (columnIndex === 6) { // Date column
+					const aDate = new Date(aText);
+					const bDate = new Date(bText);
+					return order === "asc" ? aDate - bDate : bDate - aDate;
+				} else if (!isNaN(aText) && !isNaN(bText)) {
+					// Numeric sorting
+					return order === "asc" ? aText - bText : bText - aText;
+				} else {
+					// Textual sorting
+					return order === "asc"
+						? aText.localeCompare(bText, undefined, { numeric: true })
+						: bText.localeCompare(aText, undefined, { numeric: true });
+				}
+			});
+
+			sortedRows.forEach(row => tableBody.appendChild(row));
+		};
+
+		document.querySelectorAll(".sort-btn").forEach(button => {
+			button.addEventListener("click", () => {
+				const column = button.dataset.sort;
+				let columnIndex = 0;
+
+				// Match column index with data-sort attribute
+				switch (column) {
+					case "id": columnIndex = 0; break;
+					case "user": columnIndex = 1; break;
+					case "status": columnIndex = 2; break;
+					case "points": columnIndex = 3; break;
+					case "time": columnIndex = 4; break;
+					case "amount": columnIndex = 5; break;
+					case "date": columnIndex = 6; break;
+				}
+
+				const isActive = button.classList.contains("active-asc");
+				const order = isActive ? "desc" : "asc";
+
+				// Toggle active class for sorting direction
+				document.querySelectorAll(".sort-btn").forEach(btn => btn.classList.remove("active-asc", "active-desc"));
+				button.classList.add(order === "asc" ? "active-asc" : "active-desc");
+
+				sortTable(columnIndex, order);
+			});
+		});
+	});
+</script>
 
 

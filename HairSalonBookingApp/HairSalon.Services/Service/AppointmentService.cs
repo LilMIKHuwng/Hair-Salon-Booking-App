@@ -839,9 +839,8 @@ namespace HairSalon.Services.Service
 
         public async Task<List<AppointmentModelView>> GetAppointmentsForDropdownAsync()
         {
-            // L?y t?t c? appointments t? repository
             var appointments = await _unitOfWork.GetRepository<Appointment>().Entities
-                .Where(a => !a.DeletedTime.HasValue) // Ch? l?y các appointment ch?a b? xóa
+                .Where(a => !a.DeletedTime.HasValue) 
                 .ToListAsync();
 
             if (appointments == null || !appointments.Any())
@@ -849,7 +848,6 @@ namespace HairSalon.Services.Service
                 return new List<AppointmentModelView>();
             }
 
-            // Chuy?n ??i sang AppointmentModelView
             return _mapper.Map<List<AppointmentModelView>>(appointments);
         }
         public async Task<List<AppointmentModelView>> GetAppointmentsByUserIdAsync(string userId)
@@ -875,6 +873,5 @@ namespace HairSalon.Services.Service
             // Map the results to AppointmentModelView
             return _mapper.Map<List<AppointmentModelView>>(appointments);
         }
-
     }
 }
