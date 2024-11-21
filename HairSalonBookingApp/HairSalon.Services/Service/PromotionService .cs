@@ -141,7 +141,7 @@ namespace HairSalon.Services.Service
             return "Promotion successfully updated";
         }
 
-        // Xóa mềm khuyến mãi
+        // Xóa khuyến mãi
         public async Task<string> DeletePromotionAsync(string id, string? userId)
         {
             if (string.IsNullOrWhiteSpace(id))
