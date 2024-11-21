@@ -13,6 +13,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Net.payOS;
 using StackExchange.Redis;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 
 namespace HairSalonBE.API
 {
@@ -30,7 +32,26 @@ namespace HairSalonBE.API
 			services.AddInfrastructure(configuration);
 			services.AddServices();
 			services.ConfigJwt(configuration);
-			services.ConfigureRedis(configuration); 
+			services.ConfigureRedis(configuration);
+
+			services.AddAuthentication(options =>
+			{
+				options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+				options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+			})
+			.AddCookie(options =>
+			{
+				options.Cookie.HttpOnly = true;
+				options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+				options.Cookie.SameSite = SameSiteMode.Lax;
+			})
+			.AddGoogle(options =>
+			{
+				options.ClientId = configuration["Authentication:Google:ClientId"];
+				options.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+			});
+
+
 			services.Configure<CookiePolicyOptions>(options =>
 			{
 				options.CheckConsentNeeded = context => true;
@@ -94,6 +115,7 @@ namespace HairSalonBE.API
 				.AddScoped<ICacheService, RedisCacheService>()
 				.AddScoped<IPayOSService, PayOSService>()
 				.AddScoped<ISmsService, SmsService>()
+				.AddScoped<IGoogleLoginService, GoogleLoginService>()
 				.AddSignalR();
 		}
 
