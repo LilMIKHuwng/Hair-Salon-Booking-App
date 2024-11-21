@@ -77,7 +77,7 @@ namespace HairSalonBE.API.Controllers
         /// </summary>
         [HttpPut("mark-confirmed/{id}")]
         [Authorize(Roles = "Admin,Manager")]
-        public async Task<IActionResult> MarkAppointmentConfirmed(string id, [FromQuery] MarkConfirmedModelView model)
+        public async Task<IActionResult> MarkAppointmentConfirmed(string id)
         {
             // Lấy userId từ JWT token (nếu cần)
             var userId = User.FindFirst("userId")?.Value;

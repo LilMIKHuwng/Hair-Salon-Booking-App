@@ -218,6 +218,12 @@ namespace HairSalon.Services.Service
                     return $"The total amount ({newAppointment.TotalAmount}) does not meet the minimum requirement for the promotion '{promotion.Name}' ({promotion.TotalAmount}).";
                 }
 
+                // Check if the promotion's quantity is zero or less
+                if (promotion.Quantity.HasValue && promotion.Quantity <= 0)
+                {
+                    return $"Promotion with ID: {model.PromotionsId} is out of stock.";
+                }
+
                 // If the appointment qualifies, apply the promotion
                 newAppointment.PromotionId = promotion.Id;
             }
