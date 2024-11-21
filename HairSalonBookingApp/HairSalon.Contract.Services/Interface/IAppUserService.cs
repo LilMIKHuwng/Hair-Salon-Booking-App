@@ -23,5 +23,6 @@ namespace HairSalon.Contract.Services.Interface
         Task<List<AppUserModelView>> GetAllStylistAsync();
         Task<List<AppUserModelView>> GetUsersByRoleAsync(string roleName);
         Task<AppUserModelView?> GetUserByIdAsync(string id);
+        Task<AppUserModelView> GetUserByEmailAsync(string email);
     }
 }
