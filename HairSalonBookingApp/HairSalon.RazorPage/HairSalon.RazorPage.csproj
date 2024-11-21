@@ -7,9 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Pages\PayOS\**" />
     <Compile Remove="wwwroot\css\Dashboard\**" />
+    <Content Remove="Pages\PayOS\**" />
     <Content Remove="wwwroot\css\Dashboard\**" />
+    <EmbeddedResource Remove="Pages\PayOS\**" />
     <EmbeddedResource Remove="wwwroot\css\Dashboard\**" />
+    <None Remove="Pages\PayOS\**" />
     <None Remove="wwwroot\css\Dashboard\**" />
   </ItemGroup>
 

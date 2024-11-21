@@ -30,8 +30,16 @@ namespace HairSalon.Contract.Repositories.Entity
 
 		[Required]
 		public DateTime AppointmentDate { get; set; }
-		
-		public virtual ICollection<ServiceAppointment>? ServiceAppointments { get; set; }
+
+		public bool EmailSent { get; set; } = false;
+		public bool PhoneSent { get; set; } = false;
+        public string? PromotionId { get; set; }
+
+        [ForeignKey("PromotionId")]
+
+        public virtual Promotion? Promotion { get; set; }
+
+        public virtual ICollection<ServiceAppointment>? ServiceAppointments { get; set; }
 		public virtual ICollection<ComboAppointment>? ComboAppointments { get; set; }
 
 		public virtual Payment? Payment { get; set; }

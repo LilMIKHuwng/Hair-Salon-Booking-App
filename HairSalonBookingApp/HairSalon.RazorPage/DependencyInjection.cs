@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Net.payOS;
 
 namespace HairSalonBE.API
 {
@@ -16,6 +17,10 @@ namespace HairSalonBE.API
     {
         public static void AddConfig(this IServiceCollection services, IConfiguration configuration)
         {
+            PayOS payOS = new PayOS(configuration["PayOS:PAYOS_CLIENT_ID"] ?? throw new Exception("Cannot find environment"),
+                configuration["PayOS:PAYOS_API_KEY"] ?? throw new Exception("Cannot find environment"),
+                configuration["PayOS:PAYOS_CHECKSUM_KEY"] ?? throw new Exception("Cannot find environment"));
+            services.AddSingleton(payOS);
             services.ConfigRoute();
             services.AddDatabase(configuration);
             services.AddIdentity();
@@ -79,7 +84,9 @@ namespace HairSalonBE.API
                 .AddScoped<IFeedbackService, FeedbackService>()
                 .AddScoped<IVnPayService, VnPayService>()
                 .AddScoped<IComboService, ComboService>()
-                .AddScoped<IDashboardService, DashboardService>();
+                .AddScoped<IDashboardService, DashboardService>()
+                .AddScoped<IPayOSService, PayOSService>()
+                ;
         }
 
         public static void ConfigJwt(this IServiceCollection services, IConfiguration configuration)

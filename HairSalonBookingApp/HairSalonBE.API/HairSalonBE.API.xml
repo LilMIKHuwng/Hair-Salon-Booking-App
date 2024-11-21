@@ -289,5 +289,10 @@
             	Xóa shop
             </summary>
         </member>
+        <member name="M:HairSalonBE.API.Controllers.SmsController.SendSMSAsync(System.String)">
+            <summary>
+                Gửi thông báo lịch hẹn qua SMS
+            </summary>
+        </member>
     </members>
 </doc>

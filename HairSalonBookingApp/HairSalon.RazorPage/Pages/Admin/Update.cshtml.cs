@@ -51,7 +51,7 @@ public class Update : PageModel
 		}
 
 
-		var result = await _userService.GetAllAppUserAsync(Id, 1, 1);
+		var result = await _userService.GetAllAppUserAsync(Id, 1, 1, null);
 		var userInfo = await _userService.GetMyInforUsersAsync(result.Items.FirstOrDefault(x => x.Id == Id).UserName);
 
 		if (userInfo == null)
