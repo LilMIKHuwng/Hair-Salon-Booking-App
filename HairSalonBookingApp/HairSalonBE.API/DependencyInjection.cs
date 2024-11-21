@@ -114,6 +114,7 @@ namespace HairSalonBE.API
 				.AddScoped<IDashboardService, DashboardService>()
 				.AddScoped<ICacheService, RedisCacheService>()
 				.AddScoped<IPayOSService, PayOSService>()
+                .AddScoped<IPromotionService, PromotionService>()
 				.AddScoped<ISmsService, SmsService>()
 				.AddScoped<IGoogleLoginService, GoogleLoginService>()
 				.AddSignalR();
