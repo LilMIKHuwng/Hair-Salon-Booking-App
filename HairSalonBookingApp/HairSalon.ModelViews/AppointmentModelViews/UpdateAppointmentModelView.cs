@@ -11,5 +11,7 @@ namespace HairSalon.ModelViews.AppointmentModelViews
         [Range(0, int.MaxValue, ErrorMessage = "PointsEarned must be a positive number.")]
         public int? PointsEarned { get; set; }
         public DateTime? AppointmentDate { get; set; }
+        public string? PromotionId { get; set; } // For applying promotions
+        public string? PromotionIdToRemove { get; set; } // For removing promotions
     }
 }

@@ -204,6 +204,26 @@
                 Lấy tất cả thông tin payment by userId
             </summary>
         </member>
+        <member name="M:HairSalonBE.API.Controllers.PromotionController.CreatePromotion(HairSalon.ModelViews.PromotionModelViews.CreatePromotionModelView)">
+            <summary>
+                Create a new promotion
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.PromotionController.GetAllPromotions(System.Int32,System.Int32,System.String,System.String)">
+            <summary>
+                Get all promotions with pagination
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.PromotionController.UpdatePromotion(System.String,HairSalon.ModelViews.PromotionModelViews.UpdatePromotionModelView)">
+            <summary>
+                Update an existing promotion
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.PromotionController.DeletePromotion(System.String)">
+            <summary>
+                Delete a promotion
+            </summary>
+        </member>
         <member name="M:HairSalonBE.API.Controllers.RoleController.GetAllRoles(System.String,System.String,System.Int32,System.Int32)">
             <summary>
                 Get all roles with pagination and optional filters
