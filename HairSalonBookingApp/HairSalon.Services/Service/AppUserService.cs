@@ -633,6 +633,7 @@ namespace HairSalon.Services.Service
             {
                 Id = appUser.Id,
                 UserName = appUser.UserName,
+                UserImage = appUser.UserImage,
                 Email = appUser.Email,
                 PhoneNumber = appUser.PhoneNumber,
                 FirstName = appUser.UserInfo?.Firstname,
