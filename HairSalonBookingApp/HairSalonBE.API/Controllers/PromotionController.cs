@@ -63,21 +63,5 @@ namespace HairSalonBE.API.Controllers
             string result = await _promotionService.DeletePromotionAsync(promotionId, null);
             return Ok(result);
         }
-
-        /// <summary>
-        ///     Get promotion details by ID
-        /// </summary>
-        [HttpGet("details/{promotionId}")]
-        public async Task<ActionResult<PromotionModelView>> GetPromotionDetails(string promotionId)
-        {
-            var result = await _promotionService.GetPromotionByIdAsync(promotionId);
-
-            if (result == null)
-            {
-                return NotFound("Promotion not found");
-            }
-
-            return Ok(result);
-        }
     }
 }

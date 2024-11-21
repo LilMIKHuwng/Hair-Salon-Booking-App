@@ -79,7 +79,7 @@
                 Thay đổi trạng thái "thành công" của lịch hẹn
             </summary>
         </member>
-        <member name="M:HairSalonBE.API.Controllers.AppointmentController.MarkAppointmentConfirmed(System.String,HairSalon.ModelViews.AppointmentModelViews.MarkConfirmedModelView)">
+        <member name="M:HairSalonBE.API.Controllers.AppointmentController.MarkAppointmentConfirmed(System.String)">
             <summary>
                 Thay đổi trạng thái "xác nhận" của lịch hẹn
             </summary>
@@ -222,11 +222,6 @@
         <member name="M:HairSalonBE.API.Controllers.PromotionController.DeletePromotion(System.String)">
             <summary>
                 Delete a promotion
-            </summary>
-        </member>
-        <member name="M:HairSalonBE.API.Controllers.PromotionController.GetPromotionDetails(System.String)">
-            <summary>
-                Get promotion details by ID
             </summary>
         </member>
         <member name="M:HairSalonBE.API.Controllers.RoleController.GetAllRoles(System.String,System.String,System.Int32,System.Int32)">
