@@ -61,7 +61,7 @@ namespace HairSalon.RazorPage.Pages.Payment
                 ResponseCode = Request.Query["vnp_ResponseCode"],
                 TransactionNo = Request.Query["vnp_TransactionNo"],
                 TransactionStatus = Request.Query["vnp_TransactionStatus"],
-                Method = "VnPay",
+                Method = Request.Query["method"] == "" ? "VnPay" : Request.Query["method"],
                 PaymentTime = DateTime.ParseExact(Request.Query["vnp_PayDate"], "yyyyMMddHHmmss", CultureInfo.InvariantCulture) // You can parse the date correctly
             };
 

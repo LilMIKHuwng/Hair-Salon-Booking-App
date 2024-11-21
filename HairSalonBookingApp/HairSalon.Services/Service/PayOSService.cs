@@ -26,7 +26,7 @@ public class PayOSService(PayOS payOs, IHttpContextAccessor httpContextAccessor,
             ItemData item = new ItemData(appoinment.Id, 1, (int)appoinment.TotalAmount);
             List<ItemData> items = new List<ItemData>();
             items.Add(item);
-            PaymentData paymentData = new PaymentData(orderCode, (int)appoinment.TotalAmount, "Thanh toan cat toc", items, configuration["VnPay:ReturnUrl"], configuration["VnPay:ReturnUrl"]);
+            PaymentData paymentData = new PaymentData(orderCode, (int)appoinment.TotalAmount, "Thanh toan cat toc", items, configuration["PayOS:ReturnUrl"], configuration["PayOS:ReturnUrl"]);
 
             CreatePaymentResult createPayment = await payOs.createPaymentLink(paymentData);
 
@@ -38,5 +38,10 @@ public class PayOSService(PayOS payOs, IHttpContextAccessor httpContextAccessor,
             return null;
         }
     }
-   
+
+    public async Task<PaymentLinkInformation> GetInformationPayment(long orderCode)
+    {
+        return await payOs.getPaymentLinkInformation(orderCode);
+
+    }
 }

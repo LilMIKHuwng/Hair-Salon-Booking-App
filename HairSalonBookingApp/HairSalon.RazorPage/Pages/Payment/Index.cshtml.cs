@@ -16,11 +16,14 @@ namespace HairSalon.RazorPage.Pages.Payment
             _paymentService = paymentService;
         }
 
+        [BindProperty(SupportsGet = true)]
+        public string? PaymentMethod { get; set; }
+
         public bool IsAdmin { get; set; }
 
         public BasePaginatedList<PaymentModelView> Payment { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int pageNumber = 1, int pageSize = 5, string? id = null, string? appointmentId = null, string? paymentMethod = null)
+        public async Task<IActionResult> OnGetAsync(int pageNumber = 1, int pageSize = 5, string? id = null, string? appointmentId = null)
         {
             var userRolesJson = HttpContext.Session.GetString("UserRoles");
 
@@ -33,7 +36,7 @@ namespace HairSalon.RazorPage.Pages.Payment
                 {
                     IsAdmin = true;
                     // If the user is an Admin, retrieve all payments with filters
-                    Payment = await _paymentService.GetAllPaymentAsync(pageNumber, pageSize, id, appointmentId, paymentMethod);
+                    Payment = await _paymentService.GetAllPaymentAsync(pageNumber, pageSize, id, appointmentId, PaymentMethod);
                     return Page();
                 }
                 var userID = HttpContext.Session.GetString("UserId");
