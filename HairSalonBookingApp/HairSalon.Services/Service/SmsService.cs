@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Firebase.Auth;
 using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
@@ -43,7 +44,7 @@ namespace HairSalon.Services.Service
 				return "The appointment date is not for tomorrow.";
 			}
 
-			return await SendSmsToUser(phoneNumber);
+			return await SendSmsToUser(phoneNumber, appointment.AppointmentDate, user.UserName);
 		}
 
 		private async Task<ApplicationUsers> GetUserByPhoneNumber(string phoneNumber)
@@ -69,11 +70,17 @@ namespace HairSalon.Services.Service
 			return appointmentDate.Date == DateTime.Today.AddDays(1).Date;
 		}
 
-		private async Task<string> SendSmsToUser(string phoneNumber)
+		private async Task<string> SendSmsToUser(string phoneNumber, DateTime appointmentDate, string username)
 		{
 			string apiKey = _configuration["Esms:ApiKey"];
 			string secretKey = _configuration["Esms:SecretKey"];
-			string content = "Your appointment is scheduled for tomorrow. Please remember to be on time!";
+			string content = "" +
+				$"Dear {username}" +
+				$"This is a friendly reminder that you have an appointment scheduled on " +
+				$"{appointmentDate:dddd, MMMM d, yyyy} at {appointmentDate:hh:mm tt}.\n\n" +
+				$"Please contact us if you have any questions or need to reschedule.\n\n" +
+				$"Thank you!";
+
 			string smsType = "4"; // Type of SMS (appointment reminder)
 
 			if (string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(secretKey))

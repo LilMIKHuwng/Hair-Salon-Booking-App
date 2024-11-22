@@ -119,6 +119,41 @@ namespace HairSalon.Services.Service
                 throw new InvalidOperationException("Error sending email", ex);
             }
         }
-    }
 
+        public async Task SendEmailExternalAsync(string email, string subject, string htmlMessage)
+        {
+            var smtpConfig = _configuration.GetSection("Smtp");
+            var smtpHost = smtpConfig["Host"];
+            var smtpPort = int.Parse(smtpConfig["Port"]);
+            var smtpEnableSsl = bool.Parse(smtpConfig["EnableSsl"]);
+            var smtpUsername = smtpConfig["Username"];
+            var smtpPassword = smtpConfig["Password"];
+
+            using var smtpClient = new SmtpClient(smtpHost)
+            {
+                Port = smtpPort,
+                Credentials = new NetworkCredential(smtpUsername, smtpPassword),
+                EnableSsl = smtpEnableSsl,
+            };
+
+            var mailMessage = new MailMessage
+            {
+                From = new MailAddress(smtpUsername),
+                Subject = subject,
+                Body = htmlMessage,
+                IsBodyHtml = true // Allow HTML in the email body
+            };
+
+            mailMessage.To.Add(email);
+
+            try
+            {
+                await smtpClient.SendMailAsync(mailMessage);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Error sending email externally", ex);
+            }
+        }
+    }
 }
