@@ -823,6 +823,10 @@ namespace HairSalon.Services.Service
 
             // Map the Appointment entity to a AppointmentModelView and return it
             AppointmentModelView appointmentModelView = _mapper.Map<AppointmentModelView>(appointmentEntity);
+
+            var user = await _unitOfWork.GetRepository<ApplicationUsers>().GetByIdAsync(Guid.Parse(appointmentModelView.UserId));
+            appointmentModelView.UserName = user.UserName;
+ 
             return appointmentModelView;
         }
 

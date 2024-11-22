@@ -118,12 +118,7 @@ else
     <h2>@ViewData["Title"]</h2>
 
     <form method="post">
-        <!-- Hidden field for required Id -->
         <input type="hidden" asp-for="Id" />
-        <div>
-            <label>Service ID:</label>
-            <p>@Model.Id</p> <!-- Display ID as non-editable text -->
-        </div>
         <div>
             <label asp-for="UpdatedService.Name">Service Name:</label>
             <!-- Display Service.Name in the input -->

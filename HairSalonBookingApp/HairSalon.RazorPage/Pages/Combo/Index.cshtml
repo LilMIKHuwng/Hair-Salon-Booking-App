@@ -252,12 +252,6 @@ else
             <thead>
                 <tr>
                     <th>
-                        Combo ID
-                        <button class="sort-btn" data-sort="id">
-                            <span class="sort-arrows">▲▼</span>
-                        </button>
-                    </th>
-                    <th>
                         Combo Name
                         <button class="sort-btn" data-sort="name">
                             <span class="sort-arrows">▲▼</span>
@@ -270,7 +264,6 @@ else
                 @foreach (var combo in Model.Combos.Items)
                 {
                     <tr>
-                        <td>@combo.Id</td>
                         <td>@combo.Name</td>
                         <td>
                             <!-- Form Update -->
@@ -341,7 +334,7 @@ else
         document.querySelectorAll(".sort-btn").forEach(button => {
             button.addEventListener("click", () => {
                 const column = button.dataset.sort;
-                const columnIndex = column === "id" ? 0 : 1;
+                const columnIndex = column === "name" ? 0 : 1;
 
                 const isActive = button.classList.contains("active-asc");
                 const order = isActive ? "desc" : "asc";

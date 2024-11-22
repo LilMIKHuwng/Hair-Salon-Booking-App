@@ -230,12 +230,6 @@ else
 			<thead>
 				<tr>
 					<th>
-						Role ID
-						<button class="sort-btn" data-sort="id">
-							<span class="sort-arrows">▲▼</span>
-						</button>
-					</th>
-					<th>
 						Role Name
 						<button class="sort-btn" data-sort="name">
 							<span class="sort-arrows">▲▼</span>
@@ -248,7 +242,6 @@ else
 				@foreach (var role in Model.Roles.Items)
 				{
 					<tr>
-						<td>@role.Id</td>
 						<td>@role.Name</td>
 						<td>
 							<!-- Form Update -->
@@ -318,7 +311,7 @@ else
 		document.querySelectorAll(".sort-btn").forEach(button => {
 			button.addEventListener("click", () => {
 				const column = button.dataset.sort;
-				const columnIndex = column === "id" ? 0 : 1;
+				const columnIndex = column === "name" ? 0 : 1;
 
 				const isActive = button.classList.contains("active-asc");
 				const order = isActive ? "desc" : "asc";
