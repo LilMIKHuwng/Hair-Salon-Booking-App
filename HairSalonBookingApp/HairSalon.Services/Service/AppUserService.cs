@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using System.Text.RegularExpressions;
 
 namespace HairSalon.Services.Service
@@ -305,7 +306,7 @@ namespace HairSalon.Services.Service
             return "Deleted user successfully!";
         }
 
-        public async Task<BasePaginatedList<AppUserModelView>> GetAllAppUserAsync(string? userId, int pageNumber, int pageSize)
+        public async Task<BasePaginatedList<AppUserModelView>> GetAllAppUserAsync(string? userId, int pageNumber, int pageSize, string? username)
         {
             IQueryable<ApplicationUsers> roleQuery = _unitOfWork.GetRepository<ApplicationUsers>().Entities
                 .Where(p => !p.DeletedTime.HasValue);
@@ -314,6 +315,11 @@ namespace HairSalon.Services.Service
             if (!string.IsNullOrEmpty(userId))
             {
                 roleQuery = roleQuery.Where(u => u.Id.ToString() == userId);
+            }
+
+            if (!string.IsNullOrEmpty(username))
+            {
+                roleQuery = roleQuery.Where(u => u.UserName.Contains(username));
             }
 
             // Order by CreatedTime descending
@@ -627,6 +633,7 @@ namespace HairSalon.Services.Service
             {
                 Id = appUser.Id,
                 UserName = appUser.UserName,
+                UserImage = appUser.UserImage,
                 Email = appUser.Email,
                 PhoneNumber = appUser.PhoneNumber,
                 FirstName = appUser.UserInfo?.Firstname,
@@ -701,5 +708,28 @@ namespace HairSalon.Services.Service
             AppUserModelView userModelView = _mapper.Map<AppUserModelView>(userEntity);
             return userModelView;
         }
-    }
+
+		public async Task<AppUserModelView> GetUserByEmailAsync(string email)
+		{
+			// Check if the provided User email is valid (non-empty and non-whitespace)
+			if (string.IsNullOrWhiteSpace(email))
+			{
+				return null; // Or you could throw an exception or return an error message
+			}
+
+			// Try to find the user by ID, ensuring hasn’t been marked as deleted
+			var userEntity = await _unitOfWork.GetRepository<ApplicationUsers>().Entities
+				.FirstOrDefaultAsync(user => user.Email == email && !user.DeletedTime.HasValue);
+
+			// If the user is not found, return null
+			if (userEntity == null)
+			{
+				return null;
+			}
+
+			// Map the ApplicationRoles entity to a RoleModelView and return it
+			AppUserModelView userModelView = _mapper.Map<AppUserModelView>(userEntity);
+			return userModelView;
+		}
+	}
 }
