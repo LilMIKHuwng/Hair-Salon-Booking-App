@@ -263,6 +263,7 @@ else
                             <span class="sort-arrows">▲▼</span>
                         </button>
                     </th>
+                    <th>Image</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -273,22 +274,20 @@ else
                         <td>@combo.Id</td>
                         <td>@combo.Name</td>
                         <td>
-                            <!-- Form Update -->
+                            <img src="@combo.ComboImage" alt="Combo Image" style="max-width: 100px; height: auto;" />
+                        </td>
+                        <td>
                             <form method="post" asp-route-id="@combo.Id" asp-route-action="update" style="display:inline;">
                                 <button type="submit" class="btn-update">Update</button>
                             </form>
 
-                            <!-- Form Detail -->
                             <form method="post" asp-route-id="@combo.Id" asp-route-action="detail" style="display:inline;">
                                 <button type="submit" class="btn-detail">Detail</button>
                             </form>
 
-                            <!-- Form Delete -->
                             <form method="post" asp-route-id="@combo.Id" asp-route-action="delete" style="display:inline;">
                                 <button type="submit" class="btn-delete">Delete</button>
                             </form>
-
-                            @* <a asp-page="/Combo/Active" asp-route-id="@combo.Id" class="btn-active">Active</a> *@
                         </td>
                     </tr>
                 }
