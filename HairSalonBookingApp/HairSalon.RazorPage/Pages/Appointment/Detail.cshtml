@@ -104,7 +104,8 @@ else
                 <table>
                     <thead>
                         <tr>
-                                <th>Selected Services</th>
+                            <th>Selected Services</th>
+                            <th>Image</th>
                         </tr>
                     </thead>
 
@@ -115,6 +116,9 @@ else
                             {
                                 <tr>
                                     <td>@service.Name</td>
+                                    <td>
+                                        <img src="@service.ServiceImage" alt="Service Image" style="max-width: 100px; height: auto;" />
+                                    </td>
                                 </tr>
                             }
                         }
@@ -125,6 +129,7 @@ else
                     <thead>
                         <tr>
                             <th>Selected Combos</th>
+                            <th>Image</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -134,6 +139,9 @@ else
                             {
                                 <tr>
                                     <td>@combo.Name</td>
+                                    <td>
+                                        <img src="@combo.ComboImage" alt="Combo Image" style="max-width: 100px; height: auto;" />
+                                    </td>
                                 </tr>
                             }
                         }
