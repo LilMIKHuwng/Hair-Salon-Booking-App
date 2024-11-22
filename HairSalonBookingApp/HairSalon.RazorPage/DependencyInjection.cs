@@ -26,6 +26,7 @@ namespace HairSalonBE.API
             services.AddIdentity();
             services.AddInfrastructure(configuration);
             services.AddServices();
+            services.ConfigFacebookAuthentication(configuration);
             services.ConfigJwt(configuration);
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -87,6 +88,18 @@ namespace HairSalonBE.API
                 .AddScoped<IDashboardService, DashboardService>()
                 .AddScoped<IPayOSService, PayOSService>()
                 ;
+        }
+
+        public static void ConfigFacebookAuthentication(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddAuthentication()
+                .AddFacebook(facebookOptions =>
+                {
+                    var facebookAuthNSection = configuration.GetSection("Authentication:Facebook");
+                    facebookOptions.AppId = facebookAuthNSection["AppId"];
+                    facebookOptions.AppSecret = facebookAuthNSection["AppSecret"];
+                    facebookOptions.CallbackPath = "/signin-facebook";
+                });
         }
 
         public static void ConfigJwt(this IServiceCollection services, IConfiguration configuration)
