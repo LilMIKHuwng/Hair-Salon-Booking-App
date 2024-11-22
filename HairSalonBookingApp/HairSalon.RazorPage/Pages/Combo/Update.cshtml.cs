@@ -83,6 +83,7 @@ namespace HairSalon.RazorPage.Pages.Combo
 			var userId = HttpContext.Session.GetString("UserId");
 
 			var response = await _comboService.UpdateComboAsync(Id, UpdatedCombo, userId);
+
             if (response == "Combo successfully updated with services.")
             {
                 ResponseMessage = response;

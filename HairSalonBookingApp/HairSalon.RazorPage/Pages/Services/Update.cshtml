@@ -117,7 +117,8 @@ else
 {
     <h2>@ViewData["Title"]</h2>
 
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
+        <!-- Hidden field for required Id -->
         <input type="hidden" asp-for="Id" />
         <div>
             <label asp-for="UpdatedService.Name">Service Name:</label>
@@ -127,38 +128,39 @@ else
 
             <!-- Type -->
             <div class="form-group">
-            <label asp-for="UpdatedService.Type">Service Type:</label>
-            <input asp-for="UpdatedService.Type" placeholder="Service Type" required />
-            <span asp-validation-for="UpdatedService.Type" class="text-danger"></span>
+                <label asp-for="UpdatedService.Type">Service Type:</label>
+                <input asp-for="UpdatedService.Type" placeholder="Service Type" required />
+                <span asp-validation-for="UpdatedService.Type" class="text-danger"></span>
             </div>
 
             <!-- Price -->
             <div class="form-group">
-            <label asp-for="UpdatedService.Price">Service Price:</label>
-            <input asp-for="UpdatedService.Price" placeholder="Price" required type="number" step="0.01" />
-            <span asp-validation-for="UpdatedService.Price" class="text-danger"></span>
+                <label asp-for="UpdatedService.Price">Service Price:</label>
+                <input asp-for="UpdatedService.Price" placeholder="Price" required type="number" step="0.01" />
+                <span asp-validation-for="UpdatedService.Price" class="text-danger"></span>
             </div>
 
             <!-- Description -->
              <div class="form-group">
-            <label asp-for="UpdatedService.Description">Service Description:</label>
-            <textarea asp-for="UpdatedService.Description" placeholder="Description" required></textarea>
-            <span asp-validation-for="UpdatedService.Description" class="text-danger"></span>
+                <label asp-for="UpdatedService.Description">Service Description:</label>
+                <textarea asp-for="UpdatedService.Description" placeholder="Description" required></textarea>
+                <span asp-validation-for="UpdatedService.Description" class="text-danger"></span>
             </div>
 
             <!-- Duration -->
              <div class="form-group">
                 <label asp-for="UpdatedService.TimeService">Duration (in minutes):</label>
-            <input asp-for="UpdatedService.TimeService" placeholder="Duration (in minutes)" required type="number" />
-            <span asp-validation-for="UpdatedService.TimeService" class="text-danger"></span>
+                <input asp-for="UpdatedService.TimeService" placeholder="Duration (in minutes)" required type="number" />
+                <span asp-validation-for="UpdatedService.TimeService" class="text-danger"></span>
             </div>
 
             <!-- image -->
-              <div class="form-group">
-            <input asp-for="UpdatedService.ServiceImage" type="file" class="form-control" required aria-label="Service Image" />
-            <span asp-validation-for="UpdatedService.ServiceImage" class="text-danger"></span>
+            <div class="form-group">
+                <label asp-for="UpdatedService.ServiceImage">Service Image</label>
+                <input asp-for="UpdatedService.ServiceImage" type="file" class="form-control" required aria-label="Service Image" />
+                <span asp-validation-for="UpdatedService.ServiceImage" class="text-danger"></span>
             </div>
-            
+
         </div>
         <button type="submit">Save Changes</button>
         <a asp-page="/Services/Index" class="btn-cancel">Cancel</a>
