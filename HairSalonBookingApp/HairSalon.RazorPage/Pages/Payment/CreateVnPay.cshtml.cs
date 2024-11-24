@@ -75,7 +75,7 @@ namespace HairSalon.RazorPage.Pages.Payment
             {
                 // Execute the payment process
                 var userId = HttpContext.Session.GetString("UserId");
-                string response = await _paymentService.ExcutePayment(NewPayment, userId);
+                string response = await _paymentService.ExecutePayment(NewPayment, userId);
                 if (response == "Payment added successfully.")
                 {
                     ResponseMessage = response;

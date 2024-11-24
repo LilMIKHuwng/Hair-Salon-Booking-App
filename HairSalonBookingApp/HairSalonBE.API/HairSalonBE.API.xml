@@ -184,7 +184,7 @@
                 Xóa payment
             </summary>
         </member>
-        <member name="M:HairSalonBE.API.Controllers.PaymentController.Deposit(HairSalon.ModelViews.VnPayModelViews.VnPayDepositWalletRequestModelView)">
+        <member name="M:HairSalonBE.API.Controllers.PaymentController.Deposit(HairSalon.ModelViews.VnPayModelViews.PaymentRequestModelView)">
             <summary>
                 Tạo thông tin để nạp tiền vào ví
             </summary>
