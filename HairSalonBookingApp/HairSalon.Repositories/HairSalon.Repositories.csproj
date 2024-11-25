@@ -9,10 +9,13 @@
   <ItemGroup>
     <Compile Remove="Data\**" />
     <Compile Remove="data_access\**" />
+    <Compile Remove="Migrations\**" />
     <EmbeddedResource Remove="Data\**" />
     <EmbeddedResource Remove="data_access\**" />
+    <EmbeddedResource Remove="Migrations\**" />
     <None Remove="Data\**" />
     <None Remove="data_access\**" />
+    <None Remove="Migrations\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,10 +42,6 @@
   <ItemGroup>
     <ProjectReference Include="..\HairSalon.Contract.Repositories\HairSalon.Contract.Repositories.csproj" />
     <ProjectReference Include="..\HairSalon.ModelViews\HairSalon.ModelViews.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

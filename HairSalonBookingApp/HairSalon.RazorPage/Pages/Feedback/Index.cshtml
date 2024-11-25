@@ -188,14 +188,8 @@ else
             <thead>
                 <tr>
                     <th>
-                        Feedback ID
-                        <button class="sort-btn" data-sort="id">
-                            <span class="sort-arrows">▲▼</span>
-                        </button>
-                    </th>
-                    <th>
-                        Feedback Appointment
-                        <button class="sort-btn" data-sort="appointment">
+                        User Name
+                        <button class="sort-btn" data-sort="username">
                             <span class="sort-arrows">▲▼</span>
                         </button>
                     </th>
@@ -218,8 +212,7 @@ else
                 @foreach (var fb in Model.Feedback.Items)
                 {
                     <tr>
-                        <td>@fb.Id</td>
-                        <td>@fb.AppointmentId</td>
+                        <td>@fb.UserName</td>
                         <td>@fb.Rate</td>
                         <td>@fb.Comment</td>
                         <td>
@@ -296,10 +289,9 @@ else
                 let columnIndex = 0;
 
                 switch (column) {
-                    case "id": columnIndex = 0; break;
-                    case "appointment": columnIndex = 1; break;
-                    case "rate": columnIndex = 2; break;
-                    case "comment": columnIndex = 3; break;
+                    case "username": columnIndex = 0; break;
+                    case "rate": columnIndex = 1; break;
+                    case "comment": columnIndex = 2; break;
                 }
 
                 const isActive = button.classList.contains("active-asc");

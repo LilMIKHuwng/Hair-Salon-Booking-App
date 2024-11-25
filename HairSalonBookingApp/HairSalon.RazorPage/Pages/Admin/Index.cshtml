@@ -232,12 +232,6 @@ else
 			<thead>
 				<tr>
 					<th>
-						User ID
-						<button class="sort-btn" data-sort="id">
-							<span class="sort-arrows">▲▼</span>
-						</button>
-					</th>
-					<th>
 						User Name
 						<button class="sort-btn" data-sort="username">
 							<span class="sort-arrows">▲▼</span>
@@ -257,7 +251,6 @@ else
 				@foreach (var staff in Model.StaffList.Items)
 				{
 					<tr>
-						<td>@staff.Id</td>
 						<td>@staff.UserName</td>
 						<td>@staff.Email</td>
 						<td>@staff.PhoneNumber</td>
@@ -333,9 +326,8 @@ else
 				let columnIndex = 0;
 
 				switch (column) {
-					case "id": columnIndex = 0; break;
-					case "username": columnIndex = 1; break;
-					case "email": columnIndex = 2; break;
+					case "username": columnIndex = 0; break;
+					case "email": columnIndex = 1; break;
 				}
 
 				const isActive = button.classList.contains("active-asc");
