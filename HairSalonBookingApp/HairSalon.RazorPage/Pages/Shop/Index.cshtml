@@ -302,6 +302,7 @@ else
                             <span class="sort-arrows">▲▼</span>
                         </button>
                     </th>
+                    <th>Shop Image</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -315,6 +316,9 @@ else
                         <td>@shop.ShopPhone</td>
                         <td>@shop.ShopEmail</td>
                         <td>@shop.OpenTime - @shop.CloseTime</td>
+                        <td>
+                            <img src="@shop.ShopImage" alt="Shop Image" style="width: 100px; height: auto;" />
+                        </td>
                         <td>
                             <!-- Form Update -->
                             <form method="post" asp-route-id="@shop.Id" asp-route-action="update" style="display:inline;">
