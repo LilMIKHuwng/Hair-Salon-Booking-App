@@ -11,7 +11,6 @@ namespace HairSalon.RazorPage
 			builder.Services.AddHttpContextAccessor();
             // Add services to the container.
             builder.Services.AddRazorPages();
-			builder.Services.AddRazorPages();
             builder.Services.AddConfig(builder.Configuration);
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

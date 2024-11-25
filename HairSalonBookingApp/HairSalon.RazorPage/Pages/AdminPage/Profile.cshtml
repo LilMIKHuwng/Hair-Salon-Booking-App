@@ -8,6 +8,31 @@
 	.profile-button {
 		margin: 20px 0px 0px 80%;
 	}
+
+	.thumbnail {
+		width: 150px;
+		height: 150px;
+		border-radius: 50%;
+		cursor: pointer;  
+	}
+
+	.overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, 0.8); 
+		display: none;  
+		align-items: center;
+		justify-content: center;
+	}
+
+		.overlay img {
+			max-width: 80%; 
+			max-height: 80%;
+			border-radius: 10px;
+		}
 </style>
 
 @if (TempData["ErrorMessage"] != null)
@@ -20,7 +45,12 @@ else
 		<div>
 			<div>
 				<div>
-					<img width="150px" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg" alt="Profile Picture">
+					<img src="@Model.UserInfo.UserImage" alt="Ảnh đại diện" class="thumbnail" onclick="openOverlay()">
+
+					<div class="overlay" id="overlay" onclick="closeOverlay()">
+						<img src="@Model.UserInfo.UserImage" alt="Ảnh phóng to">
+					</div>
+
 					<span>@Model.UserInfo?.UserName</span>
 				</div>
 			</div>
@@ -54,18 +84,25 @@ else
 					<div>
 						<div>
 							<label class="labels"><strong>FirstName</strong></label>
-							<input type="text" class="form-control" value="@Model.UserInfo?.FirstName" placeholder="Enter FirstName">
+							<input type="text" class="form-control" value="@Model.UserInfo?.FirstName" placeholder="Enter FirstName" readonly>
 						</div>
 						<div>
 							<label class="labels"><strong>LastName</strong></label>
-							<input type="text" class="form-control" value="@Model.UserInfo?.LastName" placeholder="Enter LastName">
+							<input type="text" class="form-control" value="@Model.UserInfo?.LastName" placeholder="Enter LastName" readonly>
 						</div>
-					</div>
-					<div>
-						<button class="profile-button" type="button">Save Profile</button>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+
+	<script>
+		function openOverlay() {
+			document.getElementById("overlay").style.display = "flex";  // Hiện overlay khi nhấn vào ảnh
+		}
+
+		function closeOverlay() {
+			document.getElementById("overlay").style.display = "none";  // Đóng overlay khi nhấn ra ngoài
+		}
+	</script>
 }

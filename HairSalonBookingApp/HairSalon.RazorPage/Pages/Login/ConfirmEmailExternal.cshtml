@@ -1,0 +1,14 @@
+﻿@page
+@model HairSalon.RazorPage.Pages.Login.ConfirmEmailExternalModel
+@{
+    ViewData["Title"] = "Confirm Linked Email";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div>
+    @if (Model.StatusMessage != null)
+    {
+        <p class="text-success">@Model.StatusMessage</p>
+    }
+</div>

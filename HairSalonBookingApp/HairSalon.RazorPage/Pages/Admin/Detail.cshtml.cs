@@ -40,7 +40,7 @@ public class Detail : PageModel
             return RedirectToPage("/Error");
         }
 
-        var result = await _userService.GetAllAppUserAsync(Id, 1, 1);
+        var result = await _userService.GetAllAppUserAsync(Id, 1, 1, null);
         UserDetail  = await _userService.GetMyInforUsersAsync(result.Items.FirstOrDefault(x => true).UserName);
 
         if (UserDetail == null)

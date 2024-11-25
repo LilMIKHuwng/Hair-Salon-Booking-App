@@ -15,6 +15,7 @@ using HairSalon.ModelViews.FeedBackModeViews;
 using HairSalon.ModelViews.FeedbackModeViews;
 using HairSalon.ModelViews.ComboModelViews;
 using HairSalon.ModelViews.Message;
+using HairSalon.ModelViews.PromotionModelViews;
 
 namespace HairSalon.Repositories.Mapper
 {
@@ -98,7 +99,12 @@ namespace HairSalon.Repositories.Mapper
             CreateMap<Message, MessageViewModel>();
             CreateMap<Message, CreateMessageViewModel>();
             CreateMap<CreateMessageViewModel, Message>();
-            
+
+            CreateMap<Promotion, PromotionModelView>();
+            CreateMap<Promotion, CreatePromotionModelView>();
+            CreateMap<Promotion, UpdatePromotionModelView>();
+            CreateMap<CreatePromotionModelView, Promotion>();
+            CreateMap<UpdatePromotionModelView, Promotion>();
         }
     }
 }

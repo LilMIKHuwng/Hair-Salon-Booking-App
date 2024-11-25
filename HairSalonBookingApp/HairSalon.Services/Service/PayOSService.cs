@@ -17,16 +17,13 @@ public class PayOSService(PayOS payOs, IHttpContextAccessor httpContextAccessor,
 {
     public async Task<string> CreatePaymentLink(PaymentRequestModelView model)
     {
-        var appoinment = unitOfWork.GetRepository<Appointment>().Entities.FirstOrDefault(x => x.Id == model.AppoinmentId);
-        if (appoinment == null) return "Appointment not found.";
-        if (!string.Equals(appoinment.StatusForAppointment, "Completed")) return "Appointment has not been completed.";
         try
         {
             int orderCode = int.Parse(DateTimeOffset.Now.ToString("ffffff"));
-            ItemData item = new ItemData(appoinment.Id, 1, (int)appoinment.TotalAmount);
+            ItemData item = new ItemData(model.Information, 1, (int)model.Amount);
             List<ItemData> items = new List<ItemData>();
             items.Add(item);
-            PaymentData paymentData = new PaymentData(orderCode, (int)appoinment.TotalAmount, "Thanh toan cat toc", items, configuration["VnPay:ReturnUrl"], configuration["VnPay:ReturnUrl"]);
+            PaymentData paymentData = new PaymentData(orderCode, (int)model.Amount, "Thanh toan cat toc", items, configuration["PayOS:ReturnUrl"], configuration["PayOS:ReturnUrl"]);
 
             CreatePaymentResult createPayment = await payOs.createPaymentLink(paymentData);
 
@@ -38,5 +35,10 @@ public class PayOSService(PayOS payOs, IHttpContextAccessor httpContextAccessor,
             return null;
         }
     }
-   
+
+    public async Task<PaymentLinkInformation> GetInformationPayment(long orderCode)
+    {
+        return await payOs.getPaymentLinkInformation(orderCode);
+
+    }
 }

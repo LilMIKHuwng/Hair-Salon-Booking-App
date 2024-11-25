@@ -155,6 +155,70 @@
         margin-top: 20px;
         gap: 10px;
     }
+
+    .sort-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #3f51b5;
+        color: white;
+        border: none;
+        padding: 5px 8px;
+        border-radius: 5px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-left: 5px;
+    }
+
+        .sort-btn:hover {
+            background-color: #2c3e91;
+        }
+
+    .sort-arrows {
+        font-size: 12px;
+    }
+
+    .sort-btn.active {
+        background-color: #ff9800;
+        color: #fff;
+    }
+
+    .search-form {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        gap: 10px;
+    }
+
+    .search-input {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        width: 250px;
+        font-size: 14px;
+    }
+
+    .btn-search {
+        padding: 8px 15px;
+        background-color: #3f51b5;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+        .btn-search:hover {
+            background-color: #2c3e91;
+        }
+
+    .search-add-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
 </style>
 
 @if (TempData["ErrorMessage"] != null)
@@ -165,7 +229,15 @@ else
 {
     <h2>@ViewData["Title"]</h2>
 
-    <a asp-page="/Combo/Create" class="btn">Add New Combo</a>
+
+    <div class="search-add-container">
+        <a asp-page="/Combo/Create" class="btn">Add New Combo</a>
+
+        <form method="get" class="search-form">
+            <input type="text" name="name" value="@Request.Query["name"]" placeholder="Search by Combo Name" class="search-input" />
+            <button type="submit" class="btn-search">Search</button>
+        </form>
+    </div>
 
     <h3>Combo List</h3>
 
@@ -179,8 +251,13 @@ else
         <table>
             <thead>
                 <tr>
-                    <th>Combo ID</th>
-                    <th>Combo Name</th>
+                    <th>
+                        Combo Name
+                        <button class="sort-btn" data-sort="name">
+                            <span class="sort-arrows">▲▼</span>
+                        </button>
+                    </th>
+                    <th>Image</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -188,25 +265,22 @@ else
                 @foreach (var combo in Model.Combos.Items)
                 {
                     <tr>
-                        <td>@combo.Id</td>
                         <td>@combo.Name</td>
                         <td>
-                            <!-- Form Update -->
+                            <img src="@combo.ComboImage" alt="Combo Image" style="max-width: 100px; height: auto;" />
+                        </td>
+                        <td>
                             <form method="post" asp-route-id="@combo.Id" asp-route-action="update" style="display:inline;">
                                 <button type="submit" class="btn-update">Update</button>
                             </form>
 
-                            <!-- Form Detail -->
                             <form method="post" asp-route-id="@combo.Id" asp-route-action="detail" style="display:inline;">
                                 <button type="submit" class="btn-detail">Detail</button>
                             </form>
 
-                            <!-- Form Delete -->
                             <form method="post" asp-route-id="@combo.Id" asp-route-action="delete" style="display:inline;">
                                 <button type="submit" class="btn-delete">Delete</button>
                             </form>
-
-                            @* <a asp-page="/Combo/Active" asp-route-id="@combo.Id" class="btn-active">Active</a> *@
                         </td>
                     </tr>
                 }
@@ -233,3 +307,43 @@ else
         <div class="alert alert-info text-center">No combos available.</div>
     }
 }
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const tableBody = document.querySelector("table tbody");
+
+        const getRows = () => Array.from(tableBody.querySelectorAll("tr"));
+
+        const sortTable = (columnIndex, order) => {
+            const rows = getRows();
+            const sortedRows = rows.sort((a, b) => {
+                const aText = a.children[columnIndex].innerText.trim();
+                const bText = b.children[columnIndex].innerText.trim();
+
+                if (order === "asc") {
+                    return aText.localeCompare(bText, undefined, { numeric: true });
+                } else {
+                    return bText.localeCompare(aText, undefined, { numeric: true });
+                }
+            });
+
+            sortedRows.forEach(row => tableBody.appendChild(row));
+        };
+
+        document.querySelectorAll(".sort-btn").forEach(button => {
+            button.addEventListener("click", () => {
+                const column = button.dataset.sort;
+                const columnIndex = column === "name" ? 0 : 1;
+
+                const isActive = button.classList.contains("active-asc");
+                const order = isActive ? "desc" : "asc";
+
+                document.querySelectorAll(".sort-btn").forEach(btn => btn.classList.remove("active-asc", "active-desc"));
+
+                button.classList.add(order === "asc" ? "active-asc" : "active-desc");
+
+                sortTable(columnIndex, order);
+            });
+        });
+    });
+</script>

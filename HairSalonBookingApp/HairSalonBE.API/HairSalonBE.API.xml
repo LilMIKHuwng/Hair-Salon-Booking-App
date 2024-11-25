@@ -184,7 +184,7 @@
                 Xóa payment
             </summary>
         </member>
-        <member name="M:HairSalonBE.API.Controllers.PaymentController.Deposit(HairSalon.ModelViews.VnPayModelViews.VnPayDepositWalletRequestModelView)">
+        <member name="M:HairSalonBE.API.Controllers.PaymentController.Deposit(HairSalon.ModelViews.VnPayModelViews.PaymentRequestModelView)">
             <summary>
                 Tạo thông tin để nạp tiền vào ví
             </summary>
@@ -202,6 +202,26 @@
         <member name="M:HairSalonBE.API.Controllers.PaymentController.GetAllPaymentsByUserId(System.String,System.Int32,System.Int32)">
             <summary>
                 Lấy tất cả thông tin payment by userId
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.PromotionController.CreatePromotion(HairSalon.ModelViews.PromotionModelViews.CreatePromotionModelView)">
+            <summary>
+                Create a new promotion
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.PromotionController.GetAllPromotions(System.Int32,System.Int32,System.String,System.String)">
+            <summary>
+                Get all promotions with pagination
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.PromotionController.UpdatePromotion(System.String,HairSalon.ModelViews.PromotionModelViews.UpdatePromotionModelView)">
+            <summary>
+                Update an existing promotion
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.PromotionController.DeletePromotion(System.String)">
+            <summary>
+                Delete a promotion
             </summary>
         </member>
         <member name="M:HairSalonBE.API.Controllers.RoleController.GetAllRoles(System.String,System.String,System.Int32,System.Int32)">
@@ -287,6 +307,11 @@
         <member name="M:HairSalonBE.API.Controllers.ShopController.DeleteShop(System.String)">
             <summary>
             	Xóa shop
+            </summary>
+        </member>
+        <member name="M:HairSalonBE.API.Controllers.SmsController.SendSMSAsync(System.String)">
+            <summary>
+                Gửi thông báo lịch hẹn qua SMS
             </summary>
         </member>
     </members>

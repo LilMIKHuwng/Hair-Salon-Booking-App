@@ -134,6 +134,34 @@
         margin-top: 20px;
         gap: 10px;
     }
+
+    .sort-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #3f51b5;
+        color: white;
+        border: none;
+        padding: 5px 8px;
+        border-radius: 5px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-left: 5px;
+    }
+
+        .sort-btn:hover {
+            background-color: #2c3e91;
+        }
+
+    .sort-arrows {
+        font-size: 12px;
+    }
+
+    .sort-btn.active {
+        background-color: #ff9800;
+        color: #fff;
+    }
 </style>
 
 
@@ -159,19 +187,32 @@ else
         <table>
             <thead>
                 <tr>
-                    <th>Feedback ID</th>
-                    <th>Feedback Appointment</th>
-                    <th>Rate</th>
-                    <th>Comment</th>
+                    <th>
+                        User Name
+                        <button class="sort-btn" data-sort="username">
+                            <span class="sort-arrows">▲▼</span>
+                        </button>
+                    </th>
+                    <th>
+                        Rate
+                        <button class="sort-btn" data-sort="rate">
+                            <span class="sort-arrows">▲▼</span>
+                        </button>
+                    </th>
+                    <th>
+                        Comment
+                        <button class="sort-btn" data-sort="comment">
+                            <span class="sort-arrows">▲▼</span>
+                        </button>
+                    </th>
                     <th>Action</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="feedbackTableBody">
                 @foreach (var fb in Model.Feedback.Items)
                 {
                     <tr>
-                        <td>@fb.Id</td>
-                        <td>@fb.AppointmentId</td>
+                        <td>@fb.UserName</td>
                         <td>@fb.Rate</td>
                         <td>@fb.Comment</td>
                         <td>
@@ -215,3 +256,52 @@ else
         <div class="alert alert-info text-center">No feedbacks available.</div>
     }
 }
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const tableBody = document.querySelector("#feedbackTableBody");
+
+        const getRows = () => Array.from(tableBody.querySelectorAll("tr"));
+
+        const sortTable = (columnIndex, order) => {
+            const rows = getRows();
+            const sortedRows = rows.sort((a, b) => {
+                const aText = a.children[columnIndex].innerText.trim();
+                const bText = b.children[columnIndex].innerText.trim();
+
+                if (!isNaN(aText) && !isNaN(bText)) {
+                    // Numeric sorting
+                    return order === "asc" ? aText - bText : bText - aText;
+                } else {
+                    // Textual sorting
+                    return order === "asc"
+                        ? aText.localeCompare(bText, undefined, { numeric: true })
+                        : bText.localeCompare(aText, undefined, { numeric: true });
+                }
+            });
+
+            sortedRows.forEach(row => tableBody.appendChild(row));
+        };
+
+        document.querySelectorAll(".sort-btn").forEach(button => {
+            button.addEventListener("click", () => {
+                const column = button.dataset.sort;
+                let columnIndex = 0;
+
+                switch (column) {
+                    case "username": columnIndex = 0; break;
+                    case "rate": columnIndex = 1; break;
+                    case "comment": columnIndex = 2; break;
+                }
+
+                const isActive = button.classList.contains("active-asc");
+                const order = isActive ? "desc" : "asc";
+
+                document.querySelectorAll(".sort-btn").forEach(btn => btn.classList.remove("active-asc", "active-desc"));
+                button.classList.add(order === "asc" ? "active-asc" : "active-desc");
+
+                sortTable(columnIndex, order);
+            });
+        });
+    });
+</script>

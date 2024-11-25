@@ -14,10 +14,12 @@ namespace HairSalonBE.API.Controllers
     {
         private readonly IAppUserService _appUserService;
         private readonly TokenService _tokenService;
+		private readonly IGoogleLoginService _googleLoginService;
 
-        public AuthController(TokenService tokenService, IAppUserService userService) {
+		public AuthController(TokenService tokenService, IAppUserService userService, IGoogleLoginService googleLoginService) {
             _tokenService = tokenService;
             _appUserService = userService;
+			_googleLoginService = googleLoginService;
         }
 
         /// <summary>
@@ -69,5 +71,21 @@ namespace HairSalonBE.API.Controllers
             }
             return Ok();
         }
-    }
+
+		[HttpGet("signin-google")]
+		public IActionResult GoogleLogin()
+		{
+			var loginUrl = _googleLoginService.GetGoogleLoginUrl();
+			return Ok(new { loginUrl });
+		}
+
+		[HttpGet("signin-google-callback")]
+		public async Task<IActionResult> GoogleCallback(string code)
+		{
+			var token = await _googleLoginService.GetTokenFromCode(code);
+			return Ok(new { token });
+		}
+
+	}
 }
+

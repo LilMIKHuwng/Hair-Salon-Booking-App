@@ -21,7 +21,7 @@ namespace HairSalon.RazorPage.Pages.Payment
         public string Amount { get; set; }
 
         [BindProperty]
-        public VnPayDepositWalletRequestModelView DepositWalletRequest { get; set; }
+        public PaymentRequestModelView PaymentRequestModelView { get; set; }
 
         
         public string ResponseMessage { get; set; }
@@ -64,7 +64,7 @@ namespace HairSalon.RazorPage.Pages.Payment
             {
                 var userId = HttpContext.Session.GetString("UserId");
                 // Call the DepositWallet method and get the payment URL
-                string paymentUrl = await _paymentService.DepositWallet(DepositWalletRequest, HttpContext, userId);
+                string paymentUrl = await _paymentService.CreatePaymentUrl(PaymentRequestModelView, HttpContext);
 
                 // Redirect the user to the VNPay payment URL
                 if (!string.IsNullOrEmpty(paymentUrl))
