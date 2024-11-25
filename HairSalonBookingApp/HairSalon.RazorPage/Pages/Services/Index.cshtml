@@ -230,12 +230,6 @@
             <thead>
                 <tr>
                     <th>
-                        Service ID
-                        <button class="sort-btn" data-sort="id">
-                            <span class="sort-arrows">▲▼</span>
-                        </button>
-                    </th>
-                    <th>
                         Service Name
                         <button class="sort-btn" data-sort="name">
                             <span class="sort-arrows">▲▼</span>
@@ -249,7 +243,6 @@
                 @foreach (var service in Model.Services.Items)
                 {
                     <tr>
-                        <td>@service.Id</td>
                         <td>@service.Name</td>
                         <td>
                             <img src="@service.ServiceImage" alt="Service Image" style="width: 100px; height: auto;" />
@@ -318,7 +311,7 @@
         document.querySelectorAll(".sort-btn").forEach(button => {
             button.addEventListener("click", () => {
                 const column = button.dataset.sort;
-                const columnIndex = column === "id" ? 0 : 1;
+                const columnIndex = column === "name" ? 0 : 1;
 
                 const isActive = button.classList.contains("active-asc");
                 const order = isActive ? "desc" : "asc";

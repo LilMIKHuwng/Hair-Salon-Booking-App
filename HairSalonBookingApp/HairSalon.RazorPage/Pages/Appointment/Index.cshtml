@@ -344,7 +344,7 @@ else
 				@foreach (var appointment in Model.Appointments.Items)
 				{
 					<tr>
-						<td>@appointment.Id</td>
+						<td class="appointment-id" data-id="@appointment.Id">@appointment.Id</td>
 						<td>@appointment.UserName</td>
 						<td class="@($"status-{appointment.StatusForAppointment.ToLower()}")">
 							@appointment.StatusForAppointment
@@ -407,6 +407,38 @@ else
 		<div class="alert alert-info text-center">No appointments available.</div>
 	}
 }
+
+
+<script>
+	document.addEventListener("DOMContentLoaded", function () {
+		// Lấy tất cả các thẻ có class "appointment-id"
+		const appointmentElements = document.querySelectorAll(".appointment-id");
+
+		appointmentElements.forEach((element) => {
+			// Lấy giá trị GUID từ data-id
+			const guid = element.dataset.id;
+
+			// Chuyển đổi GUID thành chuỗi 6 số
+			const encodedId = guidTo6DigitNumber(guid);
+
+			// Hiển thị giá trị mã hóa thay thế nội dung gốc
+			element.textContent = encodedId;
+		});
+	});
+
+	// Hàm mã hóa GUID thành chuỗi 6 số
+	function guidTo6DigitNumber(guid) {
+		// Tạo hash từ GUID (cắt bỏ các dấu "-")
+		const cleanGuid = guid.replace(/-/g, "");
+
+		// Lấy 6 ký tự đầu tiên của hash, sau đó chuyển thành số
+		const hash = parseInt(cleanGuid.substring(0, 6), 16);
+
+		// Đảm bảo kết quả là chuỗi 6 số
+		return (hash % 1000000).toString().padStart(6, "0");
+	}
+
+</script>
 
 <script>
 	document.addEventListener("DOMContentLoaded", () => {

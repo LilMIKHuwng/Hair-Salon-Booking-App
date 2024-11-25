@@ -6,10 +6,9 @@ namespace HairSalon.Contract.Services.Interface
 {
     public interface IVnPayService
     {
-        string CreatePaymentUrl(PaymentRequestModelView model, HttpContext context);
-        Task<string> ExcutePayment(PaymentResponseModelView collections, string? userId);
-        Task<string> ExcuteDepositToWallet(Guid userId, double amount);
-        Task<string> DepositWallet(VnPayDepositWalletRequestModelView model, HttpContext context, string? userId);
+        Task<string> CreatePaymentUrl(PaymentRequestModelView model, HttpContext context);
+        Task<string> ExecutePayment(PaymentResponseModelView collections, string? userId);
+        Task<string> ExecuteDepositToWallet(Guid userId, double amount);
         Task<AppointmentModelView?> GetAppointmentByIdAsync(string id);
         /*Task<string> DepositToWalletWithVnPay(double amount);*/
     }

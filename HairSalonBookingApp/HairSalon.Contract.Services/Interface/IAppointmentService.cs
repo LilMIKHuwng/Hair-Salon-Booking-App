@@ -11,6 +11,7 @@ namespace HairSalon.Contract.Services.Interface
         Task<string> UpdateAppointmentAsync(string id, UpdateAppointmentModelView model, string? userId);
         Task<string> DeleteAppointmentAsync(string id, string? userId);
         Task<string> MarkCompleted(string id, string? userId);
+        Task<string> MarkCancel(string id, string? userId);
         Task<string> MarkConfirmed(string id, string? userId);
         Task<AppointmentModelView?> GetAppointmentByIdAsync(string id);
         Task<List<ServiceAppointment>> GetAllServiceAppointment(string appointmentId);
