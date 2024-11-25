@@ -757,7 +757,7 @@ namespace HairSalon.Services.Service
             await _unitOfWork.GetRepository<UserInfo>().UpdateAsync(existingAppointment.User.UserInfo);
             
             // set status Cancel and save
-            existingAppointment.StatusForAppointment = "Canceled";
+            existingAppointment.StatusForAppointment = "Cancelled";
             if (userId != null)
             {
                 existingAppointment.LastUpdatedBy = userId;
@@ -811,11 +811,7 @@ namespace HairSalon.Services.Service
                 return "User info not found.";
             }
 
-            if (existingAppointment.Payment != null)
-            {
-                // Set the appointment status to "Confirmed"
-                existingAppointment.StatusForAppointment = "Confirmed";
-            }
+            existingAppointment.StatusForAppointment = "Confirmed";
             
             // Set the last updated user and timestamp
             existingAppointment.LastUpdatedBy = userId ?? _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
