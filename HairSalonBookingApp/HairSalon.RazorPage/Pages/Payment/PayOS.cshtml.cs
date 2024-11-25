@@ -90,7 +90,7 @@ namespace HairSalon.RazorPage.Pages.Payment
                 return Page();
             }
 
-            var paymentRequest = new PaymentRequestModelView { AppoinmentId = appointment.Id };
+            var paymentRequest = new PaymentRequestModelView { Information = appointment.Id };
             var paymentUrl = await _payOsService.CreatePaymentLink(paymentRequest);
             HttpContext.Session.SetString("AppointmentId", appointment.Id);
             if (paymentUrl == "Appointment not found." || paymentUrl == "Appointment has not been completed.")

@@ -84,13 +84,18 @@ namespace HairSalon.Services.Service
                 userId = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
             }
 
+            
             // Get the user by userId
             var user = await _unitOfWork.GetRepository<ApplicationUsers>()
                 .GetByIdAsync(Guid.Parse(userId));
+            
             if (user == null)
             {
                 return "User is not found.";
             }
+            // Retrieve user info associated with the user
+            var userInfo = await _unitOfWork.GetRepository<UserInfo>().Entities
+                .FirstOrDefaultAsync(ui => ui.Id == user.UserInfo.Id);
 
             if (model.ComboIds.IsNullOrEmpty() && model.ServiceIds.IsNullOrEmpty())
             {
@@ -217,12 +222,39 @@ namespace HairSalon.Services.Service
                 {
                     return $"The total amount ({newAppointment.TotalAmount}) does not meet the minimum requirement for the promotion '{promotion.Name}' ({promotion.TotalAmount}).";
                 }
-
+                
                 // Check if the promotion's quantity is zero or less
                 if (promotion.Quantity.HasValue && promotion.Quantity <= 0)
                 {
                     return $"Promotion with ID: {model.PromotionsId} is out of stock.";
                 }
+                
+
+                // Calculate the discount based on the promotion percentage
+                decimal discountFromPercentage = 0;
+                decimal maxAllowedDiscount = promotion.MaxAmount ?? decimal.MaxValue;
+
+                if (promotion.DiscountPercentage.HasValue)
+                {
+                    discountFromPercentage = newAppointment.TotalAmount * ((decimal)promotion.DiscountPercentage.Value / 100);
+                }
+
+                // Apply the final discount ensuring it does not exceed the max allowed discount
+                decimal finalDiscount = Math.Min(discountFromPercentage, maxAllowedDiscount);
+                newAppointment.TotalAmount -= finalDiscount;
+
+                // Ensure the appointment's total amount doesn't go below 0
+                newAppointment.TotalAmount = Math.Max(newAppointment.TotalAmount, 0);
+
+                // Decrease the promotion's quantity by 1 (as it's been used)
+                promotion.Quantity--;
+                await _unitOfWork.GetRepository<Promotion>().UpdateAsync(promotion);
+
+                // Update the user's points based on the new total amount of the appointment
+                userInfo.Point -= newAppointment.PointsEarned;
+                int pointsToAdd = (int)(newAppointment.TotalAmount / 1000) * 10; // Assuming 1 point per 1000 currency units
+                userInfo.Point += pointsToAdd;
+                
 
                 // If the appointment qualifies, apply the promotion
                 newAppointment.PromotionId = promotion.Id;
@@ -268,6 +300,8 @@ namespace HairSalon.Services.Service
                 }
             }
 
+            //Update point in userInfo
+            await _unitOfWork.GetRepository<UserInfo>().UpdateAsync(userInfo);
             // Add new appointment
             await _unitOfWork.GetRepository<Appointment>().InsertAsync(newAppointment);
             await _unitOfWork.SaveAsync();
@@ -691,6 +725,52 @@ namespace HairSalon.Services.Service
 
             return "success";
         }
+        
+        // Mark Appointment Cancel
+        public async Task<string> MarkCancel(string id, string? userId)
+        {
+            // Validate appointment ID
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return "Invalid appointment ID. Please provide a valid ID.";
+            }
+
+            // Get appointment by ID and ensure it's not deleted
+            var existingAppointment = await _unitOfWork.GetRepository<Appointment>().Entities
+                .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
+
+            if (existingAppointment == null)
+            {
+                return "Appointment not found or has already been deleted.";
+            }
+            
+            //refund promotion
+            var promotion = existingAppointment.Promotion;
+            if (promotion != null)
+            {
+                promotion.Quantity++;
+                await _unitOfWork.GetRepository<Promotion>().UpdateAsync(promotion);
+            }
+            
+            //refund point
+            existingAppointment.User.UserInfo.Point += existingAppointment.PointsEarned;
+            await _unitOfWork.GetRepository<UserInfo>().UpdateAsync(existingAppointment.User.UserInfo);
+            
+            // set status Cancel and save
+            existingAppointment.StatusForAppointment = "Canceled";
+            if (userId != null)
+            {
+                existingAppointment.LastUpdatedBy = userId;
+            }
+            else
+            {
+                existingAppointment.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+            }
+            existingAppointment.LastUpdatedTime = DateTimeOffset.UtcNow;
+            await _unitOfWork.SaveAsync();
+
+            return "success";
+        }
 
         // Mark Appointment Confirmed
         public async Task<string> MarkConfirmed(string id, string? userId)
@@ -731,65 +811,12 @@ namespace HairSalon.Services.Service
                 return "User info not found.";
             }
 
-            // Get the promotion from the appointment if it exists
-            var promotion = null as Promotion;
-
-            // Retrieve the existing promotion from the database based on the PromotionId in the appointment
-            if (!string.IsNullOrEmpty(existingAppointment.PromotionId))
+            if (existingAppointment.Payment != null)
             {
-                promotion = await _unitOfWork.GetRepository<Promotion>().Entities
-                    .FirstOrDefaultAsync(p => p.Id == existingAppointment.PromotionId && !p.DeletedTime.HasValue && p.ExpiryDate >= DateTime.UtcNow);
-
-                // If the promotion is invalid or expired, return an error message
-                if (promotion == null)
-                {
-                    return $"The promotion already applied is invalid or expired.";
-                }
+                // Set the appointment status to "Confirmed"
+                existingAppointment.StatusForAppointment = "Confirmed";
             }
-            else
-            {
-                return "No promotion applied to this appointment.";
-            }
-
-            // Check if the total amount of the appointment meets the promotion requirements
-            if (existingAppointment.TotalAmount < promotion.TotalAmount)
-            {
-                return $"The total amount ({existingAppointment.TotalAmount:C}) does not meet the promotion requirement ({promotion.TotalAmount:C}).";
-            }
-
-            // Calculate the discount based on the promotion percentage
-            decimal discountFromPercentage = 0;
-            decimal maxAllowedDiscount = promotion.MaxAmount ?? decimal.MaxValue;
-
-            if (promotion.DiscountPercentage.HasValue)
-            {
-                discountFromPercentage = existingAppointment.TotalAmount * ((decimal)promotion.DiscountPercentage.Value / 100);
-            }
-
-            // Apply the final discount ensuring it does not exceed the max allowed discount
-            decimal finalDiscount = Math.Min(discountFromPercentage, maxAllowedDiscount);
-            existingAppointment.TotalAmount -= finalDiscount;
-
-            // Ensure the appointment's total amount doesn't go below 0
-            existingAppointment.TotalAmount = Math.Max(existingAppointment.TotalAmount, 0);
-
-            // Decrease the promotion's quantity by 1 (as it's been used)
-            promotion.Quantity--;
-            await _unitOfWork.GetRepository<Promotion>().UpdateAsync(promotion);
-
-            // Update the user's points based on the new total amount of the appointment
-            userInfo.Point -= existingAppointment.PointsEarned;
-            int pointsToAdd = (int)(existingAppointment.TotalAmount / 1000) * 10; // Assuming 1 point per 1000 currency units
-            userInfo.Point += pointsToAdd;
-            await _unitOfWork.GetRepository<UserInfo>().UpdateAsync(userInfo);
-
-            // Update the total amount of the appointment (subtract points if any)
-            existingAppointment.TotalAmount -= existingAppointment.PointsEarned;
-            existingAppointment.TotalAmount = Math.Max(existingAppointment.TotalAmount, 0);
-
-            // Set the appointment status to "Confirmed"
-            existingAppointment.StatusForAppointment = "Confirmed";
-
+            
             // Set the last updated user and timestamp
             existingAppointment.LastUpdatedBy = userId ?? _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
             existingAppointment.LastUpdatedTime = DateTimeOffset.UtcNow;
@@ -800,7 +827,7 @@ namespace HairSalon.Services.Service
             // Return a success message
             return "success";
         }
-
+        
 
         // Retrieve a appointment by its ID
         public async Task<AppointmentModelView?> GetAppointmentByIdAsync(string id)
@@ -811,7 +838,7 @@ namespace HairSalon.Services.Service
                 return null;
             }
 
-            // Try to find the appointment by its ID, ensuring it hasn’t been marked as deleted
+            // Try to find the appointment by its ID, ensuring it hasnï¿½t been marked as deleted
             var appointmentEntity = await _unitOfWork.GetRepository<Appointment>().Entities
                 .FirstOrDefaultAsync(a => a.Id == id && !a.DeletedTime.HasValue);
 
@@ -823,6 +850,10 @@ namespace HairSalon.Services.Service
 
             // Map the Appointment entity to a AppointmentModelView and return it
             AppointmentModelView appointmentModelView = _mapper.Map<AppointmentModelView>(appointmentEntity);
+
+            var user = await _unitOfWork.GetRepository<ApplicationUsers>().GetByIdAsync(Guid.Parse(appointmentModelView.UserId));
+            appointmentModelView.UserName = user.UserName;
+ 
             return appointmentModelView;
         }
 

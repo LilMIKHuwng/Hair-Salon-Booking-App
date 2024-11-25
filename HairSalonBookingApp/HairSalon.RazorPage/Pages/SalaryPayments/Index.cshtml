@@ -172,7 +172,7 @@
 
 @if (TempData["ErrorMessage"] != null)
 {
-    <div class="alert alert-danger mt-3">@TempData["ErrorMessage"]</div>
+    <div class="alert alert-danger mt-3 text-center">@TempData["ErrorMessage"]</div>
 }
 else
 {
@@ -193,12 +193,6 @@ else
         <table id="salaryPaymentsTable">
             <thead>
                 <tr>
-                    <th>
-                        SalaryPayment ID
-                        <button class="sort-btn" data-sort="id">
-                            <span class="sort-arrows">▲▼</span>
-                        </button>
-                    </th>
                     <th>
                         Full Name
                         <button class="sort-btn" data-sort="fullName">
@@ -224,7 +218,6 @@ else
                 @foreach (var salary in Model.SalaryPayments.Items)
                 {
                     <tr>
-                        <td>@salary.Id</td>
                         <td>@salary.FullName</td>
                         <td>@salary.BaseSalary</td>
                         <td>@salary.PaymentDate.ToString("MMMM dd, yyyy")</td>
@@ -266,7 +259,7 @@ else
     }
     else
     {
-        <div class="alert alert-info">No Salary Payments available.</div>
+        <div class="alert alert-info text-center">No Salary Payments available.</div>
     }
 }
 
@@ -320,10 +313,9 @@ else
         // Định nghĩa cột theo key sắp xếp
         function getColumnIndex(sortKey) {
             switch (sortKey) {
-                case "id": return 1;
-                case "fullName": return 2;
-                case "baseSalary": return 3;
-                case "paymentDate": return 4;
+                case "fullName": return 1;
+                case "baseSalary": return 2;
+                case "paymentDate": return 3;
                 default: return 1;
             }
         }

@@ -113,14 +113,7 @@
 <h2>@ViewData["Title"]</h2>
 
 <form method="post">
-	<!-- Hidden field for required Id -->
 	<input type="hidden" asp-for="Id" />
-
-	<div>
-		<label>Feedback ID:</label>
-		<p>@Model.Id</p> <!-- Display ID as non-editable text -->
-	</div>
-
 	<div>
 		<label asp-for="UpdatedFeedback.Comment">Feedback Comment</label>
 		<!-- Input for Feedback Comment -->

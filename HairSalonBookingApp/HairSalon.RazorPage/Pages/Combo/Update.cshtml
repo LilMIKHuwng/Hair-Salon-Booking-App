@@ -141,10 +141,6 @@ else
 	<form method="post" enctype="multipart/form-data">
 		<input type="hidden" asp-for="Id" />
 		<div>
-			<label>Combo ID:</label>
-			<p>@Model.Id</p>
-		</div>
-		<div>
 			<label asp-for="UpdatedCombo.Name">Combo Name</label>
 			<input asp-for="UpdatedCombo.Name" placeholder="Combo Name" required />
 			<span asp-validation-for="UpdatedCombo.Name" class="text-danger"></span>
