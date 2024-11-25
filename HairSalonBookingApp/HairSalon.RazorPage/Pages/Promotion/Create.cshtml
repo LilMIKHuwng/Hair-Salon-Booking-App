@@ -1,0 +1,145 @@
+﻿@page
+@model HairSalon.RazorPage.Pages.Promotion.CreateModel
+@{
+    ViewData["Title"] = "Create Service";
+}
+
+<style>
+    /* Page Layout */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+        padding: 20px;
+    }
+
+    h2 {
+        color: #3f51b5;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #3f51b5;
+        padding-bottom: 5px;
+    }
+
+    /* Form and Input Styling */
+    form {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    input[type="text"], input[type="number"], textarea, input[type="file"] {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        font-size: 16px;
+    }
+
+    /* Button Styling */
+    .button, .btn-cancel, .btn-delete {
+        display: inline-block;
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        color: #ffffff;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .button {
+        background-color: #3f51b5;
+    }
+
+        .button:hover {
+            background-color: #2c3e91;
+        }
+
+    .btn-cancel {
+        background-color: #d9534f;
+        text-align: center;
+        text-decoration: none;
+    }
+
+        .btn-cancel:hover {
+            background-color: #c9302c;
+        }
+
+    /* Alert Styling */
+    .alert-danger {
+        background-color: #f2dede;
+        color: #a94442;
+        border: 1px solid #ebccd1;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    /* Validation Message Styling */
+    .text-danger {
+        color: #e74c3c;
+        font-size: 0.9em;
+    }
+</style>
+
+@if (TempData["DeniedMessage"] != null)
+{
+    <div class="alert alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
+}
+else
+{
+    <h2>Create New Promotion</h2>
+
+    <form method="post" enctype="multipart/form-data" asp-antiforgery="true">
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <input asp-for="NewPromotion.Name" placeholder="Promotion Name" required aria-label="Promotion Name" />
+        <span asp-validation-for="NewPromotion.Name" class="text-danger"></span>
+
+        <div class="form-group">
+            <input asp-for="NewPromotion.DiscountPercentage" class="form-control" placeholder="Discount Percentage" required aria-label="Discount Percentage" />
+            <span asp-validation-for="NewPromotion.DiscountPercentage" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <input asp-for="NewPromotion.TotalAmount" class="form-control" placeholder="Total Amount" required type="number" step="1000" aria-label="Total Amount" />
+            <span asp-validation-for="NewPromotion.TotalAmount" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <input asp-for="NewPromotion.MaxAmount" class="form-control" placeholder="Max Amount" required type="number" step="1000" aria-label="Max Amount" />
+            <span asp-validation-for="NewPromotion.MaxAmount" class="text-danger"></span>
+        </div>
+
+
+        <div class="form-group">
+            <input asp-for="NewPromotion.Quantity" class="form-control" placeholder="Quantity" required type="number"step="1" aria-label="Quantity" />
+            <span asp-validation-for="NewPromotion.Quantity" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <input asp-for="NewPromotion.ExpiryDate" class="form-control" placeholder="Expiry Date" required type="date" aria-label="Expiry Date" />
+            <span asp-validation-for="NewPromotion.ExpiryDate" class="text-danger"></span>
+        </div>
+
+        
+
+        <button type="submit" class="button">Add Service</button>
+        <a asp-page="/Promotion/Index" class="btn-cancel">Cancel</a>
+    </form>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger mt-3 text-center">@TempData["ErrorMessage"]</div>
+    }
+}
