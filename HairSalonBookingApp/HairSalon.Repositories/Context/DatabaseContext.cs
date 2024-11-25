@@ -14,48 +14,48 @@ namespace HairSalon.Repositories.Context
         {
         }
 
-        // user
-        public virtual DbSet<ApplicationUsers> ApplicationUsers => Set<ApplicationUsers>();
-        public virtual DbSet<ApplicationRoles> ApplicationRoles => Set<ApplicationRoles>();
-        public virtual DbSet<ApplicationUserClaims> ApplicationUserClaims => Set<ApplicationUserClaims>();
-        public virtual DbSet<ApplicationUserRoles> ApplicationUserRoles => Set<ApplicationUserRoles>();
-        public virtual DbSet<ApplicationUserLogins> ApplicationUserLogins => Set<ApplicationUserLogins>();
-        public virtual DbSet<ApplicationRoleClaims> ApplicationRoleClaims => Set<ApplicationRoleClaims>();
-        public virtual DbSet<ApplicationUserTokens> ApplicationUserTokens => Set<ApplicationUserTokens>();
+		// user
+		public virtual DbSet<ApplicationUsers> ApplicationUsers => Set<ApplicationUsers>();
+		public virtual DbSet<ApplicationRoles> ApplicationRoles => Set<ApplicationRoles>();
+		public virtual DbSet<ApplicationUserClaims> ApplicationUserClaims => Set<ApplicationUserClaims>();
+		public virtual DbSet<ApplicationUserRoles> ApplicationUserRoles => Set<ApplicationUserRoles>();
+		public virtual DbSet<ApplicationUserLogins> ApplicationUserLogins => Set<ApplicationUserLogins>();
+		public virtual DbSet<ApplicationRoleClaims> ApplicationRoleClaims => Set<ApplicationRoleClaims>();
+		public virtual DbSet<ApplicationUserTokens> ApplicationUserTokens => Set<ApplicationUserTokens>();
 
-        public virtual DbSet<UserInfo> UserInfos => Set<UserInfo>();
-        public virtual DbSet<Shop> Shops { get; set; }
-        public virtual DbSet<Service> Services { get; set; }
-        public virtual DbSet<Appointment> Appointments { get; set; }
-        public virtual DbSet<SalaryPayment> SalaryPayments { get; set; }
-        public virtual DbSet<ServiceAppointment> ServiceAppointments { get; set; }
-        public virtual DbSet<Payment> Payments { get; set; }
-        public virtual DbSet<Feedback> Feedbacks { get; set; }
-        public virtual DbSet<Combo> Combos { get; set; }
-        public virtual DbSet<Message> Messages { get; set; }
+		public virtual DbSet<UserInfo> UserInfos => Set<UserInfo>();
+		public virtual DbSet<Shop> Shops { get; set; }
+		public virtual DbSet<Service> Services { get; set; }
+		public virtual DbSet<Appointment> Appointments { get; set; }
+		public virtual DbSet<SalaryPayment> SalaryPayments { get; set; }
+		public virtual DbSet<ServiceAppointment> ServiceAppointments { get; set; }
+		public virtual DbSet<Payment> Payments { get; set; }
+		public virtual DbSet<Feedback> Feedbacks { get; set; }
+		public virtual DbSet<Combo> Combos { get; set; }
+		public virtual DbSet<Message> Messages { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseLazyLoadingProxies();
-            }
-        }
+		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+		{
+			if (!optionsBuilder.IsConfigured)
+			{
+				optionsBuilder.UseLazyLoadingProxies();
+			}
+		}
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Appointment>()
-                .HasOne(a => a.Stylist)
-                .WithMany()
-                .HasForeignKey(a => a.StylistId)
-                .OnDelete(DeleteBehavior.Restrict);
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
+		{
+			modelBuilder.Entity<Appointment>()
+				.HasOne(a => a.Stylist)
+				.WithMany()
+				.HasForeignKey(a => a.StylistId)
+				.OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Message>(message =>
-            {
-                message.HasOne(x => x.Recipient)
-                    .WithMany(x => x.MessageReceived)
-                    .HasForeignKey(x => x.RecipientId)
-                    .OnDelete(DeleteBehavior.Restrict);
+			modelBuilder.Entity<Message>(message =>
+			{
+				message.HasOne(x => x.Recipient)
+					.WithMany(x => x.MessageReceived)
+					.HasForeignKey(x => x.RecipientId)
+					.OnDelete(DeleteBehavior.Restrict);
 
                 message.HasOne(x => x.Sender)
                     .WithMany(x => x.MessageSent)
@@ -82,54 +82,54 @@ namespace HairSalon.Repositories.Context
                     .IsRequired();
             });
 
-            modelBuilder.Entity<ApplicationUserTokens>()
-                .HasKey(token => new { token.UserId, token.LoginProvider, token.Name });
-            /*============================            SEED DATA            =================================*/
+			modelBuilder.Entity<ApplicationUserTokens>()
+				.HasKey(token => new { token.UserId, token.LoginProvider, token.Name });
+			/*============================            SEED DATA            =================================*/
 
-            // 1. ApplicationRoles
-            var roleIdAdmin = Guid.NewGuid();
-            var roleIdUser = Guid.NewGuid();
-            var roleIdStylist = Guid.NewGuid();
-            var roleIdManager = Guid.NewGuid();
+			// 1. ApplicationRoles
+			var roleIdAdmin = Guid.NewGuid();
+			var roleIdUser = Guid.NewGuid();
+			var roleIdStylist = Guid.NewGuid();
+			var roleIdManager = Guid.NewGuid();
 
-            modelBuilder.Entity<ApplicationRoles>().HasData(
-                new ApplicationRoles
-                {
-                    Id = roleIdAdmin,
-                    Name = "Admin",
-                    NormalizedName = "ADMIN",
-                    CreatedBy = "System",
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                },
-                new ApplicationRoles
-                {
-                    Id = roleIdManager,
-                    Name = "Manager",
-                    NormalizedName = "MANAGER",
-                    CreatedBy = "System",
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                },
-                new ApplicationRoles
-                {
-                    Id = roleIdStylist,
-                    Name = "Stylist",
-                    NormalizedName = "STYLIST",
-                    CreatedBy = "System",
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                },
-                new ApplicationRoles
-                {
-                    Id = roleIdUser,
-                    Name = "User",
-                    NormalizedName = "USER",
-                    CreatedBy = "System",
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                }
-            );
+			modelBuilder.Entity<ApplicationRoles>().HasData(
+				new ApplicationRoles
+				{
+					Id = roleIdAdmin,
+					Name = "Admin",
+					NormalizedName = "ADMIN",
+					CreatedBy = "System",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new ApplicationRoles
+				{
+					Id = roleIdManager,
+					Name = "Manager",
+					NormalizedName = "MANAGER",
+					CreatedBy = "System",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new ApplicationRoles
+				{
+					Id = roleIdStylist,
+					Name = "Stylist",
+					NormalizedName = "STYLIST",
+					CreatedBy = "System",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new ApplicationRoles
+				{
+					Id = roleIdUser,
+					Name = "User",
+					NormalizedName = "USER",
+					CreatedBy = "System",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				}
+			);
 
             // 2. UserInfo
             // 2. UserInfo
@@ -417,84 +417,84 @@ namespace HairSalon.Repositories.Context
                 }
             );
 
-            // 4. ApplicationUserRoles
-            modelBuilder.Entity<ApplicationUserRoles>().HasData(
-                new ApplicationUserRoles
-                {
-                    UserId = userId1,
-                    RoleId = roleIdAdmin,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                },
-                new ApplicationUserRoles
-                {
-                    UserId = userId2,
-                    RoleId = roleIdUser,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                },
-                new ApplicationUserRoles
-                {
-                    UserId = userId3,
-                    RoleId = roleIdManager,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                },
-                new ApplicationUserRoles
-                {
-                    UserId = userId4,
-                    RoleId = roleIdStylist,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                },
-                new ApplicationUserRoles
-                {
-                    UserId = userId5,
-                    RoleId = roleIdUser,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                },
-                new ApplicationUserRoles
-                {
-                    UserId = userId6,
-                    RoleId = roleIdUser,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                },
-                new ApplicationUserRoles
-                {
-                    UserId = userId7,
-                    RoleId = roleIdUser,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                },
-                new ApplicationUserRoles
-                {
-                    UserId = userId8,
-                    RoleId = roleIdUser,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                }
-            );
+			// 4. ApplicationUserRoles
+			modelBuilder.Entity<ApplicationUserRoles>().HasData(
+				new ApplicationUserRoles
+				{
+					UserId = userId1,
+					RoleId = roleIdAdmin,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new ApplicationUserRoles
+				{
+					UserId = userId2,
+					RoleId = roleIdUser,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new ApplicationUserRoles
+				{
+					UserId = userId3,
+					RoleId = roleIdManager,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new ApplicationUserRoles
+				{
+					UserId = userId4,
+					RoleId = roleIdStylist,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new ApplicationUserRoles
+				{
+					UserId = userId5,
+					RoleId = roleIdUser,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new ApplicationUserRoles
+				{
+					UserId = userId6,
+					RoleId = roleIdUser,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new ApplicationUserRoles
+				{
+					UserId = userId7,
+					RoleId = roleIdUser,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new ApplicationUserRoles
+				{
+					UserId = userId8,
+					RoleId = roleIdUser,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				}
+			);
 
-            // 5. Shop
-            var shopId = Guid.NewGuid().ToString();
+			// 5. Shop
+			var shopId = Guid.NewGuid().ToString();
 
             modelBuilder.Entity<Shop>().HasData(
                 new Shop
@@ -513,133 +513,133 @@ namespace HairSalon.Repositories.Context
                     LastUpdatedTime = DateTimeOffset.UtcNow
                 });
 
-            // 6. Service
-            var serviceId1 = Guid.NewGuid().ToString();
-            var serviceId2 = Guid.NewGuid().ToString();
-            var serviceId3 = Guid.NewGuid().ToString();
-            var serviceId4 = Guid.NewGuid().ToString();
-            var serviceId5 = Guid.NewGuid().ToString();
-            var serviceId6 = Guid.NewGuid().ToString();
-            var serviceId7 = Guid.NewGuid().ToString();
-            var serviceId8 = Guid.NewGuid().ToString();
+			// 6. Service
+			var serviceId1 = Guid.NewGuid().ToString();
+			var serviceId2 = Guid.NewGuid().ToString();
+			var serviceId3 = Guid.NewGuid().ToString();
+			var serviceId4 = Guid.NewGuid().ToString();
+			var serviceId5 = Guid.NewGuid().ToString();
+			var serviceId6 = Guid.NewGuid().ToString();
+			var serviceId7 = Guid.NewGuid().ToString();
+			var serviceId8 = Guid.NewGuid().ToString();
 
-            modelBuilder.Entity<Service>().HasData(
-                new Service
-                {
-                    Id = serviceId1,
-                    Name = "Hair Cut",
-                    Type = "Hair",
-                    Price = 25000.00m,
-                    Description = "A stylish haircut to refresh your look.",
-                    ShopId = shopId,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    TimeService = 30,
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                },
-                new Service
-                {
-                    Id = serviceId2,
-                    Name = "Hair Coloring",
-                    Type = "Hair",
-                    Price = 50000.00m,
-                    Description = "A complete hair coloring service.",
-                    ShopId = shopId,
-                    CreatedBy = "SeedData",
-                    TimeService = 30,
-                    LastUpdatedBy = "SeedData",
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                },
-                new Service
-                {
-                    Id = serviceId3,
-                    Name = "Premium Hair Coloring",
-                    Type = "Hair",
-                    Price = 100000.00m,
-                    Description = "A premium hair coloring service.",
-                    ShopId = shopId,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    TimeService = 60,
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                },
-                new Service
-                {
-                    Id = serviceId4,
-                    Name = "Hair Styling",
-                    Type = "Hair",
-                    Price = 20000.00m,
-                    Description = "A professional hair styling service.",
-                    ShopId = shopId,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    TimeService = 45,
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                },
-                new Service
-                {
-                    Id = serviceId5,
-                    Name = "Beard Trim",
-                    Type = "Beard",
-                    Price = 15000.00m,
-                    Description = "A neat beard trimming service.",
-                    ShopId = shopId,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    TimeService = 20,
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                },
-                new Service
-                {
-                    Id = serviceId6,
-                    Name = "Shave",
-                    Type = "Beard",
-                    Price = 12000.00m,
-                    Description = "A clean and smooth shaving service.",
-                    ShopId = shopId,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    TimeService = 15,
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                },
-                new Service
-                {
-                    Id = serviceId7,
-                    Name = "Facial",
-                    Type = "Skin",
-                    Price = 40000.00m,
-                    Description = "A rejuvenating facial service.",
-                    ShopId = shopId,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    TimeService = 50,
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                },
-                new Service
-                {
-                    Id = serviceId8,
-                    Name = "Scalp Treatment",
-                    Type = "Hair",
-                    Price = 45000.00m,
-                    Description = "A soothing scalp treatment.",
-                    ShopId = shopId,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    TimeService = 40,
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                }
-            );
+			modelBuilder.Entity<Service>().HasData(
+				new Service
+				{
+					Id = serviceId1,
+					Name = "Hair Cut",
+					Type = "Hair",
+					Price = 25000.00m,
+					Description = "A stylish haircut to refresh your look.",
+					ShopId = shopId,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					TimeService = 30,
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new Service
+				{
+					Id = serviceId2,
+					Name = "Hair Coloring",
+					Type = "Hair",
+					Price = 50000.00m,
+					Description = "A complete hair coloring service.",
+					ShopId = shopId,
+					CreatedBy = "SeedData",
+					TimeService = 30,
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new Service
+				{
+					Id = serviceId3,
+					Name = "Premium Hair Coloring",
+					Type = "Hair",
+					Price = 100000.00m,
+					Description = "A premium hair coloring service.",
+					ShopId = shopId,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					TimeService = 60,
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new Service
+				{
+					Id = serviceId4,
+					Name = "Hair Styling",
+					Type = "Hair",
+					Price = 20000.00m,
+					Description = "A professional hair styling service.",
+					ShopId = shopId,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					TimeService = 45,
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new Service
+				{
+					Id = serviceId5,
+					Name = "Beard Trim",
+					Type = "Beard",
+					Price = 15000.00m,
+					Description = "A neat beard trimming service.",
+					ShopId = shopId,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					TimeService = 20,
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new Service
+				{
+					Id = serviceId6,
+					Name = "Shave",
+					Type = "Beard",
+					Price = 12000.00m,
+					Description = "A clean and smooth shaving service.",
+					ShopId = shopId,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					TimeService = 15,
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new Service
+				{
+					Id = serviceId7,
+					Name = "Facial",
+					Type = "Skin",
+					Price = 40000.00m,
+					Description = "A rejuvenating facial service.",
+					ShopId = shopId,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					TimeService = 50,
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new Service
+				{
+					Id = serviceId8,
+					Name = "Scalp Treatment",
+					Type = "Hair",
+					Price = 45000.00m,
+					Description = "A soothing scalp treatment.",
+					ShopId = shopId,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					TimeService = 40,
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				}
+			);
 
-            // 7. Appointment
-            /*var appointmentId = Guid.NewGuid().ToString();
+			// 7. Appointment
+			/*var appointmentId = Guid.NewGuid().ToString();
             var appointmentId1 = Guid.NewGuid().ToString();
             var appointmentId2 = Guid.NewGuid().ToString();
             var appointmentId3 = Guid.NewGuid().ToString();
@@ -706,8 +706,8 @@ namespace HairSalon.Repositories.Context
                 }
             );*/
 
-            // 8. Payment
-            /*var paymentId = Guid.NewGuid().ToString();
+			// 8. Payment
+			/*var paymentId = Guid.NewGuid().ToString();
 
             modelBuilder.Entity<Payment>().HasData(
                 new Payment
@@ -724,8 +724,8 @@ namespace HairSalon.Repositories.Context
                 }
             );*/
 
-            // 9. ServiceAppointment
-            /*var serviceAppointmentId = Guid.NewGuid().ToString();
+			// 9. ServiceAppointment
+			/*var serviceAppointmentId = Guid.NewGuid().ToString();
 
             modelBuilder.Entity<ServiceAppointment>().HasData(
                 new ServiceAppointment
@@ -741,130 +741,130 @@ namespace HairSalon.Repositories.Context
                 }
             );*/
 
-            // 10. SalaryPayment
-            var salaryPaymentId = Guid.NewGuid().ToString();
+			// 10. SalaryPayment
+			var salaryPaymentId = Guid.NewGuid().ToString();
 
-            modelBuilder.Entity<SalaryPayment>().HasData(
-                new SalaryPayment
-                {
-                    Id = salaryPaymentId,
-                    UserId = userId1,
-                    BaseSalary = 2000.00m,
-                    PaymentDate = DateTime.UtcNow,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                }
-            );
+			modelBuilder.Entity<SalaryPayment>().HasData(
+				new SalaryPayment
+				{
+					Id = salaryPaymentId,
+					UserId = userId1,
+					BaseSalary = 2000.00m,
+					PaymentDate = DateTime.UtcNow,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				}
+			);
 
-            // 11. Combo
-            var comboId1 = Guid.NewGuid().ToString();
-            var comboId2 = Guid.NewGuid().ToString();
-            var comboId3 = Guid.NewGuid().ToString();
+			// 11. Combo
+			var comboId1 = Guid.NewGuid().ToString();
+			var comboId2 = Guid.NewGuid().ToString();
+			var comboId3 = Guid.NewGuid().ToString();
 
-            modelBuilder.Entity<Combo>().HasData(
-                new Combo
-                {
-                    Id = comboId1,
-                    Name = "Basic Hair Combo",
-                    TotalPrice = 40000.00m,
-                    TimeCombo = 60,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                },
-                new Combo
-                {
-                    Id = comboId2,
-                    Name = "Deluxe Hair Combo",
-                    TotalPrice = 80000.00m,
-                    TimeCombo = 120,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                },
-                new Combo
-                {
-                    Id = comboId3,
-                    Name = "Ultimate Hair & Beard Combo",
-                    TotalPrice = 120000.00m,
-                    TimeCombo = 150,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                }
-            );
+			modelBuilder.Entity<Combo>().HasData(
+				new Combo
+				{
+					Id = comboId1,
+					Name = "Basic Hair Combo",
+					TotalPrice = 40000.00m,
+					TimeCombo = 60,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new Combo
+				{
+					Id = comboId2,
+					Name = "Deluxe Hair Combo",
+					TotalPrice = 80000.00m,
+					TimeCombo = 120,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new Combo
+				{
+					Id = comboId3,
+					Name = "Ultimate Hair & Beard Combo",
+					TotalPrice = 120000.00m,
+					TimeCombo = 150,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				}
+			);
 
-            // 12. ComboService
-            modelBuilder.Entity<ComboServices>().HasData(
-                new ComboServices
-                {
-                    Id = Guid.NewGuid().ToString("N"),
-                    ServiceId = serviceId1,
-                    ComboId = comboId1,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                },
-                new ComboServices
-                {
-                    Id = Guid.NewGuid().ToString("N"),
-                    ServiceId = serviceId2,
-                    ComboId = comboId1,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                },
-                new ComboServices
-                {
-                    Id = Guid.NewGuid().ToString("N"),
-                    ServiceId = serviceId3,
-                    ComboId = comboId2,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                },
-                new ComboServices
-                {
-                    Id = Guid.NewGuid().ToString("N"),
-                    ServiceId = serviceId4,
-                    ComboId = comboId2,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                },
-                new ComboServices
-                {
-                    Id = Guid.NewGuid().ToString("N"),
-                    ServiceId = serviceId5,
-                    ComboId = comboId3,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                },
-                new ComboServices
-                {
-                    Id = Guid.NewGuid().ToString("N"),
-                    ServiceId = serviceId6,
-                    ComboId = comboId3,
-                    CreatedBy = "SeedData",
-                    LastUpdatedBy = "SeedData",
-                    CreatedTime = DateTimeOffset.UtcNow,
-                    LastUpdatedTime = DateTimeOffset.UtcNow
-                }
-            );
+			// 12. ComboService
+			modelBuilder.Entity<ComboServices>().HasData(
+				new ComboServices
+				{
+					Id = Guid.NewGuid().ToString("N"),
+					ServiceId = serviceId1,
+					ComboId = comboId1,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new ComboServices
+				{
+					Id = Guid.NewGuid().ToString("N"),
+					ServiceId = serviceId2,
+					ComboId = comboId1,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new ComboServices
+				{
+					Id = Guid.NewGuid().ToString("N"),
+					ServiceId = serviceId3,
+					ComboId = comboId2,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new ComboServices
+				{
+					Id = Guid.NewGuid().ToString("N"),
+					ServiceId = serviceId4,
+					ComboId = comboId2,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new ComboServices
+				{
+					Id = Guid.NewGuid().ToString("N"),
+					ServiceId = serviceId5,
+					ComboId = comboId3,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				},
+				new ComboServices
+				{
+					Id = Guid.NewGuid().ToString("N"),
+					ServiceId = serviceId6,
+					ComboId = comboId3,
+					CreatedBy = "SeedData",
+					LastUpdatedBy = "SeedData",
+					CreatedTime = DateTimeOffset.UtcNow,
+					LastUpdatedTime = DateTimeOffset.UtcNow
+				}
+			);
 
-            // 13. ComboAppointment
-            /*var comboAppointmentId1 = Guid.NewGuid().ToString();
+			// 13. ComboAppointment
+			/*var comboAppointmentId1 = Guid.NewGuid().ToString();
             var comboAppointmentId2 = Guid.NewGuid().ToString();
             var comboAppointmentId3 = Guid.NewGuid().ToString();
 
@@ -900,6 +900,6 @@ namespace HairSalon.Repositories.Context
                     LastUpdatedTime = DateTimeOffset.UtcNow
                 }
             );*/
-        }
-    }
+		}
+	}
 }
