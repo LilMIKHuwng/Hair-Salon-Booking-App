@@ -42,7 +42,7 @@ namespace HairSalon.Contract.Repositories.Entity
         public virtual ICollection<ServiceAppointment>? ServiceAppointments { get; set; }
 		public virtual ICollection<ComboAppointment>? ComboAppointments { get; set; }
 
-		public virtual Payment? Payment { get; set; }
+		public virtual ICollection<Payment> Payment { get; set; } = [];
 		public virtual Feedback? Feedback { get; set; }
 	}
 }

@@ -23,7 +23,7 @@ namespace HairSalon.Contract.Repositories.Entity
         [Required]
         public DateTime ExpiryDate { get; set; }
 
-        public virtual Appointment? Appointment { get; set; }
+        public virtual ICollection<Appointment>? Appointments { get; set; } = [];
 
     }
 }
