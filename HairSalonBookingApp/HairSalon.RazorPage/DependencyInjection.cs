@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Net.payOS;
+using Microsoft.AspNetCore.Authentication.OAuth;
 
 namespace HairSalonBE.API
 {
@@ -98,9 +99,20 @@ namespace HairSalonBE.API
                     var facebookAuthNSection = configuration.GetSection("Authentication:Facebook");
                     facebookOptions.AppId = facebookAuthNSection["AppId"];
                     facebookOptions.AppSecret = facebookAuthNSection["AppSecret"];
-                    facebookOptions.CallbackPath = "/signin-facebook";
+                    facebookOptions.CallbackPath = "/signin-facebook"; // Đường dẫn callback
+                    facebookOptions.Events = new OAuthEvents
+                    {
+                        OnRemoteFailure = context =>
+                        {
+                            Console.WriteLine("Facebook OAuth error: " + context.Failure.Message);
+                            context.Response.Redirect("/Login?error=" + Uri.EscapeDataString(context.Failure.Message));
+                            context.HandleResponse();
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
         }
+
 
         public static void ConfigJwt(this IServiceCollection services, IConfiguration configuration)
         {

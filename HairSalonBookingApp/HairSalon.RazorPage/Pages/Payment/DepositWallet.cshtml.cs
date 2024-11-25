@@ -59,7 +59,7 @@ namespace HairSalon.RazorPage.Pages.Payment
                 if (Guid.TryParse(DepositWalletRequest.UserId, out var userId) && DepositWalletRequest.Amount > 0)
                 {
                     // Call the ExcuteDepositToWallet service method
-                    var response = await _paymentService.ExcuteDepositToWallet(userId, DepositWalletRequest.Amount);
+                    var response = await _paymentService.ExecuteDepositToWallet(userId, DepositWalletRequest.Amount);
 
                     // Check the response and set a success or error message
                     if (response == "Success!")

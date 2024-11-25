@@ -252,17 +252,12 @@ else
             <thead>
                 <tr>
                     <th>
-                        Combo ID
-                        <button class="sort-btn" data-sort="id">
-                            <span class="sort-arrows">▲▼</span>
-                        </button>
-                    </th>
-                    <th>
                         Combo Name
                         <button class="sort-btn" data-sort="name">
                             <span class="sort-arrows">▲▼</span>
                         </button>
                     </th>
+                    <th>Image</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -270,25 +265,22 @@ else
                 @foreach (var combo in Model.Combos.Items)
                 {
                     <tr>
-                        <td>@combo.Id</td>
                         <td>@combo.Name</td>
                         <td>
-                            <!-- Form Update -->
+                            <img src="@combo.ComboImage" alt="Combo Image" style="max-width: 100px; height: auto;" />
+                        </td>
+                        <td>
                             <form method="post" asp-route-id="@combo.Id" asp-route-action="update" style="display:inline;">
                                 <button type="submit" class="btn-update">Update</button>
                             </form>
 
-                            <!-- Form Detail -->
                             <form method="post" asp-route-id="@combo.Id" asp-route-action="detail" style="display:inline;">
                                 <button type="submit" class="btn-detail">Detail</button>
                             </form>
 
-                            <!-- Form Delete -->
                             <form method="post" asp-route-id="@combo.Id" asp-route-action="delete" style="display:inline;">
                                 <button type="submit" class="btn-delete">Delete</button>
                             </form>
-
-                            @* <a asp-page="/Combo/Active" asp-route-id="@combo.Id" class="btn-active">Active</a> *@
                         </td>
                     </tr>
                 }
@@ -341,7 +333,7 @@ else
         document.querySelectorAll(".sort-btn").forEach(button => {
             button.addEventListener("click", () => {
                 const column = button.dataset.sort;
-                const columnIndex = column === "id" ? 0 : 1;
+                const columnIndex = column === "name" ? 0 : 1;
 
                 const isActive = button.classList.contains("active-asc");
                 const order = isActive ? "desc" : "asc";

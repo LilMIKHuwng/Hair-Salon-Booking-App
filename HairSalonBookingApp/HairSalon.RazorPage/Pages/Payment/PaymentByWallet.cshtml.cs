@@ -103,13 +103,13 @@ namespace HairSalon.RazorPage.Pages.Payment
             if (ModelState.IsValid)
             {
                 var userId = HttpContext.Session.GetString("UserId");
-                string response = await _paymentService.ExcutePayment(NewPayment, userId);
+                string response = await _paymentService.ExecutePayment(NewPayment, userId);
                 if (response == "Payment added successfully.")
                 {
                     ResponseMessage = response;
                     return RedirectToPage("/Payment/Index"); // Redirect back to the payment list page
                 }
-                // Set ErrorMessage if there’s an error
+                // Set ErrorMessage if thereï¿½s an error
                 TempData["ErrorMessage"] = response;
             }
             return Page(); // Return the same page in case of validation errors or other issues

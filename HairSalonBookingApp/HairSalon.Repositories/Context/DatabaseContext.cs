@@ -6,13 +6,13 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HairSalon.Repositories.Context
 {
-
-	public class DatabaseContext : IdentityDbContext<ApplicationUsers, ApplicationRoles, Guid,
-		ApplicationUserClaims, ApplicationUserRoles, ApplicationUserLogins, ApplicationRoleClaims, ApplicationUserTokens>
-	{
-		public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
-		{
-		}
+    public class DatabaseContext : IdentityDbContext<ApplicationUsers, ApplicationRoles, Guid,
+        ApplicationUserClaims, ApplicationUserRoles, ApplicationUserLogins, ApplicationRoleClaims,
+        ApplicationUserTokens>
+    {
+        public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
+        {
+        }
 
 		// user
 		public virtual DbSet<ApplicationUsers> ApplicationUsers => Set<ApplicationUsers>();
@@ -57,28 +57,30 @@ namespace HairSalon.Repositories.Context
 					.HasForeignKey(x => x.RecipientId)
 					.OnDelete(DeleteBehavior.Restrict);
 
-				message.HasOne(x => x.Sender)
-					.WithMany(x => x.MessageSent)
-					.HasForeignKey(x => x.SenderId)
-					.OnDelete(DeleteBehavior.Restrict);
-			});
+                message.HasOne(x => x.Sender)
+                    .WithMany(x => x.MessageSent)
+                    .HasForeignKey(x => x.SenderId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+            modelBuilder.Entity<ApplicationUsers>().HasOne(a => a.UserInfo)
+                .WithOne(x => x.ApplicationUsers)
+                .HasForeignKey<ApplicationUsers>(x => x.UserInfoId)
+                ;
 
-
-			modelBuilder.Entity<ApplicationUserLogins>()
-				.HasKey(login => new { login.UserId, login.LoginProvider, login.ProviderKey });
-
-			modelBuilder.Entity<ApplicationUserRoles>(userRole =>
-			{
-				userRole.HasKey(ur => new { ur.UserId, ur.RoleId });
-				userRole.HasOne(ur => ur.User)
-					.WithMany(u => u.UserRoles)
-					.HasForeignKey(ur => ur.UserId)
-					.IsRequired();
-				userRole.HasOne(ur => ur.Role)
-					.WithMany(r => r.UserRoles)
-					.HasForeignKey(ur => ur.RoleId)
-					.IsRequired();
-			});
+            modelBuilder.Entity<ApplicationUserLogins>()
+                .HasKey(login => new { login.UserId, login.LoginProvider, login.ProviderKey });
+            modelBuilder.Entity<ApplicationUserRoles>(userRole =>
+            {
+                userRole.HasKey(ur => new { ur.UserId, ur.RoleId });
+                userRole.HasOne(ur => ur.User)
+                    .WithMany(u => u.UserRoles)
+                    .HasForeignKey(ur => ur.UserId)
+                    .IsRequired();
+                userRole.HasOne(ur => ur.Role)
+                    .WithMany(r => r.UserRoles)
+                    .HasForeignKey(ur => ur.RoleId)
+                    .IsRequired();
+            });
 
 			modelBuilder.Entity<ApplicationUserTokens>()
 				.HasKey(token => new { token.UserId, token.LoginProvider, token.Name });
@@ -129,293 +131,291 @@ namespace HairSalon.Repositories.Context
 				}
 			);
 
-			// 2. UserInfo
-			var userInfoId1 = Guid.NewGuid().ToString();
-			var userInfoId2 = Guid.NewGuid().ToString();
-			var userInfoId3 = Guid.NewGuid().ToString();
-			var userInfoId4 = Guid.NewGuid().ToString();
-			var userInfoId5 = Guid.NewGuid().ToString();
-			var userInfoId6 = Guid.NewGuid().ToString();
-			var userInfoId7 = Guid.NewGuid().ToString();
-			var userInfoId8 = Guid.NewGuid().ToString();
+            // 2. UserInfo
+            // 2. UserInfo
+            var userInfoId1 = Guid.NewGuid().ToString();
+            var userInfoId2 = Guid.NewGuid().ToString();
+            var userInfoId3 = Guid.NewGuid().ToString();
+            var userInfoId4 = Guid.NewGuid().ToString();
+            var userInfoId5 = Guid.NewGuid().ToString();
+            var userInfoId6 = Guid.NewGuid().ToString();
+            var userInfoId7 = Guid.NewGuid().ToString();
+            var userInfoId8 = Guid.NewGuid().ToString();
 
-			modelBuilder.Entity<UserInfo>().HasData(
-				new UserInfo
-				{
-					Id = userInfoId1,
-					Firstname = "John",
-					Lastname = "Doe",
-					BankAccount = "123456789",
-					BankAccountName = "John Doe",
-					Bank = "Bank A",
-					Point = 100,
-					CreatedBy = "SeedData",
-					LastUpdatedBy = "SeedData",
-					CreatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedTime = DateTimeOffset.UtcNow
-				},
-				new UserInfo
-				{
-					Id = userInfoId2,
-					Firstname = "Jane",
-					Lastname = "Smith",
-					BankAccount = "987654321",
-					BankAccountName = "Jane Smith",
-					Bank = "Bank B",
-					Point = 150,
-					CreatedBy = "SeedData",
-					LastUpdatedBy = "SeedData",
-					CreatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedTime = DateTimeOffset.UtcNow
-				},
-				new UserInfo
-				{
-					Id = userInfoId3,
-					Firstname = "Dev",
-					Lastname = "Nguyen",
-					BankAccount = "123456798",
-					BankAccountName = "Dev Nguyen",
-					Bank = "Bank c",
-					Point = 0,
-					CreatedBy = "SeedData",
-					LastUpdatedBy = "SeedData",
-					CreatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedTime = DateTimeOffset.UtcNow
-				},
-				new UserInfo
-				{
-					Id = userInfoId4,
-					Firstname = "Dan",
-					Lastname = "Tran",
-					BankAccount = "123456987",
-					BankAccountName = "Dan Tran",
-					Bank = "Bank D",
-					Point = 0,
-					CreatedBy = "SeedData",
-					LastUpdatedBy = "SeedData",
-					CreatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedTime = DateTimeOffset.UtcNow
-				},
+            modelBuilder.Entity<UserInfo>().HasData(
+                new UserInfo
+                {
+                    Id = userInfoId1,
+                    Firstname = "John",
+                    Lastname = "Doe",
+                    BankAccount = "123456789",
+                    BankAccountName = "John Doe",
+                    Bank = "Bank A",
+                    Point = 100,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new UserInfo
+                {
+                    Id = userInfoId2,
+                    Firstname = "Jane",
+                    Lastname = "Smith",
+                    BankAccount = "987654321",
+                    BankAccountName = "Jane Smith",
+                    Bank = "Bank B",
+                    Point = 150,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new UserInfo
+                {
+                    Id = userInfoId3,
+                    Firstname = "Dev",
+                    Lastname = "Nguyen",
+                    BankAccount = "123456798",
+                    BankAccountName = "Dev Nguyen",
+                    Bank = "Bank c",
+                    Point = 0,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new UserInfo
+                {
+                    Id = userInfoId4,
+                    Firstname = "Dan",
+                    Lastname = "Tran",
+                    BankAccount = "123456987",
+                    BankAccountName = "Dan Tran",
+                    Bank = "Bank D",
+                    Point = 0,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new UserInfo
+                {
+                    Id = userInfoId5,
+                    Firstname = "Alice",
+                    Lastname = "Walker",
+                    BankAccount = "112233445",
+                    BankAccountName = "Alice Walker",
+                    Bank = "Bank E",
+                    Point = 200,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new UserInfo
+                {
+                    Id = userInfoId6,
+                    Firstname = "Bob",
+                    Lastname = "Brown",
+                    BankAccount = "998877665",
+                    BankAccountName = "Bob Brown",
+                    Bank = "Bank F",
+                    Point = 50,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new UserInfo
+                {
+                    Id = userInfoId7,
+                    Firstname = "Chris",
+                    Lastname = "Evans",
+                    BankAccount = "554433221",
+                    BankAccountName = "Chris Evans",
+                    Bank = "Bank G",
+                    Point = 75,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new UserInfo
+                {
+                    Id = userInfoId8,
+                    Firstname = "Diana",
+                    Lastname = "Prince",
+                    BankAccount = "667788990",
+                    BankAccountName = "Diana Prince",
+                    Bank = "Bank H",
+                    Point = 300,
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                }
+            );
 
-				new UserInfo
-				{
-					Id = userInfoId5,
-					Firstname = "Alice",
-					Lastname = "Walker",
-					BankAccount = "112233445",
-					BankAccountName = "Alice Walker",
-					Bank = "Bank E",
-					Point = 200,
-					CreatedBy = "SeedData",
-					LastUpdatedBy = "SeedData",
-					CreatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedTime = DateTimeOffset.UtcNow
-				},
+// 3. ApplicationUsers/-strong/-heart:>:o:-((:-h var passwordHasher = new PasswordHasher<ApplicationUsers>();
+            var userId1 = Guid.NewGuid();
+            var userId2 = Guid.NewGuid();
+            var userId3 = Guid.NewGuid();
+            var userId4 = Guid.NewGuid();
+            var userId5 = Guid.NewGuid();
+            var userId6 = Guid.NewGuid();
+            var userId7 = Guid.NewGuid();
+            var userId8 = Guid.NewGuid();
 
-				new UserInfo
-				{
-					Id = userInfoId6,
-					Firstname = "Bob",
-					Lastname = "Brown",
-					BankAccount = "998877665",
-					BankAccountName = "Bob Brown",
-					Bank = "Bank F",
-					Point = 50,
-					CreatedBy = "SeedData",
-					LastUpdatedBy = "SeedData",
-					CreatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedTime = DateTimeOffset.UtcNow
-				},
-				new UserInfo
-				{
-					Id = userInfoId7,
-					Firstname = "Chris",
-					Lastname = "Evans",
-					BankAccount = "554433221",
-					BankAccountName = "Chris Evans",
-					Bank = "Bank G",
-					Point = 75,
-					CreatedBy = "SeedData",
-					LastUpdatedBy = "SeedData",
-					CreatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedTime = DateTimeOffset.UtcNow
-				},
-				new UserInfo
-				{
-					Id = userInfoId8,
-					Firstname = "Diana",
-					Lastname = "Prince",
-					BankAccount = "667788990",
-					BankAccountName = "Diana Prince",
-					Bank = "Bank H",
-					Point = 300,
-					CreatedBy = "SeedData",
-					LastUpdatedBy = "SeedData",
-					CreatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedTime = DateTimeOffset.UtcNow
-				}
-			);
+            var adminUser = new ApplicationUsers { Id = userId1 };
+            var normalUser = new ApplicationUsers { Id = userId2 };
+            var managerUser = new ApplicationUsers { Id = userId3 };
+            var stylistUser = new ApplicationUsers { Id = userId4 };
+            var additionalUser1 = new ApplicationUsers { Id = userId5 };
+            var additionalUser2 = new ApplicationUsers { Id = userId6 };
+            var additionalUser3 = new ApplicationUsers { Id = userId7 };
+            var additionalUser4 = new ApplicationUsers { Id = userId8 };
+            var passwordHasher = new PasswordHasher<ApplicationUsers>();
 
-			// 3. ApplicationUsers
-			var passwordHasher = new PasswordHasher<ApplicationUsers>();
-			var userId1 = Guid.NewGuid();
-			var userId2 = Guid.NewGuid();
-			var userId3 = Guid.NewGuid();
-			var userId4 = Guid.NewGuid();
-			var userId5 = Guid.NewGuid();
-			var userId6 = Guid.NewGuid();
-			var userId7 = Guid.NewGuid();
-			var userId8 = Guid.NewGuid();
+// Hash passwords
+            var adminPasswordHash = passwordHasher.HashPassword(adminUser, "123");
+            var userPasswordHash = passwordHasher.HashPassword(normalUser, "123");
+            var managerPasswordHash = passwordHasher.HashPassword(managerUser, "123");
+            var stylistPasswordHash = passwordHasher.HashPassword(stylistUser, "123");
+            var additionalUserPasswordHash1 = passwordHasher.HashPassword(additionalUser1, "123");
+            var additionalUserPasswordHash2 = passwordHasher.HashPassword(additionalUser2, "123");
+            var additionalUserPasswordHash3 = passwordHasher.HashPassword(additionalUser3, "123");
+            var additionalUserPasswordHash4 = passwordHasher.HashPassword(additionalUser4, "123");
 
-			var adminUser = new ApplicationUsers { Id = userId1 };
-			var normalUser = new ApplicationUsers { Id = userId2 };
-			var managerUser = new ApplicationUsers { Id = userId3 };
-			var stylistUser = new ApplicationUsers { Id = userId4 };
-			var additionalUser1 = new ApplicationUsers { Id = userId5 };
-			var additionalUser2 = new ApplicationUsers { Id = userId6 };
-			var additionalUser3 = new ApplicationUsers { Id = userId7 };
-			var additionalUser4 = new ApplicationUsers { Id = userId8 };
-
-			// Hash passwords
-			var adminPasswordHash = passwordHasher.HashPassword(adminUser, "123");
-			var userPasswordHash = passwordHasher.HashPassword(normalUser, "123");
-			var managerPasswordHash = passwordHasher.HashPassword(managerUser, "123");
-			var stylistPasswordHash = passwordHasher.HashPassword(stylistUser, "123");
-			var additionalUserPasswordHash1 = passwordHasher.HashPassword(additionalUser1, "123");
-			var additionalUserPasswordHash2 = passwordHasher.HashPassword(additionalUser2, "123");
-			var additionalUserPasswordHash3 = passwordHasher.HashPassword(additionalUser3, "123");
-			var additionalUserPasswordHash4 = passwordHasher.HashPassword(additionalUser4, "123");
-
-			modelBuilder.Entity<ApplicationUsers>().HasData(
-				new ApplicationUsers
-				{
-					Id = userId1,
-					UserName = "admin",
-					NormalizedUserName = "ADMIN@EXAMPLE.COM",
-					Email = "admin@example.com",
-					NormalizedEmail = "ADMIN@EXAMPLE.COM",
-					EmailConfirmed = true,
-					PasswordHash = adminPasswordHash,
-					UserInfoId = userInfoId1,
-					SecurityStamp = "SeedData",
-					CreatedBy = "SeedData",
-					LastUpdatedBy = "SeedData",
-					CreatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedTime = DateTimeOffset.UtcNow
-				},
-				new ApplicationUsers
-				{
-					Id = userId2,
-					UserName = "user",
-					NormalizedUserName = "USER@EXAMPLE.COM",
-					Email = "user@example.com",
-					NormalizedEmail = "USER@EXAMPLE.COM",
-					EmailConfirmed = true,
-					PasswordHash = userPasswordHash,
-					UserInfoId = userInfoId2,
-					SecurityStamp = "SeedData",
-					CreatedBy = "SeedData",
-					LastUpdatedBy = "SeedData",
-					CreatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedTime = DateTimeOffset.UtcNow
-				},
-				new ApplicationUsers
-				{
-					Id = userId3,
-					UserName = "manager",
-					NormalizedUserName = "MANAGER@EXAMPLE.COM",
-					Email = "manager@example.com",
-					NormalizedEmail = "MANAGER@EXAMPLE.COM",
-					EmailConfirmed = true,
-					PasswordHash = managerPasswordHash,
-					UserInfoId = userInfoId3,
-					SecurityStamp = "SeedData",
-					CreatedBy = "SeedData",
-					LastUpdatedBy = "SeedData",
-					CreatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedTime = DateTimeOffset.UtcNow
-				},
-				new ApplicationUsers
-				{
-					Id = userId4,
-					UserName = "stylist",
-					NormalizedUserName = "STYLIST@EXAMPLE.COM",
-					Email = "stylist@example.com",
-					NormalizedEmail = "STYLIST@EXAMPLE.COM",
-					EmailConfirmed = true,
-					PasswordHash = stylistPasswordHash,
-					UserInfoId = userInfoId4,
-					SecurityStamp = "SeedData",
-					CreatedBy = "SeedData",
-					LastUpdatedBy = "SeedData",
-					CreatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedTime = DateTimeOffset.UtcNow
-				},
-				new ApplicationUsers
-				{
-					Id = userId5,
-					UserName = "user2",
-					NormalizedUserName = "USER2@EXAMPLE.COM",
-					Email = "user2@example.com",
-					NormalizedEmail = "USER2@EXAMPLE.COM",
-					EmailConfirmed = true,
-					PasswordHash = additionalUserPasswordHash1,
-					UserInfoId = userInfoId5,
-					SecurityStamp = "SeedData",
-					CreatedBy = "SeedData",
-					LastUpdatedBy = "SeedData",
-					CreatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedTime = DateTimeOffset.UtcNow
-				},
-				new ApplicationUsers
-				{
-					Id = userId6,
-					UserName = "user3",
-					NormalizedUserName = "USER3@EXAMPLE.COM",
-					Email = "user3@example.com",
-					NormalizedEmail = "USER3@EXAMPLE.COM",
-					EmailConfirmed = true,
-					PasswordHash = additionalUserPasswordHash2,
-					UserInfoId = userInfoId6,
-					SecurityStamp = "SeedData",
-					CreatedBy = "SeedData",
-					LastUpdatedBy = "SeedData",
-					CreatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedTime = DateTimeOffset.UtcNow
-				},
-				new ApplicationUsers
-				{
-					Id = userId7,
-					UserName = "user4",
-					NormalizedUserName = "USER4@EXAMPLE.COM",
-					Email = "user4@example.com",
-					NormalizedEmail = "USER4@EXAMPLE.COM",
-					EmailConfirmed = true,
-					PasswordHash = additionalUserPasswordHash3,
-					UserInfoId = userInfoId7,
-					SecurityStamp = "SeedData",
-					CreatedBy = "SeedData",
-					LastUpdatedBy = "SeedData",
-					CreatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedTime = DateTimeOffset.UtcNow
-				},
-				new ApplicationUsers
-				{
-					Id = userId8,
-					UserName = "user5",
-					NormalizedUserName = "USER5@EXAMPLE.COM",
-					Email = "user5@example.com",
-					NormalizedEmail = "USER5@EXAMPLE.COM",
-					EmailConfirmed = true,
-					PasswordHash = additionalUserPasswordHash4,
-					UserInfoId = userInfoId8,
-					SecurityStamp = "SeedData",
-					CreatedBy = "SeedData",
-					LastUpdatedBy = "SeedData",
-					CreatedTime = DateTimeOffset.UtcNow,
-					LastUpdatedTime = DateTimeOffset.UtcNow
-				}
-			);
+            modelBuilder.Entity<ApplicationUsers>().HasData(
+                new ApplicationUsers
+                {
+                    Id = userId1,
+                    UserName = "admin",
+                    NormalizedUserName = "ADMIN@EXAMPLE.COM",
+                    Email = "admin@example.com",
+                    NormalizedEmail = "ADMIN@EXAMPLE.COM",
+                    EmailConfirmed = true,
+                    PasswordHash = adminPasswordHash,
+                    UserInfoId = userInfoId1,
+                    SecurityStamp = "SeedData",
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new ApplicationUsers
+                {
+                    Id = userId2,
+                    UserName = "user",
+                    NormalizedUserName = "USER@EXAMPLE.COM",
+                    Email = "user@example.com",
+                    NormalizedEmail = "USER@EXAMPLE.COM",
+                    EmailConfirmed = true,
+                    PasswordHash = userPasswordHash,
+                    UserInfoId = userInfoId2,
+                    SecurityStamp = "SeedData",
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new ApplicationUsers
+                {
+                    Id = userId3,
+                    UserName = "manager",
+                    NormalizedUserName = "MANAGER@EXAMPLE.COM",
+                    Email = "manager@example.com",
+                    NormalizedEmail = "MANAGER@EXAMPLE.COM",
+                    EmailConfirmed = true,
+                    PasswordHash = managerPasswordHash,
+                    UserInfoId = userInfoId3,
+                    SecurityStamp = "SeedData",
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new ApplicationUsers
+                {
+                    Id = userId4,
+                    UserName = "stylist",
+                    NormalizedUserName = "STYLIST@EXAMPLE.COM",
+                    Email = "stylist@example.com",
+                    NormalizedEmail = "STYLIST@EXAMPLE.COM", EmailConfirmed = true,
+                    PasswordHash = stylistPasswordHash,
+                    UserInfoId = userInfoId4,
+                    SecurityStamp = "SeedData",
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new ApplicationUsers
+                {
+                    Id = userId5,
+                    UserName = "user2",
+                    NormalizedUserName = "USER2@EXAMPLE.COM",
+                    Email = "user2@example.com",
+                    NormalizedEmail = "USER2@EXAMPLE.COM",
+                    EmailConfirmed = true,
+                    PasswordHash = additionalUserPasswordHash1,
+                    UserInfoId = userInfoId5,
+                    SecurityStamp = "SeedData",
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new ApplicationUsers
+                {
+                    Id = userId6,
+                    UserName = "user3",
+                    NormalizedUserName = "USER3@EXAMPLE.COM",
+                    Email = "user3@example.com",
+                    NormalizedEmail = "USER3@EXAMPLE.COM",
+                    EmailConfirmed = true,
+                    PasswordHash = additionalUserPasswordHash2,
+                    UserInfoId = userInfoId6,
+                    SecurityStamp = "SeedData",
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new ApplicationUsers
+                {
+                    Id = userId7,
+                    UserName = "user4",
+                    NormalizedUserName = "USER4@EXAMPLE.COM",
+                    Email = "user4@example.com",
+                    NormalizedEmail = "USER4@EXAMPLE.COM",
+                    EmailConfirmed = true,
+                    PasswordHash = additionalUserPasswordHash3,
+                    UserInfoId = userInfoId7,
+                    SecurityStamp = "SeedData",
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                },
+                new ApplicationUsers
+                {
+                    Id = userId8,
+                    UserName = "user5",
+                    NormalizedUserName = "USER5@EXAMPLE.COM",
+                    Email = "user5@example.com",
+                    NormalizedEmail = "USER5@EXAMPLE.COM",
+                    EmailConfirmed = true,
+                    PasswordHash = additionalUserPasswordHash4,
+                    UserInfoId = userInfoId8,
+                    SecurityStamp = "SeedData",
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                }
+            );
 
 			// 4. ApplicationUserRoles
 			modelBuilder.Entity<ApplicationUserRoles>().HasData(
@@ -496,22 +496,22 @@ namespace HairSalon.Repositories.Context
 			// 5. Shop
 			var shopId = Guid.NewGuid().ToString();
 
-			modelBuilder.Entity<Shop>().HasData(
-			new Shop
-			{
-				Id = shopId,
-				Name = "Salon A",
-				Address = "123 Main St, Cityville",
-				ShopEmail = "contact@salona.com",
-				ShopPhone = "123-456-7890",
-				OpenTime = new TimeSpan(9, 0, 0), // 09:00 AM
-				CloseTime = new TimeSpan(19, 0, 0), // 07:00 PM
-				Title = "Best Hair Salon in Town",
-				CreatedBy = "SeedData",
-				LastUpdatedBy = "SeedData",
-				CreatedTime = DateTimeOffset.UtcNow,
-				LastUpdatedTime = DateTimeOffset.UtcNow
-			});
+            modelBuilder.Entity<Shop>().HasData(
+                new Shop
+                {
+                    Id = shopId,
+                    Name = "Salon A",
+                    Address = "123 Main St, Cityville",
+                    ShopEmail = "contact@salona.com",
+                    ShopPhone = "123-456-7890",
+                    OpenTime = new TimeSpan(9, 0, 0), // 09:00 AM
+                    CloseTime = new TimeSpan(19, 0, 0), // 07:00 PM
+                    Title = "Best Hair Salon in Town",
+                    CreatedBy = "SeedData",
+                    LastUpdatedBy = "SeedData",
+                    CreatedTime = DateTimeOffset.UtcNow,
+                    LastUpdatedTime = DateTimeOffset.UtcNow
+                });
 
 			// 6. Service
 			var serviceId1 = Guid.NewGuid().ToString();

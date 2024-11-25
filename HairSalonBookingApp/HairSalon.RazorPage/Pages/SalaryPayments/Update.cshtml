@@ -132,12 +132,6 @@ else
 
 	<form method="post">
 		<input type="hidden" asp-for="Id" />
-
-		<div>
-			<label>Salary Payment ID:</label>
-			<p>@Model.Id</p>
-		</div>
-
 		<div class="form-group">
 			<label asp-for="SalaryPayment.UserId">User ID</label>
 			<select asp-for="SalaryPayment.UserId" class="form-control" required>

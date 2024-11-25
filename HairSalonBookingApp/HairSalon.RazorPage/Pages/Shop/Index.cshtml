@@ -267,12 +267,6 @@ else
             <thead>
                 <tr>
                     <th>
-                        Shop ID
-                        <button class="sort-btn" data-sort="id">
-                            <span class="sort-arrows">▲▼</span>
-                        </button>
-                    </th>
-                    <th>
                         Shop Name
                         <button class="sort-btn" data-sort="name">
                             <span class="sort-arrows">▲▼</span>
@@ -302,6 +296,7 @@ else
                             <span class="sort-arrows">▲▼</span>
                         </button>
                     </th>
+                    <th>Shop Image</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -309,12 +304,14 @@ else
                 @foreach (var shop in Model.Shops.Items)
                 {
                     <tr>
-                        <td>@shop.Id</td>
                         <td>@shop.Name</td>
                         <td>@shop.Address</td>
                         <td>@shop.ShopPhone</td>
                         <td>@shop.ShopEmail</td>
                         <td>@shop.OpenTime - @shop.CloseTime</td>
+                        <td>
+                            <img src="@shop.ShopImage" alt="Shop Image" style="width: 100px; height: auto;" />
+                        </td>
                         <td>
                             <!-- Form Update -->
                             <form method="post" asp-route-id="@shop.Id" asp-route-action="update" style="display:inline;">
@@ -406,12 +403,11 @@ else
         // Định nghĩa cột theo key sắp xếp
         function getColumnIndex(sortKey) {
             switch (sortKey) {
-                case "id": return 1;
-                case "name": return 2;
-                case "address": return 3;
-                case "phone": return 4;
-                case "email": return 5;
-                case "hours": return 6;
+                case "name": return 1;
+                case "address": return 2;
+                case "phone": return 3;
+                case "email": return 4;
+                case "hours": return 5;
                 default: return 1;
             }
         }

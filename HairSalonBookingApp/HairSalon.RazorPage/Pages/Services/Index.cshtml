@@ -230,17 +230,12 @@
             <thead>
                 <tr>
                     <th>
-                        Service ID
-                        <button class="sort-btn" data-sort="id">
-                            <span class="sort-arrows">▲▼</span>
-                        </button>
-                    </th>
-                    <th>
                         Service Name
                         <button class="sort-btn" data-sort="name">
                             <span class="sort-arrows">▲▼</span>
                         </button>
                     </th>
+                    <th>Service Image</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -248,20 +243,19 @@
                 @foreach (var service in Model.Services.Items)
                 {
                     <tr>
-                        <td>@service.Id</td>
                         <td>@service.Name</td>
                         <td>
-                            <!-- Form Update -->
+                            <img src="@service.ServiceImage" alt="Service Image" style="width: 100px; height: auto;" />
+                        </td>
+                        <td>
                             <form method="post" asp-route-id="@service.Id" asp-route-action="update" style="display:inline;">
                                 <button type="submit" class="btn-update">Update</button>
                             </form>
 
-                            <!-- Form Detail -->
                             <form method="post" asp-route-id="@service.Id" asp-route-action="detail" style="display:inline;">
                                 <button type="submit" class="btn-detail">Detail</button>
                             </form>
 
-                            <!-- Form Delete -->
                             <form method="post" asp-route-id="@service.Id" asp-route-action="delete" style="display:inline;">
                                 <button type="submit" class="btn-delete">Delete</button>
                             </form>
@@ -317,7 +311,7 @@
         document.querySelectorAll(".sort-btn").forEach(button => {
             button.addEventListener("click", () => {
                 const column = button.dataset.sort;
-                const columnIndex = column === "id" ? 0 : 1;
+                const columnIndex = column === "name" ? 0 : 1;
 
                 const isActive = button.classList.contains("active-asc");
                 const order = isActive ? "desc" : "asc";
