@@ -187,7 +187,7 @@ else
 
         <div>
             <label asp-for="NewPayment.Method">Method</label>
-            <input asp-for="NewPayment.Method" placeholder="Enter Method" required />
+            <input asp-for="NewPayment.Method" placeholder="Enter Method" required value="COD" readonly />
             <span asp-validation-for="NewPayment.Method" class="text-danger"></span>
         </div>
 
