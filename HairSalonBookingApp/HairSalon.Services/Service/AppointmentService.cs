@@ -190,6 +190,7 @@ namespace HairSalon.Services.Service
                     return "Stylist has other appointment at that time";
                 }
             }
+            
 
             // Map data model to entity
             Appointment newAppointment = _mapper.Map<Appointment>(model);
@@ -259,7 +260,11 @@ namespace HairSalon.Services.Service
                 // If the appointment qualifies, apply the promotion
                 newAppointment.PromotionId = promotion.Id;
             }
-
+            //check the number of cancelled appointment
+            if (CheckAmountCancelledAppointment(userId))
+            {
+                return "Today you cancelled appointment too much! Try again in next day!";
+            }
             // create service appointment
             if (!model.ServiceIds.IsNullOrEmpty())
             {
@@ -299,7 +304,7 @@ namespace HairSalon.Services.Service
                     await _unitOfWork.GetRepository<ComboAppointment>().InsertAsync(comboAppointment);
                 }
             }
-
+            
             //Update point in userInfo
             await _unitOfWork.GetRepository<UserInfo>().UpdateAsync(userInfo);
             // Add new appointment
@@ -307,6 +312,14 @@ namespace HairSalon.Services.Service
             await _unitOfWork.SaveAsync();
 
             return "Appointment successfully created.";
+        }
+
+        private bool CheckAmountCancelledAppointment(string userId)
+        {
+            var appointmentList = _unitOfWork.GetRepository<Appointment>();
+            int count = appointmentList.Entities.Count(x => x.StatusForAppointment == "Cancelled" 
+                                                        && x.AppointmentDate.ToString("yyyy MMMM dd") == DateTime.UtcNow.ToString("yyyy MMMM dd"));
+            return count > 3;
         }
 
         // Get all appointments by startEndDay, id
