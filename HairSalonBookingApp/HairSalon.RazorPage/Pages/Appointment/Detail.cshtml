@@ -148,7 +148,9 @@ else
 				}
 			</tbody>
 		</table>
+		<p><strong>Promotion ID:</strong> @Model.Appointment.PromotionId</p>
 	</div>
+
 
 	<div class="btn-container">
 		@{
@@ -158,12 +160,92 @@ else
 		@if (userRolesString.Contains("Admin") || userRolesString.Contains("Manager") || userRolesString.Contains("User"))
 		{
 			<a asp-page="/Appointment/Update" asp-route-id="@Model.Appointment.Id" class="btn">Update Appointment</a>
+
+			<div class="deposit-container">
+				<input type="hidden" id="appointmentId" value="@Model.Appointment.Id" />
+				<label for="depositMethod" style="font-weight: bold;">Select Deposit Method:</label>
+				<select id="depositMethod" name="depositMethod" class="form-control" style="width: auto; display: inline-block; margin-right: 10px;">
+					<option value="VnPay">VnPay</option>
+					<option value="PayOS">PayOS</option>
+					<option value="Wallet">Wallet</option>
+				</select>
+				<button type="button" class="btn btn-primary" onclick="processDeposit()">Deposit</button>
+			</div>
 		}
 		<a asp-page="/Appointment/Index" class="btn">Back to Appointment List</a>
 	</div>
+
+	<p>Time remaining to confirm appointment: <span id="countdown">15m 0s</span></p>
 
 	@if (TempData["ErrorMessage"] != null)
 	{
 		<div class="alert-danger">@TempData["ErrorMessage"]</div>
 	}
 }
+
+<script>
+	function processDeposit() {
+		var appointmentId = document.getElementById('appointmentId').value;
+		var depositMethod = document.getElementById('depositMethod').value;
+
+		// Define URLs for different deposit methods
+		let depositUrls = {
+			"VnPay": `/Appointment/VnPayDeposit?appointmentId=${appointmentId}`,
+			"PayOS": `/Appointment/PayOSDeposit?appointmentId=${appointmentId}`,
+			"Wallet": `/Appointment/WalletDeposit?appointmentId=${appointmentId}`
+		};
+
+		// Redirect to the selected deposit method page
+		if (depositUrls[depositMethod]) {
+			window.location.href = depositUrls[depositMethod];
+		} else {
+			alert('Invalid deposit method selected.');
+		}
+	}
+</script>
+
+<script>
+	// Tính toán thời gian đã trôi qua từ thời điểm tạo cuộc hẹn
+	var createdTime = new Date('@Model.Appointment.CreatedTime');
+	var currentTime = new Date();
+	var timeDifference = currentTime - createdTime;
+	var remainingTime = 900000 - timeDifference; // 15 phút = 900000ms
+
+	// Cập nhật bộ đếm mỗi giây
+	var timerInterval = setInterval(function () {
+		remainingTime -= 1000; // Giảm 1 giây mỗi lần
+		if (remainingTime <= 0) {
+			clearInterval(timerInterval); // Dừng bộ đếm
+			checkAndCancelAppointment();
+		}
+		updateCountdownDisplay(remainingTime);
+	}, 1000);
+
+	// Hàm cập nhật bộ đếm hiển thị
+	function updateCountdownDisplay(time) {
+		var minutes = Math.floor(time / 60000);
+		var seconds = Math.floor((time % 60000) / 1000);
+		document.getElementById("countdown").innerHTML = minutes + "m " + seconds + "s";
+	}
+
+	// Kiểm tra và gọi hàm Cancel nếu cần
+	function checkAndCancelAppointment() {
+		var appointmentStatus = '@Model.Appointment.StatusForAppointment';
+		if (appointmentStatus !== 'Confirmed') {
+			// Gọi hàm Cancel (API hoặc Method)
+			fetch(`/Appointment/Cancel?appointmentId=${'@Model.Appointment.Id'}`, {
+				method: 'POST'
+			}).then(response => {
+				if (response.ok) {
+					alert('Appointment has been automatically canceled.');
+					window.location.href = '/Appointment/Index'; // Điều hướng về trang danh sách cuộc hẹn
+				} else {
+					alert('Failed to cancel the appointment.');
+				}
+			}).catch(error => {
+				alert('An error occurred while canceling the appointment.');
+			});
+		}
+	}
+</script>
+

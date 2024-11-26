@@ -311,7 +311,7 @@ namespace HairSalon.Services.Service
             await _unitOfWork.GetRepository<Appointment>().InsertAsync(newAppointment);
             await _unitOfWork.SaveAsync();
 
-            return "Appointment successfully created.";
+            return "Appointment successfully created. " + newAppointment.Id;
         }
 
         private bool CheckAmountCancelledAppointment(string userId)
