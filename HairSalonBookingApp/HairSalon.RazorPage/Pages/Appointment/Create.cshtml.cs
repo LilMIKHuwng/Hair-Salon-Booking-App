@@ -73,11 +73,16 @@ namespace HairSalon.RazorPage.Pages.Appointment
                 var userId = HttpContext.Session.GetString("UserId");
 
                 string response = await _appointmentService.AddAppointmentAsync(NewAppointment, userId);
-                if (response == "Appointment successfully created.")
+                if (response.Contains("Appointment successfully created."))
                 {
-                    ResponseMessage = response;
-                    return RedirectToPage("/Appointment/Index"); // Redirect back to the appointment list page
-                }
+					// Extract the Id from the response
+					var responseParts = response.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+					var appointmentId = responseParts[^1]; 
+
+					ResponseMessage = "Appointment successfully created.";
+					TempData["AppointmentId"] = appointmentId; 
+					return RedirectToPage("/Appointment/Detail"); 
+				}
                 else
                 {
                     // Set ErrorMessage if there’s an error

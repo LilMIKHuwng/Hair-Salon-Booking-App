@@ -208,7 +208,7 @@ else
 				<option value="">Select Promotion</option>
 				@foreach (var promotion in Model.Promotions)
 				{
-					<option value="@promotion.Id" selected="@(Model.UpdateAppointment?.PromotionId == promotion.Id || Model.Appointment?.PromotionsId == promotion.Id ? "selected" : null)">
+					<option value="@promotion.Id" selected="@(Model.UpdateAppointment?.PromotionId == promotion.Id || Model.Appointment?.PromotionId == promotion.Id ? "selected" : null)">
 						@promotion.Name
 					</option>
 				}

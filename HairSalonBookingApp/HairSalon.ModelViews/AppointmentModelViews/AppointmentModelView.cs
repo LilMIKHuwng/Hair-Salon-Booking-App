@@ -10,7 +10,8 @@
 		public int TotalTime { get; set; }
 		public decimal TotalAmount { get; set; }
 		public DateTime AppointmentDate { get; set; }
-        public string PromotionsId { get; set; }
+        public string PromotionId { get; set; }
+        public DateTimeOffset CreatedTime { get; set; }
         public string UserName { get; set; }
     }
 }
