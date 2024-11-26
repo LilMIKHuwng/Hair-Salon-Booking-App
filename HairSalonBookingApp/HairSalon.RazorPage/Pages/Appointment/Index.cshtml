@@ -1,4 +1,5 @@
 ﻿@page "/Appointments"
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 @model AppointmentManagementModel
 @{
 	ViewData["Title"] = "Appointment Management";
@@ -124,6 +125,19 @@
 
 		.btn-confirm:hover {
 			background-color: #d68910;
+		}
+
+	.btn-feedback {
+		color: #ffffff;
+		background-color: #0066FF;
+		padding: 5px 10px;
+		border-radius: 5px;
+		text-decoration: none;
+		transition: background-color 0.3s ease;
+	}
+
+		.btn-feedback:hover {
+			background-color: #0066CC;
 		}
 
 	/* Table Styling */
@@ -355,31 +369,51 @@ else
 						<td>@appointment.AppointmentDate.ToString("MM/dd/yyyy hh:mm tt")</td>
 						<td>
 							<div class="action-buttons">
-								<!-- Form Update -->
-								<form method="post" asp-route-id="@appointment.Id" asp-route-action="update" style="display:inline;">
-									<button type="submit" class="btn-update">Update</button>
-								</form>
+								<!-- Role-based -->
+								@{
+									var session = HttpContextAccessor.HttpContext.Session;
+									var userRolesString = session.GetString("UserRoles");
+								}
+
+								@if (userRolesString.Contains("Admin") || userRolesString.Contains("Manager")
+													|| userRolesString.Contains("User"))
+								{
+									<!-- Form Update -->
+									<form method="post" asp-route-id="@appointment.Id" asp-route-action="update" style="display:inline;">
+										<button type="submit" class="btn-update">Update</button>
+									</form>
+
+									<!-- Form Delete -->
+									<form method="post" asp-route-id="@appointment.Id" asp-route-action="delete" style="display:inline;">
+										<button type="submit" class="btn-delete">Delete</button>
+									</form>
+									
+									<!-- Form Feedback -->
+									@if (appointment.StatusForAppointment == "Completed" && !(await Model._feedbacktService.CheckAlreadyFeedbackAsync(appointment.Id)))
+									{
+										<form method="post" asp-route-id="@appointment.Id" asp-route-action="feedback" style="display:inline;">
+											<button type="submit" class="btn-feedback">Feedback</button>
+										</form>
+									}
+								}
 
 								<!-- Form Detail -->
 								<form method="post" asp-route-id="@appointment.Id" asp-route-action="detail" style="display:inline;">
 									<button type="submit" class="btn-detail">Detail</button>
 								</form>
 
-								<!-- Form Delete -->
-								<form method="post" asp-route-id="@appointment.Id" asp-route-action="delete" style="display:inline;">
-									<button type="submit" class="btn-delete">Delete</button>
-								</form>
+								@if (userRolesString.Contains("Admin") || userRolesString.Contains("Manager"))
+								{
+									<!-- Form Completed -->
+									<form method="post" asp-route-id="@appointment.Id" asp-route-action="completed" style="display:inline;">
+										<button type="submit" class="btn-completed">Completed</button>
+									</form>
 
-								<!-- Form Completed -->
-								<form method="post" asp-route-id="@appointment.Id" asp-route-action="completed" style="display:inline;">
-									<button type="submit" class="btn-completed">Completed</button>
-								</form>
-
-								<!-- Form Confirm -->
-								<form method="post" asp-route-id="@appointment.Id" asp-route-action="confirm" style="display:inline;">
-									<button type="submit" class="btn-confirm">Confirm</button>
-								</form>
-
+									<!-- Form Confirm -->
+									<form method="post" asp-route-id="@appointment.Id" asp-route-action="confirm" style="display:inline;">
+										<button type="submit" class="btn-confirm">Confirm</button>
+									</form>
+								}
 							</div>
 						</td>
 					</tr>

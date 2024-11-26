@@ -64,11 +64,6 @@ namespace HairSalon.Services.Service
                 {
                     return "Appointment not found.";
                 }
-
-                if (appointment.StatusForAppointment != "Completed")
-                {
-                    return "Appointment don't complete";
-                }
             }
 
             // Validate the payment model and method

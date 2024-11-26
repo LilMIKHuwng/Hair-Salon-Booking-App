@@ -20,5 +20,6 @@ namespace HairSalon.Contract.Services.Interface
 
         Task<List<AppointmentModelView>> GetAppointmentsForDropdownAsync();
 
-    }
+        Task<bool> CheckAlreadyFeedbackAsync(string? appointmentId);
+	}
 }
