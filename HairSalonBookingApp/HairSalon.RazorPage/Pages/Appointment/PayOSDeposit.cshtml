@@ -1,0 +1,25 @@
+﻿@page
+@model HairSalon.RazorPage.Pages.Appointment.PayOSDepositModel
+
+@{
+    ViewData["Title"] = "PayOS Deposit";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+else
+{
+    <div class="details-container">
+        <p><strong>Deposit Amount:</strong> @Model.Amount VND</p>
+        <p><strong>Information:</strong> @Model.Information</p>
+        <p><strong>Type:</strong> @Model.Type</p>
+    </div>
+
+    <form method="post">
+        <button type="submit" class="btn btn-primary">Proceed to Payment</button>
+    </form>
+}
