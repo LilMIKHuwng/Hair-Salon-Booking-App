@@ -68,20 +68,21 @@ namespace HairSalon.RazorPage.Pages.Feedback
 				AppointmentId = TempData["AppointmentId"].ToString();
 			}
 
-			// Retrieve all feedbacks and appointments
-			var feedbacks = await _feedbackService.GetAllFeedbackAsync(1, int.MaxValue, null, null); // Use appropriate parameters here
-			var allAppointments = await _appointmentService.GetAppointmentsForDropdownAsync() 
-											?? new List<AppointmentModelView>();
+			// Retrieve feedbacks, appointments, services, and combos
+			var feedbacks = await _feedbackService.GetAllFeedbackAsync(1, int.MaxValue, null, null);
+			var allAppointments = await _appointmentService.GetAppointmentsForDropdownAsync() ?? new List<AppointmentModelView>();
+			var allServices = await _serviceService.GetAllServicesAsync() ?? new List<ServiceModelView>();
+			var allCombos = await _comboService.GetAllComboAsync() ?? new List<ComboModelView>();
 
 			// Filter appointments to include only those without feedback
 			var feedbackAppointmentIds = feedbacks.Items.Select(f => f.AppointmentId).ToList();
 			Appointments = allAppointments.Where(a => !feedbackAppointmentIds.Contains(a.Id)).ToList();
 
-            // Set Services and Combos
-            Services = allServices;
-            Combos = allCombos;
+			// Set Services and Combos
+			Services = allServices;
+			Combos = allCombos;
 
-            return Page();
+			return Page();
         }
 
 		public async Task<IActionResult> OnPostAsync()
