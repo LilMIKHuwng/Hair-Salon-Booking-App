@@ -2,6 +2,8 @@
 using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.AppointmentModelViews;
 using HairSalon.ModelViews.FeedBackModeViews;
+using HairSalon.ModelViews.ServiceModelViews;
+using HairSalon.ModelViews.ComboModelViews; // Import ComboModelViews if necessary
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
@@ -12,11 +14,19 @@ namespace HairSalon.RazorPage.Pages.Feedback
     {
         private readonly IFeedbackService _feedbackService;
         private readonly IAppointmentService _appointmentService;
+        private readonly IServiceService _serviceService;  // New service injection
+        private readonly IComboService _comboService;      // New combo injection
 
-        public CreateModel(IFeedbackService feedbackService, IAppointmentService appointmentService)
+        public CreateModel(
+            IFeedbackService feedbackService,
+            IAppointmentService appointmentService,
+            IServiceService serviceService,  // Inject IServiceService
+            IComboService comboService)      // Inject IComboService
         {
             _feedbackService = feedbackService;
             _appointmentService = appointmentService;
+            _serviceService = serviceService;
+            _comboService = comboService;
         }
 
         [BindProperty]
@@ -27,7 +37,8 @@ namespace HairSalon.RazorPage.Pages.Feedback
 
         public List<FeedBackModelView> Feedbacks { get; set; }
         public List<AppointmentModelView> Appointments { get; set; }
-
+        public List<ServiceModelView> Services { get; set; } // For Service dropdown
+        public List<ComboModelView> Combos { get; set; }     // For Combo dropdown
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -41,24 +52,29 @@ namespace HairSalon.RazorPage.Pages.Feedback
 
             var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
 
-            // Check if the user has the "Admin" role
+            // Check if the user has the necessary role
             if (!userRoles.Any(role => role == "Admin" || role == "Manager" || role == "User" || role == "Stylist"))
             {
                 TempData["DeniedMessage"] = "You do not have permission";
                 return Page();
             }
 
-            // Retrieve all feedbacks and appointments
-            var feedbacks = await _feedbackService.GetAllFeedbackAsync(1, int.MaxValue, null, null); // Use appropriate parameters here
+            // Retrieve feedbacks, appointments, services, and combos
+            var feedbacks = await _feedbackService.GetAllFeedbackAsync(1, int.MaxValue, null, null);
             var allAppointments = await _appointmentService.GetAppointmentsForDropdownAsync() ?? new List<AppointmentModelView>();
+            var allServices = await _serviceService.GetAllServicesAsync() ?? new List<ServiceModelView>();
+            var allCombos = await _comboService.GetAllComboAsync() ?? new List<ComboModelView>();
 
             // Filter appointments to include only those without feedback
             var feedbackAppointmentIds = feedbacks.Items.Select(f => f.AppointmentId).ToList();
             Appointments = allAppointments.Where(a => !feedbackAppointmentIds.Contains(a.Id)).ToList();
 
+            // Set Services and Combos
+            Services = allServices;
+            Combos = allCombos;
+
             return Page();
         }
-
 
         public async Task<IActionResult> OnPostAsync()
         {
@@ -76,7 +92,5 @@ namespace HairSalon.RazorPage.Pages.Feedback
             }
             return Page();
         }
-
-
     }
 }
