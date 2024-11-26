@@ -19,11 +19,16 @@ namespace HairSalon.RazorPage.Pages.Feedback
 		public BasePaginatedList<FeedBackModelView> Feedback { get; set; }
 
 		public string UserName { get; set; }
+		public bool IsTrueRole { get; set; }
 
 		public async Task<IActionResult> OnGetAsync(int pageNumber = 1, int pageSize = 5, string? id = null, string? AppointmentId = null)
 		{
+			// Authenication
 			var userFeedbacksJson = HttpContext.Session.GetString("UserRoles");
 			UserName = HttpContext.Session.GetString("Username");
+			var userRoleJson = HttpContext.Session.GetString("UserRoles");
+			var userRoles = JsonConvert.DeserializeObject<List<string>>(userRoleJson);
+			IsTrueRole = userRoles.Any(role => role == "Admin" || role == "Manager");
 
 			if (userFeedbacksJson != null)
 			{

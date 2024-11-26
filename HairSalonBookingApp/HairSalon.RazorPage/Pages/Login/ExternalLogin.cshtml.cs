@@ -119,6 +119,20 @@ public class ExternalLoginModel : PageModel
 
             // Check if the email is already associated with an account
             var user = await _userManager.FindByEmailAsync(email);
+            if (user != null)
+            {
+                // If the existing account is not linked to the same provider, deny access
+                var existingLogin = await _userManager.GetLoginsAsync(user);
+                var isSameProvider = existingLogin.Any(l => l.LoginProvider == info.LoginProvider);
+
+                if (!isSameProvider)
+                {
+                    ErrorMessage = "This email is already linked to another external provider. Please use another email to link to this provider.";
+                    _logger.LogWarning("Email {Email} is already linked to a different provider.", email);
+                    return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
+                }
+            }
+
             if (user == null)
             {
                 // Create a new user account
