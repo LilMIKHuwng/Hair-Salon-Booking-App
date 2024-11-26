@@ -290,6 +290,7 @@ namespace HairSalon.Services.Service
             ServiceModelView ServiceModelView = _mapper.Map<ServiceModelView>(serviceEntity);
             return ServiceModelView;
         }
+
     }
 
 }
