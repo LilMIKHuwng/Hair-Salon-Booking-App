@@ -1,4 +1,5 @@
 ﻿using HairSalon.Core;
+using HairSalon.ModelViews.ComboModelViews;
 using HairSalon.ModelViews.PromotionModelViews;
 using System;
 using System.Collections.Generic;
@@ -15,5 +16,6 @@ namespace HairSalon.Contract.Services.Interface
         Task<string> UpdatePromotionAsync(string promotionId, UpdatePromotionModelView model, string? userId); // Add userId
         Task<string> DeletePromotionAsync(string promotionId, string? userId); // Add userId
         Task<PromotionModelView?> GetPromotionByIdAsync(string promotionId);
-    }
+		Task<List<PromotionModelView>> GetAllPromotionAsync();
+	}
 }

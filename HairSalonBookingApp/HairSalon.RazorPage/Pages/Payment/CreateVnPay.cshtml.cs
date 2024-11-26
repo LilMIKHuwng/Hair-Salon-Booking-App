@@ -10,10 +10,12 @@ namespace HairSalon.RazorPage.Pages.Payment
     public class CreateVnPayModel : PageModel
     {
         private readonly IVnPayService _paymentService;
+        private readonly IAppointmentService _appointmentService;
 
-        public CreateVnPayModel(IVnPayService paymentService)
+        public CreateVnPayModel(IVnPayService paymentService, IAppointmentService appointmentService)
         {
             _paymentService = paymentService;
+            _appointmentService = appointmentService;
         }
 
         [BindProperty]
@@ -79,6 +81,13 @@ namespace HairSalon.RazorPage.Pages.Payment
                 if (response == "Payment added successfully.")
                 {
                     ResponseMessage = response;
+
+                    var appointment = await _appointmentService.GetAppointmentByIdAsync(NewPayment.AppointmentId);
+
+                    if (appointment.StatusForAppointment == "Scheduled")
+                    {
+						var confirm = await _appointmentService.MarkConfirmed(NewPayment.AppointmentId, userId);
+                    }
                     return RedirectToPage("/Payment/Index"); // Redirect to payment list page
                 }
 
