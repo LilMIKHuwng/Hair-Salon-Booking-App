@@ -45,10 +45,12 @@ else
 		<div>
 			<div>
 				<div>
-					<img src="@Model.UserInfo.UserImage" alt="Ảnh đại diện" class="thumbnail" onclick="openOverlay()">
+					<img src="@(!string.IsNullOrEmpty(Model.UserInfo.UserImage) ? Model.UserInfo.UserImage : "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg")"
+						 alt="Ảnh đại diện" class="thumbnail" onclick="openOverlay()">
 
 					<div class="overlay" id="overlay" onclick="closeOverlay()">
-						<img src="@Model.UserInfo.UserImage" alt="Ảnh phóng to">
+						<img src="@(!string.IsNullOrEmpty(Model.UserInfo.UserImage) ? Model.UserInfo.UserImage : "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg")"
+							 alt="Ảnh phóng to">
 					</div>
 
 					<span>@Model.UserInfo?.UserName</span>

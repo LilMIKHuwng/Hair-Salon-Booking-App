@@ -1,4 +1,6 @@
-﻿﻿<!DOCTYPE html>
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -20,24 +22,52 @@
 </style>
 <body>
     <div class="d-flex" id="wrapper">
-        <!-- Add the #wrapper ID here -->
         <!-- Sidebar -->
         <div id="sidebar-wrapper" class="bg-light border-right">
             <div class="sidebar-heading">Hair Salon</div>
             <div class="list-group list-group-flush">
                 <a href="~/Index" class="list-group-item list-group-item-action bg-light">Home</a>
                 <a href="~/Admin/Profile" class="list-group-item list-group-item-action bg-light">Profile</a>
-                <a href="~/Dashboard/AppointmentStatistic" class="list-group-item list-group-item-action bg-light">Dashboard</a>
-                <a href="~/Roles" class="list-group-item list-group-item-action bg-light">Role</a>
-                <a href="~/Shops" class="list-group-item list-group-item-action bg-light">Shop</a>
-                <a href="~/Payments" class="list-group-item list-group-item-action bg-light">Payment</a>
-                <a href="~/Feedbacks" class="list-group-item list-group-item-action bg-light">Feedback</a>
-                <a href="~/Admin" class="list-group-item list-group-item-action bg-light">Admin</a>
-                <a href="~/SalaryPayments" class="list-group-item list-group-item-action bg-light">SalaryPayments</a>
-                <a href="~/Services" class="list-group-item list-group-item-action bg-light">Service</a>
-                <a href="~/Appointments" class="list-group-item list-group-item-action bg-light">Appointment</a>
-                <a href="~/Combos" class="list-group-item list-group-item-action bg-light">Combo</a>
-                <a href="~/Login/Logout" class="list-group-item list-group-item-action bg-light logout-link">Logout</a> <!-- Logout link added here -->
+
+                <!-- Role-based Menu -->
+                @{
+                    var session = HttpContextAccessor.HttpContext.Session;
+                    var userRolesString = session.GetString("UserRoles");
+                }
+
+                @if (userRolesString.Contains("Admin"))
+                {
+                    <a href="~/Roles" class="list-group-item list-group-item-action bg-light">Role</a>
+                    <a href="~/Admin" class="list-group-item list-group-item-action bg-light">Admin</a>
+                }
+
+                @if (userRolesString.Contains("Admin") || userRolesString.Contains("Manager"))
+                {
+                    <a href="~/Dashboard/AppointmentStatistic" class="list-group-item list-group-item-action bg-light">Dashboard</a>
+                    <a href="~/Shops" class="list-group-item list-group-item-action bg-light">Shop</a>
+                    <a href="~/Payments" class="list-group-item list-group-item-action bg-light">Payment</a>
+                    <a href="~/Feedbacks" class="list-group-item list-group-item-action bg-light">Feedback</a>
+                    <a href="~/SalaryPayments" class="list-group-item list-group-item-action bg-light">SalaryPayments</a>
+                    <a href="~/Services" class="list-group-item list-group-item-action bg-light">Service</a>
+                    <a href="~/Appointments" class="list-group-item list-group-item-action bg-light">Appointment</a>
+                    <a href="~/Combos" class="list-group-item list-group-item-action bg-light">Combo</a>
+                    <a href="~/Promotions" class="list-group-item list-group-item-action bg-light">Promotion</a>
+                }
+
+                @if (userRolesString.Contains("Stylist"))
+                {
+                    <a href="~/Appointments" class="list-group-item list-group-item-action bg-light">Appointment</a>
+                    <a href="~/SalaryPayments" class="list-group-item list-group-item-action bg-light">SalaryPayments</a>
+                }
+
+                @if (userRolesString.Contains("User"))
+                {
+                    <a href="~/Feedbacks" class="list-group-item list-group-item-action bg-light">Feedback</a>
+                    <a href="~/Payments" class="list-group-item list-group-item-action bg-light">Payment</a>
+                    <a href="~/Appointments" class="list-group-item list-group-item-action bg-light">Appointment</a>
+                }
+
+                <a href="~/Login/Logout" class="list-group-item list-group-item-action bg-light logout-link">Logout</a>
             </div>
         </div>
 

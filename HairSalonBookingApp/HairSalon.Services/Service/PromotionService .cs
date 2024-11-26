@@ -3,6 +3,7 @@ using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
+using HairSalon.ModelViews.ComboModelViews;
 using HairSalon.ModelViews.PromotionModelViews;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -185,5 +186,24 @@ namespace HairSalon.Services.Service
             PromotionModelView promotionModelView = _mapper.Map<PromotionModelView>(promotionEntity);
             return promotionModelView;
         }
-    }
+
+		public async Task<List<PromotionModelView>> GetAllPromotionAsync()
+		{
+			// Try to find all combos not deleted
+			var list = await _unitOfWork.GetRepository<Promotion>().Entities
+				.Where(a => !a.DeletedTime.HasValue && a.Quantity > 0)
+				.ToListAsync();
+
+			// If list combos is not found, return null
+			if (list == null)
+			{
+				return null;
+			}
+
+			// Map the service entity to a ServiceModelView and return it
+			var promotionModelViews = _mapper.Map<List<PromotionModelView>>(list);
+
+			return promotionModelViews;
+		}
+	}
 }

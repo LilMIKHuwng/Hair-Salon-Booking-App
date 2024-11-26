@@ -201,6 +201,21 @@ else
 			<span asp-validation-for="UpdateAppointment.AppointmentDate" class="text-danger"></span>
 		</div>
 
+		<!-- Promotion Selection -->
+		<div class="form-group">
+			<label asp-for="UpdateAppointment.PromotionId" style="font-weight: bold;">Select Promotion</label>
+			<select asp-for="UpdateAppointment.PromotionId" class="form-control">
+				<option value="">Select Promotion</option>
+				@foreach (var promotion in Model.Promotions)
+				{
+					<option value="@promotion.Id" selected="@(Model.UpdateAppointment?.PromotionId == promotion.Id || Model.Appointment?.PromotionId == promotion.Id ? "selected" : null)">
+						@promotion.Name
+					</option>
+				}
+			</select>
+			<span asp-validation-for="UpdateAppointment.PromotionId" class="text-danger"></span>
+		</div>
+
 		<button type="submit">Save Changes</button>
 		<a asp-page="/Appointment/Index" class="btn-cancel">Cancel</a>
 	</form>
