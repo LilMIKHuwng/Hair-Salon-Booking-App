@@ -1,0 +1,29 @@
+﻿@page
+@model HairSalon.RazorPage.Pages.Payment.PaymentSelectionModel
+@{
+    ViewData["Title"] = "Select Payment Method";
+}
+
+<style>
+    .btn {
+        display: inline-block;
+        padding: 8px 15px;
+        color: #ffffff;
+        background-color: #3f51b5;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn:hover {
+            background-color: #2c3e91;
+        }
+</style>
+
+<h2>Select Payment Method</h2>
+
+<div>
+    <a asp-page="/Payment/VnPay" class="btn">VnPay Payment</a>
+    <a asp-page="/Payment/PayOS" class="btn">PayOS Payment</a>
+    <a asp-page="/Payment/PaymentByWallet" class="btn">Payment by Wallet</a>
+</div>

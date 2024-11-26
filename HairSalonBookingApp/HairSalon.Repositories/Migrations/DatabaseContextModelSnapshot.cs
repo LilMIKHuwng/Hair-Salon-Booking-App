@@ -105,37 +105,37 @@ namespace HairSalon.Repositories.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("6b8574fe-1721-40f2-a506-12c888cd4737"),
+                            Id = new Guid("d67b2178-0052-47bc-8b63-20b33b343f58"),
                             CreatedBy = "System",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 21, 708, DateTimeKind.Unspecified).AddTicks(5482), new TimeSpan(0, 0, 0, 0, 0)),
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 21, 708, DateTimeKind.Unspecified).AddTicks(5482), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 148, DateTimeKind.Unspecified).AddTicks(8773), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 148, DateTimeKind.Unspecified).AddTicks(8774), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("7c97ce47-f985-4572-bef5-a19690510879"),
+                            Id = new Guid("0f48c754-7828-4802-a1d7-bf1292ce997d"),
                             CreatedBy = "System",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 21, 708, DateTimeKind.Unspecified).AddTicks(5485), new TimeSpan(0, 0, 0, 0, 0)),
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 21, 708, DateTimeKind.Unspecified).AddTicks(5486), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 148, DateTimeKind.Unspecified).AddTicks(8777), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 148, DateTimeKind.Unspecified).AddTicks(8777), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "Manager",
                             NormalizedName = "MANAGER"
                         },
                         new
                         {
-                            Id = new Guid("dbb51740-3be6-4fd7-a18b-f8121240dc48"),
+                            Id = new Guid("bce86398-d46a-41fe-bd8d-78eca6ca69f8"),
                             CreatedBy = "System",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 21, 708, DateTimeKind.Unspecified).AddTicks(5488), new TimeSpan(0, 0, 0, 0, 0)),
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 21, 708, DateTimeKind.Unspecified).AddTicks(5488), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 148, DateTimeKind.Unspecified).AddTicks(8779), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 148, DateTimeKind.Unspecified).AddTicks(8780), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "Stylist",
                             NormalizedName = "STYLIST"
                         },
                         new
                         {
-                            Id = new Guid("8c41965d-3dc5-42bb-83a9-18589661c425"),
+                            Id = new Guid("d18fff28-db7f-49f4-8c6f-1e271deae1d5"),
                             CreatedBy = "System",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 21, 708, DateTimeKind.Unspecified).AddTicks(5491), new TimeSpan(0, 0, 0, 0, 0)),
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 21, 708, DateTimeKind.Unspecified).AddTicks(5492), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 148, DateTimeKind.Unspecified).AddTicks(8781), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 148, DateTimeKind.Unspecified).AddTicks(8782), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -253,75 +253,75 @@ namespace HairSalon.Repositories.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = new Guid("57d3c91d-5d70-448c-888c-ea8d5f690f70"),
-                            RoleId = new Guid("6b8574fe-1721-40f2-a506-12c888cd4737"),
+                            UserId = new Guid("da4ce05d-426a-442c-bff2-f29f854067bd"),
+                            RoleId = new Guid("d67b2178-0052-47bc-8b63-20b33b343f58"),
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1249), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8814), new TimeSpan(0, 0, 0, 0, 0)),
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1249), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8814), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
-                            UserId = new Guid("2c917267-3acb-4790-9d34-9e5bb67b0756"),
-                            RoleId = new Guid("8c41965d-3dc5-42bb-83a9-18589661c425"),
+                            UserId = new Guid("7b0294e7-bf4c-4cac-a9e6-2768d8080c3d"),
+                            RoleId = new Guid("d18fff28-db7f-49f4-8c6f-1e271deae1d5"),
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1253), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8819), new TimeSpan(0, 0, 0, 0, 0)),
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1262), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8827), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
-                            UserId = new Guid("30861d1c-d561-470c-871d-12976e3d2257"),
-                            RoleId = new Guid("7c97ce47-f985-4572-bef5-a19690510879"),
+                            UserId = new Guid("255bde30-139e-46dc-b915-475c74da13b1"),
+                            RoleId = new Guid("0f48c754-7828-4802-a1d7-bf1292ce997d"),
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1265), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8830), new TimeSpan(0, 0, 0, 0, 0)),
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1265), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8832), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
-                            UserId = new Guid("5e4dd8eb-d247-476d-ae47-2c9190cc6525"),
-                            RoleId = new Guid("dbb51740-3be6-4fd7-a18b-f8121240dc48"),
+                            UserId = new Guid("edec91fd-f867-42ee-8adc-4945cdda9a44"),
+                            RoleId = new Guid("bce86398-d46a-41fe-bd8d-78eca6ca69f8"),
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1268), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8834), new TimeSpan(0, 0, 0, 0, 0)),
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1271), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8835), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
-                            UserId = new Guid("80eeb7cb-0324-48f9-a129-0297f709a22f"),
-                            RoleId = new Guid("8c41965d-3dc5-42bb-83a9-18589661c425"),
+                            UserId = new Guid("de39f073-ebf8-4e7e-bb21-3de070b60521"),
+                            RoleId = new Guid("d18fff28-db7f-49f4-8c6f-1e271deae1d5"),
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1272), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8841), new TimeSpan(0, 0, 0, 0, 0)),
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1273), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8842), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
-                            UserId = new Guid("5c8e2cfc-8360-41fd-bfaa-d1871292152d"),
-                            RoleId = new Guid("8c41965d-3dc5-42bb-83a9-18589661c425"),
+                            UserId = new Guid("f3d5ab34-0ec2-4267-8fcf-597a32133e04"),
+                            RoleId = new Guid("d18fff28-db7f-49f4-8c6f-1e271deae1d5"),
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1275), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8844), new TimeSpan(0, 0, 0, 0, 0)),
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1275), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8845), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
-                            UserId = new Guid("bc67e1af-582c-4efb-ad9b-4fefe42afbb5"),
-                            RoleId = new Guid("8c41965d-3dc5-42bb-83a9-18589661c425"),
+                            UserId = new Guid("5d5abb16-2599-4f13-a556-378d33a6d686"),
+                            RoleId = new Guid("d18fff28-db7f-49f4-8c6f-1e271deae1d5"),
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1277), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8848), new TimeSpan(0, 0, 0, 0, 0)),
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1285), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8855), new TimeSpan(0, 0, 0, 0, 0))
                         },
                         new
                         {
-                            UserId = new Guid("1de58d74-2593-4cd9-ab0a-5b5b8ec4e7e3"),
-                            RoleId = new Guid("8c41965d-3dc5-42bb-83a9-18589661c425"),
+                            UserId = new Guid("6df2479f-a188-4321-95b0-4fbd896b787d"),
+                            RoleId = new Guid("d18fff28-db7f-49f4-8c6f-1e271deae1d5"),
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1287), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8857), new TimeSpan(0, 0, 0, 0, 0)),
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1288), new TimeSpan(0, 0, 0, 0, 0))
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8858), new TimeSpan(0, 0, 0, 0, 0))
                         });
                 });
 
@@ -472,33 +472,33 @@ namespace HairSalon.Repositories.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "7efe8760-8de6-435c-a0a9-d5f6047e0eb7",
+                            Id = "5c72bab7-9c13-4084-8f7e-a08fb54d9c9b",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1671), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9312), new TimeSpan(0, 0, 0, 0, 0)),
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1671), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9312), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "Basic Hair Combo",
                             TimeCombo = 60,
                             TotalPrice = 40000.00m
                         },
                         new
                         {
-                            Id = "00840771-8340-4549-8fc8-1ddabc619fcd",
+                            Id = "25fa3d4b-69c5-48a6-bb87-a100d3edb5df",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1678), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9321), new TimeSpan(0, 0, 0, 0, 0)),
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1678), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9321), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "Deluxe Hair Combo",
                             TimeCombo = 120,
                             TotalPrice = 80000.00m
                         },
                         new
                         {
-                            Id = "f50f5045-bef5-4c26-9c1b-a1cbba44175d",
+                            Id = "e9c40acb-9fbe-44e4-86ce-6737237b0552",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1682), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9326), new TimeSpan(0, 0, 0, 0, 0)),
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1682), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9326), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "Ultimate Hair & Beard Combo",
                             TimeCombo = 150,
                             TotalPrice = 120000.00m
@@ -587,63 +587,63 @@ namespace HairSalon.Repositories.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a3f23f8d426d4261a6dbb04a7cfda66a",
-                            ComboId = "7efe8760-8de6-435c-a0a9-d5f6047e0eb7",
+                            Id = "06cffd63a7904455814345c0ece8c136",
+                            ComboId = "5c72bab7-9c13-4084-8f7e-a08fb54d9c9b",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1816), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9439), new TimeSpan(0, 0, 0, 0, 0)),
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1817), new TimeSpan(0, 0, 0, 0, 0)),
-                            ServiceId = "d11b33e1-a954-41ea-b175-33c8a6b32c5e"
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9439), new TimeSpan(0, 0, 0, 0, 0)),
+                            ServiceId = "4fb74949-56a7-4e8c-85d7-6a13b5dd88a5"
                         },
                         new
                         {
-                            Id = "2567bfeb99c84e26870f41cac21fa75a",
-                            ComboId = "7efe8760-8de6-435c-a0a9-d5f6047e0eb7",
+                            Id = "3ebd2bee364a43b496b5c1136066da26",
+                            ComboId = "5c72bab7-9c13-4084-8f7e-a08fb54d9c9b",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1822), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9445), new TimeSpan(0, 0, 0, 0, 0)),
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1823), new TimeSpan(0, 0, 0, 0, 0)),
-                            ServiceId = "ed9d13c4-2ddb-4228-aece-8e7d7066f019"
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9446), new TimeSpan(0, 0, 0, 0, 0)),
+                            ServiceId = "87000773-cc3b-4392-9470-dd32427221c8"
                         },
                         new
                         {
-                            Id = "46d3668930f041ca9bcb2f74dee8c200",
-                            ComboId = "00840771-8340-4549-8fc8-1ddabc619fcd",
+                            Id = "b02e24df43b54171b3d5c3a9809924ca",
+                            ComboId = "25fa3d4b-69c5-48a6-bb87-a100d3edb5df",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1826), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9456), new TimeSpan(0, 0, 0, 0, 0)),
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1826), new TimeSpan(0, 0, 0, 0, 0)),
-                            ServiceId = "dcfcdbc3-e457-495c-891a-5a05bc1545e6"
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9456), new TimeSpan(0, 0, 0, 0, 0)),
+                            ServiceId = "04d26ddd-f63c-4777-b024-303a1ddf65b7"
                         },
                         new
                         {
-                            Id = "330840f9281a4d1eba8f1336c735c80c",
-                            ComboId = "00840771-8340-4549-8fc8-1ddabc619fcd",
+                            Id = "97fffc468ad24142b3fa44d2f3f2b820",
+                            ComboId = "25fa3d4b-69c5-48a6-bb87-a100d3edb5df",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1830), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9462), new TimeSpan(0, 0, 0, 0, 0)),
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1830), new TimeSpan(0, 0, 0, 0, 0)),
-                            ServiceId = "1d3d9ba1-c379-4277-9034-25d0587a760f"
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9462), new TimeSpan(0, 0, 0, 0, 0)),
+                            ServiceId = "18fe38b1-bb65-4dc9-9e3b-02b7ebe5d1ab"
                         },
                         new
                         {
-                            Id = "2f6cfd4cc89143e6962d038d82df8da4",
-                            ComboId = "f50f5045-bef5-4c26-9c1b-a1cbba44175d",
+                            Id = "8ae81d2e91e34024bff966f8b7b945bf",
+                            ComboId = "e9c40acb-9fbe-44e4-86ce-6737237b0552",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1834), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9468), new TimeSpan(0, 0, 0, 0, 0)),
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1834), new TimeSpan(0, 0, 0, 0, 0)),
-                            ServiceId = "133020d4-c2d7-4c70-9d35-aea0942aee7f"
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9468), new TimeSpan(0, 0, 0, 0, 0)),
+                            ServiceId = "cab73a33-97e7-4cff-b071-f368ce2d69ae"
                         },
                         new
                         {
-                            Id = "fbdf6326e3e24bd5b963513386afb581",
-                            ComboId = "f50f5045-bef5-4c26-9c1b-a1cbba44175d",
+                            Id = "d0e5302f1e8e47b19fbdd0cbfe4b8714",
+                            ComboId = "e9c40acb-9fbe-44e4-86ce-6737237b0552",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1839), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9474), new TimeSpan(0, 0, 0, 0, 0)),
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1839), new TimeSpan(0, 0, 0, 0, 0)),
-                            ServiceId = "a7249d25-f10a-41d0-a707-4783147ed4e1"
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9474), new TimeSpan(0, 0, 0, 0, 0)),
+                            ServiceId = "90cd97d4-57af-4054-a057-e5aacdbae05b"
                         });
                 });
 
@@ -898,18 +898,18 @@ namespace HairSalon.Repositories.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "34abcf02-0f66-4aea-9e8e-e71c3338d597",
+                            Id = "7919472e-8783-45e4-a21b-d4aacdbf9bae",
                             BaseSalary = 2000.00m,
                             BonusSalary = 0m,
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1621), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9244), new TimeSpan(0, 0, 0, 0, 0)),
                             DayOffNoPermitted = 0,
                             DayOffPermitted = 0,
                             DeductedSalary = 0m,
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1622), new TimeSpan(0, 0, 0, 0, 0)),
-                            PaymentDate = new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Utc).AddTicks(1621),
-                            UserId = new Guid("57d3c91d-5d70-448c-888c-ea8d5f690f70")
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9245), new TimeSpan(0, 0, 0, 0, 0)),
+                            PaymentDate = new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Utc).AddTicks(9243),
+                            UserId = new Guid("da4ce05d-426a-442c-bff2-f29f854067bd")
                         });
                 });
 
@@ -970,113 +970,113 @@ namespace HairSalon.Repositories.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "d11b33e1-a954-41ea-b175-33c8a6b32c5e",
+                            Id = "4fb74949-56a7-4e8c-85d7-6a13b5dd88a5",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1546), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9139), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "A stylish haircut to refresh your look.",
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1546), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9140), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "Hair Cut",
                             Price = 25000.00m,
-                            ShopId = "78ba63f3-ab2b-451d-911b-296eefc53b51",
+                            ShopId = "d3466024-9647-49e1-b16a-0fe6fe6bff41",
                             TimeService = 30,
                             Type = "Hair"
                         },
                         new
                         {
-                            Id = "ed9d13c4-2ddb-4228-aece-8e7d7066f019",
+                            Id = "87000773-cc3b-4392-9470-dd32427221c8",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1550), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9146), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "A complete hair coloring service.",
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1550), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9147), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "Hair Coloring",
                             Price = 50000.00m,
-                            ShopId = "78ba63f3-ab2b-451d-911b-296eefc53b51",
+                            ShopId = "d3466024-9647-49e1-b16a-0fe6fe6bff41",
                             TimeService = 30,
                             Type = "Hair"
                         },
                         new
                         {
-                            Id = "dcfcdbc3-e457-495c-891a-5a05bc1545e6",
+                            Id = "04d26ddd-f63c-4777-b024-303a1ddf65b7",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1554), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9151), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "A premium hair coloring service.",
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1554), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9152), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "Premium Hair Coloring",
                             Price = 100000.00m,
-                            ShopId = "78ba63f3-ab2b-451d-911b-296eefc53b51",
+                            ShopId = "d3466024-9647-49e1-b16a-0fe6fe6bff41",
                             TimeService = 60,
                             Type = "Hair"
                         },
                         new
                         {
-                            Id = "1d3d9ba1-c379-4277-9034-25d0587a760f",
+                            Id = "18fe38b1-bb65-4dc9-9e3b-02b7ebe5d1ab",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1558), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9157), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "A professional hair styling service.",
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1559), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9157), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "Hair Styling",
                             Price = 20000.00m,
-                            ShopId = "78ba63f3-ab2b-451d-911b-296eefc53b51",
+                            ShopId = "d3466024-9647-49e1-b16a-0fe6fe6bff41",
                             TimeService = 45,
                             Type = "Hair"
                         },
                         new
                         {
-                            Id = "133020d4-c2d7-4c70-9d35-aea0942aee7f",
+                            Id = "cab73a33-97e7-4cff-b071-f368ce2d69ae",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1562), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9165), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "A neat beard trimming service.",
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1562), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9165), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "Beard Trim",
                             Price = 15000.00m,
-                            ShopId = "78ba63f3-ab2b-451d-911b-296eefc53b51",
+                            ShopId = "d3466024-9647-49e1-b16a-0fe6fe6bff41",
                             TimeService = 20,
                             Type = "Beard"
                         },
                         new
                         {
-                            Id = "a7249d25-f10a-41d0-a707-4783147ed4e1",
+                            Id = "90cd97d4-57af-4054-a057-e5aacdbae05b",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1565), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9170), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "A clean and smooth shaving service.",
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1566), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9171), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "Shave",
                             Price = 12000.00m,
-                            ShopId = "78ba63f3-ab2b-451d-911b-296eefc53b51",
+                            ShopId = "d3466024-9647-49e1-b16a-0fe6fe6bff41",
                             TimeService = 15,
                             Type = "Beard"
                         },
                         new
                         {
-                            Id = "cfd2a1f4-9ff7-4894-bf32-168f8e7849f4",
+                            Id = "30a538a1-54b0-4e37-99d5-5611a20c4702",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1569), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9175), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "A rejuvenating facial service.",
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1570), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9176), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "Facial",
                             Price = 40000.00m,
-                            ShopId = "78ba63f3-ab2b-451d-911b-296eefc53b51",
+                            ShopId = "d3466024-9647-49e1-b16a-0fe6fe6bff41",
                             TimeService = 50,
                             Type = "Skin"
                         },
                         new
                         {
-                            Id = "3e6acc83-b661-487d-b445-6e9681059b40",
+                            Id = "805e94d0-34b8-4f7c-a61b-dcfffdfb4fbe",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1573), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9180), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "A soothing scalp treatment.",
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1573), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(9181), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "Scalp Treatment",
                             Price = 45000.00m,
-                            ShopId = "78ba63f3-ab2b-451d-911b-296eefc53b51",
+                            ShopId = "d3466024-9647-49e1-b16a-0fe6fe6bff41",
                             TimeService = 40,
                             Type = "Hair"
                         });
@@ -1190,13 +1190,13 @@ namespace HairSalon.Repositories.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "78ba63f3-ab2b-451d-911b-296eefc53b51",
+                            Id = "d3466024-9647-49e1-b16a-0fe6fe6bff41",
                             Address = "123 Main St, Cityville",
                             CloseTime = new TimeSpan(0, 19, 0, 0, 0),
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1362), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8946), new TimeSpan(0, 0, 0, 0, 0)),
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1362), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8947), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "Salon A",
                             OpenTime = new TimeSpan(0, 9, 0, 0, 0),
                             ShopEmail = "contact@salona.com",
@@ -1255,113 +1255,113 @@ namespace HairSalon.Repositories.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "8eac1ebf-4f60-403e-b5b5-9c79a893bfb8",
+                            Id = "99b3957e-d2f2-4ec6-87f3-63206221563b",
                             Bank = "Bank A",
                             BankAccount = "123456789",
                             BankAccountName = "John Doe",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 21, 708, DateTimeKind.Unspecified).AddTicks(5718), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 148, DateTimeKind.Unspecified).AddTicks(9005), new TimeSpan(0, 0, 0, 0, 0)),
                             Firstname = "John",
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 21, 708, DateTimeKind.Unspecified).AddTicks(5719), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 148, DateTimeKind.Unspecified).AddTicks(9005), new TimeSpan(0, 0, 0, 0, 0)),
                             Lastname = "Doe",
                             Point = 100
                         },
                         new
                         {
-                            Id = "93d4636f-2978-4a78-8c6f-0cff05fc9f58",
+                            Id = "166065dd-60a4-46bb-9f62-9398b7b95057",
                             Bank = "Bank B",
                             BankAccount = "987654321",
                             BankAccountName = "Jane Smith",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 21, 708, DateTimeKind.Unspecified).AddTicks(5726), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 148, DateTimeKind.Unspecified).AddTicks(9010), new TimeSpan(0, 0, 0, 0, 0)),
                             Firstname = "Jane",
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 21, 708, DateTimeKind.Unspecified).AddTicks(5727), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 148, DateTimeKind.Unspecified).AddTicks(9010), new TimeSpan(0, 0, 0, 0, 0)),
                             Lastname = "Smith",
                             Point = 150
                         },
                         new
                         {
-                            Id = "0836ffb1-5ebb-4a49-88d4-e850e2fb86e2",
+                            Id = "a7fcd0a4-7bdd-4733-b724-0f5a80d45b06",
                             Bank = "Bank c",
                             BankAccount = "123456798",
                             BankAccountName = "Dev Nguyen",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 21, 708, DateTimeKind.Unspecified).AddTicks(5731), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 148, DateTimeKind.Unspecified).AddTicks(9013), new TimeSpan(0, 0, 0, 0, 0)),
                             Firstname = "Dev",
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 21, 708, DateTimeKind.Unspecified).AddTicks(5732), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 148, DateTimeKind.Unspecified).AddTicks(9013), new TimeSpan(0, 0, 0, 0, 0)),
                             Lastname = "Nguyen",
                             Point = 0
                         },
                         new
                         {
-                            Id = "24fdf8b4-149c-4634-8942-fa67b5efddbf",
+                            Id = "e846cd8b-83d0-45c0-b603-5d734886d93c",
                             Bank = "Bank D",
                             BankAccount = "123456987",
                             BankAccountName = "Dan Tran",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 21, 708, DateTimeKind.Unspecified).AddTicks(5735), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 148, DateTimeKind.Unspecified).AddTicks(9019), new TimeSpan(0, 0, 0, 0, 0)),
                             Firstname = "Dan",
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 21, 708, DateTimeKind.Unspecified).AddTicks(5736), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 148, DateTimeKind.Unspecified).AddTicks(9019), new TimeSpan(0, 0, 0, 0, 0)),
                             Lastname = "Tran",
                             Point = 0
                         },
                         new
                         {
-                            Id = "c5a34596-2387-4e88-a1b0-c0640e0a0f6e",
+                            Id = "687b57df-318d-4bde-b328-03ca5fea8a0b",
                             Bank = "Bank E",
                             BankAccount = "112233445",
                             BankAccountName = "Alice Walker",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 21, 708, DateTimeKind.Unspecified).AddTicks(5745), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 148, DateTimeKind.Unspecified).AddTicks(9027), new TimeSpan(0, 0, 0, 0, 0)),
                             Firstname = "Alice",
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 21, 708, DateTimeKind.Unspecified).AddTicks(5745), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 148, DateTimeKind.Unspecified).AddTicks(9027), new TimeSpan(0, 0, 0, 0, 0)),
                             Lastname = "Walker",
                             Point = 200
                         },
                         new
                         {
-                            Id = "2504d3ea-45a9-4b80-8d96-d568446df940",
+                            Id = "80eec699-eb87-4298-8a3c-710aad9bcbd7",
                             Bank = "Bank F",
                             BankAccount = "998877665",
                             BankAccountName = "Bob Brown",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 21, 708, DateTimeKind.Unspecified).AddTicks(5749), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 148, DateTimeKind.Unspecified).AddTicks(9031), new TimeSpan(0, 0, 0, 0, 0)),
                             Firstname = "Bob",
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 21, 708, DateTimeKind.Unspecified).AddTicks(5749), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 148, DateTimeKind.Unspecified).AddTicks(9031), new TimeSpan(0, 0, 0, 0, 0)),
                             Lastname = "Brown",
                             Point = 50
                         },
                         new
                         {
-                            Id = "8dcbba7c-0f59-4ca6-bb5a-41fde75b15f4",
+                            Id = "93e4cf1c-6500-43ea-a82a-3afb7628cac9",
                             Bank = "Bank G",
                             BankAccount = "554433221",
                             BankAccountName = "Chris Evans",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 21, 708, DateTimeKind.Unspecified).AddTicks(5752), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 148, DateTimeKind.Unspecified).AddTicks(9034), new TimeSpan(0, 0, 0, 0, 0)),
                             Firstname = "Chris",
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 21, 708, DateTimeKind.Unspecified).AddTicks(5754), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 148, DateTimeKind.Unspecified).AddTicks(9034), new TimeSpan(0, 0, 0, 0, 0)),
                             Lastname = "Evans",
                             Point = 75
                         },
                         new
                         {
-                            Id = "af34674b-0772-44db-bfb2-d35a5564d5aa",
+                            Id = "1482ccc5-b59d-4b59-ab95-9dfc02b8ba14",
                             Bank = "Bank H",
                             BankAccount = "667788990",
                             BankAccountName = "Diana Prince",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 21, 708, DateTimeKind.Unspecified).AddTicks(5757), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 148, DateTimeKind.Unspecified).AddTicks(9037), new TimeSpan(0, 0, 0, 0, 0)),
                             Firstname = "Diana",
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 21, 708, DateTimeKind.Unspecified).AddTicks(5757), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 148, DateTimeKind.Unspecified).AddTicks(9037), new TimeSpan(0, 0, 0, 0, 0)),
                             Lastname = "Prince",
                             Point = 300
                         });
@@ -1475,194 +1475,194 @@ namespace HairSalon.Repositories.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("57d3c91d-5d70-448c-888c-ea8d5f690f70"),
+                            Id = new Guid("da4ce05d-426a-442c-bff2-f29f854067bd"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c3a03129-23eb-4a9b-8529-54fc5030034e",
+                            ConcurrencyStamp = "83896b4c-061e-4821-b326-06afc51ebc16",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1056), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8592), new TimeSpan(0, 0, 0, 0, 0)),
                             E_Wallet = 0m,
                             Email = "admin@example.com",
                             EmailConfirmed = true,
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1056), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8593), new TimeSpan(0, 0, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@EXAMPLE.COM",
                             NormalizedUserName = "ADMIN@EXAMPLE.COM",
                             Password = "",
-                            PasswordHash = "AQAAAAIAAYagAAAAEHm3JSx8HY6KO1cI+E9Es7l5BwNDgbjfwfLiwosqLsiBBf/IRixDjollx8WdnZUJTw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAED+JIE7u+99zdITuU5krQX8TRjKFemtmNhBE0uc8ZNZwuKPZt5UDVCaI6D4yWMWPyQ==",
                             PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             SecurityStamp = "SeedData",
                             TwoFactorEnabled = false,
-                            UserInfoId = "8eac1ebf-4f60-403e-b5b5-9c79a893bfb8",
+                            UserInfoId = "99b3957e-d2f2-4ec6-87f3-63206221563b",
                             UserName = "admin"
                         },
                         new
                         {
-                            Id = new Guid("2c917267-3acb-4790-9d34-9e5bb67b0756"),
+                            Id = new Guid("7b0294e7-bf4c-4cac-a9e6-2768d8080c3d"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "65333a10-7067-4356-9f63-b7e496353dd8",
+                            ConcurrencyStamp = "07b9f446-f796-4e81-8d8e-aa8d0f924ebf",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1070), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8604), new TimeSpan(0, 0, 0, 0, 0)),
                             E_Wallet = 0m,
                             Email = "user@example.com",
                             EmailConfirmed = true,
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1072), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8605), new TimeSpan(0, 0, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedEmail = "USER@EXAMPLE.COM",
                             NormalizedUserName = "USER@EXAMPLE.COM",
                             Password = "",
-                            PasswordHash = "AQAAAAIAAYagAAAAEBsxkUmLfMoIrjQTNVSY2dJLmMBVzBAsdYTnu2E32n1FU0QQn0UXKNlegc3Azbmzlw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEAUgSXwQfhfSxFDxrKMzYq36+F2p/jbChuw5PBecOblugnpwwxV9JYzpfm9eMy1+nQ==",
                             PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             SecurityStamp = "SeedData",
                             TwoFactorEnabled = false,
-                            UserInfoId = "93d4636f-2978-4a78-8c6f-0cff05fc9f58",
+                            UserInfoId = "166065dd-60a4-46bb-9f62-9398b7b95057",
                             UserName = "user"
                         },
                         new
                         {
-                            Id = new Guid("30861d1c-d561-470c-871d-12976e3d2257"),
+                            Id = new Guid("255bde30-139e-46dc-b915-475c74da13b1"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "09478826-9e1c-49e2-96f0-241233753177",
+                            ConcurrencyStamp = "c70c7e90-afc9-47bb-9d20-430ed675ad12",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1076), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8613), new TimeSpan(0, 0, 0, 0, 0)),
                             E_Wallet = 0m,
                             Email = "manager@example.com",
                             EmailConfirmed = true,
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1076), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8613), new TimeSpan(0, 0, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedEmail = "MANAGER@EXAMPLE.COM",
                             NormalizedUserName = "MANAGER@EXAMPLE.COM",
                             Password = "",
-                            PasswordHash = "AQAAAAIAAYagAAAAEL+fcZP7Z9vcMda6xd7wOrEYZbdi29SYtSgLDuk4R2Tre8scdSiv7X3w5rLi/Pp5Pg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAELwj7aPl/msug/3VypP7WJrW4kcYKgQ40LVwCkI+C3EIfn4dJYtc9mJZb1ZdT3U0fg==",
                             PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             SecurityStamp = "SeedData",
                             TwoFactorEnabled = false,
-                            UserInfoId = "0836ffb1-5ebb-4a49-88d4-e850e2fb86e2",
+                            UserInfoId = "a7fcd0a4-7bdd-4733-b724-0f5a80d45b06",
                             UserName = "manager"
                         },
                         new
                         {
-                            Id = new Guid("5e4dd8eb-d247-476d-ae47-2c9190cc6525"),
+                            Id = new Guid("edec91fd-f867-42ee-8adc-4945cdda9a44"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ee38b904-53e5-423f-851c-0f8ac0dc90ea",
+                            ConcurrencyStamp = "59db21de-7cfe-4f8f-9e48-3b94966ff483",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1081), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8619), new TimeSpan(0, 0, 0, 0, 0)),
                             E_Wallet = 0m,
                             Email = "stylist@example.com",
                             EmailConfirmed = true,
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1081), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8619), new TimeSpan(0, 0, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedEmail = "STYLIST@EXAMPLE.COM",
                             NormalizedUserName = "STYLIST@EXAMPLE.COM",
                             Password = "",
-                            PasswordHash = "AQAAAAIAAYagAAAAEAoLEBRyjSLXijlmKCEJgu/FRUNRWyWFVSpXUFvBXXNMfVPs56XlzJEROb0KvmY3eA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEN00/SqiLmWajK43M1AkJ9ShS272lBFaziJbOmQhocV+KacmX70SPLwoQRriWPYSnA==",
                             PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             SecurityStamp = "SeedData",
                             TwoFactorEnabled = false,
-                            UserInfoId = "24fdf8b4-149c-4634-8942-fa67b5efddbf",
+                            UserInfoId = "e846cd8b-83d0-45c0-b603-5d734886d93c",
                             UserName = "stylist"
                         },
                         new
                         {
-                            Id = new Guid("80eeb7cb-0324-48f9-a129-0297f709a22f"),
+                            Id = new Guid("de39f073-ebf8-4e7e-bb21-3de070b60521"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "eea6ce3c-e1ea-4c94-a38e-410bcf79424a",
+                            ConcurrencyStamp = "19b2311b-9c6f-4c37-9f2c-87cc9b9aa540",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1085), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8626), new TimeSpan(0, 0, 0, 0, 0)),
                             E_Wallet = 0m,
                             Email = "user2@example.com",
                             EmailConfirmed = true,
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1085), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8627), new TimeSpan(0, 0, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedEmail = "USER2@EXAMPLE.COM",
                             NormalizedUserName = "USER2@EXAMPLE.COM",
                             Password = "",
-                            PasswordHash = "AQAAAAIAAYagAAAAEK5N32BNT2fwLvEdWvvaaOLdUdJgJc9P9w2UDxGA/Y+IpYKgow7BSJ38AFYgrgTIww==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEGOVF68gSWR010XJdtrPeSA9+SCZ83zfBvT4FZOBuAzJ9lm+jGzgCIy/A3/4mEm5dA==",
                             PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             SecurityStamp = "SeedData",
                             TwoFactorEnabled = false,
-                            UserInfoId = "c5a34596-2387-4e88-a1b0-c0640e0a0f6e",
+                            UserInfoId = "687b57df-318d-4bde-b328-03ca5fea8a0b",
                             UserName = "user2"
                         },
                         new
                         {
-                            Id = new Guid("5c8e2cfc-8360-41fd-bfaa-d1871292152d"),
+                            Id = new Guid("f3d5ab34-0ec2-4267-8fcf-597a32133e04"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c1a17ad6-8c40-47d5-8565-2ca87f754636",
+                            ConcurrencyStamp = "f3ad13dc-45f2-490a-812c-add737fb7d26",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1101), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8633), new TimeSpan(0, 0, 0, 0, 0)),
                             E_Wallet = 0m,
                             Email = "user3@example.com",
                             EmailConfirmed = true,
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1103), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8635), new TimeSpan(0, 0, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedEmail = "USER3@EXAMPLE.COM",
                             NormalizedUserName = "USER3@EXAMPLE.COM",
                             Password = "",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGbnfpgp7krkcpp23M1m2dk7zDkSIP6NMi33D6gUafPxfUXDtHx6cG03y/J64UH6Rw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEGaOakBAhcr0gTmQY6bVeRejLKlvEHys0xc0GVui/B+Xq76Qf6h4Q5MFD1bLwILtXg==",
                             PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             SecurityStamp = "SeedData",
                             TwoFactorEnabled = false,
-                            UserInfoId = "2504d3ea-45a9-4b80-8d96-d568446df940",
+                            UserInfoId = "80eec699-eb87-4298-8a3c-710aad9bcbd7",
                             UserName = "user3"
                         },
                         new
                         {
-                            Id = new Guid("bc67e1af-582c-4efb-ad9b-4fefe42afbb5"),
+                            Id = new Guid("5d5abb16-2599-4f13-a556-378d33a6d686"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1a668c78-a055-440a-97fc-9789ff4abcb5",
+                            ConcurrencyStamp = "26d5f47a-bf51-49ec-a590-fe80f906717d",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1107), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8654), new TimeSpan(0, 0, 0, 0, 0)),
                             E_Wallet = 0m,
                             Email = "user4@example.com",
                             EmailConfirmed = true,
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1108), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8655), new TimeSpan(0, 0, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedEmail = "USER4@EXAMPLE.COM",
                             NormalizedUserName = "USER4@EXAMPLE.COM",
                             Password = "",
-                            PasswordHash = "AQAAAAIAAYagAAAAEB0mdYirmhZt8JLuXXbb7lYtCg/z5+SiI4b++0GgRLbLqUknpHXeRSot54fCy01MyQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHyMkFHsRmGAhSqKv8Lu6wL0zkqbTIL2NOuPecDo1hGyTZL6RaqifzxkeWncymryVg==",
                             PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             SecurityStamp = "SeedData",
                             TwoFactorEnabled = false,
-                            UserInfoId = "8dcbba7c-0f59-4ca6-bb5a-41fde75b15f4",
+                            UserInfoId = "93e4cf1c-6500-43ea-a82a-3afb7628cac9",
                             UserName = "user4"
                         },
                         new
                         {
-                            Id = new Guid("1de58d74-2593-4cd9-ab0a-5b5b8ec4e7e3"),
+                            Id = new Guid("6df2479f-a188-4321-95b0-4fbd896b787d"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "6e027667-e572-4949-92e2-a0d9173ec7dd",
+                            ConcurrencyStamp = "d2d8dbbf-fb41-425b-9112-352e33fa7946",
                             CreatedBy = "SeedData",
-                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1112), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8660), new TimeSpan(0, 0, 0, 0, 0)),
                             E_Wallet = 0m,
                             Email = "user5@example.com",
                             EmailConfirmed = true,
                             LastUpdatedBy = "SeedData",
-                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 13, 34, 22, 207, DateTimeKind.Unspecified).AddTicks(1113), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastUpdatedTime = new DateTimeOffset(new DateTime(2024, 11, 25, 16, 7, 9, 618, DateTimeKind.Unspecified).AddTicks(8660), new TimeSpan(0, 0, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedEmail = "USER5@EXAMPLE.COM",
                             NormalizedUserName = "USER5@EXAMPLE.COM",
                             Password = "",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPX2PMIxYezbP7v+Pkl9lNjiBmXA6PI5zzGtYb+fSE/ZOK0Uc+dbBAwiHqNrWUtKsg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECdXrTPG27euvgCoD2LXf97qoFu5DkwYv3QWDAOhBrk+FCN6PGslsGkn6kItbdwxbg==",
                             PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             SecurityStamp = "SeedData",
                             TwoFactorEnabled = false,
-                            UserInfoId = "af34674b-0772-44db-bfb2-d35a5564d5aa",
+                            UserInfoId = "1482ccc5-b59d-4b59-ab95-9dfc02b8ba14",
                             UserName = "user5"
                         });
                 });
