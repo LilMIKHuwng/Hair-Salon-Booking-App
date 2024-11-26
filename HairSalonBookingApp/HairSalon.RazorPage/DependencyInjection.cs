@@ -114,7 +114,6 @@ namespace HairSalonBE.API
                     };
                 });
         }
-
         public static void ConfigFacebookAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAuthentication()
