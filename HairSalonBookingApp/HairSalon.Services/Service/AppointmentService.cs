@@ -316,11 +316,20 @@ namespace HairSalon.Services.Service
 
         private bool CheckAmountCancelledAppointment(string userId)
         {
-            var appointmentList = _unitOfWork.GetRepository<Appointment>();
-            int count = appointmentList.Entities.Count(x => x.StatusForAppointment == "Cancelled" 
-                                                        && x.AppointmentDate.ToString("yyyy MMMM dd") == DateTime.UtcNow.ToString("yyyy MMMM dd"));
+            var appointmentRepository = _unitOfWork.GetRepository<Appointment>();
+
+            DateTime startOfDay = DateTime.UtcNow.Date;
+            DateTime endOfDay = startOfDay.AddDays(1);
+
+            int count = appointmentRepository.Entities
+                .Count(x => x.StatusForAppointment == "Cancelled" 
+                            && x.UserId.ToString() == userId
+                            && x.CreatedTime >= startOfDay 
+                            && x.CreatedTime < endOfDay);
+
             return count > 3;
         }
+
 
         // Get all appointments by startEndDay, id
         public async Task<BasePaginatedList<AppointmentModelView>> GetAllAppointmentAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? endDate, string? id, Guid? userId, Guid? stylistId, string? statusForAppointment)
@@ -751,10 +760,15 @@ namespace HairSalon.Services.Service
             // Get appointment by ID and ensure it's not deleted
             var existingAppointment = await _unitOfWork.GetRepository<Appointment>().Entities
                 .FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
-
+            
             if (existingAppointment == null)
             {
                 return "Appointment not found or has already been deleted.";
+            }
+            //refund money to wallet
+            if (existingAppointment.StatusForAppointment == "Confirmed")
+            {
+                existingAppointment.User.E_Wallet += existingAppointment.TotalAmount / 10;
             }
             
             //refund promotion
@@ -767,6 +781,7 @@ namespace HairSalon.Services.Service
             
             //refund point
             existingAppointment.User.UserInfo.Point += existingAppointment.PointsEarned;
+            existingAppointment.User.UserInfo.Point -=  (int)(existingAppointment.TotalAmount / 1000) * 10;;
             await _unitOfWork.GetRepository<UserInfo>().UpdateAsync(existingAppointment.User.UserInfo);
             
             // set status Cancel and save
