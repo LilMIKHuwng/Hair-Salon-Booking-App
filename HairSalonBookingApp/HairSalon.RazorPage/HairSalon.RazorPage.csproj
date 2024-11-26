@@ -34,7 +34,6 @@
 
   <ItemGroup>
     <Folder Include="Pages\Dashboard\" />
-    <Folder Include="wwwroot\image\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -51,6 +50,10 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
     <Content Update="Pages\Services\Update.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\favicon.ico">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>

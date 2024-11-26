@@ -98,15 +98,15 @@ namespace HairSalonBE.API
             services.AddAuthentication()
                 .AddGoogle(GoogleOptions =>
                 {
-                    var facebookAuthNSection = configuration.GetSection("Authentication:Google");
-                    GoogleOptions.ClientId = facebookAuthNSection["ClientId"];
-                    GoogleOptions.ClientSecret = facebookAuthNSection["ClientSecret"];
+                    var googleAuthNSection = configuration.GetSection("Authentication:Google");
+                    GoogleOptions.ClientId = googleAuthNSection["ClientId"];
+                    GoogleOptions.ClientSecret = googleAuthNSection["ClientSecret"];
                     GoogleOptions.CallbackPath = "/signin-google"; 
                     GoogleOptions.Events = new OAuthEvents
                     {
                         OnRemoteFailure = context =>
                         {
-                            Console.WriteLine("Facebook OAuth error: " + context.Failure.Message);
+                            Console.WriteLine("Google OAuth error: " + context.Failure.Message);
                             context.Response.Redirect("/Login?error=" + Uri.EscapeDataString(context.Failure.Message));
                             context.HandleResponse();
                             return Task.CompletedTask;
@@ -114,7 +114,6 @@ namespace HairSalonBE.API
                     };
                 });
         }
-
         public static void ConfigFacebookAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAuthentication()
@@ -123,7 +122,7 @@ namespace HairSalonBE.API
                     var facebookAuthNSection = configuration.GetSection("Authentication:Facebook");
                     facebookOptions.AppId = facebookAuthNSection["AppId"];
                     facebookOptions.AppSecret = facebookAuthNSection["AppSecret"];
-                    facebookOptions.CallbackPath = "/signin-facebook"; // Đường dẫn callback
+                    facebookOptions.CallbackPath = "/signin-facebook"; 
                     facebookOptions.Events = new OAuthEvents
                     {
                         OnRemoteFailure = context =>
@@ -136,7 +135,6 @@ namespace HairSalonBE.API
                     };
                 });
         }
-
         public static void ConfigJwt(this IServiceCollection services, IConfiguration configuration)
         {
             // Config JWT Authentication
