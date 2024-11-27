@@ -9,107 +9,82 @@ namespace HairSalon.RazorPage.Pages.Payment
 {
     public class VnPayModel : PageModel
     {
-        private readonly IVnPayService _paymentService;
-        private readonly IAppointmentService _appointmentService; 
-        private readonly IPaymentService _checkPaymentService;
-        public VnPayModel(IVnPayService paymentService, IAppointmentService appointmentService, IPaymentService checkPaymentService)
+        private readonly IAppointmentService _appointmentService;
+        private readonly IVnPayService _vnPayService;
+
+        public VnPayModel(IAppointmentService appointmentService, IVnPayService vnPayService)
         {
-            _paymentService = paymentService;
             _appointmentService = appointmentService;
-            _checkPaymentService = checkPaymentService;
+            _vnPayService = vnPayService;
         }
 
         [BindProperty(SupportsGet = true)]
-        public string Id { get; set; }
-        public PaymentRequestModelView Payment { get; set; }
-        public List<AppointmentModelView> Appointments { get; set; }
-        public async Task<IActionResult> OnGetAsync()
+        public string AppointmentId { get; set; }
+
+        public double Amount { get; private set; }
+        public string Information { get; private set; }
+        public string Type { get; private set; }
+        public string? ErrorMessage { get; set; }
+
+        public async Task<IActionResult> OnGetAsync(string appointmentId)
         {
-            // Retrieve user roles from session
-            var userRolesJson = HttpContext.Session.GetString("UserRoles");
-            if (userRolesJson == null)
-            {
-                TempData["DeniedMessage"] = "You do not have permission";
-                return RedirectToPage("/Error"); // Redirect to a different page with a denied message
-            }
+            AppointmentId = appointmentId;
 
-            var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
-
-            // Check if the user has "Admin" or "Manager" roles
-            if (!userRoles.Any(role => role == "Admin" || role == "User"))
-            {
-                TempData["DeniedMessage"] = "You do not have permission";
-                return Page(); // Redirect to a different page with a denied message
-            }
-
-            // Get the userId (You need to retrieve this based on your app's context)
-            var userId = HttpContext.Session.GetString("UserId");
-            if (string.IsNullOrEmpty(userId))
-            {
-                TempData["DeniedMessage"] = "User not found.";
-                return Page();
-            }
-
-            // Call service to get appointments for the user
-            var allAppointments = await _appointmentService.GetAppointmentsByUserIdAsync(userId);
-
-            // Filter out the appointments that have already been paid
-            Appointments = new List<AppointmentModelView>();
-            foreach (var appointment in allAppointments)
-            {
-                bool isPaid = await _checkPaymentService.IsAppointmentPaidAsync(appointment.Id);
-                if (!isPaid) // Only add appointments that are not paid
-                {
-                    Appointments.Add(appointment);
-                }
-            }
-
-            return Page();
-
-        }
-
-        // Handler to generate and redirect to the VNPay URL
-        public async Task<IActionResult> OnPostPayWithVnPayAsync()
-        {
-            if (string.IsNullOrEmpty(Id))
-            {
-                TempData["ErrorMessage"] = "Appointment ID is required.";
-                return RedirectToPage("/Error");
-            }
-
-            var appointment = await _paymentService.GetAppointmentByIdAsync(Id);
+            var appointment = await _appointmentService.GetAppointmentByIdAsync(AppointmentId);
             if (appointment == null)
             {
-                TempData["ErrorMessage"] = "AppointmentId not found.";
+                ErrorMessage = "Appointment not found.";
                 return Page();
             }
 
-            var paymentRequest = new PaymentRequestModelView { Information = appointment.Id };
-            string paymentUrl = await _paymentService.CreatePaymentUrl(paymentRequest, HttpContext);
+            // Set readonly fields
+            Amount = ((double)appointment.TotalAmount * 0.9);
+            Information = $"Deposit for Appointment #{AppointmentId}";
+            Type = "VNPay";
 
-            if (paymentUrl == "Appointment not found." || paymentUrl == "Appointment has not been completed.")
-            {
-                TempData["ErrorMessage"] = paymentUrl;
-                return Page();
-            }
-
-            return Redirect(paymentUrl);
+            return Page();
         }
 
-        public IActionResult OnGetPaymentCallbackAsync()
+        public async Task<IActionResult> OnPostAsync()
         {
-            var vnpResponseCode = Request.Query["vnp_ResponseCode"];
-            var vnpTransactionStatus = Request.Query["vnp_TransactionStatus"];
-
-            if (vnpResponseCode == "00" && vnpTransactionStatus == "00")
+            if (!ModelState.IsValid)
             {
-                TempData["SuccessMessage"] = "Payment successful!";
-                return RedirectToPage("/Payment/Index");
+                ErrorMessage = "Invalid input. Please try again.";
+                return Page();
             }
-            else
+
+            var appointment = await _appointmentService.GetAppointmentByIdAsync(AppointmentId);
+            if (appointment == null)
             {
-                TempData["ErrorMessage"] = "Payment failed or invalid response. Please try again.";
-                return RedirectToPage("/Payment/Index");
+                ErrorMessage = "Appointment not found.";
+                return Page();
+            }
+
+            var paymentRequest = new PaymentRequestModelView
+            {
+                Amount = ((double)appointment.TotalAmount * 0.9),
+                Information = AppointmentId,
+                Type = "VNPay"
+            };
+
+            try
+            {
+                // Generate VnPay payment link
+                var paymentUrl = await _vnPayService.CreatePaymentUrl(paymentRequest, HttpContext);
+
+                if (string.IsNullOrEmpty(paymentUrl))
+                {
+                    ErrorMessage = "Failed to generate the payment link. Please try again.";
+                    return Page();
+                }
+
+                // Redirect to the payment link
+                return Redirect(paymentUrl);
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"An error occurred: {ex.Message}";
+                return Page();
             }
         }
     }

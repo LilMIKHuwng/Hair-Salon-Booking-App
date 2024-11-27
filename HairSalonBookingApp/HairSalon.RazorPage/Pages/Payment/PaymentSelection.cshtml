@@ -22,8 +22,46 @@
 
 <h2>Select Payment Method</h2>
 
-<div>
-    <a asp-page="/Payment/VnPay" class="btn">VnPay Payment</a>
-    <a asp-page="/Payment/PayOS" class="btn">PayOS Payment</a>
-    <a asp-page="/Payment/PaymentByWallet" class="btn">Payment by Wallet</a>
+<div class="btn-container">
+    @{
+        var userRolesString = HttpContext.Session.GetString("UserRoles");
+    }
+    @if (userRolesString.Contains("Admin") || userRolesString.Contains("Manager") || userRolesString.Contains("User"))
+    {
+
+        <div class="deposit-container">
+            <input type="hidden" id="appointmentId" value="@Model.Appointment.Id" />
+            <label for="depositMethod" style="font-weight: bold;">Select Deposit Method:</label>
+            <select id="depositMethod" name="depositMethod" class="form-control" style="width: auto; display: inline-block; margin-right: 10px;">
+                <option value="VnPay">VnPay</option>
+                <option value="PayOS">PayOS</option>
+                <option value="Wallet">Wallet</option>
+            </select>
+            <button type="button" class="btn btn-primary" onclick="processDeposit()">Deposit</button>
+        </div>
+    }
+    <a asp-page="/Appointment/Index" class="btn">Back to Appointment List</a>
 </div>
+
+
+<script>
+    function processDeposit() {
+        var appointmentId = document.getElementById('appointmentId').value;
+        var depositMethod = document.getElementById('depositMethod').value;
+
+        // Define URLs for different deposit methods
+        let depositUrls = {
+            "VnPay": `/Payment/VnPay?appointmentId=${appointmentId}`,
+            "PayOS": `/Payment/PayOS?appointmentId=${appointmentId}`,
+            "Wallet": `/Payment/DepositWallet?appointmentId=${appointmentId}`
+        };
+
+        // Redirect to the selected deposit method page
+        if (depositUrls[depositMethod]) {
+            window.location.href = depositUrls[depositMethod];
+        } else {
+            alert('Invalid deposit method selected.');
+        }
+    }
+</script>
+

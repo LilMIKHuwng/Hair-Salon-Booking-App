@@ -22,6 +22,12 @@ namespace HairSalon.RazorPage.Pages.Payment
             var code = Request.Query["code"];
             var status = Request.Query["status"];
             var orderCode = Request.Query["orderCode"];
+
+            if (status == "CANCELLED")
+            {
+                return RedirectToPage("/Payment/Index");
+            }
+
             if (code == "00" && status == "PAID")
             {
                 var paymentLinkInformation = await _payOsService.GetInformationPayment(int.Parse(orderCode));

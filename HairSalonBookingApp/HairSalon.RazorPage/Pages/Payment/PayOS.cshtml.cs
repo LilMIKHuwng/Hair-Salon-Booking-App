@@ -7,118 +7,90 @@ using Newtonsoft.Json;
 
 namespace HairSalon.RazorPage.Pages.Payment
 {
-    public class PayOS : PageModel
-    {
-        private readonly IVnPayService _paymentService;
-        private readonly IAppointmentService _appointmentService; 
-        private readonly IPaymentService _checkPaymentService;
-        private readonly IPayOSService _payOsService;
-        
-        public PayOS(IVnPayService paymentService, 
-            IAppointmentService appointmentService, 
-            IPaymentService checkPaymentService,
-            IPayOSService payOsService)
-        {
-            _paymentService = paymentService;
-            _appointmentService = appointmentService;
-            _checkPaymentService = checkPaymentService;
-            _payOsService = payOsService;
-        }
+	public class PayOS : PageModel
+	{
+		private readonly IPayOSService _payOSService;
+		private readonly IAppointmentService _appointmentService;
 
-        [BindProperty(SupportsGet = true)]
-        public string Id { get; set; }
-        public PaymentRequestModelView Payment { get; set; }
-        public List<AppointmentModelView> Appointments { get; set; }
-        public async Task<IActionResult> OnGetAsync()
-        {
-            // Retrieve user roles from session
-            var userRolesJson = HttpContext.Session.GetString("UserRoles");
-            if (userRolesJson == null)
-            {
-                TempData["DeniedMessage"] = "You do not have permission";
-                return RedirectToPage("/Error"); // Redirect to a different page with a denied message
-            }
+		public PayOS(IPayOSService payOSService, IAppointmentService appointmentService)
+		{
+			_payOSService = payOSService;
+			_appointmentService = appointmentService;
+		}
 
-            var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
+		public double Amount { get; private set; }
+		public string Information { get; private set; }
+		public string Type { get; private set; }
+		public string? ErrorMessage { get; set; }
 
-            // Check if the user has "Admin" or "Manager" roles
-            if (!userRoles.Any(role => role == "Admin" || role == "User"))
-            {
-                TempData["DeniedMessage"] = "You do not have permission";
-                return Page(); // Redirect to a different page with a denied message
-            }
+		[BindProperty(SupportsGet = true)]
+		public string AppointmentId { get; set; }
 
-            // Get the userId (You need to retrieve this based on your app's context)
-            var userId = HttpContext.Session.GetString("UserId");
-            if (string.IsNullOrEmpty(userId))
-            {
-                TempData["DeniedMessage"] = "User not found.";
-                return Page();
-            }
+		public async Task<IActionResult> OnGetAsync()
+		{
+			if (string.IsNullOrEmpty(AppointmentId))
+			{
+				TempData["ErrorMessage"] = "Appointment ID is missing.";
+				return Page();
+			}
 
-            // Call service to get appointments for the user
-            var allAppointments = await _appointmentService.GetAppointmentsByUserIdAsync(userId);
+			var appointment = await _appointmentService.GetAppointmentByIdAsync(AppointmentId);
+			if (appointment == null)
+			{
+				ErrorMessage = "Appointment not found.";
+				return Page();
+			}
 
-            // Filter out the appointments that have already been paid
-            Appointments = new List<AppointmentModelView>();
-            foreach (var appointment in allAppointments)
-            {
-                bool isPaid = await _checkPaymentService.IsAppointmentPaidAsync(appointment.Id);
-                if (!isPaid) // Only add appointments that are not paid
-                {
-                    Appointments.Add(appointment);
-                }
-            }
+			// Set properties to be displayed on the page
+			Amount = ((double)appointment.TotalAmount * 0.9); 
+			Information = $"Deposit for Appointment #{AppointmentId}";
+			Type = "PayOS";
 
-            return Page();
+			return Page();
+		}
 
-        }
 
-        // Handler to generate and redirect to the PayOS URL
-        public async Task<IActionResult> OnPostPayWithVnPayAsync()
-        {
-            if (string.IsNullOrEmpty(Id))
-            {
-                TempData["ErrorMessage"] = "Appointment ID is required.";
-                return RedirectToPage("/Error");
-            }
+		public async Task<IActionResult> OnPostAsync()
+		{
+			if (string.IsNullOrEmpty(AppointmentId))
+			{
+				ErrorMessage = "Appointment ID is required.";
+				return Page();
+			}
 
-            var appointment = await _paymentService.GetAppointmentByIdAsync(Id);
-            if (appointment == null)
-            {
-                TempData["ErrorMessage"] = "AppointmentId not found.";
-                return Page();
-            }
+			var appointment = await _appointmentService.GetAppointmentByIdAsync(AppointmentId);
+			if (appointment == null)
+			{
+				ErrorMessage = "Appointment not found.";
+				return Page();
+			}
 
-            var paymentRequest = new PaymentRequestModelView { Information = appointment.Id };
-            var paymentUrl = await _payOsService.CreatePaymentLink(paymentRequest);
-            HttpContext.Session.SetString("AppointmentId", appointment.Id);
-            if (paymentUrl == "Appointment not found." || paymentUrl == "Appointment has not been completed.")
-            {
-                TempData["ErrorMessage"] = paymentUrl;
-                return Page();
-            }
+			var paymentRequest = new PaymentRequestModelView
+			{
+				Amount = ((double)appointment.TotalAmount * 0.9), // Example logic
+				Information = $"Deposit for Appointment #{AppointmentId}",
+				Type = "PayOS"
+			};
 
-            return Redirect(paymentUrl);
-        }
+			try
+			{
+				var paymentLink = await _payOSService.CreatePaymentLink(paymentRequest);
 
-        public IActionResult OnGetPaymentCallbackAsync()
-        {
-            var vnpResponseCode = Request.Query["code"];
-            var vnpTransactionStatus = Request.Query["status"];
+				if (string.IsNullOrEmpty(paymentLink))
+				{
+					ErrorMessage = "Failed to generate the payment link.";
+					return Page();
+				}
 
-            if (vnpResponseCode == "00" && vnpTransactionStatus == "PAID")
-            {
-                TempData["SuccessMessage"] = "Payment successful!";
-                return RedirectToPage("/Payment/Index");
-            }
-            else
-            {
-                TempData["ErrorMessage"] = "Payment failed or invalid response. Please try again.";
-                return RedirectToPage("/Payment/Index");
-            }
-        }
-    }
+				return Redirect(paymentLink);
+			}
+			catch (Exception ex)
+			{
+				ErrorMessage = $"An error occurred: {ex.Message}";
+				return Page();
+			}
+		}
+	}
 }
 
 
