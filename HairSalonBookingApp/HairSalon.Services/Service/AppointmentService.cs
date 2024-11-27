@@ -747,9 +747,42 @@ namespace HairSalon.Services.Service
 
             return "success";
         }
-        
-        // Mark Appointment Cancel
-        public async Task<string> MarkCancel(string id, string? userId)
+
+		public async Task<string> MarkCompletedPayment(string id, string? userId)
+		{
+			// Validate appointment ID
+			if (string.IsNullOrWhiteSpace(id))
+			{
+				return "Invalid appointment ID. Please provide a valid ID.";
+			}
+
+			// Get appointment by ID and ensure it's not deleted
+			var existingAppointment = await _unitOfWork.GetRepository<Appointment>().Entities
+				.FirstOrDefaultAsync(s => s.Id == id && !s.DeletedTime.HasValue);
+
+			if (existingAppointment == null)
+			{
+				return "Appointment not found or has already been deleted.";
+			}
+
+			// set status Completed and save
+			existingAppointment.StatusForAppointment = "Completed Payment";
+			if (userId != null)
+			{
+				existingAppointment.LastUpdatedBy = userId;
+			}
+			else
+			{
+				existingAppointment.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+			}
+			existingAppointment.LastUpdatedTime = DateTimeOffset.UtcNow;
+			await _unitOfWork.SaveAsync();
+
+			return "success";
+		}
+
+		// Mark Appointment Cancel
+		public async Task<string> MarkCancel(string id, string? userId)
         {
             // Validate appointment ID
             if (string.IsNullOrWhiteSpace(id))
@@ -781,7 +814,6 @@ namespace HairSalon.Services.Service
             
             //refund point
             existingAppointment.User.UserInfo.Point += existingAppointment.PointsEarned;
-            existingAppointment.User.UserInfo.Point -=  (int)(existingAppointment.TotalAmount / 1000) * 10;;
             await _unitOfWork.GetRepository<UserInfo>().UpdateAsync(existingAppointment.User.UserInfo);
             
             // set status Cancel and save
