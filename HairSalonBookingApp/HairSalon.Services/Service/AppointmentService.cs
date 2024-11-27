@@ -966,5 +966,25 @@ namespace HairSalon.Services.Service
             // Map the results to AppointmentModelView
             return _mapper.Map<List<AppointmentModelView>>(appointments);
         }
-    }
+
+		public async Task AutoCheckCancelAppointmentAsync()
+		{
+			var appointments = await _unitOfWork.GetRepository<Appointment>().Entities
+				.Where(a => !a.DeletedTime.HasValue && a.StatusForAppointment == "Scheduled")
+				.ToListAsync();
+
+            int count = 0;
+
+            foreach (var appointment in appointments) 
+            {
+                if (DateTime.Now - appointment.CreatedTime >= TimeSpan.FromMinutes(15))
+                {
+                    var cancel = MarkCancel(appointment.Id, "AutomationCheck");
+                    count++;
+                }
+            }
+
+			Console.WriteLine($"{count} appointments have been automatically cancelled.");
+		}
+	}
 }

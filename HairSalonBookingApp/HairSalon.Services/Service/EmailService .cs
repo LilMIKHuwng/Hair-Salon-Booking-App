@@ -31,7 +31,7 @@ namespace HairSalon.Services.Service
             var appointments = await _unitOfWork.GetRepository<Appointment>().Entities
                 .Where(a => !a.DeletedTime.HasValue && !a.EmailSent &&
                             a.AppointmentDate >= now && // Appointment is not in the past
-                            a.AppointmentDate <= now.AddDays(1)) // Appointment is within 24 hours
+                            a.AppointmentDate <= now.AddDays(1) && a.StatusForAppointment == "Confirmed") // Appointment is within 24 hours
                 .ToListAsync();
 
             if (!appointments.Any())
