@@ -1,5 +1,6 @@
 using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Services.Interface;
+using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalon.ModelViews.AppointmentModelViews;
 using HairSalon.ModelViews.ComboModelViews;
 using HairSalon.ModelViews.ServiceModelViews;
@@ -13,20 +14,23 @@ namespace HairSalon.RazorPage.Pages.Appointment
         private readonly IAppointmentService _appointmentService;
         private readonly IServiceService _serviceService;
         private readonly IComboService _comboService;
+		private readonly IAppUserService _appUserService;
 
-        public DetailModel(IAppointmentService appointmentService, IServiceService serviceService, IComboService comboService)
+		public DetailModel(IAppointmentService appointmentService, IServiceService serviceService, IComboService comboService, IAppUserService appUserService)
         {
             _appointmentService = appointmentService;
             _serviceService = serviceService;
             _comboService = comboService;
-        }
+			_appUserService = appUserService;
+		}
 
         public List<ComboAppointment> ComboAppointment { get; set; }
         public List<ServiceAppointment> ServiceAppointment { get; set; }
         public List<ServiceModelView> Services { get; set; }
         public List<ComboModelView> Combos { get; set; }
+		public List<AppUserModelView> Stylists { get; set; }
 
-        [BindProperty(SupportsGet = true)]
+		[BindProperty(SupportsGet = true)]
         public string Id { get; set; }
 
         public AppointmentModelView Appointment { get; set; }
@@ -65,8 +69,10 @@ namespace HairSalon.RazorPage.Pages.Appointment
             ServiceAppointment = await _appointmentService.GetAllServiceAppointment(Id);
             Services = await _serviceService.GetAllServicesAsync();
             Combos = await _comboService.GetAllComboAsync();
+			Stylists = await _appUserService.GetAllStylistAsync();
 
-            return Page();
+
+			return Page();
         }
     }
 }
