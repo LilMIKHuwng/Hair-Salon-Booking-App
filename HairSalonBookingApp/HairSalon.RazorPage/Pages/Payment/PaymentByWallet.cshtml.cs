@@ -1,3 +1,5 @@
+using DocumentFormat.OpenXml.Office2010.Excel;
+using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.AppointmentModelViews;
 using HairSalon.ModelViews.VnPayModelViews;
@@ -22,6 +24,9 @@ namespace HairSalon.RazorPage.Pages.Payment
 
         [BindProperty]
         public PaymentResponseModelView NewPayment { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public PaymentRequestModelView paymentRequest { get; set; }
 
         public List<AppointmentModelView> Appointments { get; set; }
 
@@ -60,6 +65,14 @@ namespace HairSalon.RazorPage.Pages.Payment
                 return Page();
             }
 
+            // Get PaymentRequest from TempData
+            var paymentRequestJson = TempData["PaymentRequest"]?.ToString();
+            PaymentRequestModelView paymentRequest = new PaymentRequestModelView();
+            if (!string.IsNullOrEmpty(paymentRequestJson))
+            {
+                paymentRequest = JsonConvert.DeserializeObject<PaymentRequestModelView>(paymentRequestJson);
+            }
+
             // Ensure NewPayment is initialized
             if (NewPayment == null)
             {
@@ -68,20 +81,43 @@ namespace HairSalon.RazorPage.Pages.Payment
 
             // Call service to get appointments for the user
             var allAppointments = await _appointmentService.GetAppointmentsByUserIdAsync(userId);
-
-            // Filter out the appointments that have already been paid
+            AppointmentModelView appointmentModelView = await _appointmentService.GetAppointmentByIdAsync(paymentRequest.Information);
             Appointments = new List<AppointmentModelView>();
-            foreach (var appointment in allAppointments)
+
+            if (allAppointments.Any())
             {
-                bool isPaid = await _checkPaymentService.IsAppointmentPaidAsync(appointment.Id);
+                // Filter out the appointments that have already been paid
+                foreach (var appointment in allAppointments)
+                {
+                    bool isPaid = await _checkPaymentService.IsAppointmentPaidAsync(appointment.Id);
+                    if (!isPaid)
+                    {
+                        Appointments.Add(appointment);
+                        var appointmentAmount = appointment.TotalAmount;
+
+                        if (appointmentAmount != null)
+                        {
+                            NewPayment.TotalAmount = appointmentAmount;
+                        }
+                        else
+                        {
+                            NewPayment.TotalAmount = 0;
+                        }
+
+                    }
+                }
+            }
+            else if(appointmentModelView != null)
+            {
+                bool isPaid = await _checkPaymentService.IsAppointmentPaidAsync(appointmentModelView.Id);
                 if (!isPaid)
                 {
-                    Appointments.Add(appointment);
-                    var appointmentAmount = appointment.TotalAmount;
+                    Appointments.Add(appointmentModelView);
+                    var appointmentAmount = paymentRequest.Amount;
 
                     if (appointmentAmount != null)
                     {
-                        NewPayment.TotalAmount = appointmentAmount;
+                        NewPayment.TotalAmount = (decimal)appointmentAmount;
                     }
                     else
                     {
@@ -91,6 +127,8 @@ namespace HairSalon.RazorPage.Pages.Payment
                 }
             }
 
+            // Set method
+            NewPayment.Method = "Wallet";
             // Set PaymentTime to the current date and time
             NewPayment.PaymentTime = DateTime.Now;
 
@@ -100,18 +138,17 @@ namespace HairSalon.RazorPage.Pages.Payment
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (ModelState.IsValid)
+
+            var userId = HttpContext.Session.GetString("UserId");
+            string response = await _paymentService.ExecutePayment(NewPayment, userId);
+            if (response == "Payment added successfully.")
             {
-                var userId = HttpContext.Session.GetString("UserId");
-                string response = await _paymentService.ExecutePayment(NewPayment, userId);
-                if (response == "Payment added successfully.")
-                {
-                    ResponseMessage = response;
-                    return RedirectToPage("/Payment/Index"); // Redirect back to the payment list page
-                }
-                // Set ErrorMessage if there�s an error
-                TempData["ErrorMessage"] = response;
+                ResponseMessage = response;
+                return RedirectToPage("/Payment/Index"); // Redirect back to the payment list page
             }
+            // Set ErrorMessage if there�s an error
+            TempData["ErrorMessage"] = response;
+
             return Page(); // Return the same page in case of validation errors or other issues
         }
     }
