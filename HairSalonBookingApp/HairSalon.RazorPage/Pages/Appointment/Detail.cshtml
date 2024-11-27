@@ -3,6 +3,7 @@
 @model HairSalon.RazorPage.Pages.Appointment.DetailModel
 @{
 	ViewData["Title"] = "Appointment Details";
+	var userId = HttpContext.Session.GetString("UserId");
 }
 
 <style>
@@ -91,6 +92,38 @@
 else
 {
 	<h2>@ViewData["Title"]</h2>
+
+	@if (Model.Appointment.StatusForAppointment == "Scheduled")
+	{
+		<div id="countdown-container" style="text-align: center; margin-top: 20px;">
+			<p><strong>Time remaining to confirm:</strong> <span id="countdown-timer"></span></p>
+		</div>
+
+		<script>
+			let countdownTime = @Model.CountdownTimeInSeconds;
+			const appointmentId = "@Model.Appointment.Id";
+			const userId = "@userId";
+
+			function updateCountdown() {
+				const timerElement = document.getElementById("countdown-timer");
+				let minutes = Math.floor(countdownTime / 60);
+				let seconds = countdownTime % 60;
+
+				timerElement.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+
+				if (countdownTime <= 0) {
+					clearInterval(timerInterval);
+					window.location.href = `/Appointment/AutoCancel?id=${appointmentId}&userId=${userId}`;
+				} else {
+					countdownTime--;
+				}
+			}
+
+			const timerInterval = setInterval(updateCountdown, 1000);
+			updateCountdown();
+		</script>
+	}
+	
 
 	<div class="details-container">
 		<p><strong>Appointment ID:</strong> @Model.Appointment.Id</p>
@@ -185,21 +218,23 @@ else
 		{
 			<a asp-page="/Appointment/Update" asp-route-id="@Model.Appointment.Id" class="btn">Update Appointment</a>
 
-			<div class="deposit-container">
-				<input type="hidden" id="appointmentId" value="@Model.Appointment.Id" />
-				<label for="depositMethod" style="font-weight: bold;">Select Deposit Method:</label>
-				<select id="depositMethod" name="depositMethod" class="form-control" style="width: auto; display: inline-block; margin-right: 10px;">
-					<option value="VnPay">VnPay</option>
-					<option value="PayOS">PayOS</option>
-					<option value="Wallet">Wallet</option>
-				</select>
-				<button type="button" class="btn btn-primary" onclick="processDeposit()">Deposit</button>
-			</div>
+			if (Model.Appointment.StatusForAppointment == "Scheduled")
+			{
+				<div class="deposit-container">
+					<input type="hidden" id="appointmentId" value="@Model.Appointment.Id" />
+					<label for="depositMethod" style="font-weight: bold;">Select Deposit Method:</label>
+					<select id="depositMethod" name="depositMethod" class="form-control" style="width: auto; display: inline-block; margin-right: 10px;">
+						<option value="VnPay">VnPay</option>
+						<option value="PayOS">PayOS</option>
+						<option value="Wallet">Wallet</option>
+					</select>
+					<button type="button" class="btn btn-primary" onclick="processDeposit()">Deposit</button>
+				</div>
+			}
+			
 		}
 		<a asp-page="/Appointment/Index" class="btn">Back to Appointment List</a>
 	</div>
-
-	<p>Time remaining to confirm appointment: <span id="countdown">15m 0s</span></p>
 
 	@if (TempData["ErrorMessage"] != null)
 	{
@@ -228,48 +263,4 @@ else
 	}
 </script>
 
-<script>
-	// Tính toán thời gian đã trôi qua từ thời điểm tạo cuộc hẹn
-	var createdTime = new Date('@Model.Appointment.CreatedTime');
-	var currentTime = new Date();
-	var timeDifference = currentTime - createdTime;
-	var remainingTime = 900000 - timeDifference; // 15 phút = 900000ms
-
-	// Cập nhật bộ đếm mỗi giây
-	var timerInterval = setInterval(function () {
-		remainingTime -= 1000; // Giảm 1 giây mỗi lần
-		if (remainingTime <= 0) {
-			clearInterval(timerInterval); // Dừng bộ đếm
-			checkAndCancelAppointment();
-		}
-		updateCountdownDisplay(remainingTime);
-	}, 1000);
-
-	// Hàm cập nhật bộ đếm hiển thị
-	function updateCountdownDisplay(time) {
-		var minutes = Math.floor(time / 60000);
-		var seconds = Math.floor((time % 60000) / 1000);
-		document.getElementById("countdown").innerHTML = minutes + "m " + seconds + "s";
-	}
-
-	// Kiểm tra và gọi hàm Cancel nếu cần
-	function checkAndCancelAppointment() {
-		var appointmentStatus = '@Model.Appointment.StatusForAppointment';
-		if (appointmentStatus !== 'Confirmed') {
-			// Gọi hàm Cancel (API hoặc Method)
-			fetch(`/Appointment/Cancel?appointmentId=${'@Model.Appointment.Id'}`, {
-				method: 'POST'
-			}).then(response => {
-				if (response.ok) {
-					alert('Appointment has been automatically canceled.');
-					window.location.href = '/Appointment/Index'; // Điều hướng về trang danh sách cuộc hẹn
-				} else {
-					alert('Failed to cancel the appointment.');
-				}
-			}).catch(error => {
-				alert('An error occurred while canceling the appointment.');
-			});
-		}
-	}
-</script>
 

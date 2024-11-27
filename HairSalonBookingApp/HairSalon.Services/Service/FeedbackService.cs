@@ -282,6 +282,19 @@ namespace HairSalon.Services.Service
             return _mapper.Map<List<AppointmentModelView>>(appointments);
         }
 
+		public async Task<bool> CheckAlreadyFeedbackAsync(string? appointmentId)
+		{
+			// Kiểm tra nếu appointmentId là null hoặc rỗng, trả về false
+			if (string.IsNullOrWhiteSpace(appointmentId))
+				return false;
 
-    }
+			// Sử dụng repository để kiểm tra điều kiện
+			var isAlreadyFeedback = await _unitOfWork.GetRepository<Appointment>()
+				.Entities
+				.AnyAsync(a => a.Id == appointmentId && a.Feedback != null);
+
+			return isAlreadyFeedback;
+		}
+
+	}
 }

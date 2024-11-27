@@ -10,17 +10,17 @@ namespace HairSalon.RazorPage.Pages.Appointment
 	public class AppointmentManagementModel : PageModel
 	{
 		private readonly IAppointmentService _appointmentService;
+		public readonly IFeedbackService _feedbacktService;
 
-		public AppointmentManagementModel(IAppointmentService appointmentService)
+		public AppointmentManagementModel(IAppointmentService appointmentService, IFeedbackService feedbacktService)
 		{
 			_appointmentService = appointmentService;
+			_feedbacktService = feedbacktService;
 		}
 
 		[BindProperty(SupportsGet = true)]
 		public string? StatusForAppointment { get; set; }
-
 		public BasePaginatedList<AppointmentModelView> Appointments { get; set; }
-
 
 		public async Task<IActionResult> OnGetAsync(int pageNumber = 1, int pageSize = 5, DateTime? startDate = null, DateTime? endDate = null,
 			string? id = null, Guid? userId = null, Guid? stylistId = null)
@@ -78,6 +78,10 @@ namespace HairSalon.RazorPage.Pages.Appointment
 					return RedirectToPage("/Appointment/Detail");
 				case "delete":
 					return RedirectToPage("/Appointment/Delete");
+				case "feedback":
+					return RedirectToPage("/Feedback/Create");
+				case "cancel":
+					return RedirectToPage("/Appointment/Cancel");
 				case "completed":
 					return RedirectToPage("/Appointment/MarkCompleted");
 				case "confirm":
@@ -87,6 +91,5 @@ namespace HairSalon.RazorPage.Pages.Appointment
 					return RedirectToPage();
 			}
 		}
-
 	}
 }
