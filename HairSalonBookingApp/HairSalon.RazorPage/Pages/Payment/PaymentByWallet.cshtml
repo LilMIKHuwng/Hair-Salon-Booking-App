@@ -109,7 +109,7 @@ else
     <form method="post">
         <div>
             <label for="NewPayment.AppointmentId">Appointment:</label>
-            <input value="@Model.NewPayment.AppointmentId" readonly />
+            <input asp-for="@Model.NewPayment.AppointmentId" value="@Model.NewPayment.AppointmentId" readonly />
             <span asp-validation-for="NewPayment.AppointmentId" class="text-danger"></span>
         </div>
 
