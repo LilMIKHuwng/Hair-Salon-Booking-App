@@ -28,8 +28,6 @@ namespace HairSalon.RazorPage.Pages.Payment
         [BindProperty(SupportsGet = true)]
         public PaymentRequestModelView paymentRequest { get; set; }
 
-        public List<AppointmentModelView> Appointments { get; set; }
-
         [TempData]
         public string ErrorMessage { get; set; }
 
@@ -79,40 +77,18 @@ namespace HairSalon.RazorPage.Pages.Payment
                 NewPayment = new PaymentResponseModelView();
             }
 
+            NewPayment.AppointmentId = paymentRequest.Information;
             // Call service to get appointments for the user
             var allAppointments = await _appointmentService.GetAppointmentsByUserIdAsync(userId);
+            //Get appointment by id if get all not work
             AppointmentModelView appointmentModelView = await _appointmentService.GetAppointmentByIdAsync(paymentRequest.Information);
-            Appointments = new List<AppointmentModelView>();
 
-            if (allAppointments.Any())
-            {
-                // Filter out the appointments that have already been paid
-                foreach (var appointment in allAppointments)
-                {
-                    bool isPaid = await _checkPaymentService.IsAppointmentPaidAsync(appointment.Id);
-                    if (!isPaid)
-                    {
-                        Appointments.Add(appointment);
-                        var appointmentAmount = appointment.TotalAmount;
-
-                        if (appointmentAmount != null)
-                        {
-                            NewPayment.TotalAmount = appointmentAmount;
-                        }
-                        else
-                        {
-                            NewPayment.TotalAmount = 0;
-                        }
-
-                    }
-                }
-            }
-            else if(appointmentModelView != null)
+            if (appointmentModelView != null)
             {
                 bool isPaid = await _checkPaymentService.IsAppointmentPaidAsync(appointmentModelView.Id);
+
                 if (!isPaid)
                 {
-                    Appointments.Add(appointmentModelView);
                     var appointmentAmount = paymentRequest.Amount;
 
                     if (appointmentAmount != null)
@@ -133,16 +109,20 @@ namespace HairSalon.RazorPage.Pages.Payment
             NewPayment.PaymentTime = DateTime.Now;
 
             return Page();
-
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-
             var userId = HttpContext.Session.GetString("UserId");
+            var appointment = await _appointmentService.GetAppointmentByIdAsync(NewPayment.AppointmentId);
             string response = await _paymentService.ExecutePayment(NewPayment, userId);
+
             if (response == "Payment added successfully.")
             {
+                if (appointment.StatusForAppointment == "Scheduled")
+                {
+                    var confirm = await _appointmentService.MarkConfirmed(NewPayment.AppointmentId, userId);
+                }
                 ResponseMessage = response;
                 return RedirectToPage("/Payment/Index"); // Redirect back to the payment list page
             }
