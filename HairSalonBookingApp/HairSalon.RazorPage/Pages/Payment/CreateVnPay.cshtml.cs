@@ -52,21 +52,34 @@ namespace HairSalon.RazorPage.Pages.Payment
             }
 
             IsUserRole = !userRoles.Contains("Admin") && userRoles.Contains("User");
-
-            NewPayment = new PaymentResponseModelView
+            if (Request.Query["vnp_TransactionStatus"] == "00")
             {
-                AppointmentId = Request.Query["vnp_OrderInfo"],
-                TotalAmount = Convert.ToDecimal(Request.Query["vnp_Amount"]) / 100,
-                BankCode = Request.Query["vnp_BankCode"],
-                BankTranNo = Request.Query["vnp_BankTranNo"],
-                CardType = Request.Query["vnp_CardType"],
-                ResponseCode = Request.Query["vnp_ResponseCode"],
-                TransactionNo = Request.Query["vnp_TransactionNo"],
-                TransactionStatus = Request.Query["vnp_TransactionStatus"],
-                Method = Request.Query["method"] == "" ? "VnPay" : Request.Query["method"],
-                PaymentTime = DateTime.ParseExact(Request.Query["vnp_PayDate"], "yyyyMMddHHmmss", CultureInfo.InvariantCulture) // You can parse the date correctly
-            };
+                NewPayment = new PaymentResponseModelView
+                {
+                    AppointmentId = Request.Query["vnp_OrderInfo"],
+                    TotalAmount = Convert.ToDecimal(Request.Query["vnp_Amount"]) / 100,
+                    BankCode = Request.Query["vnp_BankCode"],
+                    BankTranNo = Request.Query["vnp_BankTranNo"],
+                    CardType = Request.Query["vnp_CardType"],
+                    ResponseCode = Request.Query["vnp_ResponseCode"],
+                    TransactionNo = Request.Query["vnp_TransactionNo"],
+                    TransactionStatus = Request.Query["vnp_TransactionStatus"],
+                    Method = string.IsNullOrEmpty(Request.Query["method"]) ? "VnPay" : Request.Query["method"],
+                    PaymentTime = DateTime.ParseExact(Request.Query["vnp_PayDate"], "yyyyMMddHHmmss", CultureInfo.InvariantCulture) // You can parse the date correctly
+                };
 
+                return Page();
+            }
+            var userId = HttpContext.Session.GetString("UserId");
+
+            string response = await _appointmentService.MarkCancel(Request.Query["vnp_OrderInfo"], userId);
+            if (response == "success")
+            {
+                ResponseMessage = response;
+                return RedirectToPage("/Appointment/Index");
+            }
+            // Set ErrorMessage if deletion fails
+            TempData["ErrorMessage"] = response;
             return Page();
         }
 

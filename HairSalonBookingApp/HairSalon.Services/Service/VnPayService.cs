@@ -34,7 +34,7 @@ namespace HairSalon.Services.Service
             vnpay.AddRequestData("vnp_TmnCode", _configuration["VnPay:TmnCode"]);
             vnpay.AddRequestData("vnp_Amount", ((int)model.Amount * 100).ToString());
             vnpay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
-            vnpay.AddRequestData("vnp_ExpireDate", DateTime.Now.AddMinutes(15).ToString("yyyyMMddHHmmss"));
+            vnpay.AddRequestData("vnp_ExpireDate", model.TimeExpire);
             vnpay.AddRequestData("vnp_CurrCode", "VND");
             vnpay.AddRequestData("vnp_IpAddr", "165.225.230.115");
             vnpay.AddRequestData("vnp_Locale", "vn");
