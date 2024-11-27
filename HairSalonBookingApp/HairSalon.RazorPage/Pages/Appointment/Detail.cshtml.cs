@@ -1,3 +1,4 @@
+﻿using DocumentFormat.OpenXml.Office2010.Excel;
 using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.AppointmentModelViews;
@@ -31,7 +32,9 @@ namespace HairSalon.RazorPage.Pages.Appointment
 
         public AppointmentModelView Appointment { get; set; }
 
-        public async Task<IActionResult> OnGetAsync()
+		public int CountdownTimeInSeconds { get; private set; } = 0;
+
+		public async Task<IActionResult> OnGetAsync()
         {
 			// Get Id from TempData
 			if (TempData.ContainsKey("AppointmentId"))
@@ -61,7 +64,14 @@ namespace HairSalon.RazorPage.Pages.Appointment
                 return RedirectToPage("/Role/Index");
             }
 
-            ComboAppointment = await _appointmentService.GetAllComboAppointment(Id);
+			var createTime = Appointment.CreatedTime; 
+			var now = DateTime.UtcNow;
+			var maxTime = createTime.AddMinutes(15); 
+			var timeLeft = maxTime - now;
+
+			CountdownTimeInSeconds = (int)Math.Max(0, timeLeft.TotalSeconds);
+
+			ComboAppointment = await _appointmentService.GetAllComboAppointment(Id);
             ServiceAppointment = await _appointmentService.GetAllServiceAppointment(Id);
             Services = await _serviceService.GetAllServicesAsync();
             Combos = await _comboService.GetAllComboAsync();

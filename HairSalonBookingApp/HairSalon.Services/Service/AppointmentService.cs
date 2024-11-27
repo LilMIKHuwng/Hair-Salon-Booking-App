@@ -781,7 +781,6 @@ namespace HairSalon.Services.Service
             
             //refund point
             existingAppointment.User.UserInfo.Point += existingAppointment.PointsEarned;
-            existingAppointment.User.UserInfo.Point -=  (int)(existingAppointment.TotalAmount / 1000) * 10;;
             await _unitOfWork.GetRepository<UserInfo>().UpdateAsync(existingAppointment.User.UserInfo);
             
             // set status Cancel and save

@@ -25,7 +25,9 @@ public class PayOSDepositModel : PageModel
     public string Type { get; private set; }
     public string? ErrorMessage { get; set; }
 
-    public async Task<IActionResult> OnGetAsync(string appointmentId)
+	public int CountdownTimeInSeconds { get; private set; } = 0;
+
+	public async Task<IActionResult> OnGetAsync(string appointmentId)
     {
         AppointmentId = appointmentId;
 
@@ -36,8 +38,15 @@ public class PayOSDepositModel : PageModel
             return Page();
         }
 
-        // Set readonly fields
-        Amount = (double)(appointment.TotalAmount * 10 / 100); // 10% deposit
+		var createTime = appointment.CreatedTime;
+		var now = DateTime.UtcNow;
+		var maxTime = createTime.AddMinutes(15);
+		var timeLeft = maxTime - now;
+
+		CountdownTimeInSeconds = (int)Math.Max(0, timeLeft.TotalSeconds);
+
+		// Set readonly fields
+		Amount = (double)(appointment.TotalAmount * 10 / 100); // 10% deposit
         Information = $"Deposit for Appointment #{AppointmentId}";
         Type = "PayOS";
 
