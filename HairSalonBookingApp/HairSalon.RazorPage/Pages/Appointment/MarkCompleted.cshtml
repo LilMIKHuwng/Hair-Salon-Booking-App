@@ -112,8 +112,21 @@ else
 
 	<div class="details-container">
 		<p><strong>Appointment ID:</strong> @Model.Appointment.Id</p>
-		<p><strong>User ID:</strong> @Model.Appointment.UserId</p>
-		<p><strong>Stylist ID:</strong> @Model.Appointment.StylistId</p>
+		<p><strong>User Name:</strong> @Model.Appointment.UserName</p>
+		<p>
+			<strong>Stylist Name:</strong>
+			@{
+				var stylist = Model.Stylists.FirstOrDefault(s => s.Id == Model.Appointment.StylistId);
+				if (stylist != null)
+				{
+					@stylist.UserName
+				}
+				else
+				{
+					<span style="color: red;">Stylist not found</span>
+				}
+			}
+		</p>
 		<p><strong>Status:</strong> @Model.Appointment.StatusForAppointment</p>
 		<p><strong>Points Earned:</strong> @Model.Appointment.PointsEarned</p>
 		<p><strong>Total Time:</strong> @Model.Appointment.TotalTime minutes</p>
