@@ -127,6 +127,19 @@
 			background-color: #d68910;
 		}
 
+	.btn-cancel {
+		color: #ffffff;
+		background-color: darkgrey;
+		padding: 5px 10px;
+		border-radius: 5px;
+		text-decoration: none;
+		transition: background-color 0.3s ease;
+	}
+
+		.btn-cancel:hover {
+			background-color: darkolivegreen;
+		}
+
 	.btn-feedback {
 		color: #ffffff;
 		background-color: #0066FF;
@@ -200,6 +213,11 @@
 		font-weight: bold;
 	}
 
+	.status-cancel {
+		color: #f39c12;
+		font-weight: bold;
+	}
+
 	.status-confirmed {
 		color: #f39c12;
 		font-weight: bold;
@@ -210,6 +228,15 @@
 		font-weight: bold;
 	}
 
+	.status-successfull {
+		color: #2ecc71;
+		font-weight: bold;
+	}
+
+	.status-cancelled {
+		color: red;
+		font-weight: bold;
+	}
 
 	.sort-btn {
 		display: inline-flex;
@@ -293,6 +320,8 @@ else
 				<option value="Scheduled">Scheduled</option>
 				<option value="Confirmed">Confirmed</option>
 				<option value="Completed">Completed</option>
+				<option value="Successfull">Successfull</option>
+				<option value="Cancelled">Cancelled</option>
 			</select>
 		</form>
 	</div>
@@ -383,13 +412,16 @@ else
 										<button type="submit" class="btn-update">Update</button>
 									</form>
 
-									<!-- Form Delete -->
-									<form method="post" asp-route-id="@appointment.Id" asp-route-action="delete" style="display:inline;">
-										<button type="submit" class="btn-delete">Delete</button>
-									</form>
+									<!-- Form Cancel -->
+									@if (!(appointment.StatusForAppointment == "Completed" || appointment.StatusForAppointment == "Cancelled"))
+									{
+										<form method="post" asp-route-id="@appointment.Id" asp-route-action="cancel" style="display:inline;">
+											<button type="submit" class="btn-cancel">Canccel</button>
+										</form>
+									}
 									
 									<!-- Form Feedback -->
-									@if (appointment.StatusForAppointment == "Completed" && !(await Model._feedbacktService.CheckAlreadyFeedbackAsync(appointment.Id)))
+									@if (appointment.StatusForAppointment == "Completed" || appointment.StatusForAppointment == "Successfull" && !(await Model._feedbacktService.CheckAlreadyFeedbackAsync(appointment.Id)))
 									{
 										<form method="post" asp-route-id="@appointment.Id" asp-route-action="feedback" style="display:inline;">
 											<button type="submit" class="btn-feedback">Feedback</button>
@@ -404,6 +436,11 @@ else
 
 								@if (userRolesString.Contains("Admin") || userRolesString.Contains("Manager"))
 								{
+									<!-- Form Delete -->
+									<form method="post" asp-route-id="@appointment.Id" asp-route-action="delete" style="display:inline;">
+										<button type="submit" class="btn-delete">Delete</button>
+									</form>
+
 									<!-- Form Completed -->
 									<form method="post" asp-route-id="@appointment.Id" asp-route-action="completed" style="display:inline;">
 										<button type="submit" class="btn-completed">Completed</button>
