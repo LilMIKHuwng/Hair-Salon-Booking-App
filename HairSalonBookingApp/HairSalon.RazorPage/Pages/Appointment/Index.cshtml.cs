@@ -80,6 +80,8 @@ namespace HairSalon.RazorPage.Pages.Appointment
 					return RedirectToPage("/Appointment/Delete");
 				case "feedback":
 					return RedirectToPage("/Feedback/Create");
+				case "cancel":
+					return RedirectToPage("/Appointment/Cancel");
 				case "completed":
 					return RedirectToPage("/Appointment/MarkCompleted");
 				case "confirm":
