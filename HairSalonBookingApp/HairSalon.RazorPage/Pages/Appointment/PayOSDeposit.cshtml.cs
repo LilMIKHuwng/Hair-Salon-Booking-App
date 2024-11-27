@@ -69,12 +69,14 @@ public class PayOSDepositModel : PageModel
             ErrorMessage = "Appointment not found.";
             return Page();
         }
-
+        var timeRemaining = TimeSpan.FromMinutes(15) - (DateTimeOffset.Now - appointment.CreatedTime);
+        var expirationTime = DateTimeOffset.UtcNow.Add(timeRemaining);
         var paymentRequest = new PaymentRequestModelView
         {
-            Amount = (double)(appointment.TotalAmount * 10 / 100),
+            Amount = (double)(appointment.TotalAmount * 10 / 100), // Using 0.1 for clarity
             Information = $"Deposit for Appointment #{AppointmentId}",
-            Type = "PayOS"
+            Type = "PayOS",
+            TimeExpire = expirationTime.ToUnixTimeSeconds() + "",
         };
 
         try
