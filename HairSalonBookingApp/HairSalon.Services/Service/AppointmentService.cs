@@ -748,7 +748,7 @@ namespace HairSalon.Services.Service
             return "success";
         }
 
-		public async Task<string> MarkCompletedPayment(string id, string? userId)
+		public async Task<string> MarkSuccessfull(string id, string? userId)
 		{
 			// Validate appointment ID
 			if (string.IsNullOrWhiteSpace(id))
@@ -766,7 +766,7 @@ namespace HairSalon.Services.Service
 			}
 
 			// set status Completed and save
-			existingAppointment.StatusForAppointment = "Completed Payment";
+			existingAppointment.StatusForAppointment = "Successfull";
 			if (userId != null)
 			{
 				existingAppointment.LastUpdatedBy = userId;
