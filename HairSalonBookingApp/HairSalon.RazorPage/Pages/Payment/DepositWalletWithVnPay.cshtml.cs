@@ -23,7 +23,6 @@ namespace HairSalon.RazorPage.Pages.Payment
         [BindProperty]
         public PaymentRequestModelView PaymentRequestModelView { get; set; }
 
-        
         public string ResponseMessage { get; set; }
 
         // TempData for messages
@@ -56,31 +55,23 @@ namespace HairSalon.RazorPage.Pages.Payment
             return Page();
         }
 
-
         // Method for handling POST request
         public async Task<IActionResult> OnPostAsync()
         {
-            if (ModelState.IsValid)
-            {
-                var userId = HttpContext.Session.GetString("UserId");
-                // Call the DepositWallet method and get the payment URL
-                string paymentUrl = await _paymentService.CreateDepositUrl(PaymentRequestModelView, HttpContext);
 
-                // Redirect the user to the VNPay payment URL
-                if (!string.IsNullOrEmpty(paymentUrl))
-                {
-                    return Redirect(paymentUrl);
-                }
-                else
-                {
-                    // If the payment URL is empty or null, set an error message
-                    TempData["ErrorMessage"] = "Failed to initiate payment. Please try again.";
-                }
+            var userId = HttpContext.Session.GetString("UserId");
+            // Call the DepositWallet method and get the payment URL
+            string paymentUrl = await _paymentService.CreateDepositUrl(PaymentRequestModelView, HttpContext);
+
+            // Redirect the user to the VNPay payment URL
+            if (!string.IsNullOrEmpty(paymentUrl))
+            {
+                return Redirect(paymentUrl);
             }
             else
             {
-                // If the model state is invalid, show an error message
-                TempData["ErrorMessage"] = "Invalid input. Please check your data and try again.";
+                // If the payment URL is empty or null, set an error message
+                TempData["ErrorMessage"] = "Failed to initiate payment. Please try again.";
             }
 
             // Return to the same page if there was an error
