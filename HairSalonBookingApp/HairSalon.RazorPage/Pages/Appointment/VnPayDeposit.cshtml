@@ -87,6 +87,11 @@
 		.btn:hover {
 			background-color: #2c3e91;
 		}
+
+	.form-center {
+		text-align: center;
+		margin-top: 20px;
+	}
 </style>
 
 <h2>@ViewData["Title"]</h2>
@@ -110,7 +115,7 @@ else
         <p><strong>Type:</strong> @Model.Type</p>
     </div>
 
-    <form method="post">
+	<form method="post" class="form-center">
         <button type="submit" class="btn btn-primary">Proceed to Payment</button>
     </form>
 }
