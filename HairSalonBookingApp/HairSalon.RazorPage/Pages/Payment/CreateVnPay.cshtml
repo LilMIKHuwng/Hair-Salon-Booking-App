@@ -152,51 +152,8 @@ else
         </div>
 
         <div>
-            <label asp-for="NewPayment.BankCode">Bank Code</label>
-            <input asp-for="NewPayment.BankCode" placeholder="Enter Bank Code"
-                   readonly="@(Model.IsUserRole ? "readonly" : null)" />
-            <span asp-validation-for="NewPayment.BankCode" class="text-danger"></span>
-        </div>
-
-        <div>
-            <label asp-for="NewPayment.BankTranNo">Bank Transaction Number</label>
-            <input asp-for="NewPayment.BankTranNo" placeholder="Enter Bank Transaction Number"
-                   readonly="@(Model.IsUserRole ? "readonly" : null)" />
-            <span asp-validation-for="NewPayment.BankTranNo" class="text-danger"></span>
-        </div>
-
-        <div>
-            <label asp-for="NewPayment.CardType">Card Type</label>
-            <input asp-for="NewPayment.CardType" placeholder="Enter Card Type"
-                   readonly="@(Model.IsUserRole ? "readonly" : null)" />
-            <span asp-validation-for="NewPayment.CardType" class="text-danger"></span>
-        </div>
-
-        <div>
-            <label asp-for="NewPayment.ResponseCode">Response Code</label>
-            <input asp-for="NewPayment.ResponseCode" placeholder="Enter Response Code"
-                   readonly="@(Model.IsUserRole ? "readonly" : null)" />
-            <span asp-validation-for="NewPayment.ResponseCode" class="text-danger"></span>
-        </div>
-
-        <div>
-            <label asp-for="NewPayment.TransactionNo">Transaction Number</label>
-            <input asp-for="NewPayment.TransactionNo" placeholder="Enter Transaction Number"
-                   readonly="@(Model.IsUserRole ? "readonly" : null)" />
-            <span asp-validation-for="NewPayment.TransactionNo" class="text-danger"></span>
-        </div>
-
-        <div>
-            <label asp-for="NewPayment.TransactionStatus">Transaction Status</label>
-            <input asp-for="NewPayment.TransactionStatus" placeholder="Enter Transaction Status"
-                   readonly="@(Model.IsUserRole ? "readonly" : null)" />
-            <span asp-validation-for="NewPayment.TransactionStatus" class="text-danger"></span>
-        </div>
-
-        <div>
             <label asp-for="NewPayment.Method">Method</label>
-            <input asp-for="NewPayment.Method" placeholder="Enter Method"
-                   readonly="@(Model.IsUserRole ? "readonly" : null)" required />
+            <input asp-for="NewPayment.Method" value="VnPay" readonly="readonly" required />
             <span asp-validation-for="NewPayment.Method" class="text-danger"></span>
         </div>
 
