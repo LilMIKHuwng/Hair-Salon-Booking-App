@@ -77,10 +77,7 @@ namespace HairSalon.Services.Service
             {
                 var appointmentId = await _unitOfWork.GetRepository<Payment>().Entities
                 .FirstOrDefaultAsync(ui => ui.AppointmentId == model.AppointmentId);
-                if (appointmentId != null) 
-                {
-                    return "Appointment have paymented";
-                }
+
                 var appointment = await _unitOfWork.GetRepository<Appointment>().Entities
                .FirstOrDefaultAsync(ui => ui.Id == model.AppointmentId);
 
@@ -105,7 +102,7 @@ namespace HairSalon.Services.Service
             if (string.IsNullOrEmpty(userIdString))
             {
                 userIdString = _httpContextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-            } 
+            }
 
             if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out Guid userId))
             {

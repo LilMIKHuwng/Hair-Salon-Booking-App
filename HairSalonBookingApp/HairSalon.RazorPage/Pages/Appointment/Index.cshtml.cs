@@ -86,6 +86,8 @@ namespace HairSalon.RazorPage.Pages.Appointment
 					return RedirectToPage("/Appointment/MarkCompleted");
 				case "confirm":
 					return RedirectToPage("/Appointment/MarkConfirmed");
+				case "payment":
+					return RedirectToPage("/Payment/PaymentSelection");
 				default:
 					TempData["ErrorMessage"] = "Invalid action.";
 					return RedirectToPage();
