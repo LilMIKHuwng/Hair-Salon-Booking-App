@@ -1,67 +1,145 @@
 ﻿@page
 @model HairSalon.RazorPage.Pages.Payment.PaymentSelectionModel
 @{
-    ViewData["Title"] = "Select Payment Method";
+	ViewData["Title"] = "Select Payment Method";
 }
 
 <style>
-    .btn {
-        display: inline-block;
-        padding: 8px 15px;
-        color: #ffffff;
-        background-color: #3f51b5;
-        border-radius: 5px;
-        text-decoration: none;
-        transition: background-color 0.3s ease;
-    }
+	/* General Styles */
+	body {
+		font-family: Arial, sans-serif;
+		background-color: #f8f9fa;
+		color: #333;
+		padding: 20px;
+	}
 
-        .btn:hover {
-            background-color: #2c3e91;
-        }
+	h2 {
+		color: #3f51b5;
+		margin-bottom: 20px;
+		border-bottom: 2px solid #3f51b5;
+		padding-bottom: 5px;
+	}
+
+	/* Button Styling */
+	.btn {
+		display: inline-block;
+		padding: 10px 20px;
+		font-size: 16px;
+		color: #ffffff;
+		background-color: #3f51b5;
+		border-radius: 5px;
+		text-decoration: none;
+		text-align: center;
+		cursor: pointer;
+		transition: background-color 0.3s ease;
+	}
+
+		.btn:hover {
+			background-color: #2c3e91;
+		}
+
+	.btn-1 {
+		display: inline-block;
+		padding: 10px 20px;
+		font-size: 16px;
+		color: #ffffff;
+		background-color: #3f51b5;
+		border-radius: 5px;
+		text-decoration: none;
+		text-align: center;
+		cursor: pointer;
+		transition: background-color 0.3s ease;
+		margin-top: 20px;
+	}
+
+	.btn-2 {
+		display: inline-block;
+		padding: 10px 20px;
+		font-size: 16px;
+		color: #ffffff;
+		background-color: #3f51b5;
+		border-radius: 5px;
+		text-decoration: none;
+		text-align: center;
+		cursor: pointer;
+		transition: background-color 0.3s ease;
+		margin-top: 20px;
+		margin-left: 34%;
+	}
+
+	.btn-primary {
+		background-color: #3f51b5;
+		border: none;
+	}
+
+		.btn-primary:hover {
+			background-color: #2c3e91;
+		}
+
+	/* Input and Select Styling */
+	.form-control {
+		padding: 10px;
+		font-size: 16px;
+		border-radius: 5px;
+		border: 1px solid #ddd;
+		margin-right: 10px;
+		width: auto;
+		display: inline-block;
+		background-color: #ffffff;
+	}
+
+	/* Container Styling */
+	.deposit-container {
+		padding: 20px;
+		background-color: #ffffff;
+		border-radius: 8px;
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		max-width: 400px;
+		width: 100%;
+		text-align: center;
+		margin-left: 25%;
+	}
 </style>
 
 <h2>Select Payment Method</h2>
 
 <div class="btn-container">
-    @{
-        var userRolesString = HttpContext.Session.GetString("UserRoles");
-    }
-    @if (userRolesString.Contains("Admin") || userRolesString.Contains("Manager") || userRolesString.Contains("User"))
-    {
-
-        <div class="deposit-container">
-            <input type="hidden" id="appointmentId" value="@Model.Appointment.Id" />
-            <label for="depositMethod" style="font-weight: bold;">Select Deposit Method:</label>
-            <select id="depositMethod" name="depositMethod" class="form-control" style="width: auto; display: inline-block; margin-right: 10px;">
-                <option value="VnPay">VnPay</option>
-                <option value="PayOS">PayOS</option>
-                <option value="Wallet">Wallet</option>
-            </select>
-            <button type="button" class="btn btn-primary" onclick="processDeposit()">Deposit</button>
-        </div>
-    }
-    <a asp-page="/Appointment/Index" class="btn">Back to Appointment List</a>
+	@{
+		var userRolesString = HttpContext.Session.GetString("UserRoles");
+	}
+	@if (userRolesString.Contains("Admin") || userRolesString.Contains("Manager") || userRolesString.Contains("User"))
+	{
+		<div class="deposit-container">
+			<input type="hidden" id="appointmentId" value="@Model.Appointment.Id" />
+			<label for="depositMethod" style="font-weight: bold;">Select Payment Method:</label>
+			<select id="depositMethod" name="depositMethod" class="form-control">
+				<option value="VnPay">VnPay</option>
+				<option value="PayOS">PayOS</option>
+				<option value="Wallet">Wallet</option>
+			</select>
+			<button type="button" class="btn-1 btn-primary" onclick="processDeposit()">Pay</button>
+		</div>
+	}
+	<a asp-page="/Appointment/Index" class="btn-2">Back to Appointment List</a>
 </div>
 
-
 <script>
-    function processDeposit() {
-        var appointmentId = document.getElementById('appointmentId').value;
-        var depositMethod = document.getElementById('depositMethod').value;
+	function processDeposit() {
+		var appointmentId = document.getElementById('appointmentId').value;
+		var depositMethod = document.getElementById('depositMethod').value;
 
-        // Define URLs for different deposit methods
-        let depositUrls = {
-            "VnPay": `/Payment/VnPay?appointmentId=${appointmentId}`,
-            "PayOS": `/Payment/PayOS?appointmentId=${appointmentId}`,
-            "Wallet": `/Payment/DepositWallet?appointmentId=${appointmentId}`
-        };
+		// Define URLs for different deposit methods
+		let depositUrls = {
+			"VnPay": `/Payment/VnPay?appointmentId=${appointmentId}`,
+			"PayOS": `/Payment/PayOS?appointmentId=${appointmentId}`,
+			"Wallet": `/Payment/PaymentByWallet?appointmentId=${appointmentId}`
+		};
 
-        // Redirect to the selected deposit method page
-        if (depositUrls[depositMethod]) {
-            window.location.href = depositUrls[depositMethod];
-        } else {
-            alert('Invalid deposit method selected.');
-        }
-    }
+		// Redirect to the selected deposit method page
+		if (depositUrls[depositMethod]) {
+			window.location.href = depositUrls[depositMethod];
+		} else {
+			alert('Invalid deposit method selected.');
+		}
+	}
 </script>
-

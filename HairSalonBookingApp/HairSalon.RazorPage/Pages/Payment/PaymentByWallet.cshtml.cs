@@ -37,8 +37,9 @@ namespace HairSalon.RazorPage.Pages.Payment
         [TempData]
         public string DeniedMessage { get; set; }
 
-        public async Task<IActionResult> OnGetAsync()
+        public async Task<IActionResult> OnGetAsync(string appointmentId)
         {
+            #region Authentication
             // Retrieve user roles from session
             var userRolesJson = HttpContext.Session.GetString("UserRoles");
             if (userRolesJson == null)
@@ -62,6 +63,7 @@ namespace HairSalon.RazorPage.Pages.Payment
                 TempData["DeniedMessage"] = "User not found.";
                 return Page();
             }
+            #endregion
 
             // Get PaymentRequest from TempData
             var paymentRequestJson = TempData["PaymentRequest"]?.ToString();
@@ -77,29 +79,44 @@ namespace HairSalon.RazorPage.Pages.Payment
                 NewPayment = new PaymentResponseModelView();
             }
 
-            NewPayment.AppointmentId = paymentRequest.Information;
-            // Call service to get appointments for the user
-            var allAppointments = await _appointmentService.GetAppointmentsByUserIdAsync(userId);
-            //Get appointment by id if get all not work
-            AppointmentModelView appointmentModelView = await _appointmentService.GetAppointmentByIdAsync(paymentRequest.Information);
-
-            if (appointmentModelView != null)
+            /* Payment by wallet */
+            if (!string.IsNullOrEmpty(appointmentId))
             {
-                bool isPaid = await _checkPaymentService.IsAppointmentPaidAsync(appointmentModelView.Id);
-
-                if (!isPaid)
+                var appointment = await _appointmentService.GetAppointmentByIdAsync(appointmentId);
+                if (appointment == null)
                 {
-                    var appointmentAmount = paymentRequest.Amount;
+                    ErrorMessage = "Appointment not found.";
+                    return Page();
+                }
+                NewPayment.TotalAmount = appointment.TotalAmount * 0.9m;
+                NewPayment.AppointmentId = appointmentId;
+            }
+            /* Deposit by wallet */
+            else
+            {
+                NewPayment.AppointmentId = paymentRequest.Information;
+                // Call service to get appointments for the user
+                var allAppointments = await _appointmentService.GetAppointmentsByUserIdAsync(userId);
+                //Get appointment by id if get all not work
+                AppointmentModelView appointmentModelView = await _appointmentService.GetAppointmentByIdAsync(paymentRequest.Information);
 
-                    if (appointmentAmount != null)
-                    {
-                        NewPayment.TotalAmount = (decimal)appointmentAmount;
-                    }
-                    else
-                    {
-                        NewPayment.TotalAmount = 0;
-                    }
+                if (appointmentModelView != null)
+                {
+                    bool isPaid = await _checkPaymentService.IsAppointmentPaidAsync(appointmentModelView.Id);
 
+                    if (!isPaid)
+                    {
+                        var appointmentAmount = paymentRequest.Amount;
+
+                        if (appointmentAmount != null)
+                        {
+                            NewPayment.TotalAmount = (decimal)appointmentAmount;
+                        }
+                        else
+                        {
+                            NewPayment.TotalAmount = 0;
+                        }
+                    }
                 }
             }
 
@@ -123,6 +140,12 @@ namespace HairSalon.RazorPage.Pages.Payment
                 {
                     var confirm = await _appointmentService.MarkConfirmed(NewPayment.AppointmentId, userId);
                 }
+
+                if (appointment.StatusForAppointment == "Completed")
+                {
+                    var confirm = await _appointmentService.MarkSuccessfull(NewPayment.AppointmentId, userId);
+                }
+
                 ResponseMessage = response;
                 return RedirectToPage("/Payment/Index"); // Redirect back to the payment list page
             }
