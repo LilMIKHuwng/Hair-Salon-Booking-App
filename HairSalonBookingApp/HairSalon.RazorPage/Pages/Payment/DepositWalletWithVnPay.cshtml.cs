@@ -64,7 +64,7 @@ namespace HairSalon.RazorPage.Pages.Payment
             {
                 var userId = HttpContext.Session.GetString("UserId");
                 // Call the DepositWallet method and get the payment URL
-                string paymentUrl = await _paymentService.CreatePaymentUrl(PaymentRequestModelView, HttpContext);
+                string paymentUrl = await _paymentService.CreateDepositUrl(PaymentRequestModelView, HttpContext);
 
                 // Redirect the user to the VNPay payment URL
                 if (!string.IsNullOrEmpty(paymentUrl))
