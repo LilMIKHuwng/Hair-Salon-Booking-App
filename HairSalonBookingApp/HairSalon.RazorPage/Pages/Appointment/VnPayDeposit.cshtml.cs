@@ -24,7 +24,9 @@ namespace HairSalon.RazorPage.Pages.Appointment
         public string Type { get; private set; }
         public string? ErrorMessage { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(string appointmentId)
+		public int CountdownTimeInSeconds { get; private set; } = 0;
+
+		public async Task<IActionResult> OnGetAsync(string appointmentId)
         {
             AppointmentId = appointmentId;
 
@@ -35,8 +37,15 @@ namespace HairSalon.RazorPage.Pages.Appointment
                 return Page();
             }
 
-            // Set readonly fields
-            Amount = (double)(appointment.TotalAmount * 10 / 100); // 10% deposit
+			var createTime = appointment.CreatedTime;
+			var now = DateTime.UtcNow;
+			var maxTime = createTime.AddMinutes(15);
+			var timeLeft = maxTime - now;
+
+			CountdownTimeInSeconds = (int)Math.Max(0, timeLeft.TotalSeconds);
+
+			// Set readonly fields
+			Amount = (double)(appointment.TotalAmount * 10 / 100); // 10% deposit
             Information = $"Deposit for Appointment #{AppointmentId}";
             Type = "VNPay";
 
@@ -57,12 +66,14 @@ namespace HairSalon.RazorPage.Pages.Appointment
                 ErrorMessage = "Appointment not found.";
                 return Page();
             }
-
+            var timeRemaining = TimeSpan.FromMinutes(15) - (DateTimeOffset.Now - appointment.CreatedTime);
+            var expirationTime = DateTime.UtcNow.Add(timeRemaining).AddHours(7);
             var paymentRequest = new PaymentRequestModelView
             {
                 Amount = (double)(appointment.TotalAmount * 10 / 100),
                 Information = AppointmentId,
-                Type = "VNPay"
+                Type = "VNPay",
+                TimeExpire = expirationTime.ToString("yyyyMMddHHmmss")
             };
 
             try

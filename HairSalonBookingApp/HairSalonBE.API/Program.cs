@@ -94,25 +94,45 @@ app.MapHub<ChatHub>("/chat");
 app.MapControllers();
 
 // Run the email task in a background thread
+// Run the email and auto-cancel tasks in a background thread
 Task.Run(async () =>
 {
-    using var scope = app.Services.CreateScope();
-    var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
+	using var scope = app.Services.CreateScope();
+	var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
+	var appointmentService = scope.ServiceProvider.GetRequiredService<IAppointmentService>();
 
-    while (true)
-    {
-        try
-        {
-            await emailService.SendEmailToConfirmDateAsync();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error during email sending: {ex.Message}");
-        }
+	var emailTaskDelay = TimeSpan.FromHours(12); // Gửi email mỗi 12 giờ
+	var autoCancelTaskDelay = TimeSpan.FromMinutes(5); // Kiểm tra tự động hủy mỗi 5 phút
 
-        // Wait for 24 hours before sending the next batch of emails
-        await Task.Delay(TimeSpan.FromHours(12));
-    }
+	var nextEmailRun = DateTime.UtcNow.Add(emailTaskDelay);
+	var nextAutoCancelRun = DateTime.UtcNow.Add(autoCancelTaskDelay);
+
+	while (true)
+	{
+		try
+		{
+			// Gửi email nếu đã đến thời gian
+			if (DateTime.UtcNow >= nextEmailRun)
+			{
+				await emailService.SendEmailToConfirmDateAsync();
+				nextEmailRun = DateTime.UtcNow.Add(emailTaskDelay);
+			}
+
+			// Kiểm tra tự động hủy lịch hẹn nếu đã đến thời gian
+			if (DateTime.UtcNow >= nextAutoCancelRun)
+			{
+				await appointmentService.AutoCheckCancelAppointmentAsync();
+				nextAutoCancelRun = DateTime.UtcNow.Add(autoCancelTaskDelay);
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Error during background tasks: {ex.Message}");
+		}
+
+		// Đợi 1 phút trước khi kiểm tra lại (giảm tải CPU, tùy chỉnh nếu cần)
+		await Task.Delay(TimeSpan.FromMinutes(1));
+	}
 });
 
 app.Run();

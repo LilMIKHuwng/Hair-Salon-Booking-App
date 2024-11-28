@@ -1,7 +1,7 @@
 ﻿@page
-@model HairSalon.RazorPage.Pages.Appointment.MarkCompletedModel
+@model HairSalon.RazorPage.Pages.Appointment.CancelModel
 @{
-	ViewData["Title"] = "Mark Appointment Completed";
+	ViewData["Title"] = "Mark Appointment Cancelled";
 }
 
 <style>
@@ -82,23 +82,14 @@
 			background-color: #31b0d5;
 		}
 
-	.alert {
-		padding: 10px 15px;
-		border-radius: 5px;
-		margin: 10px 0;
-		text-align: center;
-	}
-
-	.alert-info {
-		background-color: #d9edf7;
-		color: #31708f;
-		border: 1px solid #bce8f1;
-	}
-
 	.alert-danger {
 		background-color: #f2dede;
 		color: #a94442;
 		border: 1px solid #ebccd1;
+		padding: 10px;
+		border-radius: 5px;
+		margin-top: 10px;
+		text-align: center;
 	}
 </style>
 
@@ -112,21 +103,8 @@ else
 
 	<div class="details-container">
 		<p><strong>Appointment ID:</strong> @Model.Appointment.Id</p>
-		<p><strong>User Name:</strong> @Model.Appointment.UserName</p>
-		<p>
-			<strong>Stylist Name:</strong>
-			@{
-				var stylist = Model.Stylists.FirstOrDefault(s => s.Id == Model.Appointment.StylistId);
-				if (stylist != null)
-				{
-					@stylist.UserName
-				}
-				else
-				{
-					<span style="color: red;">Stylist not found</span>
-				}
-			}
-		</p>
+		<p><strong>User ID:</strong> @Model.Appointment.UserId</p>
+		<p><strong>Stylist ID:</strong> @Model.Appointment.StylistId</p>
 		<p><strong>Status:</strong> @Model.Appointment.StatusForAppointment</p>
 		<p><strong>Points Earned:</strong> @Model.Appointment.PointsEarned</p>
 		<p><strong>Total Time:</strong> @Model.Appointment.TotalTime minutes</p>
@@ -134,10 +112,10 @@ else
 		<p><strong>Appointment Date:</strong> @Model.Appointment.AppointmentDate.ToString("MM/dd/yyyy hh:mm tt")</p>
 	</div>
 
-	<p class="confirmation-text">Are you sure you want to mark this appointment as completed?</p>
+	<p class="confirmation-text">Are you sure you want to mark this appointment as cancelled ?</p>
 
 	<form method="post" asp-route-id="@Model.Id">
-		<button type="submit">Completed</button>
+		<button type="submit">Cancelled</button>
 		<a asp-page="/Appointment/Index" class="btn-cancel">Cancel</a>
 	</form>
 
