@@ -104,31 +104,18 @@
 }
 else
 {
-    <h2>Create New Payment By Wallet</h2>
+    <h2>Payment By Wallet</h2>
 
     <form method="post">
         <div>
-            <label for="NewPayment.AppointmentId">Select Appointment:</label>
-            <select asp-for="NewPayment.AppointmentId" id="NewPayment.AppointmentId" required>
-                <option value="">-- Select Appointment --</option>
-                @if (Model.Appointments != null && Model.Appointments.Any())
-                {
-                    @foreach (var appointment in Model.Appointments)
-                    {
-                        <option value="@appointment.Id">@appointment.Id</option>
-                    }
-                }
-                else
-                {
-                    <option value="" disabled>No appointments available</option>
-                }
-            </select>
+            <label for="NewPayment.AppointmentId">Appointment:</label>
+            <input asp-for="@Model.NewPayment.AppointmentId" value="@Model.NewPayment.AppointmentId" readonly />
             <span asp-validation-for="NewPayment.AppointmentId" class="text-danger"></span>
         </div>
 
         <div>
-            <label asp-for="NewPayment.TotalAmount">Total Amount</label>
-            <input asp-for="NewPayment.TotalAmount" type="number" step="0.01" placeholder="Enter Total Amount" required />
+            <label asp-for="NewPayment.TotalAmount">Deposit Amount</label>
+            <input asp-for="NewPayment.TotalAmount" type="number" step="0.01" placeholder="Enter Deposit Amount" readonly required />
             <span asp-validation-for="NewPayment.TotalAmount" class="text-danger"></span>
         </div>
 
