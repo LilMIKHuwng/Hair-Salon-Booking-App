@@ -1,5 +1,6 @@
 ﻿@page
 @model HairSalon.RazorPage.Pages.Payment.CreateModel
+
 @{
     ViewData["Title"] = "Create Payment";
 }
@@ -132,20 +133,24 @@ else
 
     <form method="post">
         <div>
-            <label asp-for="NewPayment.AppointmentId">Appointment ID</label>
-            <input asp-for="NewPayment.AppointmentId" placeholder="Enter Appointment ID" required />
-            <span asp-validation-for="NewPayment.AppointmentId" class="text-danger"></span>
+            <select asp-for="NewPayment.AppointmentId" class="form-control" required onchange="updateTotalAmount()">
+                <option value="">-- Select Appointment --</option>
+                @foreach (var appointment in Model.ConfirmedAppointments)
+                {
+                    <option value="@appointment.Id" data-amount="@appointment.TotalAmount">@appointment.UserName</option>
+                }
+            </select>
         </div>
 
         <div>
-            <label asp-for="NewPayment.TotalAmount">Total Amount</label>
-            <input asp-for="NewPayment.TotalAmount" type="number" step="0.01" placeholder="Enter Total Amount" required />
+            <label asp-for="NewPayment.TotalAmount">Total Amount (90%)</label>
+            <input asp-for="NewPayment.TotalAmount" id="totalAmount" type="number" step="0.01" placeholder="Total Amount" required readonly />
             <span asp-validation-for="NewPayment.TotalAmount" class="text-danger"></span>
         </div>
 
         <div>
             <label asp-for="NewPayment.PaymentTime">Payment Time</label>
-            <input asp-for="NewPayment.PaymentTime" type="datetime-local" placeholder="Enter Payment Time" required />
+            <input asp-for="NewPayment.PaymentTime" type="datetime-local" required value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" readonly />
             <span asp-validation-for="NewPayment.PaymentTime" class="text-danger"></span>
         </div>
 
@@ -201,4 +206,12 @@ else
     }
 }
 
-
+<script>
+    function updateTotalAmount() {
+        var selectedOption = document.querySelector('select[name="NewPayment.AppointmentId"] option:checked');
+        if (selectedOption) {
+            var totalAmount = parseFloat(selectedOption.getAttribute('data-amount')) * 0.9;
+            document.getElementById('totalAmount').value = totalAmount.toFixed(2);
+        }
+    }
+</script>

@@ -952,8 +952,13 @@ namespace HairSalon.Services.Service
 			{
 				return new List<AppointmentModelView>();
 			}
-
-			return _mapper.Map<List<AppointmentModelView>>(appointments);
+            List<AppointmentModelView> appointmentModelViews = _mapper.Map<List<AppointmentModelView>>(appointments);
+            foreach (var appointment in appointmentModelViews)
+			{
+                var user = await _unitOfWork.GetRepository<ApplicationUsers>().GetByIdAsync(Guid.Parse(appointment.UserId));
+                appointment.UserName = user.UserName;
+            }
+            return appointmentModelViews;
 		}
 		public async Task<List<AppointmentModelView>> GetAppointmentsByUserIdAsync(string userId)
 		{
