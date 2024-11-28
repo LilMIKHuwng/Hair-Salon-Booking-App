@@ -2,6 +2,7 @@
 @model HairSalon.RazorPage.Pages.Appointment.WalletDepositModel
 @{
 	ViewData["Title"] = "Wallet Deposit";
+    var userId = HttpContext.Session.GetString("UserId");
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -12,6 +13,10 @@
 }
 else
 {
+    <div id="countdown-container" style="text-align: center; margin-top: 20px;">
+        <p><strong>Time remaining to confirm:</strong> <span id="countdown-timer"></span></p>
+    </div>
+
     <div class="details-container">
         <p><strong>Deposit Amount:</strong> @Model.Amount VND</p>
         <p><strong>Information:</strong> @Model.Information</p>
@@ -22,3 +27,27 @@ else
         <button type="submit" class="btn btn-primary">Proceed to Payment</button>
     </form>
 }
+
+<script>
+	let countdownTime = @Model.CountdownTimeInSeconds;
+	const appointmentId = "@Model.AppointmentId";
+	const userId = "@userId";
+
+	function updateCountdown() {
+		const timerElement = document.getElementById("countdown-timer");
+		let minutes = Math.floor(countdownTime / 60);
+		let seconds = countdownTime % 60;
+
+		timerElement.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+
+		if (countdownTime <= 0) {
+			clearInterval(timerInterval);
+			window.location.href = `/Appointment/AutoCancel?id=${appointmentId}&userId=${userId}`;
+		} else {
+			countdownTime--;
+		}
+	}
+
+	const timerInterval = setInterval(updateCountdown, 1000);
+	updateCountdown();
+</script>
