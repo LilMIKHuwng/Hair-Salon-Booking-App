@@ -101,6 +101,12 @@ namespace HairSalon.RazorPage.Pages.Payment
                     {
 						var confirm = await _appointmentService.MarkConfirmed(NewPayment.AppointmentId, userId);
                     }
+
+                    if (appointment.StatusForAppointment == "Completed")
+                    {
+                        var confirm = await _appointmentService.MarkSuccessfull(NewPayment.AppointmentId, userId);
+                    }
+
                     return RedirectToPage("/Payment/Index"); // Redirect to payment list page
                 }
 
