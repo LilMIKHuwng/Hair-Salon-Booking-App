@@ -455,23 +455,18 @@ else
                                             <button type="submit" class="btn-feedback">Feedback</button>
                                         </form>
                                     }
-                                }
-
-                                <!-- Form Feedback -->
-                                @if (appointment.StatusForAppointment == "Completed" && !(await Model._feedbacktService.CheckAlreadyFeedbackAsync(appointment.Id)))
-                                {
-                                    <form method="post" asp-route-id="@appointment.Id" asp-route-action="feedback" style="display:inline;">
-                                        <button type="submit" class="btn-feedback">Feedback</button>
-                                    </form>
+                                    if (appointment.StatusForAppointment == "Confirmed")
+                                    {
+                                        <!-- Form Payment -->
+                                        <form method="post" asp-route-id="@appointment.Id" asp-route-action="payment" style="display:inline;">
+                                            <button type="submit" class="btn-payment">Payment</button>
+                                        </form>
+                                    }
                                 }
 
                                 <!-- Form Detail -->
                                 <form method="post" asp-route-id="@appointment.Id" asp-route-action="detail" style="display:inline;">
                                     <button type="submit" class="btn-detail">Detail</button>
-                                </form>
-                                <!-- Form Payment -->
-                                <form method="post" asp-route-id="@appointment.Id" asp-route-action="payment" style="display:inline;">
-                                    <button type="submit" class="btn-payment">Payment</button>
                                 </form>
 
                                 @if (userRolesString.Contains("Admin") || userRolesString.Contains("Manager"))

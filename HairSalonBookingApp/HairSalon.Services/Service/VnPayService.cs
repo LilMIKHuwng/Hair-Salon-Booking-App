@@ -47,6 +47,7 @@ namespace HairSalon.Services.Service
 
             return paymentUrl;
         }
+
         public async Task<string> ExecutePayment(PaymentResponseModelView model, string? userIdString)
         {
             if (model.AppointmentId != null)
