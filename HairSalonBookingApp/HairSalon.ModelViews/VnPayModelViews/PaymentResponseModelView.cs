@@ -12,6 +12,6 @@
         public string? ResponseCode { get; set; }
         public string? TransactionNo { get; set; }
         public string? TransactionStatus { get; set; }
-        public string Method { get; set; }
+        public string? Method { get; set; }
     }
 }

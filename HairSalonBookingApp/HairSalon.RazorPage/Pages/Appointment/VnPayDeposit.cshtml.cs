@@ -66,12 +66,14 @@ namespace HairSalon.RazorPage.Pages.Appointment
                 ErrorMessage = "Appointment not found.";
                 return Page();
             }
-
+            var timeRemaining = TimeSpan.FromMinutes(15) - (DateTimeOffset.Now - appointment.CreatedTime);
+            var expirationTime = DateTime.UtcNow.Add(timeRemaining).AddHours(7);
             var paymentRequest = new PaymentRequestModelView
             {
                 Amount = (double)(appointment.TotalAmount * 10 / 100),
                 Information = AppointmentId,
-                Type = "VNPay"
+                Type = "VNPay",
+                TimeExpire = expirationTime.ToString("yyyyMMddHHmmss")
             };
 
             try
