@@ -53,11 +53,12 @@ namespace HairSalon.RazorPage.Pages.Login
                 HttpContext.Session.Remove("UserId");
                 HttpContext.Session.Remove("UserRoles");
                 HttpContext.Session.Remove("Username");
+				HttpContext.Session.Remove("AppointmentId");
 
-                // Alternatively, use HttpContext.Session.Clear(); to clear all session variables if needed
+				// Alternatively, use HttpContext.Session.Clear(); to clear all session variables if needed
 
-                // Redirect to the login page or another preferred page
-                return RedirectToPage("/Login/Login");
+				// Redirect to the login page or another preferred page
+				return RedirectToPage("/Login/Login");
             }
         }
     }

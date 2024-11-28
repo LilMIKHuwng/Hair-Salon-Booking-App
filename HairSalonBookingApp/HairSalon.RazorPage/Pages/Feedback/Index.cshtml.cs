@@ -7,42 +7,50 @@ using HairSalon.ModelViews.FeedBackModeViews;
 
 namespace HairSalon.RazorPage.Pages.Feedback
 {
-    public class FeedbackManagementModel : PageModel
-    {
-        private readonly IFeedbackService _FeedbackService;
+	public class FeedbackManagementModel : PageModel
+	{
+		private readonly IFeedbackService _FeedbackService;
 
-        public FeedbackManagementModel(IFeedbackService FeedbackService)
-        {
-            _FeedbackService = FeedbackService;
-        }
+		public FeedbackManagementModel(IFeedbackService FeedbackService)
+		{
+			_FeedbackService = FeedbackService;
+		}
 
-        public BasePaginatedList<FeedBackModelView> Feedback { get; set; }
+		public BasePaginatedList<FeedBackModelView> Feedback { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int pageNumber = 1, int pageSize = 5, string? id = null, string? AppointmentId = null)
-        {
-            var userFeedbacksJson = HttpContext.Session.GetString("UserRoles");
+		public string UserName { get; set; }
+		public bool IsTrueRole { get; set; }
 
-            if (userFeedbacksJson != null)
-            {
-                var userFeedbacks = JsonConvert.DeserializeObject<List<string>>(userFeedbacksJson);
+		public async Task<IActionResult> OnGetAsync(int pageNumber = 1, int pageSize = 5, string? id = null, string? AppointmentId = null)
+		{
+			// Authenication
+			var userFeedbacksJson = HttpContext.Session.GetString("UserRoles");
+			UserName = HttpContext.Session.GetString("Username");
+			var userRoleJson = HttpContext.Session.GetString("UserRoles");
+			var userRoles = JsonConvert.DeserializeObject<List<string>>(userRoleJson);
+			IsTrueRole = userRoles.Any(role => role == "Admin" || role == "Manager");
 
-                // Check if the user has "Admin" or "Manager" feedback
-                if (!userFeedbacks.Any(feedback => feedback == "Admin" || feedback == "Manager" || feedback == "User" || feedback == "Stylist"))
-                {
-                    TempData["ErrorMessage"] = "You do not have permission to view this page.";
-                    return Page(); // Show error message on the same page
-                }
-            }
-            else
-            {
-                TempData["ErrorMessage"] = "You do not have permission to view this page.";
-                return Page();
-            }
+			if (userFeedbacksJson != null)
+			{
+				var userFeedbacks = JsonConvert.DeserializeObject<List<string>>(userFeedbacksJson);
 
-            // If authorized, retrieve feedbacks data
-            Feedback = await _FeedbackService.GetAllFeedbackAsync(pageNumber, pageSize, id, AppointmentId);
-            return Page();
-        }
+				// Check if the user has "Admin" or "Manager" feedback
+				if (!userFeedbacks.Any(feedback => feedback == "Admin" || feedback == "Manager" || feedback == "User" || feedback == "Stylist"))
+				{
+					TempData["ErrorMessage"] = "You do not have permission to view this page.";
+					return Page(); // Show error message on the same page
+				}
+			}
+			else
+			{
+				TempData["ErrorMessage"] = "You do not have permission to view this page.";
+				return Page();
+			}
+
+			// If authorized, retrieve feedbacks data
+			Feedback = await _FeedbackService.GetAllFeedbackAsync(pageNumber, pageSize, id, AppointmentId);
+			return Page();
+		}
 
 		public async Task<IActionResult> OnPostAsync(string id, string action)
 		{

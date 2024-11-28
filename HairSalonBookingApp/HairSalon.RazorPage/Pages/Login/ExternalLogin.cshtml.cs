@@ -72,7 +72,6 @@ public class ExternalLoginModel : PageModel
 
     public async Task<IActionResult> OnGetCallbackAsync(string returnUrl = null, string remoteError = null)
     {
-        // Set the return URL or default to home
         returnUrl ??= Url.Content("~/");
 
         // Handle external provider errors
@@ -90,12 +89,11 @@ public class ExternalLoginModel : PageModel
             return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
         }
 
-        // Try signing in with external login
+        // Attempt to sign in with the external provider
         var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
 
         if (result.Succeeded)
         {
-            // Successful login: log information and set session data
             _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
 
             var account = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
@@ -109,25 +107,97 @@ public class ExternalLoginModel : PageModel
                     HttpContext.Session.SetString("Username", account.UserName);
                     HttpContext.Session.SetString("UserRoles", JsonConvert.SerializeObject(await _tokenService.GetUserRoles(token.AccessToken)));
                 }
-            } 
-
-            return Redirect("/Index");
-
-        } else {
-
-            // If the user does not have an account, then ask the user to create an account.
-            ReturnUrl = returnUrl;
-            ProviderDisplayName = info.ProviderDisplayName;
-            if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
-            {
-                Input = new InputModel
-                {
-                    Email = info.Principal.FindFirstValue(ClaimTypes.Email)
-                };
             }
 
-            return Page();
+            return Redirect("/Index");
         }
+
+        // If the user does not have an account
+        if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
+        {
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+
+            // Check if the email is already associated with an account
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user != null)
+            {
+                // If the existing account is not linked to the same provider, deny access
+                var existingLogin = await _userManager.GetLoginsAsync(user);
+                var isSameProvider = existingLogin.Any(l => l.LoginProvider == info.LoginProvider);
+
+                if (!isSameProvider)
+                {
+                    ErrorMessage = "This email is already linked to another external provider. Please use another email to link to this provider.";
+                    _logger.LogWarning("Email {Email} is already linked to a different provider.", email);
+                    return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
+                }
+            }
+
+            if (user == null)
+            {
+                // Create a new user account
+                var userInfo = new UserInfo
+                {
+                    Firstname = email.Split('@')[0],
+                    Lastname = email.Split('@')[1]
+                };
+
+                user = new ApplicationUsers
+                {
+                    UserName = email.Split('@')[0],
+                    Email = email,
+                    UserInfo = userInfo,
+                    EmailConfirmed = true
+                };
+
+                var createResult = await _userManager.CreateAsync(user);
+                if (createResult.Succeeded)
+                {
+                    await _userManager.AddLoginAsync(user, info);
+
+                    // Assign "User" role to the account
+                    try
+                    {
+                        var roleRepository = _unitOfWork.GetRepository<ApplicationRoles>();
+                        var userRole = await roleRepository.Entities.FirstOrDefaultAsync(r => r.Name == "User");
+                        if (userRole != null)
+                        {
+                            var userRoleRepository = _unitOfWork.GetRepository<ApplicationUserRoles>();
+                            var applicationUserRole = new ApplicationUserRoles
+                            {
+                                UserId = user.Id,
+                                RoleId = userRole.Id,
+                                CreatedBy = user.Id.ToString(),
+                                CreatedTime = DateTime.UtcNow,
+                                LastUpdatedBy = user.Id.ToString(),
+                                LastUpdatedTime = DateTime.UtcNow
+                            };
+
+                            await userRoleRepository.InsertAsync(applicationUserRole);
+                            await _unitOfWork.SaveAsync();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error assigning role to the user.");
+                    }
+
+                    return Redirect("/Login/ConfirmEmailExternal");
+                }
+            }
+
+            // Automatically log the user in
+            await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
+            _logger.LogInformation("User {Email} created and logged in via {Provider}.", email, info.LoginProvider);
+
+            return Redirect(returnUrl);
+        }
+
+        // If email is not provided, prompt the user to create an account
+        ReturnUrl = returnUrl;
+        ProviderDisplayName = info.ProviderDisplayName;
+
+        return Page();
     }
 
     public async Task<IActionResult> OnPostConfirmationAsync(string returnUrl = null)
@@ -229,5 +299,4 @@ public class ExternalLoginModel : PageModel
         ReturnUrl = returnUrl;
         return Page();
     }
-
 }

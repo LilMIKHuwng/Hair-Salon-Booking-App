@@ -20,12 +20,11 @@ public class SalaryManagentModel : PageModel
     public async Task<IActionResult> OnGetAsync(string? id, Guid? stylistId, DateTime? paymentDate, decimal? baseSalary, int pageNumber = 1, int pageSize = 5)
     {
         var userRolesJson = HttpContext.Session.GetString("UserRoles");
+        var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
 
         if (userRolesJson != null)
         {
-            var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
-
-            if (!userRoles.Any(role => role == "Admin" || role == "Manager"))
+            if (!userRoles.Any(role => role == "Admin" || role == "Manager" || role == "Stylist"))
             {
                 TempData["ErrorMessage"] = "You do not have permission to view this page.";
                 return Page();
@@ -37,7 +36,15 @@ public class SalaryManagentModel : PageModel
             return Page();
         }
 
-        SalaryPayments = await _salaryService.GetAllSalaryPaymentAsync(id, stylistId, paymentDate, baseSalary, pageNumber, pageSize);
+        if (userRoles.Any(role => role == "Admin" || role == "Manager"))
+        {
+            SalaryPayments = await _salaryService.GetAllSalaryPaymentAsync(id, stylistId, paymentDate, baseSalary, pageNumber, pageSize);
+        } else
+        {
+            var userIdJson = HttpContext.Session.GetString("UserId");
+            Guid userId = Guid.TryParse(userIdJson, out var parsedUserId) ? parsedUserId : Guid.Empty;
+            SalaryPayments = await _salaryService.GetAllSalaryPaymentAsync(id, userId, paymentDate, baseSalary, pageNumber, pageSize);
+        }
 
         return Page();
     }

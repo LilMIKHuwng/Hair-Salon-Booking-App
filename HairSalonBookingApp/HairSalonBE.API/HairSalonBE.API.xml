@@ -74,6 +74,11 @@
                 Xóa lịch hẹn
             </summary>
         </member>
+        <member name="M:HairSalonBE.API.Controllers.AppointmentController.CancelAppointment(System.String)">
+            <summary>
+                Xóa lịch hẹn
+            </summary>
+        </member>
         <member name="M:HairSalonBE.API.Controllers.AppointmentController.MarkAppointmentCompleted(System.String)">
             <summary>
                 Thay đổi trạng thái "thành công" của lịch hẹn
