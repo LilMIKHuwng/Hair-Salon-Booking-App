@@ -48,16 +48,36 @@ namespace HairSalon.Services.Service
             return paymentUrl;
         }
 
+        public async Task<string> CreateDepositUrl(PaymentRequestModelView model, HttpContext context)
+        {
+
+            var vnpay = new VNPayLibrary();
+            vnpay.AddRequestData("vnp_Command", "pay");
+            vnpay.AddRequestData("vnp_Version", "2.1.0");
+            vnpay.AddRequestData("vnp_TmnCode", _configuration["VnPay:TmnCode"]);
+            vnpay.AddRequestData("vnp_Amount", ((int)model.Amount * 100).ToString());
+            vnpay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
+            vnpay.AddRequestData("vnp_ExpireDate", DateTime.Now.AddMinutes(15).ToString("yyyyMMddHHmmss"));
+            vnpay.AddRequestData("vnp_CurrCode", "VND");
+            vnpay.AddRequestData("vnp_IpAddr", "165.225.230.115");
+            vnpay.AddRequestData("vnp_Locale", "vn");
+            vnpay.AddRequestData("vnp_OrderInfo", model.Information);
+            vnpay.AddRequestData("vnp_OrderType", "other");
+            vnpay.AddRequestData("vnp_ReturnUrl", _configuration["VnPay:ReturnUrl2"]);
+            vnpay.AddRequestData("vnp_TxnRef", DateTime.Now.ToString("yyyyMMddHHmmss"));
+
+            string paymentUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html" + vnpay.CreateRequestUrl(_configuration["VnPay:PaymentUrl2"], _configuration["VnPay:HashSecret"]);
+
+            return paymentUrl;
+        }
+
         public async Task<string> ExecutePayment(PaymentResponseModelView model, string? userIdString)
         {
             if (model.AppointmentId != null)
             {
                 var appointmentId = await _unitOfWork.GetRepository<Payment>().Entities
                 .FirstOrDefaultAsync(ui => ui.AppointmentId == model.AppointmentId);
-                if (appointmentId != null) 
-                {
-                    return "Appointment have paymented";
-                }
+
                 var appointment = await _unitOfWork.GetRepository<Appointment>().Entities
                .FirstOrDefaultAsync(ui => ui.Id == model.AppointmentId);
 
@@ -82,7 +102,7 @@ namespace HairSalon.Services.Service
             if (string.IsNullOrEmpty(userIdString))
             {
                 userIdString = _httpContextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-            } 
+            }
 
             if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out Guid userId))
             {

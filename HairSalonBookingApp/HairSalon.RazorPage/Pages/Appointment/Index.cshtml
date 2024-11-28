@@ -428,65 +428,67 @@ else
                                     var userRolesString = session.GetString("UserRoles");
                                 }
 
-                                @if (userRolesString.Contains("Admin") || userRolesString.Contains("Manager")
-                               || userRolesString.Contains("User"))
-                                {
-                                    <!-- Form Update -->
-                                    <form method="post" asp-route-id="@appointment.Id" asp-route-action="update" style="display:inline;">
-                                        <button type="submit" class="btn-update">Update</button>
-                                    </form>
+								@if (userRolesString.Contains("Admin") || userRolesString.Contains("Manager")
+													|| userRolesString.Contains("User"))
+								{
+									if (appointment.StatusForAppointment == "Scheduled")
+									{
+										<!-- Form Update -->
+										<form method="post" asp-route-id="@appointment.Id" asp-route-action="update" style="display:inline;">
+											<button type="submit" class="btn-update">Update</button>
+										</form>
+									}
 
-                                    <!-- Form Delete -->
-                                    <form method="post" asp-route-id="@appointment.Id" asp-route-action="delete" style="display:inline;">
-                                        <button type="submit" class="btn-delete">Delete</button>
-                                    </form>
-                                    <!-- Form Cancel -->
-                                    @if (!(appointment.StatusForAppointment == "Completed" || appointment.StatusForAppointment == "Cancelled"))
-                                    {
-                                        <form method="post" asp-route-id="@appointment.Id" asp-route-action="cancel" style="display:inline;">
-                                            <button type="submit" class="btn-cancel">Canccel</button>
-                                        </form>
-                                    }
+									<!-- Form Cancel -->
+									@if (!(appointment.StatusForAppointment == "Completed" || appointment.StatusForAppointment == "Cancelled"))
+									{
+										<form method="post" asp-route-id="@appointment.Id" asp-route-action="cancel" style="display:inline;">
+											<button type="submit" class="btn-cancel">Canccel</button>
+										</form>
+									}
 
-                                    <!-- Form Feedback -->
-                                    @if (appointment.StatusForAppointment == "Completed" || appointment.StatusForAppointment == "Successfull" && !(await Model._feedbacktService.CheckAlreadyFeedbackAsync(appointment.Id)))
-                                    {
-                                        <form method="post" asp-route-id="@appointment.Id" asp-route-action="feedback" style="display:inline;">
-                                            <button type="submit" class="btn-feedback">Feedback</button>
-                                        </form>
-                                    }
-                                    if (appointment.StatusForAppointment == "Confirmed")
+									<!-- Form Feedback -->
+									@if (appointment.StatusForAppointment == "Completed" || appointment.StatusForAppointment == "Successfull" && !(await Model._feedbacktService.CheckAlreadyFeedbackAsync(appointment.Id)))
+									{
+										<form method="post" asp-route-id="@appointment.Id" asp-route-action="feedback" style="display:inline;">
+											<button type="submit" class="btn-feedback">Feedback</button>
+										</form>
+									}
+
+                                    if (appointment.StatusForAppointment == "Completed")
                                     {
                                         <!-- Form Payment -->
                                         <form method="post" asp-route-id="@appointment.Id" asp-route-action="payment" style="display:inline;">
                                             <button type="submit" class="btn-payment">Payment</button>
                                         </form>
                                     }
-                                }
+								}
 
                                 <!-- Form Detail -->
                                 <form method="post" asp-route-id="@appointment.Id" asp-route-action="detail" style="display:inline;">
                                     <button type="submit" class="btn-detail">Detail</button>
                                 </form>
 
-                                @if (userRolesString.Contains("Admin") || userRolesString.Contains("Manager"))
-                                {
-                                    <!-- Form Completed -->
-                                    <form method="post" asp-route-id="@appointment.Id" asp-route-action="completed" style="display:inline;">
-                                        <button type="submit" class="btn-completed">Completed</button>
-                                    </form>
-
-                                    <!-- Form Confirm -->
-                                    <form method="post" asp-route-id="@appointment.Id" asp-route-action="confirm" style="display:inline;">
-                                        <button type="submit" class="btn-confirm">Confirm</button>
-                                    </form>
-                                }
-                            </div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+								@if (userRolesString.Contains("Admin") || userRolesString.Contains("Manager"))
+								{
+									<!-- Form Delete -->
+									<form method="post" asp-route-id="@appointment.Id" asp-route-action="delete" style="display:inline;">
+										<button type="submit" class="btn-delete">Delete</button>
+									</form>
+									<!-- Form Completed -->
+									if (appointment.StatusForAppointment == "Confirmed")
+									{
+										<form method="post" asp-route-id="@appointment.Id" asp-route-action="completed" style="display:inline;">
+											<button type="submit" class="btn-completed">Completed</button>
+										</form>
+									}
+								}
+							</div>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
 
         <!-- Pagination Controls -->
         <div class="pagination">
