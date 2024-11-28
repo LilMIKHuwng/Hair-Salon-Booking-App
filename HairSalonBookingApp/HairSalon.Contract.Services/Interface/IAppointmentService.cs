@@ -19,5 +19,6 @@ namespace HairSalon.Contract.Services.Interface
         Task<List<ComboAppointment>> GetAllComboAppointment(string appointmentId);
         Task<List<AppointmentModelView>> GetAppointmentsForDropdownAsync();
         Task<List<AppointmentModelView>> GetAppointmentsByUserIdAsync(string userId);
-    }
+		Task AutoCheckCancelAppointmentAsync();
+	}
 }

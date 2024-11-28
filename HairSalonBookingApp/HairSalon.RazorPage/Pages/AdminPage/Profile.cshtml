@@ -33,6 +33,28 @@
 			max-height: 80%;
 			border-radius: 10px;
 		}
+
+	.btn-vnpay {
+		color: #ffffff;
+		background-color: #3f51b5;
+		padding: 5px 10px;
+		border-radius: 5px;
+		text-decoration: none;
+		transition: background-color 0.3s ease;
+		margin-left: 10px;
+		display: inline-block;
+	}
+		.btn-vnpay:hover {
+			background-color: #2c3e91;
+			color: #000000; 
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+		}
+
+	.form-btn {
+		display: flex;
+		justify-content: flex-start; 
+		margin-top: 20px; 
+	}
 </style>
 
 @if (TempData["ErrorMessage"] != null)
@@ -47,7 +69,7 @@ else
 				<div>
 					<img src="@(!string.IsNullOrEmpty(Model.UserInfo.UserImage) ? Model.UserInfo.UserImage : "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg")"
 						 alt="Ảnh đại diện" class="thumbnail" onclick="openOverlay()">
-
+					
 					<div class="overlay" id="overlay" onclick="closeOverlay()">
 						<img src="@(!string.IsNullOrEmpty(Model.UserInfo.UserImage) ? Model.UserInfo.UserImage : "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg")"
 							 alt="Ảnh phóng to">
@@ -95,6 +117,13 @@ else
 					</div>
 				</div>
 			</div>
+			<div class="form-btn">
+				<a asp-page="/Payment/DepositWalletWithVnPay" class="btn-vnpay">Deposit Wallet With VnPay</a>
+			</div>
+			@if (TempData["ResponseMessage"] != null)
+			{
+				<div class="alert alert-info mt-3 text-center">@TempData["ResponseMessage"]</div>
+			}
 		</div>
 	</div>
 

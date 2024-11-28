@@ -124,7 +124,6 @@ else
 		</script>
 	}
 	
-
 	<div class="details-container">
 		<p><strong>Appointment ID:</strong> @Model.Appointment.Id</p>
 		<p><strong>User Name:</strong> @Model.Appointment.UserName</p>
@@ -216,10 +215,10 @@ else
 		}
 		@if (userRolesString.Contains("Admin") || userRolesString.Contains("Manager") || userRolesString.Contains("User"))
 		{
-			<a asp-page="/Appointment/Update" asp-route-id="@Model.Appointment.Id" class="btn">Update Appointment</a>
-
 			if (Model.Appointment.StatusForAppointment == "Scheduled")
 			{
+				<a asp-page="/Appointment/Update" asp-route-id="@Model.Appointment.Id" class="btn">Update Appointment</a>
+
 				<div class="deposit-container">
 					<input type="hidden" id="appointmentId" value="@Model.Appointment.Id" />
 					<label for="depositMethod" style="font-weight: bold;">Select Deposit Method:</label>

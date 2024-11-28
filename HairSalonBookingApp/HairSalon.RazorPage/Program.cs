@@ -1,3 +1,4 @@
+using HairSalon.Contract.Services.Interface;
 using HairSalonBE.API;
 
 namespace HairSalon.RazorPage
@@ -55,7 +56,45 @@ namespace HairSalon.RazorPage
                 });
             });
 
-            app.Run();
+			// Run the email and auto-cancel tasks in a background thread
+			Task.Run(async () =>
+			{
+				using var scope = app.Services.CreateScope();
+				var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
+				var appointmentService = scope.ServiceProvider.GetRequiredService<IAppointmentService>();
+
+				var emailTaskDelay = TimeSpan.FromHours(12); 
+				var autoCancelTaskDelay = TimeSpan.FromMinutes(5); 
+
+				var nextEmailRun = DateTime.UtcNow.Add(emailTaskDelay);
+				var nextAutoCancelRun = DateTime.UtcNow.Add(autoCancelTaskDelay);
+
+				while (true)
+				{
+					try
+					{
+						if (DateTime.UtcNow >= nextEmailRun)
+						{
+							await emailService.SendEmailToConfirmDateAsync();
+							nextEmailRun = DateTime.UtcNow.Add(emailTaskDelay);
+						}
+
+						if (DateTime.UtcNow >= nextAutoCancelRun)
+						{
+							await appointmentService.AutoCheckCancelAppointmentAsync();
+							nextAutoCancelRun = DateTime.UtcNow.Add(autoCancelTaskDelay);
+						}
+					}
+					catch (Exception ex)
+					{
+						Console.WriteLine($"Error during background tasks: {ex.Message}");
+					}
+
+					await Task.Delay(TimeSpan.FromMinutes(1));
+				}
+			});
+
+			app.Run();
 		}
 	}
 }

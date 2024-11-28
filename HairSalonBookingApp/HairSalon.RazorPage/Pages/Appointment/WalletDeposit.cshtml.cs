@@ -1,21 +1,19 @@
+using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Services.Interface;
-using HairSalon.ModelViews.AppointmentModelViews;
 using HairSalon.ModelViews.VnPayModelViews;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 
-namespace HairSalon.RazorPage.Pages.Payment
+namespace HairSalon.RazorPage.Pages.Appointment
 {
-    public class VnPayModel : PageModel
+    public class WalletDepositModel : PageModel
     {
         private readonly IAppointmentService _appointmentService;
-        private readonly IVnPayService _vnPayService;
 
-        public VnPayModel(IAppointmentService appointmentService, IVnPayService vnPayService)
+        public WalletDepositModel(IAppointmentService appointmentService)
         {
             _appointmentService = appointmentService;
-            _vnPayService = vnPayService;
         }
 
         [BindProperty(SupportsGet = true)]
@@ -26,7 +24,9 @@ namespace HairSalon.RazorPage.Pages.Payment
         public string Type { get; private set; }
         public string? ErrorMessage { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(string appointmentId)
+		public int CountdownTimeInSeconds { get; private set; } = 0;
+
+		public async Task<IActionResult> OnGet(string appointmentId)
         {
             AppointmentId = appointmentId;
 
@@ -37,50 +37,41 @@ namespace HairSalon.RazorPage.Pages.Payment
                 return Page();
             }
 
-            // Set readonly fields
-            Amount = ((double)appointment.TotalAmount * 0.9);
+			var createTime = appointment.CreatedTime;
+			var now = DateTime.UtcNow;
+			var maxTime = createTime.AddMinutes(15);
+			var timeLeft = maxTime - now;
+
+			CountdownTimeInSeconds = (int)Math.Max(0, timeLeft.TotalSeconds);
+
+			// Set readonly fields
+			Amount = (double)(appointment.TotalAmount * 10 / 100); // 10% deposit
             Information = $"Deposit for Appointment #{AppointmentId}";
-            Type = "VNPay";
+            Type = "Wallet";
 
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
-            {
-                ErrorMessage = "Invalid input. Please try again.";
-                return Page();
-            }
-
             var appointment = await _appointmentService.GetAppointmentByIdAsync(AppointmentId);
             if (appointment == null)
             {
                 ErrorMessage = "Appointment not found.";
                 return Page();
             }
-            var expirationTime = DateTimeOffset.UtcNow.AddHours(7).AddMinutes(15);
+
             var paymentRequest = new PaymentRequestModelView
             {
-                Amount = ((double)appointment.TotalAmount * 0.9),
+                Amount = (double)(appointment.TotalAmount * 10 / 100),
                 Information = AppointmentId,
-                Type = "VNPay",
-                TimeExpire = expirationTime.ToString("yyyyMMddHHmmss")
+                Type = "Wallet"
             };
 
             try
             {
-                // Generate VnPay payment link
-                var paymentUrl = await _vnPayService.CreatePaymentUrl(paymentRequest, HttpContext);
-
-                if (string.IsNullOrEmpty(paymentUrl))
-                {
-                    ErrorMessage = "Failed to generate the payment link. Please try again.";
-                    return Page();
-                }
-
-                // Redirect to the payment link
-                return Redirect(paymentUrl);
+                TempData["PaymentRequest"] = JsonConvert.SerializeObject(paymentRequest);
+                return RedirectToPage("/Payment/PaymentByWallet");
             }
             catch (Exception ex)
             {
@@ -88,7 +79,5 @@ namespace HairSalon.RazorPage.Pages.Payment
                 return Page();
             }
         }
-    }
+    } 
 }
-
-

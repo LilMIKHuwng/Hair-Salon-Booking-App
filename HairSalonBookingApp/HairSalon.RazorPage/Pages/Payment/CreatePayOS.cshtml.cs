@@ -22,11 +22,17 @@ namespace HairSalon.RazorPage.Pages.Payment
             var code = Request.Query["code"];
             var status = Request.Query["status"];
             var orderCode = Request.Query["orderCode"];
+
+            if (status == "CANCELLED")
+            {
+                return RedirectToPage("/Payment/Index");
+            }
+
+            var appointmentId = HttpContext.Session.GetString("AppointmentId");
+            var url = "";
             if (code == "00" && status == "PAID")
             {
                 var paymentLinkInformation = await _payOsService.GetInformationPayment(int.Parse(orderCode));
-
-                var appointmentId = HttpContext.Session.GetString("AppointmentId");
                 var totalAmount = paymentLinkInformation.amount * 100;
                 var bankCode = "00";
                 var bankTranNo = paymentLinkInformation.transactions.FirstOrDefault().counterAccountName ?? "testBank" ;
@@ -37,7 +43,7 @@ namespace HairSalon.RazorPage.Pages.Payment
                 var method = "PayOS";
                 var paymentTime = DateTime.Parse(paymentLinkInformation.createdAt);
 
-                var url = $"/payment/createvnpay?vnp_OrderInfo={appointmentId}" +
+                 url = $"/payment/createvnpay?vnp_OrderInfo={appointmentId}" +
                           $"&vnp_Amount={totalAmount}" +
                           $"&vnp_BankCode={bankCode}" +
                           $"&vnp_BankTranNo={bankTranNo}" +
@@ -48,9 +54,15 @@ namespace HairSalon.RazorPage.Pages.Payment
                           $"&method={method}" +
                           $"&vnp_PayDate={paymentTime:yyyyMMddHHmmss}";
 
-                return Redirect(url);
             }
-            return Page();
+            else
+            {
+                 url = $"/payment/createvnpay?vnp_OrderInfo={appointmentId}" +
+                          $"&vnp_TransactionStatus=24";
+            }
+            
+            return Redirect(url);
+
         }
     }
 }

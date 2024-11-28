@@ -23,8 +23,14 @@ public class PayOSService(PayOS payOs, IHttpContextAccessor httpContextAccessor,
             ItemData item = new ItemData(model.Information, 1, (int)model.Amount);
             List<ItemData> items = new List<ItemData>();
             items.Add(item);
-            PaymentData paymentData = new PaymentData(orderCode, (int)model.Amount, "Thanh toan cat toc", items, configuration["PayOS:ReturnUrl"], configuration["PayOS:ReturnUrl"]);
-
+            PaymentData paymentData = new PaymentData(orderCode,
+                (int)model.Amount,
+                "Thanh toan cat toc",
+                items,
+                configuration["PayOS:ReturnUrl"],
+                configuration["PayOS:ReturnUrl"],
+                "", "", "", "", "",
+                long.Parse(model.TimeExpire));
             CreatePaymentResult createPayment = await payOs.createPaymentLink(paymentData);
 
             return createPayment.checkoutUrl;

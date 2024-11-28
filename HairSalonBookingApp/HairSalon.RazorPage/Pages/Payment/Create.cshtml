@@ -149,7 +149,7 @@ else
             <span asp-validation-for="NewPayment.PaymentTime" class="text-danger"></span>
         </div>
 
-        <div>
+        @* <div>
             <label asp-for="NewPayment.BankCode">Bank Code</label>
             <input asp-for="NewPayment.BankCode" placeholder="Enter Bank Code" />
             <span asp-validation-for="NewPayment.BankCode" class="text-danger"></span>
@@ -183,11 +183,11 @@ else
             <label asp-for="NewPayment.TransactionStatus">Transaction Status</label>
             <input asp-for="NewPayment.TransactionStatus" placeholder="Enter Transaction Status" />
             <span asp-validation-for="NewPayment.TransactionStatus" class="text-danger"></span>
-        </div>
+        </div> *@
 
         <div>
             <label asp-for="NewPayment.Method">Method</label>
-            <input asp-for="NewPayment.Method" placeholder="Enter Method" required />
+            <input asp-for="NewPayment.Method" placeholder="Enter Method" required value="COD" readonly />
             <span asp-validation-for="NewPayment.Method" class="text-danger"></span>
         </div>
 
