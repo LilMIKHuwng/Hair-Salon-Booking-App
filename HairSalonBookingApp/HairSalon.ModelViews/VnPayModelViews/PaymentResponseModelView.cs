@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HairSalon.ModelViews.VnPayModelViews
+﻿namespace HairSalon.ModelViews.VnPayModelViews
 {
     public class PaymentResponseModelView
     {
@@ -18,6 +12,6 @@ namespace HairSalon.ModelViews.VnPayModelViews
         public string? ResponseCode { get; set; }
         public string? TransactionNo { get; set; }
         public string? TransactionStatus { get; set; }
-        public string Method { get; set; }
+        public string? Method { get; set; }
     }
 }

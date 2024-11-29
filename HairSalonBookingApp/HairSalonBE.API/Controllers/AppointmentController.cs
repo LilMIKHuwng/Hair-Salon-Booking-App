@@ -60,6 +60,16 @@ namespace HairSalonBE.API.Controllers
             var result = await _appointmentService.DeleteAppointmentAsync(id, null);
             return Ok(result);
         }
+        
+        /// <summary>
+        ///     Xóa lịch hẹn
+        /// </summary>
+        [HttpPut("mark-cancel/{id}")]
+        public async Task<IActionResult> CancelAppointment(string id)
+        {
+            var result = await _appointmentService.MarkCancel(id, null);
+            return Ok(result);
+        }
 
         /// <summary>
         ///     Thay đổi trạng thái "thành công" của lịch hẹn
@@ -76,10 +86,12 @@ namespace HairSalonBE.API.Controllers
         ///     Thay đổi trạng thái "xác nhận" của lịch hẹn
         /// </summary>
         [HttpPut("mark-confirmed/{id}")]
-        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> MarkAppointmentConfirmed(string id)
         {
-            var result = await _appointmentService.MarkConfirmed(id, null);
+            // Lấy userId từ JWT token (nếu cần)
+            var userId = User.FindFirst("userId")?.Value;
+
+            var result = await _appointmentService.MarkConfirmed(id, userId);
             return Ok(result);
         }
 

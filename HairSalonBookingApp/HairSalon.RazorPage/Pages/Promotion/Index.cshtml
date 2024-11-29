@@ -1,0 +1,372 @@
+﻿@page "/Promotions"
+@using HairSalon.RazorPage.Pages.Promotion
+@model PromotionModel
+@{
+    ViewData["Title"] = "Promotion";
+}
+
+<style>
+    /* General Layout */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h2 {
+        color: #3f51b5;
+        border-bottom: 2px solid #3f51b5;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+
+    h3 {
+        color: #3f51b5;
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+
+    /* Message Styling */
+    .alert {
+        padding: 10px 15px;
+        border-radius: 5px;
+        margin: 10px 0;
+    }
+
+    .alert-info {
+        background-color: #d9edf7;
+        color: #31708f;
+        border: 1px solid #bce8f1;
+    }
+
+    .alert-danger {
+        background-color: #f2dede;
+        color: #a94442;
+        border: 1px solid #ebccd1;
+    }
+
+    /* Link Button Styling */
+    .btn {
+        display: inline-block;
+        padding: 8px 15px;
+        color: #ffffff;
+        background-color: #3f51b5;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn:hover {
+            background-color: #2c3e91;
+        }
+
+    .btn-delete {
+        color: #ffffff;
+        background-color: #e74c3c;
+        padding: 5px 10px;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-delete:hover {
+            background-color: #c0392b;
+        }
+
+    .btn-update {
+        color: #ffffff;
+        background-color: #f39c12;
+        padding: 5px 10px;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-update:hover {
+            background-color: #d68910;
+        }
+
+    .btn-detail {
+        color: #ffffff;
+        background-color: #3498db;
+        padding: 5px 10px;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-detail:hover {
+            background-color: #2c80b4;
+        }
+
+    /* Table Styling */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+    }
+
+        table th,
+        table td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        table th {
+            background-color: #3f51b5;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        table tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    /* Styling for Pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        gap: 10px;
+    }
+
+    .sort-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #3f51b5;
+        color: white;
+        border: none;
+        padding: 5px 8px;
+        border-radius: 5px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-left: 5px;
+    }
+
+        .sort-btn:hover {
+            background-color: #2c3e91;
+        }
+
+    .sort-arrows {
+        font-size: 12px;
+    }
+
+    .sort-btn.active {
+        background-color: #ff9800;
+        color: #fff;
+    }
+
+    .search-form {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        gap: 10px;
+    }
+
+    .search-input {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        width: 250px;
+        font-size: 14px;
+    }
+
+    .btn-search {
+        padding: 8px 15px;
+        background-color: #3f51b5;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+        .btn-search:hover {
+            background-color: #2c3e91;
+        }
+
+    .search-add-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+</style>
+
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger mt-3 text-center">@TempData["ErrorMessage"]</div>
+}
+else
+{
+    <h2>@ViewData["Title"]</h2>
+
+    <div class="search-add-container">
+        <a asp-page="/Promotion/Create" class="btn">Add New Promotion</a>
+
+        <form method="get" class="search-form">
+            <input type="text" name="name" value="@Request.Query["name"]" placeholder="Search by Promotion Name" class="search-input" />
+            <button type="submit" class="btn-search">Search</button>
+        </form>
+    </div>
+
+    <h3>Promotion List</h3>
+
+    @if (TempData["ResponseMessage"] != null)
+    {
+        <div class="alert alert-info mt-3 text-center">@TempData["ResponseMessage"]</div>
+    }
+
+    @if (Model.Promotions != null && Model.Promotions.Items.Any())
+    {
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        Promotion Name
+                        <button class="sort-btn" data-sort="name">
+                            <span class="sort-arrows">▲▼</span>
+                        </button>
+                    </th>
+                    <th>
+                        Discount Percentage
+                        <button class="sort-btn" data-sort="discountpercentage">
+                            <span class="sort-arrows">▲▼</span>
+                        </button>
+                    </th>
+                    <th>
+                        Total Amount
+                        <button class="sort-btn" data-sort="totalamount">
+                            <span class="sort-arrows">▲▼</span>
+                        </button>
+                    </th>
+                    <th>
+                        Max Amount
+                        <button class="sort-btn" data-sort="maxamount">
+                            <span class="sort-arrows">▲▼</span>
+                        </button>
+                    </th>
+                    <th>
+                        Quantity
+                        <button class="sort-btn" data-sort="quantity">
+                            <span class="sort-arrows">▲▼</span>
+                        </button>
+                    </th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var promotion in Model.Promotions.Items)
+                {
+                    <tr>
+                        <td>@promotion.Name</td>
+                        <td>@promotion.DiscountPercentage</td>
+                        <td>@promotion.TotalAmount</td>
+                        <td>@promotion.MaxAmount</td>
+                        <td>@promotion.Quantity</td>
+                        <td>
+                            <!-- Form Update -->
+                            <form method="post" asp-route-id="@promotion.Id" asp-route-action="update" style="display:inline;">
+                                <button type="submit" class="btn-update">Update</button>
+                            </form>
+
+                            <!-- Form Detail -->
+                            <form method="post" asp-route-id="@promotion.Id" asp-route-action="detail" style="display:inline;">
+                                <button type="submit" class="btn-detail">Detail</button>
+                            </form>
+
+                            <!-- Form Delete -->
+                            <form method="post" asp-route-id="@promotion.Id" asp-route-action="delete" style="display:inline;">
+                                <button type="submit" class="btn-delete">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- Pagination Controls -->
+        <div class="pagination">
+            @if (Model.Promotions.HasPreviousPage)
+            {
+                <a asp-page="/Promotion/Index" asp-route-pageNumber="@(Model.Promotions.CurrentPage - 1)" class="btn">Previous</a>
+            }
+
+            <span>Page @Model.Promotions.CurrentPage of @Model.Promotions.TotalPages</span>
+
+            @if (Model.Promotions.HasNextPage)
+            {
+                <a asp-page="/Promotion/Index" asp-route-pageNumber="@(Model.Promotions.CurrentPage + 1)" class="btn">Next</a>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">No promotion available.</div>
+    }
+}
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const tableBody = document.querySelector("table tbody");
+
+        // Map data-sort attributes to column indices
+        const columnMapping = {
+            name: 0,
+            discountpercentage: 1,
+            totalamount: 2,
+            maxamount: 3,
+            quantity: 4
+        };
+
+        const getRows = () => Array.from(tableBody.querySelectorAll("tr"));
+
+        const sortTable = (columnIndex, order) => {
+            const rows = getRows();
+            const sortedRows = rows.sort((a, b) => {
+                const aText = a.children[columnIndex].innerText.trim();
+                const bText = b.children[columnIndex].innerText.trim();
+
+                if (order === "asc") {
+                    return aText.localeCompare(bText, undefined, { numeric: true });
+                } else {
+                    return bText.localeCompare(aText, undefined, { numeric: true });
+                }
+            });
+
+            // Re-attach sorted rows
+            sortedRows.forEach(row => tableBody.appendChild(row));
+        };
+
+        document.querySelectorAll(".sort-btn").forEach(button => {
+            button.addEventListener("click", () => {
+                const column = button.dataset.sort;
+                const columnIndex = columnMapping[column];
+
+                if (columnIndex === undefined) return; // Ensure column exists in mapping
+
+                // Determine current sorting order
+                const isActiveAsc = button.classList.contains("active-asc");
+                const order = isActiveAsc ? "desc" : "asc";
+
+                // Reset all buttons' active states
+                document.querySelectorAll(".sort-btn").forEach(btn => btn.classList.remove("active-asc", "active-desc"));
+
+                // Set the active state for the clicked button
+                button.classList.add(order === "asc" ? "active-asc" : "active-desc");
+
+                // Perform the sort
+                sortTable(columnIndex, order);
+            });
+        });
+    });
+</script>
+

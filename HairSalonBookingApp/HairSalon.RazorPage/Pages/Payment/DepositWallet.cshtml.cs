@@ -17,10 +17,12 @@ namespace HairSalon.RazorPage.Pages.Payment
 
         [BindProperty]
         public DepositWalletModelView DepositWalletRequest { get; set; }
+
         public bool IsUserRole { get; set; }
 
         [TempData]
         public string ResponseMessage { get; set; }
+
         public async Task<IActionResult> OnGetAsync()
         {
             // Retrieve user roles from session
@@ -42,43 +44,40 @@ namespace HairSalon.RazorPage.Pages.Payment
 
             IsUserRole = !userRoles.Contains("Admin") && userRoles.Contains("User");
 
+            var UserId = HttpContext.Session.GetString("UserId");
             // Extract query parameters and assign to DepositWalletRequest object
             DepositWalletRequest = new DepositWalletModelView
             {
-                UserId = Request.Query["vnp_OrderInfo"],  // Extract the userId
+                UserId = UserId,  // Extract the userId
                 Amount = Convert.ToDouble(Request.Query["vnp_Amount"]) / 100
             };
 
-            return Page();
-        }
-
-        public async Task<IActionResult> OnPostAsync()
-        {
             if (ModelState.IsValid)
             {
-                if (Guid.TryParse(DepositWalletRequest.UserId, out var userId) && DepositWalletRequest.Amount > 0)
+                if (Guid.TryParse(UserId, out var userId) && DepositWalletRequest.Amount > 0)
                 {
                     // Call the ExcuteDepositToWallet service method
-                    var response = await _paymentService.ExcuteDepositToWallet(userId, DepositWalletRequest.Amount);
+                    var response = await _paymentService.ExecuteDepositToWallet(userId, DepositWalletRequest.Amount);
 
                     // Check the response and set a success or error message
                     if (response == "Success!")
                     {
                         ResponseMessage = "Deposit successful!";
-                        return RedirectToPage("/Payment/Index");
+                        return RedirectToPage("/AdminPage/Profile");
                     }
                     else
                     {
-                        TempData["ErrorMessage"] = response;
+						ResponseMessage = response;
                     }
                 }
                 else
                 {
-                    TempData["ErrorMessage"] = "Invalid user ID or amount entered.";
+					ResponseMessage = "Invalid user ID or amount entered.";
                 }
             }
 
             return Page();
         }
+
     }
 }

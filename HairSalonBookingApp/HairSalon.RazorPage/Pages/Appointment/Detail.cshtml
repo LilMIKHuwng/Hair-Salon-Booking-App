@@ -1,153 +1,264 @@
 ﻿@page
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 @model HairSalon.RazorPage.Pages.Appointment.DetailModel
 @{
-    ViewData["Title"] = "Appointment Details";
+	ViewData["Title"] = "Appointment Details";
+	var userId = HttpContext.Session.GetString("UserId");
 }
 
 <style>
-    /* General Page Styling */
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f5f5f5;
-        color: #333;
-        margin: 0;
-        padding: 20px;
-    }
+	/* General Page Styling */
+	body {
+		font-family: Arial, sans-serif;
+		background-color: #f5f5f5;
+		color: #333;
+		margin: 0;
+		padding: 20px;
+	}
 
-    h2 {
-        color: #3f51b5;
-        border-bottom: 2px solid #3f51b5;
-        padding-bottom: 10px;
-        margin-bottom: 20px;
-    }
+	h2 {
+		color: #3f51b5;
+		border-bottom: 2px solid #3f51b5;
+		padding-bottom: 10px;
+		margin-bottom: 20px;
+	}
 
-    /* Details Container Styling */
-    .details-container {
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        max-width: 500px;
-        margin: 0 auto 20px;
-    }
+	/* Details Container Styling */
+	.details-container {
+		background-color: #fff;
+		padding: 20px;
+		border-radius: 8px;
+		box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+		max-width: 500px;
+		margin: 0 auto 20px;
+	}
 
-    .details-container p {
-        font-size: 16px;
-        line-height: 1.6;
-    }
+		.details-container p {
+			font-size: 16px;
+			line-height: 1.6;
+		}
 
-    .details-container p strong {
-        color: #3f51b5;
-    }
+			.details-container p strong {
+				color: #3f51b5;
+			}
 
-    /* Table Styling */
-    table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-        margin-top: 10px;
-    }
+	/* Table Styling */
+	table {
+		width: 100%;
+		border-collapse: separate;
+		border-spacing: 0;
+		margin-top: 10px;
+	}
 
-    th, td {
-        padding: 8px;
-        text-align: left;
-        border-bottom: 1px solid #ddd;
-    }
+	th, td {
+		padding: 8px;
+		text-align: left;
+		border-bottom: 1px solid #ddd;
+	}
 
-    th {
-        background-color: #f1f1f1;
-        font-weight: bold;
-    }
+	th {
+		background-color: #f1f1f1;
+		font-weight: bold;
+	}
 
-    /* Button Styling */
-    .btn-container {
-        display: flex;
-        gap: 10px;
-        justify-content: center;
-    }
+	/* Button Styling */
+	.btn-container {
+		display: flex;
+		gap: 10px;
+		justify-content: center;
+	}
 
-    .btn {
-        padding: 10px 20px;
-        color: #ffffff;
-        background-color: #3f51b5;
-        border-radius: 4px;
-        text-decoration: none;
-        font-size: 14px;
-        transition: background-color 0.3s ease;
-        display: inline-block;
-        text-align: center;
-    }
+	.btn {
+		padding: 10px 20px;
+		color: #ffffff;
+		background-color: #3f51b5;
+		border-radius: 4px;
+		text-decoration: none;
+		font-size: 14px;
+		transition: background-color 0.3s ease;
+		display: inline-block;
+		text-align: center;
+	}
 
-    .btn:hover {
-        background-color: #2c3e91;
-    }
+		.btn:hover {
+			background-color: #2c3e91;
+		}
 </style>
 
 @if (TempData["DeniedMessage"] != null)
 {
-            <div class="alert alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
+	<div class="alert alert-danger mt-3 text-center">@TempData["DeniedMessage"]</div>
 }
 else
 {
-            <h2>@ViewData["Title"]</h2>
+	<h2>@ViewData["Title"]</h2>
 
-            <div class="details-container">
-                <p><strong>Appointment ID:</strong> @Model.Appointment.Id</p>
-                <p><strong>User ID:</strong> @Model.Appointment.UserId</p>
-                <p><strong>Stylist ID:</strong> @Model.Appointment.StylistId</p>
-                <p><strong>Status:</strong> @Model.Appointment.StatusForAppointment</p>
-                <p><strong>Points Earned:</strong> @Model.Appointment.PointsEarned</p>
-                <p><strong>Total Time:</strong> @Model.Appointment.TotalTime minutes</p>
-                <p><strong>Total Amount:</strong> @Model.Appointment.TotalAmount</p>
-                <p><strong>Appointment Date:</strong> @Model.Appointment.AppointmentDate.ToString("MM/dd/yyyy hh:mm tt")</p>
+	@if (Model.Appointment.StatusForAppointment == "Scheduled")
+	{
+		<div id="countdown-container" style="text-align: center; margin-top: 20px;">
+			<p><strong>Time remaining to confirm:</strong> <span id="countdown-timer"></span></p>
+		</div>
 
-                <table>
-                    <thead>
-                        <tr>
-                                <th>Selected Services</th>
-                        </tr>
-                    </thead>
+		<script>
+			let countdownTime = @Model.CountdownTimeInSeconds;
+			const appointmentId = "@Model.Appointment.Id";
+			const userId = "@userId";
 
-                    <tbody>
-                        @foreach (var service in Model.Services)
-                        {
-                            if (Model.ServiceAppointment.Any(sa => sa.ServiceId == service.Id))
-                            {
-                                <tr>
-                                    <td>@service.Name</td>
-                                </tr>
-                            }
-                        }
-                    </tbody>
-                </table>
+			function updateCountdown() {
+				const timerElement = document.getElementById("countdown-timer");
+				let minutes = Math.floor(countdownTime / 60);
+				let seconds = countdownTime % 60;
 
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Selected Combos</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var combo in Model.Combos)
-                        {
-                            if (Model.ComboAppointment.Any(ca => ca.ComboId == combo.Id))
-                            {
-                                <tr>
-                                    <td>@combo.Name</td>
-                                </tr>
-                            }
-                        }
-                    </tbody>
-                </table>
-            </div>
+				timerElement.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 
-            <div class="btn-container">
-                <a asp-page="/Appointment/Update" asp-route-id="@Model.Appointment.Id" class="btn">Update Appointment</a>
-                <a asp-page="/Appointment/Index" class="btn">Back to Appointment List</a>
-            </div>
+				if (countdownTime <= 0) {
+					clearInterval(timerInterval);
+					window.location.href = `/Appointment/AutoCancel?id=${appointmentId}&userId=${userId}`;
+				} else {
+					countdownTime--;
+				}
+			}
 
-    @if (TempData["ErrorMessage"] != null)
-    {
-                                <div class="alert-danger">@TempData["ErrorMessage"]</div>
-    }
+			const timerInterval = setInterval(updateCountdown, 1000);
+			updateCountdown();
+		</script>
+	}
+	
+	<div class="details-container">
+		<p><strong>User Name:</strong> @Model.Appointment.UserName</p>
+		<p>
+			<strong>Stylist Name:</strong>
+			@{
+				var stylist = Model.Stylists.FirstOrDefault(s => s.Id == Model.Appointment.StylistId);
+				if (stylist != null)
+				{
+					@stylist.UserName
+				}
+				else
+				{
+					<span style="color: red;">Stylist not found</span>
+				}
+			}
+		</p>
+		<p><strong>Status:</strong> @Model.Appointment.StatusForAppointment</p>
+		<p><strong>Points Earned:</strong> @Model.Appointment.PointsEarned</p>
+		<p><strong>Total Time:</strong> @Model.Appointment.TotalTime minutes</p>
+		<p><strong>Total Amount:</strong> @Model.Appointment.TotalAmount</p>
+		<p><strong>Appointment Date:</strong> @Model.Appointment.AppointmentDate.ToString("MM/dd/yyyy hh:mm tt")</p>
+
+		<table>
+			<thead>
+				<tr>
+					<th>Selected Services</th>
+					<th>Image</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				@foreach (var service in Model.Services)
+				{
+					if (Model.ServiceAppointment.Any(sa => sa.ServiceId == service.Id))
+					{
+						<tr>
+							<td>@service.Name</td>
+							<td>
+								<img src="@service.ServiceImage" alt="Service Image" style="max-width: 100px; height: auto;" />
+							</td>
+						</tr>
+					}
+				}
+			</tbody>
+		</table>
+
+		<table>
+			<thead>
+				<tr>
+					<th>Selected Combos</th>
+					<th>Image</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var combo in Model.Combos)
+				{
+					if (Model.ComboAppointment.Any(ca => ca.ComboId == combo.Id))
+					{
+						<tr>
+							<td>@combo.Name</td>
+							<td>
+								<img src="@combo.ComboImage" alt="Combo Image" style="max-width: 100px; height: auto;" />
+							</td>
+						</tr>
+					}
+				}
+			</tbody>
+		</table>
+		<p>
+			<strong>Promotion Name:</strong>
+			@if (!string.IsNullOrEmpty(Model.Appointment.PromotionName))
+			{
+				@Model.Appointment.PromotionName
+			}
+			else
+			{
+				<span style="color: red;">No promotion to choose</span>
+			}
+		</p>
+
+	</div>
+
+
+	<div class="btn-container">
+		@{
+			var session = HttpContextAccessor.HttpContext.Session;
+			var userRolesString = session.GetString("UserRoles");
+		}
+		@if (userRolesString.Contains("Admin") || userRolesString.Contains("Manager") || userRolesString.Contains("User"))
+		{
+			if (Model.Appointment.StatusForAppointment == "Scheduled")
+			{
+				<a asp-page="/Appointment/Update" asp-route-id="@Model.Appointment.Id" class="btn">Update Appointment</a>
+
+				<div class="deposit-container">
+					<input type="hidden" id="appointmentId" value="@Model.Appointment.Id" />
+					<label for="depositMethod" style="font-weight: bold;">Select Deposit Method:</label>
+					<select id="depositMethod" name="depositMethod" class="form-control" style="width: auto; display: inline-block; margin-right: 10px;">
+						<option value="VnPay">VnPay</option>
+						<option value="PayOS">PayOS</option>
+						<option value="Wallet">Wallet</option>
+					</select>
+					<button type="button" class="btn btn-primary" onclick="processDeposit()">Deposit</button>
+				</div>
+			}
+			
+		}
+		<a asp-page="/Appointment/Index" class="btn">Back to Appointment List</a>
+	</div>
+
+	@if (TempData["ErrorMessage"] != null)
+	{
+		<div class="alert-danger">@TempData["ErrorMessage"]</div>
+	}
 }
+
+<script>
+	function processDeposit() {
+		var appointmentId = document.getElementById('appointmentId').value;
+		var depositMethod = document.getElementById('depositMethod').value;
+
+		// Define URLs for different deposit methods
+		let depositUrls = {
+			"VnPay": `/Appointment/VnPayDeposit?appointmentId=${appointmentId}`,
+			"PayOS": `/Appointment/PayOSDeposit?appointmentId=${appointmentId}`,
+			"Wallet": `/Appointment/WalletDeposit?appointmentId=${appointmentId}`
+		};
+
+		// Redirect to the selected deposit method page
+		if (depositUrls[depositMethod]) {
+			window.location.href = depositUrls[depositMethod];
+		} else {
+			alert('Invalid deposit method selected.');
+		}
+	}
+</script>
+
+

@@ -5,22 +5,22 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace HairSalon.RazorPage.Pages.Feedback
 {
-    public class DetailModel : PageModel
-    {
-        private readonly IFeedbackService _feedbackService;
+	public class DetailModel : PageModel
+	{
+		private readonly IFeedbackService _feedbackService;
 
-        public DetailModel(IFeedbackService feedbackService)
-        {
-            _feedbackService = feedbackService;
-        }
+		public DetailModel(IFeedbackService feedbackService)
+		{
+			_feedbackService = feedbackService;
+		}
 
-        [BindProperty(SupportsGet = true)]
-        public string Id { get; set; }
+		[BindProperty(SupportsGet = true)]
+		public string Id { get; set; }
 
-        public FeedBackModelView FeedbackDetail { get; set; }
-
-        public async Task<IActionResult> OnGetAsync()
-        {
+		public FeedBackModelView FeedbackDetail { get; set; }
+		public string UserName { get; set; }
+		public async Task<IActionResult> OnGetAsync()
+		{
 			// Get Id from TempData
 			if (TempData.ContainsKey("FeedbackId"))
 			{
@@ -28,12 +28,15 @@ namespace HairSalon.RazorPage.Pages.Feedback
 			}
 
 			FeedbackDetail = await _feedbackService.GetFeedBackByIdAsync(Id);
-            if (FeedbackDetail == null)
-            {
-                TempData["ErrorMessage"] = "Feedback not found.";
-                return RedirectToPage("/Feedback/Index");
-            }
-            return Page();
-        }
-    }
+			if (FeedbackDetail == null)
+			{
+				TempData["ErrorMessage"] = "Feedback not found.";
+				return RedirectToPage("/Feedback/Index");
+			}
+
+			UserName = HttpContext.Session.GetString("Username");
+
+			return Page();
+		}
+	}
 }

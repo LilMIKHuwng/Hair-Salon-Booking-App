@@ -4,6 +4,7 @@ using HairSalonBE.API;
 using Microsoft.OpenApi.Models;
 using HairSalon.ModelViews.Message;
 using HairSalon.Services.SignalIR;
+using HairSalon.Contract.Services.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,7 @@ builder.Configuration
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
+builder.Services.AddHttpClient();
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<IDictionary<string, UserRoomConnection>>(opt =>
@@ -37,7 +39,8 @@ builder.Services.AddSwaggerGen(option =>
         BearerFormat = "JWT",
         Scheme = "Bearer"
     });
-    option.AddSecurityRequirement(new OpenApiSecurityRequirement
+
+	option.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
@@ -55,13 +58,13 @@ builder.Services.AddSwaggerGen(option =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder =>
-    {
-        builder.WithOrigins("http://localhost:4200")
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
-    });
+	options.AddDefaultPolicy(builder =>
+	{
+		builder.WithOrigins("http://localhost:4200")
+			.AllowAnyHeader()
+			.AllowAnyMethod()
+			.AllowCredentials();
+	});
 });
 
 
@@ -82,10 +85,54 @@ app.UseSwaggerUI();
 app.UseCors();
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapHub<ChatHub>("/chat");
 
 app.MapControllers();
+
+// Run the email task in a background thread
+// Run the email and auto-cancel tasks in a background thread
+Task.Run(async () =>
+{
+	using var scope = app.Services.CreateScope();
+	var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
+	var appointmentService = scope.ServiceProvider.GetRequiredService<IAppointmentService>();
+
+	var emailTaskDelay = TimeSpan.FromHours(12); // Gửi email mỗi 12 giờ
+	var autoCancelTaskDelay = TimeSpan.FromMinutes(5); // Kiểm tra tự động hủy mỗi 5 phút
+
+	var nextEmailRun = DateTime.UtcNow.Add(emailTaskDelay);
+	var nextAutoCancelRun = DateTime.UtcNow.Add(autoCancelTaskDelay);
+
+	while (true)
+	{
+		try
+		{
+			// Gửi email nếu đã đến thời gian
+			if (DateTime.UtcNow >= nextEmailRun)
+			{
+				await emailService.SendEmailToConfirmDateAsync();
+				nextEmailRun = DateTime.UtcNow.Add(emailTaskDelay);
+			}
+
+			// Kiểm tra tự động hủy lịch hẹn nếu đã đến thời gian
+			if (DateTime.UtcNow >= nextAutoCancelRun)
+			{
+				await appointmentService.AutoCheckCancelAppointmentAsync();
+				nextAutoCancelRun = DateTime.UtcNow.Add(autoCancelTaskDelay);
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Error during background tasks: {ex.Message}");
+		}
+
+		// Đợi 1 phút trước khi kiểm tra lại (giảm tải CPU, tùy chỉnh nếu cần)
+		await Task.Delay(TimeSpan.FromMinutes(1));
+	}
+});
 
 app.Run();

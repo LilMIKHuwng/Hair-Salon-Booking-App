@@ -59,6 +59,15 @@
         .alert {
             margin-top: 15px;
         }
+
+        .d-flex .btn {
+            height: 40px;
+            text-align: center;
+        }
+
+        .w-100 {
+            max-width: 1000px;
+        }
     </style>
 </head>
 <body>
@@ -79,8 +88,26 @@
                 <label for="password" class="form-label">Password</label>
                 <input id="password" name="LoginModelView.Password" class="form-control" type="password" placeholder="Enter your password" required />
             </div>
-            <button type="submit" class="btn btn-primary mt-3">Login</button>
+            <button type="submit" class="btn btn-primary mb-3" style="width: 100%;">Login</button>
         </form>
+
+        <div>
+            @if ((Model.ExternalLogins?.Count ?? 0) != 0)
+            {
+                <section>
+                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                        <div class="d-flex justify-content-between w-100" style="gap: 10px;">
+                            @foreach (var provider in Model.ExternalLogins)
+                            {
+                                <button type="submit" class="btn btn-primary flex-grow-1" name="provider" value="@provider.Name">
+                                    @provider.DisplayName
+                                </button>
+                            }
+                        </div>
+                    </form>
+                </section>
+            }
+        </div>
 
         <a href="/Login/CreateUser" class="create-user-link">Create an Account</a>
         <a href="/Login/ForgotPassword" class="forgot-password-link">Forgot Password?</a>

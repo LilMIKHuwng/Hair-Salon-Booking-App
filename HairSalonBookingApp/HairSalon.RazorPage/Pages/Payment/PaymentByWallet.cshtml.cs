@@ -1,3 +1,5 @@
+using DocumentFormat.OpenXml.Office2010.Excel;
+using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.AppointmentModelViews;
 using HairSalon.ModelViews.VnPayModelViews;
@@ -23,7 +25,8 @@ namespace HairSalon.RazorPage.Pages.Payment
         [BindProperty]
         public PaymentResponseModelView NewPayment { get; set; }
 
-        public List<AppointmentModelView> Appointments { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public PaymentRequestModelView paymentRequest { get; set; }
 
         [TempData]
         public string ErrorMessage { get; set; }
@@ -34,8 +37,9 @@ namespace HairSalon.RazorPage.Pages.Payment
         [TempData]
         public string DeniedMessage { get; set; }
 
-        public async Task<IActionResult> OnGetAsync()
+        public async Task<IActionResult> OnGetAsync(string appointmentId)
         {
+            #region Authentication
             // Retrieve user roles from session
             var userRolesJson = HttpContext.Session.GetString("UserRoles");
             if (userRolesJson == null)
@@ -59,6 +63,15 @@ namespace HairSalon.RazorPage.Pages.Payment
                 TempData["DeniedMessage"] = "User not found.";
                 return Page();
             }
+            #endregion
+
+            // Get PaymentRequest from TempData
+            var paymentRequestJson = TempData["PaymentRequest"]?.ToString();
+            PaymentRequestModelView paymentRequest = new PaymentRequestModelView();
+            if (!string.IsNullOrEmpty(paymentRequestJson))
+            {
+                paymentRequest = JsonConvert.DeserializeObject<PaymentRequestModelView>(paymentRequestJson);
+            }
 
             // Ensure NewPayment is initialized
             if (NewPayment == null)
@@ -66,52 +79,79 @@ namespace HairSalon.RazorPage.Pages.Payment
                 NewPayment = new PaymentResponseModelView();
             }
 
-            // Call service to get appointments for the user
-            var allAppointments = await _appointmentService.GetAppointmentsByUserIdAsync(userId);
-
-            // Filter out the appointments that have already been paid
-            Appointments = new List<AppointmentModelView>();
-            foreach (var appointment in allAppointments)
+            /* Payment by wallet */
+            if (!string.IsNullOrEmpty(appointmentId))
             {
-                bool isPaid = await _checkPaymentService.IsAppointmentPaidAsync(appointment.Id);
-                if (!isPaid)
+                var appointment = await _appointmentService.GetAppointmentByIdAsync(appointmentId);
+                if (appointment == null)
                 {
-                    Appointments.Add(appointment);
-                    var appointmentAmount = appointment.TotalAmount;
+                    ErrorMessage = "Appointment not found.";
+                    return Page();
+                }
+                NewPayment.TotalAmount = appointment.TotalAmount * 0.9m;
+                NewPayment.AppointmentId = appointmentId;
+            }
+            /* Deposit by wallet */
+            else
+            {
+                NewPayment.AppointmentId = paymentRequest.Information;
+                // Call service to get appointments for the user
+                var allAppointments = await _appointmentService.GetAppointmentsByUserIdAsync(userId);
+                //Get appointment by id if get all not work
+                AppointmentModelView appointmentModelView = await _appointmentService.GetAppointmentByIdAsync(paymentRequest.Information);
 
-                    if (appointmentAmount != null)
-                    {
-                        NewPayment.TotalAmount = appointmentAmount;
-                    }
-                    else
-                    {
-                        NewPayment.TotalAmount = 0;
-                    }
+                if (appointmentModelView != null)
+                {
+                    bool isPaid = await _checkPaymentService.IsAppointmentPaidAsync(appointmentModelView.Id);
 
+                    if (!isPaid)
+                    {
+                        var appointmentAmount = paymentRequest.Amount;
+
+                        if (appointmentAmount != null)
+                        {
+                            NewPayment.TotalAmount = (decimal)appointmentAmount;
+                        }
+                        else
+                        {
+                            NewPayment.TotalAmount = 0;
+                        }
+                    }
                 }
             }
 
+            // Set method
+            NewPayment.Method = "Wallet";
             // Set PaymentTime to the current date and time
             NewPayment.PaymentTime = DateTime.Now;
 
             return Page();
-
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (ModelState.IsValid)
+            var userId = HttpContext.Session.GetString("UserId");
+            var appointment = await _appointmentService.GetAppointmentByIdAsync(NewPayment.AppointmentId);
+            string response = await _paymentService.ExecutePayment(NewPayment, userId);
+
+            if (response == "Payment added successfully.")
             {
-                var userId = HttpContext.Session.GetString("UserId");
-                string response = await _paymentService.ExcutePayment(NewPayment, userId);
-                if (response == "Payment added successfully.")
+                if (appointment.StatusForAppointment == "Scheduled")
                 {
-                    ResponseMessage = response;
-                    return RedirectToPage("/Payment/Index"); // Redirect back to the payment list page
+                    var confirm = await _appointmentService.MarkConfirmed(NewPayment.AppointmentId, userId);
                 }
-                // Set ErrorMessage if there’s an error
-                TempData["ErrorMessage"] = response;
+
+                if (appointment.StatusForAppointment == "Completed")
+                {
+                    var confirm = await _appointmentService.MarkSuccessfull(NewPayment.AppointmentId, userId);
+                }
+
+                ResponseMessage = response;
+                return RedirectToPage("/Payment/Index"); // Redirect back to the payment list page
             }
+            // Set ErrorMessage if thereï¿½s an error
+            TempData["ErrorMessage"] = response;
+
             return Page(); // Return the same page in case of validation errors or other issues
         }
     }

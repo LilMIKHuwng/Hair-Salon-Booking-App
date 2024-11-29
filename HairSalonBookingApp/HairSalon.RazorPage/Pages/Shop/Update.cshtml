@@ -112,13 +112,7 @@
 <h2>@ViewData["Title"]</h2>
 
 <form method="post" enctype="multipart/form-data">
-	<!-- Hidden field for required Id -->
 	<input type="hidden" asp-for="Id" />
-	<div>
-		<label>Shop ID:</label>
-		<p>@Model.Id</p> <!-- Display ID as non-editable text -->
-	</div>
-
 	<div>
 		<label asp-for="UpdatedShop.Name">Shop Name</label>
 		<input asp-for="UpdatedShop.Name" placeholder="Shop Name" required />
