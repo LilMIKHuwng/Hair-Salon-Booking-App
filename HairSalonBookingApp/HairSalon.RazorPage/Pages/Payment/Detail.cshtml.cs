@@ -9,16 +9,20 @@ namespace HairSalon.RazorPage.Pages.Payment
     public class DetailModel : PageModel
     {
         private readonly IPaymentService _paymentService;
+        private readonly IAppointmentService _appointmentService;
 
-        public DetailModel(IPaymentService paymentService)
+        public DetailModel(IPaymentService paymentService, IAppointmentService appointmentService)
         {
             _paymentService = paymentService;
+            _appointmentService = appointmentService;
         }
 
         [BindProperty(SupportsGet = true)]
         public string Id { get; set; }
 
         public PaymentModelView PaymentDetail { get; set; }
+
+        public string UserName;
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -59,7 +63,9 @@ namespace HairSalon.RazorPage.Pages.Payment
                 TempData["ErrorMessage"] = "Payment not found.";
                 return RedirectToPage("/Payment/Index");
             }
-            return Page();
+			var appointment = await _appointmentService.GetAppointmentByIdAsync(PaymentDetail.AppointmentId);
+            UserName = appointment.UserName;
+			return Page();
         }
     }
 }
