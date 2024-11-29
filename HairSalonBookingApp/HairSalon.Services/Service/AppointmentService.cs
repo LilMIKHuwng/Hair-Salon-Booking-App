@@ -127,6 +127,22 @@ namespace HairSalon.Services.Service
 				return "Invalid appointment date. The date must be within one month from today.";
 			}
 
+			// Validate appointment date and time range
+			if (model.AppointmentDate < DateTime.Now || model.AppointmentDate > DateTime.Now.AddMonths(1))
+			{
+				return "Invalid appointment date. The date must be within one month from today.";
+			}
+
+			// Ensure the appointment is between 7:00 AM and 5:00 PM
+			var appointmentTime = model.AppointmentDate.TimeOfDay;
+			var startOfDay = new TimeSpan(7, 0, 0); // 7:00 AM
+			var endOfDay = new TimeSpan(17, 0, 0);  // 5:00 PM
+
+			if (appointmentTime < startOfDay || appointmentTime > endOfDay)
+			{
+				return "Appointments can only be scheduled between 7:00 AM and 5:00 PM.";
+			}
+
 			bool isConflictAppointment = await IsDuplicateAppointment(user.Id, model.AppointmentDate, totalTime);
 
 			if (isConflictAppointment)
@@ -428,6 +444,8 @@ namespace HairSalon.Services.Service
 				newTotalAmount = updateResult.TotalAmount;
 			}
 
+
+
 			// Handle Promotions Removal: If there is a promotion ID to remove, check if it exists and remove it
 			if (!string.IsNullOrWhiteSpace(model.PromotionIdToRemove))
 			{
@@ -503,6 +521,14 @@ namespace HairSalon.Services.Service
 			// Update AppointmentDate if provided and valid
 			if (model.AppointmentDate.HasValue)
 			{
+				DateTime appointmentDate = model.AppointmentDate.Value;
+
+				// Ensure the appointment time is between 7:00 AM and 5:00 PM
+				if (appointmentDate.TimeOfDay < TimeSpan.FromHours(7) || appointmentDate.TimeOfDay > TimeSpan.FromHours(17))
+				{
+					return "Invalid appointment time. The appointment time must be between 7:00 AM and 5:00 PM.";
+				}
+
 				if (model.AppointmentDate < DateTime.Now || model.AppointmentDate > DateTime.Now.AddMonths(1))
 				{
 					return "Invalid appointment date. The date must be within one month from today.";
@@ -516,6 +542,7 @@ namespace HairSalon.Services.Service
 
 				existingAppointment.AppointmentDate = model.AppointmentDate.Value;
 			}
+
 
 			// Update the StylistId if provided
 			if (!string.IsNullOrWhiteSpace(model.StylistId) && Guid.TryParse(model.StylistId, out Guid newStylistId))
