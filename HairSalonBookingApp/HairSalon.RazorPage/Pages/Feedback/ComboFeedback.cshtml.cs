@@ -10,7 +10,7 @@ using HairSalon.Core;
 
 namespace HairSalon.RazorPage.Pages.Feedback
 {
-    public class Combo_FeedbackModel : PageModel
+    public class ComboFeedbackModel : PageModel
     {
         private readonly IFeedbackService _feedbackService;
         public BasePaginatedList<ServiceFeedbackModelView> Feedbacks { get; set; } = new BasePaginatedList<ServiceFeedbackModelView>();
@@ -23,7 +23,7 @@ namespace HairSalon.RazorPage.Pages.Feedback
         public int PageNumber { get; set; } = 1;
         public int PageSize { get; set; } = 10; // Example page size, you can adjust as needed
 
-        public Combo_FeedbackModel(IFeedbackService feedbackService, IComboService comboService)
+        public ComboFeedbackModel(IFeedbackService feedbackService, IComboService comboService)
         {
             _feedbackService = feedbackService;
             Combos = comboService.GetAllComboAsync().Result.ToList();

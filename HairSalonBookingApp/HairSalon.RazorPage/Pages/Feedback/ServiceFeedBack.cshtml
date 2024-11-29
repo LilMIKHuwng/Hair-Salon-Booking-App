@@ -1,8 +1,8 @@
 ﻿@page
-@model HairSalon.RazorPage.Pages.Feedback.Combo_FeedbackModel
+@model HairSalon.RazorPage.Pages.Feedback.ServiceFeedBackModel
 
 @{
-    ViewData["Title"] = "Combo Feedback";
+    ViewData["Title"] = "Service Feedback";
 }
 
 <style>
@@ -177,76 +177,81 @@
     }
 </style>
 
+<div class="container">
+    <h2>@ViewData["Title"]</h2>
 
-<h2>@ViewData["Title"]</h2>
-
-<!-- Combo Selection Dropdown -->
-<div class="form-group">
-    <label for="comboDropdown">Select a Combo:</label>
-    <div id="comboDropdown" class="custom-dropdown">
-        <div class="selected-item" onclick="toggleDropdown()">
-            @(Model.Combos.FirstOrDefault(c => c.Id == Model.ComboId)?.Name ?? "-- Select a Combo --")
-            <i class="fa fa-caret-down"></i>
+    <!-- Service Selection Dropdown -->
+    <div class="form-group">
+        <label for="serviceDropdown">Select a Service:</label>
+        <div id="serviceDropdown" class="custom-dropdown">
+            <div class="selected-item" onclick="toggleDropdown()">
+                @(Model.Services.FirstOrDefault(s => s.Id == Model.ServiceId)?.Name ?? "-- Select a Service --")
+                <i class="fa fa-caret-down"></i>
+            </div>
+            <ul class="dropdown-list" style="display:none;">
+                @foreach (var service in Model.Services)
+                {
+                    <li class="dropdown-item" onclick="selectService('@service.Id', '@service.Name')">
+                        <img src="@service.ServiceImage" alt="Service Image" class="service-image" />
+                        <span>@service.Name</span>
+                    </li>
+                }
+            </ul>
         </div>
-        <ul class="dropdown-list" style="display:none;">
-            @foreach (var combo in Model.Combos)
-            {
-                <li class="dropdown-item" onclick="selectCombo('@combo.Id', '@combo.Name')">
-                    <img src="@combo.ComboImage" alt="Combo Image" class="service-image" />
-                    <span>@combo.Name</span>
-                </li>
-            }
-        </ul>
     </div>
+    <input type="hidden" id="selectedServiceId" name="serviceDropdown" value="@Model.ServiceId" />
+
+    <script>
+        function toggleDropdown() {
+            var dropdownList = document.querySelector('.dropdown-list');
+            dropdownList.style.display = dropdownList.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function selectService(serviceId, serviceName) {
+            document.querySelector('.selected-item').innerHTML = `${serviceName} <i class="fa fa-caret-down"></i>`;
+            document.getElementById('selectedServiceId').value = serviceId;
+            document.querySelector('.dropdown-list').style.display = 'none';
+
+            // Redirect to the same page with selected serviceId as query parameter
+            window.location.href = `?serviceId=${serviceId}`;
+        }
+    </script>
+
+    <!-- Feedback List Section -->
+    <div id="feedbackList" class="feedback-list">
+        @if (Model.Feedbacks != null && Model.Feedbacks.Items.Any())
+        {
+            <h3>PREVIOUS FEEDBACK FOR THE SERVICE</h3>
+            <ul>
+                @foreach (var feedback in Model.Feedbacks.Items)
+                {
+                    <li>
+                        <div class="feedback-rating">Rating: @feedback.Rate</div>
+                        <div class="feedback-comment">Comment: @feedback.Comment</div>
+                    </li>
+                }
+            </ul>
+
+            <!-- Pagination Controls -->
+            <div class="pagination">
+                <span>Page @Model.PageNumber</span>
+                <div style="margin-left: 200px;">
+                    @if (Model.Feedbacks.HasPreviousPage)
+                    {
+                        <a href="?serviceId=@Model.ServiceId&pageNumber=@(Model.PageNumber - 1)">Previous</a>
+                    }
+                    @if (Model.Feedbacks.HasNextPage)
+                    {
+                        <a href="?serviceId=@Model.ServiceId&pageNumber=@(Model.PageNumber + 1)">Next</a>
+                    }
+                </div>
+            </div>
+        }
+        else
+        {
+            <p class="no-feedback">No feedback available for this service yet.</p>
+        }
+    </div>
+    <a href="/Feedback/Index" class="go-back-btn" style="margin-left: 280px;">Back to Feedback List</a>
 </div>
-<input type="hidden" id="selectedComboId" name="comboDropdown" value="@Model.ComboId" />
 
-<script>
-    function toggleDropdown() {
-        var dropdownList = document.querySelector('.dropdown-list');
-        dropdownList.style.display = dropdownList.style.display === 'none' ? 'block' : 'none';
-    }
-
-    function selectCombo(comboId, comboName) {
-        document.querySelector('.selected-item').innerHTML = `${comboName} <i class="fa fa-caret-down"></i>`;
-        document.getElementById('selectedComboId').value = comboId;
-        document.querySelector('.dropdown-list').style.display = 'none';
-
-        // Redirect to the same page with selected comboId as query parameter
-        window.location.href = `?ComboId=${comboId}`;
-    }
-</script>
-
-<!-- Feedback List Section -->
-<div id="feedbackList" class="feedback-list">
-    @if (Model.Feedbacks != null && Model.Feedbacks.Items.Any())
-    {
-        <h3>PREVIOUS FEEDBACK FOR THE COMBO</h3>
-        <ul>
-            @foreach (var feedback in Model.Feedbacks.Items)
-            {
-                <li>
-                    <div class="feedback-rating">Rating: @feedback.Rate</div>
-                    <div class="feedback-comment">Comment: @feedback.Comment</div>
-                </li>
-            }
-        </ul>
-
-        <!-- Pagination Controls -->
-        <div class="pagination">
-            @if (Model.Feedbacks.HasPreviousPage)
-            {
-                <a href="?ComboId=@Model.ComboId&pageNumber=@(Model.PageNumber - 1)">Previous</a>
-            }
-            @if (Model.Feedbacks.HasNextPage)
-            {
-                <a href="?ComboId=@Model.ComboId&pageNumber=@(Model.PageNumber + 1)">Next</a>
-            }
-        </div>
-    }
-    else
-    {
-        <p class="no-feedback">No feedback available for this combo yet.</p>
-    }
-    <a href="javascript:history.back()" class="go-back-btn">Go Back</a>
-</div>
