@@ -171,15 +171,16 @@
 
 	/* Search Form Styling */
 	.search-form {
-		display: flex;
+		display: inline-block;
 		align-items: center;
-		justify-content: flex-start; /* Canh trái */
+		justify-content: flex-start;
 		margin-bottom: 20px;
 		padding: 10px;
 		background-color: #ffffff;
 		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 		border-radius: 5px;
-		width: fit-content; /* Form co giãn vừa nội dung */
+		width: fit-content;
+		float: right; /* Đẩy toàn bộ form sang phải */
 	}
 
 		.search-form select {
@@ -212,9 +213,10 @@ else
 {
 	<h2>@ViewData["Title"]</h2>
 
-	<a asp-page="/Payment/Create" class="btn">Add New Payment</a>
-
-	<a asp-page="/Payment/DepositWallet" class="btn">Deposit Wallet</a>
+	@if (Model.userRoles.Any(role => role == "Admin" || role == "Manager"))
+	{
+		<a asp-page="/Payment/Create" class="btn">Add New Payment</a>
+	}
 
 	<a asp-page="/Payment/DepositWalletWithVnPay" class="btn">Deposit Wallet With VnPay</a>
 
@@ -249,8 +251,8 @@ else
 						</button>
 					</th>
 					<th>
-						Appointment ID
-						<button class="sort-btn" data-sort="appointmentId">
+						Username
+						<button class="sort-btn" data-sort="username">
 							<span class="sort-arrows">▲▼</span>
 						</button>
 					</th>
@@ -279,8 +281,8 @@ else
 				@foreach (var payment in Model.Payment.Items)
 				{
 					<tr>
-						<td>@payment.Id</td>
-						<td>@payment.AppointmentId</td>
+						<td class="payment-id" data-id="@payment.Id">@payment.Id</td>
+						<td>@payment.Username</td>
 						<td>@payment.TotalAmount</td>
 						<td>@payment.PaymentTime</td>
 						<td>@payment.PaymentMethod</td>
@@ -327,6 +329,36 @@ else
 
 <script>
 	document.addEventListener("DOMContentLoaded", function () {
+		// Lấy tất cả các thẻ có class "payment-id"
+		const appointmentElements = document.querySelectorAll(".payment-id");
+
+		appointmentElements.forEach((element) => {
+			// Lấy giá trị GUID từ data-id
+			const guid = element.dataset.id;
+
+			// Chuyển đổi GUID thành chuỗi 6 số
+			const encodedId = guidTo6DigitNumber(guid);
+
+			// Hiển thị giá trị mã hóa thay thế nội dung gốc
+			element.textContent = encodedId;
+		});
+	});
+
+	// Hàm mã hóa GUID thành chuỗi 6 số
+	function guidTo6DigitNumber(guid) {
+		// Tạo hash từ GUID (cắt bỏ các dấu "-")
+		const cleanGuid = guid.replace(/-/g, "");
+
+		// Lấy 6 ký tự đầu tiên của hash, sau đó chuyển thành số
+		const hash = parseInt(cleanGuid.substring(0, 6), 16);
+
+		// Đảm bảo kết quả là chuỗi 6 số
+		return (hash % 1000000).toString().padStart(6, "0");
+	}
+</script>
+
+<script>
+	document.addEventListener("DOMContentLoaded", function () {
 		const table = document.getElementById("paymentTable");
 		const tbody = table.querySelector("tbody");
 
@@ -360,7 +392,7 @@ else
 		function getColumnIndex(sortKey) {
 			switch (sortKey) {
 				case "id": return 1;
-				case "appointmentId": return 2;
+				case "username": return 2;
 				case "totalAmount": return 3;
 				case "paymentTime": return 4;
 				case "paymentMethod": return 5;

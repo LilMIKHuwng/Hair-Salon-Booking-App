@@ -51,7 +51,7 @@ namespace HairSalon.RazorPage.Pages.Promotion
 
             var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
 
-            if (!userRoles.Any(role => role == "Admin"))
+            if (!userRoles.Any(role => role == "Admin" || role == "Manager"))
             {
                 TempData["DeniedMessage"] = "You do not have permission to update a service.";
                 return Page(); // Redirect to a different page with a denied message
