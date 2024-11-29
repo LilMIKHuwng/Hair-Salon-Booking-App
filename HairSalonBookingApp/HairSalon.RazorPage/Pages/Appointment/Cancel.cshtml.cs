@@ -1,4 +1,5 @@
 using HairSalon.Contract.Services.Interface;
+using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalon.ModelViews.AppointmentModelViews;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -9,16 +10,19 @@ namespace HairSalon.RazorPage.Pages.Appointment
     public class CancelModel : PageModel
     {
 		private readonly IAppointmentService _appointmentService;
+		private readonly IAppUserService _appUserService;
 
-		public CancelModel(IAppointmentService appointmentService)
+		public CancelModel(IAppointmentService appointmentService, IAppUserService appUserService)
 		{
 			_appointmentService = appointmentService;
+			_appUserService = appUserService;
 		}
 
 		[BindProperty(SupportsGet = true)]
 		public string Id { get; set; }
 
 		public AppointmentModelView Appointment { get; set; }
+		public List<AppUserModelView> Stylists { get; set; }
 
 		// Property to store response or success messages
 		[TempData]
@@ -52,6 +56,8 @@ namespace HairSalon.RazorPage.Pages.Appointment
 			}
 
 			Appointment = await _appointmentService.GetAppointmentByIdAsync(Id);
+			Stylists = await _appUserService.GetAllStylistAsync();
+
 			if (Appointment == null)
 			{
 				TempData["ErrorMessage"] = "Appointment Not Found";
