@@ -252,6 +252,10 @@ else
 			<span asp-validation-for="NewAppointment.PromotionsId" class="text-danger"></span>
 		</div>
 
+		<p style="color: #d9534f; font-weight: bold; text-align: center; margin-top: 20px;">
+			Note: Your appointment will be canceled after 15 minutes if not confirmed.
+		</p>
+
 		<!-- Submit Button -->
 		<button type="submit">Create Appointment</button>
 		<a asp-page="/Appointment/Index" class="btn-cancel">Cancel</a>
