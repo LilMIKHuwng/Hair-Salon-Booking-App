@@ -342,7 +342,6 @@ namespace HairSalon.Services.Service
 			return count > 3;
 		}
 
-
 		// Get all appointments by startEndDay, id
 		public async Task<BasePaginatedList<AppointmentModelView>> GetAllAppointmentAsync(int pageNumber, int pageSize, DateTime? startDate, DateTime? endDate, string? id, Guid? userId, Guid? stylistId, string? statusForAppointment)
 		{
@@ -395,7 +394,6 @@ namespace HairSalon.Services.Service
 			}
 			return new BasePaginatedList<AppointmentModelView>(appointmentModelViews, totalCount, pageNumber, pageSize);
 		}
-
 
 		// Update Appointment
 		public async Task<string> UpdateAppointmentAsync(string id, UpdateAppointmentModelView model, string? userId)
@@ -588,7 +586,6 @@ namespace HairSalon.Services.Service
 
 			return "Appointment updated successfully.";
 		}
-
 
 		// update ServiceAppointment 
 		private async Task<(int TotalTime, decimal TotalAmount)> UpdateServiceAppointmentsAsync(string appointmentId, string[] serviceIds, int currentTotalTime, decimal currentTotalAmount, string? userId)
@@ -923,7 +920,6 @@ namespace HairSalon.Services.Service
 			return "success";
 		}
 
-
 		// Retrieve a appointment by its ID
 		public async Task<AppointmentModelView?> GetAppointmentByIdAsync(string id)
 		{
@@ -968,7 +964,6 @@ namespace HairSalon.Services.Service
 			return list;
 		}
 
-
 		public async Task<List<AppointmentModelView>> GetAppointmentsForDropdownAsync()
 		{
 			var appointments = await _unitOfWork.GetRepository<Appointment>().Entities
@@ -987,6 +982,7 @@ namespace HairSalon.Services.Service
             }
             return appointmentModelViews;
 		}
+
 		public async Task<List<AppointmentModelView>> GetAppointmentsByUserIdAsync(string userId)
 		{
 			// If userId is not provided or is invalid, throw an exception
@@ -1030,5 +1026,6 @@ namespace HairSalon.Services.Service
 
 			Console.WriteLine($"{count} appointments have been automatically cancelled.");
 		}
+
 	}
 }

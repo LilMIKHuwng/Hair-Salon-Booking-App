@@ -25,12 +25,12 @@ namespace HairSalon.Services.Service
 		// Get all payments with optional filters and pagination
 		public async Task<BasePaginatedList<PaymentModelView>> GetAllPaymentAsync(int pageNumber, int pageSize, string id, string appointmentId, string paymentMethod)
 		{
-            // Query payments not marked as deleted
-            IQueryable<Payment> paymentQuery = _unitOfWork.GetRepository<Payment>().Entities
+			// Truy vấn các thanh toán chưa bị xóa
+			IQueryable<Payment> paymentQuery = _unitOfWork.GetRepository<Payment>().Entities
 				.Where(p => !p.DeletedTime.HasValue)
 				.OrderByDescending(s => s.CreatedTime);
 
-			// Apply optional filters
+			// Áp dụng các bộ lọc tùy chọn
 			if (!string.IsNullOrEmpty(id))
 			{
 				paymentQuery = paymentQuery.Where(p => p.Id == id);
@@ -46,20 +46,34 @@ namespace HairSalon.Services.Service
 				paymentQuery = paymentQuery.Where(p => p.PaymentMethod == paymentMethod);
 			}
 
-			// Get total count before pagination
-			int totalCount = await paymentQuery.CountAsync();
+			// Tạo truy vấn bao gồm Username thông qua Appointment
+			var paymentWithUserQuery = paymentQuery.Select(p => new PaymentModelView
+			{
+				Id = p.Id,
+				AppointmentId = p.AppointmentId,
+				Username = p.Appointment.User.UserName, // Lấy Username từ User thông qua Appointment
+				TotalAmount = p.TotalAmount,
+				PaymentTime = p.CreatedTime.UtcDateTime, // Chuyển từ DateTimeOffset sang DateTime
+				PaymentMethod = p.PaymentMethod,
+				BankCode = p.BankCode,
+				BankTranNo = p.BankTranNo,
+				CardType = p.CardType,
+				ResponseCode = p.ResponseCode,
+				TransactionNo = p.TransactionNo,
+				TransactionStatus = p.TransactionStatus
+			});
 
-			// Paginate results
-			List<Payment> paginatedPayments = await paymentQuery
+			// Tổng số bản ghi trước khi phân trang
+			int totalCount = await paymentWithUserQuery.CountAsync();
+
+			// Phân trang
+			var paginatedPayments = await paymentWithUserQuery
 				.Skip((pageNumber - 1) * pageSize)
 				.Take(pageSize)
 				.ToListAsync();
 
-			// Map to PaymentModelView
-			List<PaymentModelView> paymentModelViews = _mapper.Map<List<PaymentModelView>>(paginatedPayments);
-
-			// Return paginated list with total count
-			return new BasePaginatedList<PaymentModelView>(paymentModelViews, totalCount, pageNumber, pageSize);
+			// Trả về danh sách phân trang
+			return new BasePaginatedList<PaymentModelView>(paginatedPayments, totalCount, pageNumber, pageSize);
 		}
 
 		// Soft delete a payment
@@ -96,63 +110,92 @@ namespace HairSalon.Services.Service
 			return "Payment deleted successfully.";
 		}
 
-        // Retrieve a payment by its ID
-        public async Task<PaymentModelView?> GetPaymentByIdAsync(string id)
-        {
-            // Check if the provided Role ID is valid (non-empty and non-whitespace)
-            if (string.IsNullOrWhiteSpace(id))
-            {
-                return null; // Or you could throw an exception or return an error message
-            }
+		// Retrieve a payment by its ID
+		public async Task<PaymentModelView?> GetPaymentByIdAsync(string id)
+		{
+			// Kiểm tra nếu ID hợp lệ
+			if (string.IsNullOrWhiteSpace(id))
+			{
+				return null; // Hoặc có thể ném exception tùy ý
+			}
 
-            // Try to find the payment by its ID, ensuring it hasn�t been marked as deleted
-            var paymentEntity = await _unitOfWork.GetRepository<Payment>().Entities
-                .FirstOrDefaultAsync(payment => payment.Id == id && !payment.DeletedTime.HasValue);
+			// Truy vấn để tìm Payment, bao gồm thông tin từ Appointment và User
+			var paymentEntity = await _unitOfWork.GetRepository<Payment>().Entities
+				.Where(payment => payment.Id == id && !payment.DeletedTime.HasValue)
+				.Select(payment => new PaymentModelView
+				{
+					Id = payment.Id,
+					AppointmentId = payment.AppointmentId,
+					Username = payment.Appointment.User.UserName, // Lấy Username từ bảng User thông qua Appointment
+					TotalAmount = payment.TotalAmount,
+					PaymentTime = payment.CreatedTime.UtcDateTime, // Chuyển đổi DateTimeOffset sang DateTime
+					PaymentMethod = payment.PaymentMethod,
+					BankCode = payment.BankCode,
+					BankTranNo = payment.BankTranNo,
+					CardType = payment.CardType,
+					ResponseCode = payment.ResponseCode,
+					TransactionNo = payment.TransactionNo,
+					TransactionStatus = payment.TransactionStatus
+				})
+				.FirstOrDefaultAsync();
 
-            // If the payment is not found, return null
-            if (paymentEntity == null)
-            {
-                return null;
-            }
+			// Nếu không tìm thấy, trả về null
+			if (paymentEntity == null)
+			{
+				return null;
+			}
 
-            // Map the ApplicationRoles entity to a RoleModelView and return it
-            PaymentModelView paymentModelView = _mapper.Map<PaymentModelView>(paymentEntity);
-            return paymentModelView;
-        }
+			// Trả về PaymentModelView đã ánh xạ
+			return paymentEntity;
+		}
 
-        public async Task<BasePaginatedList<PaymentModelView>> GetAllPaymentByUserIdAsync(string userId, int pageNumber = 1, int pageSize = 5)
-        {
-            // If userId is not provided, get it from HttpContext
-            userId ??= _contextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
+		public async Task<BasePaginatedList<PaymentModelView>> GetAllPaymentByUserIdAsync(string userId, int pageNumber = 1, int pageSize = 5)
+		{
+			// Nếu userId không được cung cấp, lấy từ HttpContext
+			userId ??= _contextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
 
-            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out Guid userGuid))
-            {
-                throw new ArgumentException("A valid UserId must be provided.");
-            }
+			if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out Guid userGuid))
+			{
+				throw new ArgumentException("A valid UserId must be provided.");
+			}
 
-            // Query payments by joining with appointments to filter by userId
-            IQueryable<Payment> paymentQuery = _unitOfWork.GetRepository<Payment>().Entities
-                .Where(p => p.Appointment != null &&
-                            p.Appointment.UserId == userGuid &&  // Compare Guid here
-                            !p.DeletedTime.HasValue)
-                .OrderByDescending(s => s.CreatedTime);
+			// Truy vấn thanh toán, bao gồm thông tin Appointment và Username từ User
+			var paymentQuery = _unitOfWork.GetRepository<Payment>().Entities
+				.Where(p => p.Appointment != null &&
+							p.Appointment.UserId == userGuid && 
+							!p.DeletedTime.HasValue)
+				.OrderByDescending(p => p.CreatedTime)
+				.Select(p => new PaymentModelView
+				{
+					Id = p.Id,
+					AppointmentId = p.AppointmentId,
+					Username = p.Appointment.User.UserName, // Lấy Username từ bảng ApplicationUsers
+					TotalAmount = p.TotalAmount,
+					PaymentTime = p.CreatedTime.UtcDateTime,
+					PaymentMethod = p.PaymentMethod,
+					BankCode = p.BankCode,
+					BankTranNo = p.BankTranNo,
+					CardType = p.CardType,
+					ResponseCode = p.ResponseCode,
+					TransactionNo = p.TransactionNo,
+					TransactionStatus = p.TransactionStatus
+				});
 
-            // Get total count before pagination
-            int totalCount = await paymentQuery.CountAsync();
+			// Tổng số lượng trước khi phân trang
+			int totalCount = await paymentQuery.CountAsync();
 
-            // Paginate results
-            List<Payment> paginatedPayments = await paymentQuery
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+			// Phân trang kết quả
+			var paginatedPayments = await paymentQuery
+				.Skip((pageNumber - 1) * pageSize)
+				.Take(pageSize)
+				.ToListAsync();
 
-            // Map to PaymentModelView
-            List<PaymentModelView> paymentModelViews = _mapper.Map<List<PaymentModelView>>(paginatedPayments);
+			// Trả về danh sách phân trang
+			return new BasePaginatedList<PaymentModelView>(paginatedPayments, totalCount, pageNumber, pageSize);
+		}
 
-            // Return paginated list with total count
-            return new BasePaginatedList<PaymentModelView>(paymentModelViews, totalCount, pageNumber, pageSize);
-        }
-        public async Task<bool> IsAppointmentPaidAsync(string appointmentId)
+
+		public async Task<bool> IsAppointmentPaidAsync(string appointmentId)
         {
             if (string.IsNullOrWhiteSpace(appointmentId))
             {

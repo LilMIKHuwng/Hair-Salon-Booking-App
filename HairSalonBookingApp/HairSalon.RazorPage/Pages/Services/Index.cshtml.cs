@@ -4,6 +4,7 @@ using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.ServiceModelViews;
 using HairSalon.Core;
 using Newtonsoft.Json;
+using StackExchange.Redis;
 
 namespace HairSalon.RazorPage.Pages.Service
 {
@@ -27,8 +28,8 @@ namespace HairSalon.RazorPage.Pages.Service
             {
                 var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
 
-                // Check if the user has "Admin" or "Manager" roles
-                if (!userRoles.Any(role => role == "Admin"))
+				// Check if the user has "Admin" or "Manager" roles
+                if (!userRoles.Any(role => role == "Admin" || role == "Manager"))
                 {
                     TempData["ErrorMessage"] = "You do not have permission to view this page.";
                     return Page(); // Show error message on the same page
