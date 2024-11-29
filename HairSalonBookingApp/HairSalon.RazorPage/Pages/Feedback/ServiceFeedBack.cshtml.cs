@@ -10,7 +10,7 @@ using HairSalon.Core;
 
 namespace HairSalon.RazorPage.Pages.Feedback
 {
-    public class Service_FeedBackModel : PageModel
+    public class ServiceFeedBackModel : PageModel
     {
         private readonly IFeedbackService _feedbackService;
         public BasePaginatedList<ServiceFeedbackModelView> Feedbacks { get; set; } = new BasePaginatedList<ServiceFeedbackModelView>();
@@ -20,9 +20,9 @@ namespace HairSalon.RazorPage.Pages.Feedback
         public string ServiceId { get; set; } // Store the selected serviceId
 
         public int PageNumber { get; set; } = 1;
-        public int PageSize { get; set; } = 10; // Example page size, you can adjust as needed
+        public int PageSize { get; set; } = 5; // Example page size, you can adjust as needed
 
-        public Service_FeedBackModel(IFeedbackService feedbackService, IServiceService serviceService)
+        public ServiceFeedBackModel(IFeedbackService feedbackService, IServiceService serviceService)
         {
             _feedbackService = feedbackService;
             // Fetch the list of available services
