@@ -99,8 +99,8 @@ namespace HairSalon.RazorPage.Pages.Appointment
             if (response == "Appointment updated successfully.")
             {
                 ResponseMessage = response;
-                return RedirectToPage("/Appointment/Index");
-            }
+				return RedirectToPage("/Appointment/Detail", new { id = Id });
+			}
             else 
             {
                 TempData["ErrorMessage"] = response;
