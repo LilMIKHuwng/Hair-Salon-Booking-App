@@ -10,6 +10,7 @@ namespace HairSalon.RazorPage.Pages.Payment
     public class PaymentManagementModel : PageModel
     {
         private readonly IPaymentService _paymentService;
+        public readonly IAppointmentService _appointmentService;
 
         public PaymentManagementModel(IPaymentService paymentService)
         {
@@ -21,7 +22,9 @@ namespace HairSalon.RazorPage.Pages.Payment
 
         public bool IsAdmin { get; set; }
 
-        public BasePaginatedList<PaymentModelView> Payment { get; set; }
+        public List<string> userRoles;
+
+		public BasePaginatedList<PaymentModelView> Payment { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int pageNumber = 1, int pageSize = 5, string? id = null, string? appointmentId = null)
         {
@@ -29,10 +32,10 @@ namespace HairSalon.RazorPage.Pages.Payment
 
             if (userRolesJson != null)
             {
-                var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
+                userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
 
                 // Check if the user has "Admin" role
-                if (userRoles.Contains("Admin"))
+                if (userRoles.Contains("Admin") || userRoles.Contains("Manager"))
                 {
                     IsAdmin = true;
                     // If the user is an Admin, retrieve all payments with filters

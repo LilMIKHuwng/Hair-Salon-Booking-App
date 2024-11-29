@@ -451,7 +451,8 @@ else
 									}
 
 									<!-- Form Feedback -->
-									@if (appointment.StatusForAppointment == "Completed" || appointment.StatusForAppointment == "Successfull" && !(await Model._feedbacktService.CheckAlreadyFeedbackAsync(appointment.Id)))
+									@if (appointment.StatusForAppointment == "Completed"&& !(await Model._feedbacktService.CheckAlreadyFeedbackAsync(appointment.Id)) 
+									|| appointment.StatusForAppointment == "Successfull" && !(await Model._feedbacktService.CheckAlreadyFeedbackAsync(appointment.Id)))
 									{
 										<form method="post" asp-route-id="@appointment.Id" asp-route-action="feedback" style="display:inline;">
 											<button type="submit" class="btn-feedback">Feedback</button>
@@ -547,7 +548,6 @@ else
 		// Đảm bảo kết quả là chuỗi 6 số
 		return (hash % 1000000).toString().padStart(6, "0");
 	}
-
 </script>
 
 <script>
