@@ -61,6 +61,7 @@ namespace HairSalon.RazorPage.Pages.Appointment
 
             Appointment = await _appointmentService.GetAppointmentByIdAsync(Id);
 			Stylists = await _appUserService.GetAllStylistAsync();
+
 			if (Appointment == null)
             {
                 TempData["ErrorMessage"] = "Appointment Not Found";
