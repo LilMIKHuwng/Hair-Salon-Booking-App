@@ -102,7 +102,6 @@ else
 	<h2>Delete Appointment</h2>
 
 	<div class="details-container">
-		<p><strong>Appointment ID:</strong> @Model.Appointment.Id</p>
 		<p><strong>User Name:</strong> @Model.Appointment.UserName</p>
 		<p>
 			<strong>Stylist Name:</strong>
@@ -124,10 +123,10 @@ else
 		<p><strong>Total Amount:</strong> @Model.Appointment.TotalAmount</p>
 		<p><strong>Appointment Date:</strong> @Model.Appointment.AppointmentDate.ToString("MM/dd/yyyy hh:mm tt")</p>
 		<p>
-			<strong>Promotion ID:</strong>
-			@if (!string.IsNullOrEmpty(Model.Appointment.PromotionId))
+			<strong>Promotion Name:</strong>
+			@if (!string.IsNullOrEmpty(Model.Appointment.PromotionName))
 			{
-				@Model.Appointment.PromotionId
+				@Model.Appointment.PromotionName
 			}
 			else
 			{

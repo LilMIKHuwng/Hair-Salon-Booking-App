@@ -79,39 +79,5 @@ namespace HairSalon.RazorPage.Pages.Payment
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
-        {
-            if (ModelState.IsValid)
-            {
-                var UserId = HttpContext.Session.GetString("UserId");
-                DepositWalletRequest = new DepositWalletModelView
-                {
-                    UserId = UserId,  // Extract the userId
-                    Amount = Convert.ToDouble(Request.Query["vnp_Amount"]) / 100
-                };
-                if (Guid.TryParse(UserId, out var userId) && DepositWalletRequest.Amount > 0)
-                {
-                    // Call the ExcuteDepositToWallet service method
-                    var response = await _paymentService.ExecuteDepositToWallet(userId, DepositWalletRequest.Amount);
-
-                    // Check the response and set a success or error message
-                    if (response == "Success!")
-                    {
-                        ResponseMessage = "Deposit successful!";
-                        return RedirectToPage("/Payment/Index");
-                    }
-                    else
-                    {
-                        TempData["ErrorMessage"] = response;
-                    }
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "Invalid user ID or amount entered.";
-                }
-            }
-
-            return Page();
-        }
     }
 }

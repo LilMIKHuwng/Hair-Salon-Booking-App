@@ -25,7 +25,7 @@ namespace HairSalon.RazorPage.Pages.Payment
 
             if (status == "CANCELLED")
             {
-                return RedirectToPage("/Payment/Index");
+                return RedirectToPage("/Appointment/Index");
             }
 
             var appointmentId = HttpContext.Session.GetString("AppointmentId");

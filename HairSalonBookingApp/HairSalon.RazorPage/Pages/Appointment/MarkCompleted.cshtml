@@ -111,7 +111,6 @@ else
 	<h2>@ViewData["Title"]</h2>
 
 	<div class="details-container">
-		<p><strong>Appointment ID:</strong> @Model.Appointment.Id</p>
 		<p><strong>User Name:</strong> @Model.Appointment.UserName</p>
 		<p>
 			<strong>Stylist Name:</strong>
@@ -132,6 +131,17 @@ else
 		<p><strong>Total Time:</strong> @Model.Appointment.TotalTime minutes</p>
 		<p><strong>Total Amount:</strong> @Model.Appointment.TotalAmount</p>
 		<p><strong>Appointment Date:</strong> @Model.Appointment.AppointmentDate.ToString("MM/dd/yyyy hh:mm tt")</p>
+		<p>
+			<strong>Promotion Name:</strong>
+			@if (!string.IsNullOrEmpty(Model.Appointment.PromotionName))
+			{
+				@Model.Appointment.PromotionName
+			}
+			else
+			{
+				<span style="color: red;">No promotion to choose</span>
+			}
+		</p>
 	</div>
 
 	<p class="confirmation-text">Are you sure you want to mark this appointment as completed?</p>
