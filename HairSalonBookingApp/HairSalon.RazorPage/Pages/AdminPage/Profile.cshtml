@@ -104,6 +104,13 @@ else
 							<label class="labels"><strong>Point</strong></label>
 							<input type="text" class="form-control" value="@Model.UserInfo?.Point" readonly>
 						</div>
+						<div>
+							<label class="labels"><strong>PhoneNumber</strong></label>
+							<input type="text"
+								   class="form-control"
+								   value="@(!string.IsNullOrEmpty(Model.UserInfo?.PhoneNumber) ? Model.UserInfo.PhoneNumber : "Not Updated")"
+								   readonly>
+						</div>
 					</div>
 					<div>
 						<div>
@@ -117,8 +124,13 @@ else
 					</div>
 				</div>
 			</div>
-			<div class="form-btn">
-				<a asp-page="/Payment/DepositWalletWithVnPay" class="btn-vnpay">Deposit Wallet With VnPay</a>
+			<div class="d-flex gap-2 mt-4">
+				<div class="form-btn">
+					<a asp-page="/Payment/DepositWalletWithVnPay" class="btn-vnpay">Deposit Wallet With VnPay</a>
+				</div>
+				<div class="form-btn">
+					<a asp-page="/AdminPage/UpdateProfile" class="btn-vnpay">Update Profile</a>
+				</div>
 			</div>
 			@if (TempData["ResponseMessage"] != null)
 			{
