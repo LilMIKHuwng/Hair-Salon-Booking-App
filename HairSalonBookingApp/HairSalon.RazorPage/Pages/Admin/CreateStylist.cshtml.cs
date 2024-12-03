@@ -55,6 +55,12 @@ namespace HairSalon.RazorPage.Pages.Admin
 
             var result = await _appUserService.AddAppStylistAsync(UserModel);
 
+            if (result == "Stylist added successfully.")
+            {
+                TempData["ResponseMessage"] = result;
+				return RedirectToPage("/Admin/Index");
+			}
+
             TempData["ErrorMessage"] = result; // Show error message if user creation failed
             return Page();
         }
