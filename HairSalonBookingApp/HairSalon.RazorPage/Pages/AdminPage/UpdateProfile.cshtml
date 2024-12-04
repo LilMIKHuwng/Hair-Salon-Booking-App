@@ -1,0 +1,181 @@
+﻿@page "/Admin/UpdateProfile"
+@model HairSalon.RazorPage.Pages.AdminPage.UpdateProfileModel
+@{
+    Layout = "_Layout";
+}
+
+<style>
+    .card {
+        border-radius: 10px;
+    }
+
+    .card-header {
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        background-color: rgb(63, 81, 181);
+        color: #fff;
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    .card-body {
+        background-color: #f8f9fa;
+        padding: 2rem;
+    }
+
+    .form-label {
+        font-weight: bold;
+        color: #555555;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+        transition: all 0.3s ease-in-out;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+    button[type="submit"],
+    a {
+        padding: 12px 26px; /* Adjust padding for a more balanced look */
+        font-size: 19px; /* Make font size larger for consistency */
+        width: auto;
+        max-width: none;
+        text-decoration: none;
+        border-radius: 8px; /* Rounded corners for both buttons */
+        display: inline-block;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    button[type="submit"] {
+        background-color: steelblue; /* Coral color for Save button */
+        border: none;
+        color: white;
+        cursor: pointer;
+    }
+
+        button[type="submit"]:hover {
+            background-color: royalblue; /* Darker coral on hover */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+    .btn-cancel {
+        background-color: #4e8ef7; /* Soft Blue for Cancel */
+        color: white;
+        cursor: pointer;
+        border: none;
+    }
+
+        .btn-cancel:hover {
+            background-color: #3578e5; /* Darker blue on hover */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+    .alert-danger {
+        background-color: #f2dede;
+        color: #a94442;
+        border: 1px solid #ebccd1;
+        padding: 15px;
+        border-radius: 5px;
+        margin-top: 20px;
+        text-align: center;
+        font-size: 1.1em;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+        padding: 15px;
+        border-radius: 5px;
+        margin-top: 20px;
+        text-align: center;
+        font-size: 1.1em;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header">
+                    Update Profile
+                </div>
+                <div class="card-body">
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger text-center">@TempData["ErrorMessage"]</div>
+                    }
+                    <form method="post" asp-route-id="@Model.Id" class="needs-validation">
+                        <!-- Profile fields go here -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="UserInfo.FirstName" class="form-label"></label>
+                                <input asp-for="UserInfo.FirstName" class="form-control" placeholder="Enter First Name">
+                                <span asp-validation-for="UserInfo.FirstName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="UserInfo.LastName" class="form-label"></label>
+                                <input asp-for="UserInfo.LastName" class="form-control" placeholder="Enter Last Name">
+                                <span asp-validation-for="UserInfo.LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="UserInfo.Email" class="form-label"></label>
+                                <input asp-for="UserInfo.Email" type="email" class="form-control" placeholder="Enter Email">
+                                <span asp-validation-for="UserInfo.Email" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="UserInfo.PhoneNumber" class="form-label"></label>
+                                <input asp-for="UserInfo.PhoneNumber" class="form-control" placeholder="Enter Phone Number">
+                                <span asp-validation-for="UserInfo.PhoneNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="UserInfo.BankAccount" class="form-label"></label>
+                                <input asp-for="UserInfo.BankAccount" class="form-control" placeholder="Enter Bank Account">
+                                <span asp-validation-for="UserInfo.BankAccount" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="UserInfo.UserName" class="form-label"></label>
+                                <input asp-for="UserInfo.UserName" class="form-control" placeholder="Enter User Name">
+                                <span asp-validation-for="UserInfo.UserName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <!-- Save and Cancel Buttons -->
+                        <div class="d-flex justify-content-center gap-3 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">Save</button>
+                            <a asp-page="/AdminPage/Profile" class="btn-cancel btn-lg">Cancel</a>
+                        </div>
+                    </form>
+                    @if (TempData["ResponseMessage"] != null)
+                    {
+                        <div class="alert alert-success text-center mt-3">@TempData["ResponseMessage"]</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

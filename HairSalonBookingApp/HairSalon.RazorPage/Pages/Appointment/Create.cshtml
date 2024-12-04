@@ -228,7 +228,7 @@ else
 		<!-- Points Earned Field -->
 		<div class="form-group">
 			<label for="PointsEarned" style="font-weight: bold;">Points Earned</label>
-			<input asp-for="NewAppointment.PointsEarned" type="number" value="0" id="PointsEarned" placeholder="Points Earned" required />
+			<input asp-for="NewAppointment.PointsEarned" type="number" value="0" id="PointsEarned" placeholder="Points Earned" required min="0" />
 			<span asp-validation-for="NewAppointment.PointsEarned" class="text-danger"></span>
 		</div>
 
