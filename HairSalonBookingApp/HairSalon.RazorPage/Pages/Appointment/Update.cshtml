@@ -185,7 +185,11 @@ else
 
 		<div class="form-group">
 			<label asp-for="UpdateAppointment.PointsEarned" style="font-weight: bold;">Points Earned</label>
-			<input asp-for="UpdateAppointment.PointsEarned" type="number" value="@(Model.UpdateAppointment?.PointsEarned ?? Model.Appointment?.PointsEarned ?? 0)" required />
+			<input asp-for="UpdateAppointment.PointsEarned"
+				   type="number"
+				   value="@(Model.UpdateAppointment?.PointsEarned ?? Model.Appointment?.PointsEarned ?? 0)"
+				   min="0"
+				   required />
 			<span asp-validation-for="UpdateAppointment.PointsEarned" class="text-danger"></span>
 		</div>
 

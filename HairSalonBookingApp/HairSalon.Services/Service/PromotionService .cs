@@ -66,7 +66,18 @@ namespace HairSalon.Services.Service
                 return "Promotion with the same name already exists";
             }
 
-            Promotion newPromotion = _mapper.Map<Promotion>(model);
+			// Kiểm tra logic kinh doanh hợp lý
+			if (model.TotalAmount < model.MaxAmount)
+			{
+				return "Total Amount must be greater than or equal to Max Amount.";
+			}
+
+			if (model.ExpiryDate <= DateTime.UtcNow)
+			{
+				return "Expiry Date must be in the future.";
+			}
+
+			Promotion newPromotion = _mapper.Map<Promotion>(model);
             newPromotion.CreatedBy = userId ?? _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
             newPromotion.CreatedTime = DateTimeOffset.UtcNow;
 
@@ -92,7 +103,18 @@ namespace HairSalon.Services.Service
                 return "The Promotion cannot be found or has been deleted!";
             }
 
-            bool isUpdated = false;
+			// Kiểm tra logic kinh doanh hợp lý
+			if (model.TotalAmount < model.MaxAmount)
+			{
+				return "Total Amount must be greater than or equal to Max Amount.";
+			}
+
+			if (model.ExpiryDate <= DateTime.UtcNow)
+			{
+				return "Expiry Date must be in the future.";
+			}
+
+			bool isUpdated = false;
 
             if (!string.IsNullOrWhiteSpace(model.Name) && model.Name != existingPromotion.Name)
             {
@@ -124,9 +146,9 @@ namespace HairSalon.Services.Service
                 isUpdated = true;
             }
 
-            if (model.ExpiryDate != existingPromotion.ExpiryDate)
+            if (model.ExpiryDate.HasValue)
             {
-                existingPromotion.ExpiryDate = model.ExpiryDate;
+                existingPromotion.ExpiryDate = (DateTime)model.ExpiryDate;
                 isUpdated = true;
             }
 
