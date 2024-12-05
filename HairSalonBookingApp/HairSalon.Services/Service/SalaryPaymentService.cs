@@ -89,18 +89,18 @@ namespace HairSalon.Services.Service
 				return "Invalid input: Base salary and day-off values must be non-negative.";
 			}
 
-			var paymentDate = model.PaymentDate;
-			var nextPaymentDate = new DateTime(paymentDate.Year, paymentDate.Month, 5).AddMonths(1);
-			var currentMonthPaymentStartDate = new DateTime(paymentDate.Year, paymentDate.Month, 5);
+			// Calculate the first and last days of the current payment month
+			var paymentMonthStart = new DateTime(model.PaymentDate.Year, model.PaymentDate.Month, 1);
+			var paymentMonthEnd = paymentMonthStart.AddMonths(1).AddDays(-1);
 
-			// Check if a salary payment already exists for the user in the current period
-			var existingPayment = await _unitOfWork.GetRepository<SalaryPayment>().Entities
-				.FirstOrDefaultAsync(s => s.UserId == model.UserId &&
-										  s.PaymentDate >= currentMonthPaymentStartDate &&
-										  s.PaymentDate < nextPaymentDate &&
-										  !s.DeletedTime.HasValue);
+			// Check if a salary payment already exists for the user in the current month
+			var isPaymentExists = await _unitOfWork.GetRepository<SalaryPayment>().Entities
+				.AnyAsync(s => s.UserId == model.UserId &&
+							   s.PaymentDate >= paymentMonthStart &&
+							   s.PaymentDate <= paymentMonthEnd &&
+							   !s.DeletedTime.HasValue);
 
-			if (existingPayment != null)
+			if (isPaymentExists)
 			{
 				return "The salarypayment has been create in this month!";
 			}
@@ -213,19 +213,6 @@ namespace HairSalon.Services.Service
 
 			// Lấy PaymentDate mới (nếu có, dùng ngày trong model, nếu không dùng ngày cũ)
 			var newPaymentDate = model.PaymentDate ?? existingSalary.PaymentDate;
-
-			// Kiểm tra nếu đã tồn tại lương cho UserId này trong cùng tháng và năm
-			var isDuplicateSalary = await _unitOfWork.GetRepository<SalaryPayment>().Entities
-				.AnyAsync(s => s.UserId == existingSalary.UserId &&
-							   s.PaymentDate.Year == newPaymentDate.Year &&
-							   s.PaymentDate.Month == newPaymentDate.Month &&
-							   s.Id != id &&
-							   !s.DeletedTime.HasValue);
-
-			if (isDuplicateSalary)
-			{
-				return "The UserId has been received this Salary in this month!";
-			}
 
 			// Cập nhật thông tin lương
 			existingSalary.UserId = model.UserId ?? existingSalary.UserId;
@@ -372,7 +359,6 @@ namespace HairSalon.Services.Service
 		}
 
 		// Export Excel Salary Payments
-		// Export Excel Salary Payments
 		public async Task<byte[]> ExportSalaryPaymentsToExcelAsync(Guid? stylistId, string? paymentDateStr)
 		{
 			IQueryable<SalaryPayment> salaryPaymentQuery = _unitOfWork.GetRepository<SalaryPayment>().Entities
@@ -408,7 +394,7 @@ namespace HairSalon.Services.Service
 				else if (DateTime.TryParse(paymentDateStr, out paymentDate))
 				{
 					// If it's a full date, filter by that specific date
-					salaryPaymentQuery = salaryPaymentQuery.Where(p => p.PaymentDate.Date == paymentDate.Date);
+					salaryPaymentQuery = salaryPaymentQuery.Where(p => p.PaymentDate.Month == paymentDate.Month);
 				}
 			}
 
