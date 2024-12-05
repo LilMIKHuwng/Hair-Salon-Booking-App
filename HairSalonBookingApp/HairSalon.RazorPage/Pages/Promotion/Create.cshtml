@@ -107,27 +107,57 @@ else
         <span asp-validation-for="NewPromotion.Name" class="text-danger"></span>
 
         <div class="form-group">
-            <input asp-for="NewPromotion.DiscountPercentage" class="form-control" placeholder="Discount Percentage" required aria-label="Discount Percentage" />
+            <input asp-for="NewPromotion.DiscountPercentage"
+                   class="form-control"
+                   placeholder="Discount Percentage"
+                   required
+                   type="number"
+                   step="0.01"
+                   min="0"
+                   max="100"
+                   aria-label="Discount Percentage" />
             <span asp-validation-for="NewPromotion.DiscountPercentage" class="text-danger"></span>
         </div>
 
         <div class="form-group">
-            <input asp-for="NewPromotion.TotalAmount" class="form-control" placeholder="Total Amount" required type="number" step="1000" aria-label="Total Amount" />
+            <input asp-for="NewPromotion.TotalAmount"
+                   class="form-control"
+                   placeholder="Total Amount"
+                   required
+                   type="number"
+                   step="1000"
+                   min="0"
+                   aria-label="Total Amount" />
             <span asp-validation-for="NewPromotion.TotalAmount" class="text-danger"></span>
         </div>
 
         <div class="form-group">
-            <input asp-for="NewPromotion.MaxAmount" class="form-control" placeholder="Max Amount" required type="number" step="1000" aria-label="Max Amount" />
+            <input asp-for="NewPromotion.MaxAmount"
+                   class="form-control"
+                   placeholder="Max Amount"
+                   required
+                   type="number"
+                   step="1000"
+                   min="0"
+                   aria-label="Max Amount" />
             <span asp-validation-for="NewPromotion.MaxAmount" class="text-danger"></span>
         </div>
 
-
         <div class="form-group">
-            <input asp-for="NewPromotion.Quantity" class="form-control" placeholder="Quantity" required type="number"step="1" aria-label="Quantity" />
+            <input asp-for="NewPromotion.Quantity"
+                   class="form-control"
+                   placeholder="Quantity"
+                   required
+                   type="number"
+                   step="1"
+                   min="1"
+                   aria-label="Quantity" />
             <span asp-validation-for="NewPromotion.Quantity" class="text-danger"></span>
         </div>
 
+
         <div class="form-group">
+            <label style="font-weight: bold;">Expiry Date: </label>
             <input asp-for="NewPromotion.ExpiryDate" class="form-control" placeholder="Expiry Date" required type="date" aria-label="Expiry Date" />
             <span asp-validation-for="NewPromotion.ExpiryDate" class="text-danger"></span>
         </div>

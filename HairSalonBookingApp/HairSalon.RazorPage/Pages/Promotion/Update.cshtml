@@ -125,30 +125,53 @@ else
             <input asp-for="UpdatedPromotion.Name" placeholder="Promotion Name" required />
             <span asp-validation-for="UpdatedPromotion.Name" class="text-danger"></span>
 
-     
+
             <div class="form-group">
                 <label asp-for="UpdatedPromotion.DiscountPercentage">Discount Percentage:</label>
-                <input asp-for="UpdatedPromotion.DiscountPercentage" placeholder="DiscountPercentage " required />
+                <input asp-for="UpdatedPromotion.DiscountPercentage"
+                       class="form-control"
+                       placeholder="Discount Percentage"
+                       required
+                       type="number"
+                       min="0"
+                       max="100"
+                       step="0.01" />
                 <span asp-validation-for="UpdatedPromotion.DiscountPercentage" class="text-danger"></span>
             </div>
 
-           
             <div class="form-group">
-                <label asp-for="UpdatedPromotion.TotalAmount">Total Amount :</label>
-                <input asp-for="UpdatedPromotion.TotalAmount" placeholder="TotalAmount" required type="number" step="1000" />
+                <label asp-for="UpdatedPromotion.TotalAmount">Total Amount:</label>
+                <input asp-for="UpdatedPromotion.TotalAmount"
+                       class="form-control"
+                       placeholder="Total Amount"
+                       required
+                       type="number"
+                       min="0"
+                       step="1000" />
                 <span asp-validation-for="UpdatedPromotion.TotalAmount" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="UpdatedPromotion.MaxAmount">Max Amount  :</label>
-                <input asp-for="UpdatedPromotion.MaxAmount" placeholder="MaxAmount" required type="number" step="1000" />
+                <label asp-for="UpdatedPromotion.MaxAmount">Max Amount:</label>
+                <input asp-for="UpdatedPromotion.MaxAmount"
+                       class="form-control"
+                       placeholder="Max Amount"
+                       required
+                       type="number"
+                       min="0"
+                       step="1000" />
                 <span asp-validation-for="UpdatedPromotion.MaxAmount" class="text-danger"></span>
             </div>
 
-            
-             <div class="form-group">
-                <label asp-for="UpdatedPromotion.Quantity">Quantity :</label>
-                <input asp-for="UpdatedPromotion.Quantity" placeholder="Quantity" required type="number" step="1" />
+            <div class="form-group">
+                <label asp-for="UpdatedPromotion.Quantity">Quantity:</label>
+                <input asp-for="UpdatedPromotion.Quantity"
+                       class="form-control"
+                       placeholder="Quantity"
+                       required
+                       type="number"
+                       min="1"
+                       step="1" />
                 <span asp-validation-for="UpdatedPromotion.Quantity" class="text-danger"></span>
             </div>
 
