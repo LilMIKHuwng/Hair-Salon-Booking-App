@@ -119,7 +119,7 @@ else
 
     <form method="post" enctype="multipart/form-data">
         <div class="form-group">
-            <label asp-for="SalaryPayment.UserId">User ID</label>
+            <label asp-for="SalaryPayment.UserId">Style ID</label>
             <select asp-for="SalaryPayment.UserId" class="form-control" required>
                 <option value="">Select a Stylist</option>
                 @if (ViewData["Stylists"] != null && ((List<AppUserModelView>)ViewData["Stylists"]).Any())
