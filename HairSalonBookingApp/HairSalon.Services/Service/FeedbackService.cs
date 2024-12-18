@@ -3,6 +3,7 @@ using HairSalon.Contract.Repositories.Entity;
 using HairSalon.Contract.Repositories.Interface;
 using HairSalon.Contract.Services.Interface;
 using HairSalon.Core;
+using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalon.ModelViews.AppointmentModelViews;
 using HairSalon.ModelViews.FeedbackModeViews;
 using HairSalon.ModelViews.FeedBackModeViews;
@@ -16,12 +17,14 @@ namespace HairSalon.Services.Service
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IAppointmentService _appointmentService;
 
-        public FeedbackService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor contextAccessor)
+        public FeedbackService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor contextAccessor, IAppointmentService appointmentService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _contextAccessor = contextAccessor;
+            _appointmentService = appointmentService;
         }
 
         // Get all feedbacks with optional filters for id, ... and support pagination
@@ -54,6 +57,13 @@ namespace HairSalon.Services.Service
 
             // Map to FeedBackModelView
             List<FeedBackModelView> feedbackModelViews = _mapper.Map<List<FeedBackModelView>>(paginatedFeedbacks);
+
+            foreach (var feedback in feedbackModelViews)
+            {
+                Task<AppointmentModelView> appointment = _appointmentService.GetAppointmentByIdAsync(feedback.AppointmentId);
+
+                feedback.UserName = appointment.Result.UserName;
+            }
 
             // Return paginated list with total count
             return new BasePaginatedList<FeedBackModelView>(feedbackModelViews, totalCount, pageNumber, pageSize);
@@ -253,7 +263,11 @@ namespace HairSalon.Services.Service
 
             // Map the Feedback entity to a RoleModelView and return it
             FeedBackModelView FeedbackModelView = _mapper.Map<FeedBackModelView>(FeedbackEntity);
-            return FeedbackModelView;
+
+			Task<AppointmentModelView> appointment = _appointmentService.GetAppointmentByIdAsync(FeedbackModelView.AppointmentId);
+			FeedbackModelView.UserName = appointment.Result.UserName;
+
+			return FeedbackModelView;
         }
 
         public async Task<List<AppointmentModelView>> GetAppointmentsForDropdownAsync()
@@ -268,6 +282,19 @@ namespace HairSalon.Services.Service
             return _mapper.Map<List<AppointmentModelView>>(appointments);
         }
 
+		public async Task<bool> CheckAlreadyFeedbackAsync(string? appointmentId)
+		{
+			// Kiểm tra nếu appointmentId là null hoặc rỗng, trả về false
+			if (string.IsNullOrWhiteSpace(appointmentId))
+				return false;
 
-    }
+			// Sử dụng repository để kiểm tra điều kiện
+			var isAlreadyFeedback = await _unitOfWork.GetRepository<Appointment>()
+				.Entities
+				.AnyAsync(a => a.Id == appointmentId && a.Feedback != null);
+
+			return isAlreadyFeedback;
+		}
+
+	}
 }

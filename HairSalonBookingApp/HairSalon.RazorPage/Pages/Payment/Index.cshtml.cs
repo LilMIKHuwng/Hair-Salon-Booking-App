@@ -10,30 +10,36 @@ namespace HairSalon.RazorPage.Pages.Payment
     public class PaymentManagementModel : PageModel
     {
         private readonly IPaymentService _paymentService;
+        public readonly IAppointmentService _appointmentService;
 
         public PaymentManagementModel(IPaymentService paymentService)
         {
             _paymentService = paymentService;
         }
 
+        [BindProperty(SupportsGet = true)]
+        public string? PaymentMethod { get; set; }
+
         public bool IsAdmin { get; set; }
 
-        public BasePaginatedList<PaymentModelView> Payment { get; set; }
+        public List<string> userRoles;
 
-        public async Task<IActionResult> OnGetAsync(int pageNumber = 1, int pageSize = 5, string? id = null, string? appointmentId = null, string? paymentMethod = null)
+		public BasePaginatedList<PaymentModelView> Payment { get; set; }
+
+        public async Task<IActionResult> OnGetAsync(int pageNumber = 1, int pageSize = 5, string? id = null, string? appointmentId = null)
         {
             var userRolesJson = HttpContext.Session.GetString("UserRoles");
 
             if (userRolesJson != null)
             {
-                var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
+                userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
 
                 // Check if the user has "Admin" role
-                if (userRoles.Contains("Admin"))
+                if (userRoles.Contains("Admin") || userRoles.Contains("Manager"))
                 {
                     IsAdmin = true;
                     // If the user is an Admin, retrieve all payments with filters
-                    Payment = await _paymentService.GetAllPaymentAsync(pageNumber, pageSize, id, appointmentId, paymentMethod);
+                    Payment = await _paymentService.GetAllPaymentAsync(pageNumber, pageSize, id, appointmentId, PaymentMethod);
                     return Page();
                 }
                 var userID = HttpContext.Session.GetString("UserId");

@@ -25,104 +25,104 @@ namespace HairSalon.Services.Service
 			_contextAccessor = contextAccessor;
 		}
 
-        // Get all SalaryPayments with optional filtering by ID and payment date
-        public async Task<BasePaginatedList<SalaryPaymentModelView>> GetAllSalaryPaymentAsync(
-        string? id, Guid? stylistId, DateTime? paymentDate, decimal? baseSalary, int pageNumber, int pageSize)
-        {
-            // Get all SalaryPayments that are not deleted
-            IQueryable<SalaryPayment> salaryPaymentQuery = _unitOfWork.GetRepository<SalaryPayment>().Entities
-                .Where(p => !p.DeletedTime.HasValue);
+		// Get all SalaryPayments with optional filtering by ID and payment date
+		public async Task<BasePaginatedList<SalaryPaymentModelView>> GetAllSalaryPaymentAsync(
+		string? id, Guid? stylistId, DateTime? paymentDate, decimal? baseSalary, int pageNumber, int pageSize)
+		{
+			// Get all SalaryPayments that are not deleted
+			IQueryable<SalaryPayment> salaryPaymentQuery = _unitOfWork.GetRepository<SalaryPayment>().Entities
+				.Where(p => !p.DeletedTime.HasValue);
 
-            // Apply additional filters if provided
-            if (!string.IsNullOrEmpty(id))
-            {
-                salaryPaymentQuery = salaryPaymentQuery.Where(p => p.Id == id);
-            }
+			// Apply additional filters if provided
+			if (!string.IsNullOrEmpty(id))
+			{
+				salaryPaymentQuery = salaryPaymentQuery.Where(p => p.Id == id);
+			}
 
-            if (stylistId.HasValue)
-            {
-                salaryPaymentQuery = salaryPaymentQuery.Where(p => p.UserId == stylistId.Value);
-            }
-            if (paymentDate.HasValue)
-            {
-                salaryPaymentQuery = salaryPaymentQuery.Where(p => p.PaymentDate.Date == paymentDate.Value.Date);
-            }
-            if (baseSalary.HasValue)
-            {
-                salaryPaymentQuery = salaryPaymentQuery.Where(p => p.BaseSalary == baseSalary.Value);
-            }
+			if (stylistId.HasValue)
+			{
+				salaryPaymentQuery = salaryPaymentQuery.Where(p => p.UserId == stylistId.Value);
+			}
+			if (paymentDate.HasValue)
+			{
+				salaryPaymentQuery = salaryPaymentQuery.Where(p => p.PaymentDate.Date == paymentDate.Value.Date);
+			}
+			if (baseSalary.HasValue)
+			{
+				salaryPaymentQuery = salaryPaymentQuery.Where(p => p.BaseSalary == baseSalary.Value);
+			}
 
-            // Order by creation time and paginate results
-            salaryPaymentQuery = salaryPaymentQuery.OrderByDescending(s => s.CreatedTime);
+			// Order by creation time and paginate results
+			salaryPaymentQuery = salaryPaymentQuery.OrderByDescending(s => s.CreatedTime);
 
-            // Fetch total count of records before pagination
-            int totalCount = await salaryPaymentQuery.CountAsync();
+			// Fetch total count of records before pagination
+			int totalCount = await salaryPaymentQuery.CountAsync();
 
-            // Fetch paginated salary payments along with user info for full name
-            var paginatedSalaryPayment = await salaryPaymentQuery
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .Include(s => s.User)
-                    .ThenInclude(u => u.UserInfo) // Include UserInfo for FullName
-                .ToListAsync();
+			// Fetch paginated salary payments along with user info for full name
+			var paginatedSalaryPayment = await salaryPaymentQuery
+				.Skip((pageNumber - 1) * pageSize)
+				.Take(pageSize)
+				.Include(s => s.User)
+					.ThenInclude(u => u.UserInfo) // Include UserInfo for FullName
+				.ToListAsync();
 
-            // Map entities to model views and add FullName mapping
-            var salaryPaymentModelViews = paginatedSalaryPayment.Select(s => new SalaryPaymentModelView
-            {
-                Id = s.Id,
-                UserId = s.UserId.HasValue ? s.UserId.Value.ToString() : string.Empty,
-                BaseSalary = s.BaseSalary,
-                PaymentDate = s.PaymentDate,
-                FullName = s.User.UserInfo != null
-                            ? $"{s.User.UserInfo.Firstname} {s.User.UserInfo.Lastname}"
-                            : "N/A" // Handle case when UserInfo is null
+			// Map entities to model views and add FullName mapping
+			var salaryPaymentModelViews = paginatedSalaryPayment.Select(s => new SalaryPaymentModelView
+			{
+				Id = s.Id,
+				UserId = s.UserId.HasValue ? s.UserId.Value.ToString() : string.Empty,
+				BaseSalary = s.BaseSalary,
+				PaymentDate = s.PaymentDate,
+				FullName = s.User.UserInfo != null
+							? $"{s.User.UserInfo.Firstname} {s.User.UserInfo.Lastname}"
+							: "N/A" // Handle case when UserInfo is null
 			}).ToList();
 
-            return new BasePaginatedList<SalaryPaymentModelView>(salaryPaymentModelViews, totalCount, pageNumber, pageSize);
-        }
+			return new BasePaginatedList<SalaryPaymentModelView>(salaryPaymentModelViews, totalCount, pageNumber, pageSize);
+		}
 
-        // Create a new SalaryPayment
-        public async Task<string> CreateSalaryPaymentAsync(CreateSalaryPaymentModelView model, string? userId)
-        {
-            if (model.BaseSalary < 0 || model.DayOffPermitted < 0 || model.DayOffNoPermitted < 0)
-            {
-                return "Invalid input: Base salary and day-off values must be non-negative.";
-            }
+		// Create a new SalaryPayment
+		public async Task<string> CreateSalaryPaymentAsync(CreateSalaryPaymentModelView model, string? userId)
+		{
+			if (model.BaseSalary < 0 || model.DayOffPermitted < 0 || model.DayOffNoPermitted < 0)
+			{
+				return "Invalid input: Base salary and day-off values must be non-negative.";
+			}
 
-            var paymentDate = model.PaymentDate;
-            var nextPaymentDate = new DateTime(paymentDate.Year, paymentDate.Month, 5).AddMonths(1);
-            var currentMonthPaymentStartDate = new DateTime(paymentDate.Year, paymentDate.Month, 5);
+			// Calculate the first and last days of the current payment month
+			var paymentMonthStart = new DateTime(model.PaymentDate.Year, model.PaymentDate.Month, 1);
+			var paymentMonthEnd = paymentMonthStart.AddMonths(1).AddDays(-1);
 
-			// Check if a salary payment already exists for the user in the current period
-			var existingPayment = await _unitOfWork.GetRepository<SalaryPayment>().Entities
-				.FirstOrDefaultAsync(s => s.UserId == model.UserId &&
-										  s.PaymentDate >= currentMonthPaymentStartDate &&
-										  s.PaymentDate < nextPaymentDate &&
-										  !s.DeletedTime.HasValue);
+			// Check if a salary payment already exists for the user in the current month
+			var isPaymentExists = await _unitOfWork.GetRepository<SalaryPayment>().Entities
+				.AnyAsync(s => s.UserId == model.UserId &&
+							   s.PaymentDate >= paymentMonthStart &&
+							   s.PaymentDate <= paymentMonthEnd &&
+							   !s.DeletedTime.HasValue);
 
-			if (existingPayment != null)
+			if (isPaymentExists)
 			{
 				return "The salarypayment has been create in this month!";
 			}
 
-            // Create a new SalaryPayment
-            SalaryPayment newSalaryPayment = _mapper.Map<SalaryPayment>(model);
-            newSalaryPayment.Id = Guid.NewGuid().ToString("N");
-            newSalaryPayment.CreatedTime = DateTimeOffset.UtcNow;
-            newSalaryPayment.LastUpdatedTime = DateTimeOffset.UtcNow;
+			// Create a new SalaryPayment
+			SalaryPayment newSalaryPayment = _mapper.Map<SalaryPayment>(model);
+			newSalaryPayment.Id = Guid.NewGuid().ToString("N");
+			newSalaryPayment.CreatedTime = DateTimeOffset.UtcNow;
+			newSalaryPayment.LastUpdatedTime = DateTimeOffset.UtcNow;
 
-            if (userId != null)
-            {
-                newSalaryPayment.CreatedBy = userId;
-            }
-            else
-            {
-                newSalaryPayment.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-            }
-            newSalaryPayment.CreatedTime = DateTimeOffset.UtcNow;
+			if (userId != null)
+			{
+				newSalaryPayment.CreatedBy = userId;
+			}
+			else
+			{
+				newSalaryPayment.CreatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+			}
+			newSalaryPayment.CreatedTime = DateTimeOffset.UtcNow;
 
-            // Define deduction rules using dictionaries
-            var permittedDeductionRules = new Dictionary<int, decimal>
+			// Define deduction rules using dictionaries
+			var permittedDeductionRules = new Dictionary<int, decimal>
 			{
 				{ 3, 1m / 28 }, // For 3 days, deduct 1 day salary
 				{ 7, 0.25m },   // For 7 days, deduct 25% of salary
@@ -149,55 +149,55 @@ namespace HairSalon.Services.Service
 				{ 2, 0.02m }  // 2 days off, bonus 2%
 			};
 
-            // Calculate deductions based on permitted days off
-            decimal deductionPercentage = permittedDeductionRules
-                .Where(rule => model.DayOffPermitted >= rule.Key)
-                .Select(rule => rule.Value)
-                .DefaultIfEmpty(0)
-                .Last();
+			// Calculate deductions based on permitted days off
+			decimal deductionPercentage = permittedDeductionRules
+				.Where(rule => model.DayOffPermitted >= rule.Key)
+				.Select(rule => rule.Value)
+				.DefaultIfEmpty(0)
+				.Last();
 
-            // Calculate deductions based on non-permitted days off
-            deductionPercentage += nonPermittedDeductionRules
-                .Where(rule => model.DayOffNoPermitted >= rule.Key)
-                .Select(rule => rule.Value)
-                .DefaultIfEmpty(0)
-                .Last();
+			// Calculate deductions based on non-permitted days off
+			deductionPercentage += nonPermittedDeductionRules
+				.Where(rule => model.DayOffNoPermitted >= rule.Key)
+				.Select(rule => rule.Value)
+				.DefaultIfEmpty(0)
+				.Last();
 
-            // Calculate total days off for bonus eligibility
-            int totalDaysOff = model.DayOffPermitted + model.DayOffNoPermitted;
+			// Calculate total days off for bonus eligibility
+			int totalDaysOff = model.DayOffPermitted + model.DayOffNoPermitted;
 
-            // Calculate bonus based on permitted days off only if total days off <= 3
-            decimal bonusPercentage = 0;
-            if (totalDaysOff < 3)
-            {
-                bonusPercentage = bonusRules
-                    .Where(rule => model.DayOffPermitted == rule.Key)
-                    .Select(rule => rule.Value)
-                    .DefaultIfEmpty(0)
-                    .First();
-            }
+			// Calculate bonus based on permitted days off only if total days off <= 3
+			decimal bonusPercentage = 0;
+			if (totalDaysOff < 3)
+			{
+				bonusPercentage = bonusRules
+					.Where(rule => model.DayOffPermitted == rule.Key)
+					.Select(rule => rule.Value)
+					.DefaultIfEmpty(0)
+					.First();
+			}
 
-            // Calculate the final Bonus and Deducted Salary
-            newSalaryPayment.DeductedSalary = model.BaseSalary * deductionPercentage;
-            newSalaryPayment.BonusSalary = model.BaseSalary * bonusPercentage;
+			// Calculate the final Bonus and Deducted Salary
+			newSalaryPayment.DeductedSalary = model.BaseSalary * deductionPercentage;
+			newSalaryPayment.BonusSalary = model.BaseSalary * bonusPercentage;
 
-            // Save the new salary payment
-            await _unitOfWork.GetRepository<SalaryPayment>().InsertAsync(newSalaryPayment);
-            await _unitOfWork.SaveAsync();
+			// Save the new salary payment
+			await _unitOfWork.GetRepository<SalaryPayment>().InsertAsync(newSalaryPayment);
+			await _unitOfWork.SaveAsync();
 
-            return "Add new salary payment successfully!";
-        }
+			return "Add new salary payment successfully!";
+		}
 
 
 		// Update an existing SalaryPayment
 		public async Task<string> UpdateSalaryPaymentAsync(string id, string? userId, UpdatedSalaryPaymentModelView model)
 		{
-            if (model.BaseSalary < 0 || model.DayOffPermitted < 0 || model.DayOffNoPermitted < 0)
-            {
-                return "Invalid input: Base salary and day-off values must be non-negative.";
-            }
+			if (model.BaseSalary < 0 || model.DayOffPermitted < 0 || model.DayOffNoPermitted < 0)
+			{
+				return "Invalid input: Base salary and day-off values must be non-negative.";
+			}
 
-            if (string.IsNullOrWhiteSpace(id))
+			if (string.IsNullOrWhiteSpace(id))
 			{
 				return "Please provide a valid Salary Payment ID.";
 			}
@@ -214,19 +214,6 @@ namespace HairSalon.Services.Service
 			// Lấy PaymentDate mới (nếu có, dùng ngày trong model, nếu không dùng ngày cũ)
 			var newPaymentDate = model.PaymentDate ?? existingSalary.PaymentDate;
 
-			// Kiểm tra nếu đã tồn tại lương cho UserId này trong cùng tháng và năm
-			var isDuplicateSalary = await _unitOfWork.GetRepository<SalaryPayment>().Entities
-				.AnyAsync(s => s.UserId == existingSalary.UserId &&
-							   s.PaymentDate.Year == newPaymentDate.Year &&
-							   s.PaymentDate.Month == newPaymentDate.Month &&
-							   s.Id != id &&
-							   !s.DeletedTime.HasValue);
-
-			if (isDuplicateSalary)
-			{
-				return "The UserId has been received this Salary in this month!";
-			}
-
 			// Cập nhật thông tin lương
 			existingSalary.UserId = model.UserId ?? existingSalary.UserId;
 			existingSalary.BaseSalary = model.BaseSalary ?? existingSalary.BaseSalary;
@@ -234,16 +221,16 @@ namespace HairSalon.Services.Service
 			existingSalary.DayOffPermitted = model.DayOffPermitted ?? existingSalary.DayOffPermitted;
 			existingSalary.DayOffNoPermitted = model.DayOffNoPermitted ?? existingSalary.DayOffNoPermitted;
 
-            if (userId != null)
-            {
-                existingSalary.LastUpdatedBy = userId;
-            }
-            else
-            {
-                existingSalary.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-            }
+			if (userId != null)
+			{
+				existingSalary.LastUpdatedBy = userId;
+			}
+			else
+			{
+				existingSalary.LastUpdatedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+			}
 
-            existingSalary.LastUpdatedTime = DateTimeOffset.UtcNow;
+			existingSalary.LastUpdatedTime = DateTimeOffset.UtcNow;
 
 			// Tính toán tiền khấu trừ và thưởng
 			decimal baseSalary = existingSalary.BaseSalary;
@@ -355,14 +342,14 @@ namespace HairSalon.Services.Service
 			// Soft delete by setting DeletedTime and DeletedBy
 			existingSalary.DeletedTime = DateTimeOffset.UtcNow;
 
-            if (userId != null)
-            {
-                existingSalary.DeletedBy = userId;
-            }
-            else
-            {
-                existingSalary.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
-            }
+			if (userId != null)
+			{
+				existingSalary.DeletedBy = userId;
+			}
+			else
+			{
+				existingSalary.DeletedBy = _contextAccessor.HttpContext?.User?.FindFirst("userId")?.Value;
+			}
 
 			// Save changes
 			await _unitOfWork.GetRepository<SalaryPayment>().UpdateAsync(existingSalary);
@@ -371,7 +358,6 @@ namespace HairSalon.Services.Service
 			return "Deleted salary payment successfully!";
 		}
 
-		// Export Excel Salary Payments
 		// Export Excel Salary Payments
 		public async Task<byte[]> ExportSalaryPaymentsToExcelAsync(Guid? stylistId, string? paymentDateStr)
 		{
@@ -408,7 +394,7 @@ namespace HairSalon.Services.Service
 				else if (DateTime.TryParse(paymentDateStr, out paymentDate))
 				{
 					// If it's a full date, filter by that specific date
-					salaryPaymentQuery = salaryPaymentQuery.Where(p => p.PaymentDate.Date == paymentDate.Date);
+					salaryPaymentQuery = salaryPaymentQuery.Where(p => p.PaymentDate.Month == paymentDate.Month);
 				}
 			}
 
@@ -496,34 +482,34 @@ namespace HairSalon.Services.Service
 			return stream.ToArray();
 		}
 
-        // Retrieve a SalaryPayment by its ID
-        public async Task<SalaryPaymentModelView?> GetSalaryByIdAsync(string id)
-        {
-            // Check if the provided SalaryPayment ID is valid (non-empty and non-whitespace)
-            if (string.IsNullOrWhiteSpace(id))
-            {
-                return null; // Or you could throw an exception or return an error message
-            }
+		// Retrieve a SalaryPayment by its ID
+		public async Task<SalaryPaymentModelView?> GetSalaryByIdAsync(string id)
+		{
+			// Check if the provided SalaryPayment ID is valid (non-empty and non-whitespace)
+			if (string.IsNullOrWhiteSpace(id))
+			{
+				return null; // Or you could throw an exception or return an error message
+			}
 
-            // Try to find the SalaryPayment by its ID, including related User and UserInfo, and ensuring it hasn’t been marked as deleted
-            var salaryEntity = await _unitOfWork.GetRepository<SalaryPayment>().Entities
-                .Include(s => s.User)
-                    .ThenInclude(u => u.UserInfo) // Include UserInfo for FullName
-                .FirstOrDefaultAsync(ex => ex.Id == id && !ex.DeletedTime.HasValue);
+			// Try to find the SalaryPayment by its ID, including related User and UserInfo, and ensuring it hasn’t been marked as deleted
+			var salaryEntity = await _unitOfWork.GetRepository<SalaryPayment>().Entities
+				.Include(s => s.User)
+					.ThenInclude(u => u.UserInfo) // Include UserInfo for FullName
+				.FirstOrDefaultAsync(ex => ex.Id == id && !ex.DeletedTime.HasValue);
 
-            // If the SalaryPayment is not found, return null
-            if (salaryEntity == null)
-            {
-                return null;
-            }
+			// If the SalaryPayment is not found, return null
+			if (salaryEntity == null)
+			{
+				return null;
+			}
 
-            // Map to SalaryPaymentModelView and include FullName if UserInfo is available
-            var salaryModelView = _mapper.Map<SalaryPaymentModelView>(salaryEntity);
-            salaryModelView.FullName = salaryEntity.User?.UserInfo != null
-                ? $"{salaryEntity.User.UserInfo.Firstname} {salaryEntity.User.UserInfo.Lastname}"
-                : "N/A"; // Handle case when UserInfo is null
+			// Map to SalaryPaymentModelView and include FullName if UserInfo is available
+			var salaryModelView = _mapper.Map<SalaryPaymentModelView>(salaryEntity);
+			salaryModelView.FullName = salaryEntity.User?.UserInfo != null
+				? $"{salaryEntity.User.UserInfo.Firstname} {salaryEntity.User.UserInfo.Lastname}"
+				: "N/A"; // Handle case when UserInfo is null
 
-            return salaryModelView;
-        }
-    }
+			return salaryModelView;
+		}
+	}
 }

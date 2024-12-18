@@ -1,4 +1,5 @@
 ﻿@page "/Appointments"
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 @model AppointmentManagementModel
 @{
 	ViewData["Title"] = "Appointment Management";
@@ -126,6 +127,54 @@
 			background-color: #d68910;
 		}
 
+	.btn-feedback {
+		color: #ffffff;
+		background-color: #0066FF;
+		padding: 5px 10px;
+		border-radius: 5px;
+		text-decoration: none;
+		transition: background-color 0.3s ease;
+	}
+
+	.btn-cancel {
+		color: #ffffff;
+		background-color: darkgrey;
+		padding: 5px 10px;
+		border-radius: 5px;
+		text-decoration: none;
+		transition: background-color 0.3s ease;
+	}
+
+		.btn-cancel:hover {
+			background-color: darkolivegreen;
+		}
+
+	.btn-feedback {
+		color: #ffffff;
+		background-color: #0066FF;
+		padding: 5px 10px;
+		border-radius: 5px;
+		text-decoration: none;
+		transition: background-color 0.3s ease;
+	}
+
+		.btn-feedback:hover {
+			background-color: #0066CC;
+		}
+
+	.btn-payment {
+		color: #ffffff;
+		background-color: #FA812F;
+		padding: 5px 10px;
+		border-radius: 5px;
+		text-decoration: none;
+		transition: background-color 0.3s ease;
+	}
+
+		.btn-payment:hover {
+			background-color: #FAB12F;
+		}
+
 	/* Table Styling */
 	table {
 		width: 100%;
@@ -191,11 +240,94 @@
 		font-weight: bold;
 	}
 
+	.status-cancel {
+		color: #f39c12;
+		font-weight: bold;
+	}
+
+	.status-confirmed {
+		color: #f39c12;
+		font-weight: bold;
+	}
+
 	.status-completed {
 		color: #2ecc71;
 		font-weight: bold;
 	}
 
+	.status-successfull {
+		color: #2ecc71;
+		font-weight: bold;
+	}
+
+	.status-cancelled {
+		color: red;
+		font-weight: bold;
+	}
+
+	.sort-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		background-color: #3f51b5;
+		color: white;
+		border: none;
+		padding: 5px 8px;
+		border-radius: 5px;
+		font-size: 12px;
+		cursor: pointer;
+		transition: background-color 0.3s ease;
+		margin-left: 5px;
+	}
+
+		.sort-btn:hover {
+			background-color: #2c3e91;
+		}
+
+	.sort-arrows {
+		font-size: 12px;
+	}
+
+	.sort-btn.active {
+		background-color: #ff9800;
+		color: #fff;
+	}
+
+	.search-form {
+		display: flex;
+		align-items: center;
+		margin-bottom: 20px;
+		gap: 10px;
+	}
+
+	.search-input {
+		padding: 8px;
+		border: 1px solid #ddd;
+		border-radius: 5px;
+		width: 250px;
+		font-size: 14px;
+	}
+
+	.btn-search {
+		padding: 8px 15px;
+		background-color: #3f51b5;
+		color: white;
+		border: none;
+		border-radius: 5px;
+		cursor: pointer;
+		font-size: 14px;
+	}
+
+		.btn-search:hover {
+			background-color: #2c3e91;
+		}
+
+	.search-add-container {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 20px;
+	}
 </style>
 
 @if (TempData["ErrorMessage"] != null)
@@ -206,7 +338,20 @@ else
 {
 	<h2>@ViewData["Title"]</h2>
 
-	<a asp-page="/Appointment/Create" class="btn">Add New Appointment</a>
+	<div class="search-add-container">
+		<a asp-page="/Appointment/Create" class="btn">Add New Appointment</a>
+
+		<form method="get" class="search-form" id="searchForm">
+			<select asp-for="StatusForAppointment" class="search-input" onchange="this.form.submit()">
+				<option value="">All Status</option>
+				<option value="Scheduled">Scheduled</option>
+				<option value="Confirmed">Confirmed</option>
+				<option value="Completed">Completed</option>
+				<option value="Successfull">Successfull</option>
+				<option value="Cancelled">Cancelled</option>
+			</select>
+		</form>
+	</div>
 
 	<h3>Appointment List</h3>
 
@@ -220,13 +365,48 @@ else
 		<table>
 			<thead>
 				<tr>
-					<th>Appointment ID</th>
-					<th>User</th>
-					<th>Status</th>
-					<th>Points Earned</th>
-					<th>Total Time (min)</th>
-					<th>Total Amount</th>
-					<th>Date</th>
+					<th>
+						Appointment ID
+						<button class="sort-btn" data-sort="id">
+							<span class="sort-arrows">▲▼</span>
+						</button>
+					</th>
+					<th>
+						User
+						<button class="sort-btn" data-sort="user">
+							<span class="sort-arrows">▲▼</span>
+						</button>
+					</th>
+					<th>
+						Status
+						<button class="sort-btn" data-sort="status">
+							<span class="sort-arrows">▲▼</span>
+						</button>
+					</th>
+					<th>
+						Points Earned
+						<button class="sort-btn" data-sort="points">
+							<span class="sort-arrows">▲▼</span>
+						</button>
+					</th>
+					<th>
+						Total Time (min)
+						<button class="sort-btn" data-sort="time">
+							<span class="sort-arrows">▲▼</span>
+						</button>
+					</th>
+					<th>
+						Total Amount
+						<button class="sort-btn" data-sort="amount">
+							<span class="sort-arrows">▲▼</span>
+						</button>
+					</th>
+					<th>
+						Date
+						<button class="sort-btn" data-sort="date">
+							<span class="sort-arrows">▲▼</span>
+						</button>
+					</th>
 					<th>Actions</th>
 				</tr>
 			</thead>
@@ -234,7 +414,7 @@ else
 				@foreach (var appointment in Model.Appointments.Items)
 				{
 					<tr>
-						<td>@appointment.Id</td>
+						<td class="appointment-id" data-id="@appointment.Id">@appointment.Id</td>
 						<td>@appointment.UserName</td>
 						<td class="@($"status-{appointment.StatusForAppointment.ToLower()}")">
 							@appointment.StatusForAppointment
@@ -245,31 +425,72 @@ else
 						<td>@appointment.AppointmentDate.ToString("MM/dd/yyyy hh:mm tt")</td>
 						<td>
 							<div class="action-buttons">
-								<!-- Form Update -->
-								<form method="post" asp-route-id="@appointment.Id" asp-route-action="update" style="display:inline;">
-									<button type="submit" class="btn-update">Update</button>
-								</form>
+								<!-- Role-based -->
+								@{
+									var session = HttpContextAccessor.HttpContext.Session;
+									var userRolesString = session.GetString("UserRoles");
+								}
+
+								@if (userRolesString.Contains("Admin") || userRolesString.Contains("Manager")
+													|| userRolesString.Contains("User"))
+								{
+									if (appointment.StatusForAppointment == "Scheduled")
+									{
+										<!-- Form Update -->
+										<form method="post" asp-route-id="@appointment.Id" asp-route-action="update" style="display:inline;">
+											<button type="submit" class="btn-update">Update</button>
+										</form>
+									}
+
+									<!-- Form Cancel -->
+									@if (appointment.StatusForAppointment == "Scheduled" || appointment.StatusForAppointment == "Confirmed")
+									{
+										<form method="post" asp-route-id="@appointment.Id" asp-route-action="cancel" style="display:inline;">
+											<button type="submit" class="btn-cancel">Cancel</button>
+										</form>
+									}
+
+									<!-- Form Feedback -->
+									@if (appointment.StatusForAppointment == "Completed"&& !(await Model._feedbacktService.CheckAlreadyFeedbackAsync(appointment.Id)) 
+									|| appointment.StatusForAppointment == "Successfull" && !(await Model._feedbacktService.CheckAlreadyFeedbackAsync(appointment.Id)))
+									{
+										<form method="post" asp-route-id="@appointment.Id" asp-route-action="feedback" style="display:inline;">
+											<button type="submit" class="btn-feedback">Feedback</button>
+										</form>
+									}
+
+									if (appointment.StatusForAppointment == "Completed")
+									{
+										<!-- Form Payment -->
+										<form method="post" asp-route-id="@appointment.Id" asp-route-action="payment" style="display:inline;">
+											<button type="submit" class="btn-payment">Payment</button>
+										</form>
+									}
+								}
 
 								<!-- Form Detail -->
 								<form method="post" asp-route-id="@appointment.Id" asp-route-action="detail" style="display:inline;">
 									<button type="submit" class="btn-detail">Detail</button>
 								</form>
 
-								<!-- Form Delete -->
-								<form method="post" asp-route-id="@appointment.Id" asp-route-action="delete" style="display:inline;">
-									<button type="submit" class="btn-delete">Delete</button>
-								</form>
+								@if (userRolesString.Contains("Admin") || userRolesString.Contains("Manager"))
+								{
+									if (appointment.StatusForAppointment != "Successfull")
+									{
+										<!-- Form Delete -->
+										<form method="post" asp-route-id="@appointment.Id" asp-route-action="delete" style="display:inline;">
+											<button type="submit" class="btn-delete">Delete</button>
+										</form>
+									}
 
-								<!-- Form Completed -->
-								<form method="post" asp-route-id="@appointment.Id" asp-route-action="completed" style="display:inline;">
-									<button type="submit" class="btn-completed">Completed</button>
-								</form>
-
-								<!-- Form Confirm -->
-								<form method="post" asp-route-id="@appointment.Id" asp-route-action="confirm" style="display:inline;">
-									<button type="submit" class="btn-confirm">Confirm</button>
-								</form>
-
+									<!-- Form Completed -->
+									if (appointment.StatusForAppointment == "Confirmed")
+									{
+										<form method="post" asp-route-id="@appointment.Id" asp-route-action="completed" style="display:inline;">
+											<button type="submit" class="btn-completed">Completed</button>
+										</form>
+									}
+								}
 							</div>
 						</td>
 					</tr>
@@ -297,5 +518,96 @@ else
 		<div class="alert alert-info text-center">No appointments available.</div>
 	}
 }
+
+
+<script>
+	document.addEventListener("DOMContentLoaded", function () {
+		// Lấy tất cả các thẻ có class "appointment-id"
+		const appointmentElements = document.querySelectorAll(".appointment-id");
+
+		appointmentElements.forEach((element) => {
+			// Lấy giá trị GUID từ data-id
+			const guid = element.dataset.id;
+
+			// Chuyển đổi GUID thành chuỗi 6 số
+			const encodedId = guidTo6DigitNumber(guid);
+
+			// Hiển thị giá trị mã hóa thay thế nội dung gốc
+			element.textContent = encodedId;
+		});
+	});
+
+	// Hàm mã hóa GUID thành chuỗi 6 số
+	function guidTo6DigitNumber(guid) {
+		// Tạo hash từ GUID (cắt bỏ các dấu "-")
+		const cleanGuid = guid.replace(/-/g, "");
+
+		// Lấy 6 ký tự đầu tiên của hash, sau đó chuyển thành số
+		const hash = parseInt(cleanGuid.substring(0, 6), 16);
+
+		// Đảm bảo kết quả là chuỗi 6 số
+		return (hash % 1000000).toString().padStart(6, "0");
+	}
+</script>
+
+<script>
+	document.addEventListener("DOMContentLoaded", () => {
+		const tableBody = document.querySelector("table tbody");
+
+		const getRows = () => Array.from(tableBody.querySelectorAll("tr"));
+
+		const sortTable = (columnIndex, order) => {
+			const rows = getRows();
+			const sortedRows = rows.sort((a, b) => {
+				const aText = a.children[columnIndex].innerText.trim();
+				const bText = b.children[columnIndex].innerText.trim();
+
+				// Custom sorting for numeric or date fields
+				if (columnIndex === 6) { // Date column
+					const aDate = new Date(aText);
+					const bDate = new Date(bText);
+					return order === "asc" ? aDate - bDate : bDate - aDate;
+				} else if (!isNaN(aText) && !isNaN(bText)) {
+					// Numeric sorting
+					return order === "asc" ? aText - bText : bText - aText;
+				} else {
+					// Textual sorting
+					return order === "asc"
+						? aText.localeCompare(bText, undefined, { numeric: true })
+						: bText.localeCompare(aText, undefined, { numeric: true });
+				}
+			});
+
+			sortedRows.forEach(row => tableBody.appendChild(row));
+		};
+
+		document.querySelectorAll(".sort-btn").forEach(button => {
+			button.addEventListener("click", () => {
+				const column = button.dataset.sort;
+				let columnIndex = 0;
+
+				// Match column index with data-sort attribute
+				switch (column) {
+					case "id": columnIndex = 0; break;
+					case "user": columnIndex = 1; break;
+					case "status": columnIndex = 2; break;
+					case "points": columnIndex = 3; break;
+					case "time": columnIndex = 4; break;
+					case "amount": columnIndex = 5; break;
+					case "date": columnIndex = 6; break;
+				}
+
+				const isActive = button.classList.contains("active-asc");
+				const order = isActive ? "desc" : "asc";
+
+				// Toggle active class for sorting direction
+				document.querySelectorAll(".sort-btn").forEach(btn => btn.classList.remove("active-asc", "active-desc"));
+				button.classList.add(order === "asc" ? "active-asc" : "active-desc");
+
+				sortTable(columnIndex, order);
+			});
+		});
+	});
+</script>
 
 

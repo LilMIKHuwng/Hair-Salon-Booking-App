@@ -1,5 +1,6 @@
 using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.PaymentModelViews;
+using HairSalon.Services.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
@@ -9,13 +10,15 @@ namespace HairSalon.RazorPage.Pages.Payment
     public class DeleteModel : PageModel
     {
         private readonly IPaymentService _paymentService;
+		private readonly IAppointmentService _appointmentService;
 
-        public DeleteModel(IPaymentService paymentService)
-        {
-            _paymentService = paymentService;
-        }
+		public DeleteModel(IPaymentService paymentService, IAppointmentService appointmentService)
+		{
+			_paymentService = paymentService;
+			_appointmentService = appointmentService;
+		}
 
-        [BindProperty(SupportsGet = true)]
+		[BindProperty(SupportsGet = true)]
         public string Id { get; set; }
 
         public PaymentModelView Payment { get; set; }
@@ -25,6 +28,8 @@ namespace HairSalon.RazorPage.Pages.Payment
 
         [TempData]
         public string ResponseMessage { get; set; }
+
+        public string UserName;
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -63,7 +68,10 @@ namespace HairSalon.RazorPage.Pages.Payment
                 ErrorMessage = "Payment Not Found";
                 return RedirectToPage("/Payment/Index"); // Redirect if Payment is not found
             }
-            return Page();
+			var appointment = await _appointmentService.GetAppointmentByIdAsync(Payment.AppointmentId);
+			UserName = appointment.UserName;
+
+			return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()

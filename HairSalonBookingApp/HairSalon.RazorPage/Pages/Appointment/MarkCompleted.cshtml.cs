@@ -1,4 +1,5 @@
 using HairSalon.Contract.Services.Interface;
+using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalon.ModelViews.AppointmentModelViews;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -9,19 +10,22 @@ namespace HairSalon.RazorPage.Pages.Appointment
     public class MarkCompletedModel : PageModel
     {
         private readonly IAppointmentService _appointmentService;
+		private readonly IAppUserService _appUserService;
 
-        public MarkCompletedModel(IAppointmentService appointmentService)
+		public MarkCompletedModel(IAppointmentService appointmentService, IAppUserService appUserService)
         {
             _appointmentService = appointmentService;
-        }
+			_appUserService = appUserService;
+		}
 
         [BindProperty(SupportsGet = true)]
         public string Id { get; set; }
 
         public AppointmentModelView Appointment { get; set; }
+		public List<AppUserModelView> Stylists { get; set; }
 
-        // Property to store response or success messages
-        [TempData]
+		// Property to store response or success messages
+		[TempData]
         public string ResponseMessage { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
@@ -59,7 +63,8 @@ namespace HairSalon.RazorPage.Pages.Appointment
             }
 
             Appointment = await _appointmentService.GetAppointmentByIdAsync(Id);
-            if (Appointment == null)
+			Stylists = await _appUserService.GetAllStylistAsync();
+			if (Appointment == null)
             {
                 TempData["ErrorMessage"] = "Appointment Not Found";
                 return RedirectToPage("/Appointment/Index"); // Redirect if appointment is not found

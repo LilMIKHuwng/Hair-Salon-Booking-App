@@ -107,12 +107,6 @@ else
 	<form method="post">
 		<input type="hidden" asp-for="Id" />
 
-		<div>
-			<label style="font-weight: bold;">Appointment ID:</label>
-			<p>@Model.Id</p>
-		</div>
-
-
 		<div class="form-group">
 			<label asp-for="UpdateAppointment.StylistId" style="font-weight: bold;">Select Stylist</label>
 			<select asp-for="UpdateAppointment.StylistId">
@@ -134,6 +128,7 @@ else
 					<tr>
 						<th>Select</th>
 						<th>Service Name</th>
+						<th>Image</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -146,6 +141,9 @@ else
 							</td>
 							<td>
 								<label for="service_@service.Id">@service.Name</label>
+							</td>
+							<td>
+								<img src="@service.ServiceImage" alt="Service Image" style="max-width: 100px; height: auto;" />
 							</td>
 						</tr>
 					}
@@ -161,6 +159,7 @@ else
 					<tr>
 						<th>Select</th>
 						<th>Combo Name</th>
+						<th>Image</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -174,6 +173,9 @@ else
 							<td>
 								<label for="combo_@combo.Id">@combo.Name</label>
 							</td>
+							<td>
+								<img src="@combo.ComboImage" alt="Combo Image" style="max-width: 100px; height: auto;" />
+							</td>
 						</tr>
 					}
 				</tbody>
@@ -183,7 +185,11 @@ else
 
 		<div class="form-group">
 			<label asp-for="UpdateAppointment.PointsEarned" style="font-weight: bold;">Points Earned</label>
-			<input asp-for="UpdateAppointment.PointsEarned" type="number" value="@(Model.UpdateAppointment?.PointsEarned ?? Model.Appointment?.PointsEarned ?? 0)" required />
+			<input asp-for="UpdateAppointment.PointsEarned"
+				   type="number"
+				   value="@(Model.UpdateAppointment?.PointsEarned ?? Model.Appointment?.PointsEarned ?? 0)"
+				   min="0"
+				   required />
 			<span asp-validation-for="UpdateAppointment.PointsEarned" class="text-danger"></span>
 		</div>
 
@@ -191,6 +197,21 @@ else
 			<label asp-for="UpdateAppointment.AppointmentDate" style="font-weight: bold;">Appointment Date</label>
 			<input asp-for="UpdateAppointment.AppointmentDate" type="datetime-local" value="@(Model.UpdateAppointment?.AppointmentDate?.ToString("yyyy-MM-ddTHH:mm") ?? Model.Appointment?.AppointmentDate.ToString("yyyy-MM-ddTHH:mm") ?? "")" required />
 			<span asp-validation-for="UpdateAppointment.AppointmentDate" class="text-danger"></span>
+		</div>
+
+		<!-- Promotion Selection -->
+		<div class="form-group">
+			<label asp-for="UpdateAppointment.PromotionId" style="font-weight: bold;">Select Promotion</label>
+			<select asp-for="UpdateAppointment.PromotionId" class="form-control">
+				<option value="">Select Promotion</option>
+				@foreach (var promotion in Model.Promotions)
+				{
+					<option value="@promotion.Id" selected="@(Model.UpdateAppointment?.PromotionId == promotion.Id || Model.Appointment?.PromotionId == promotion.Id ? "selected" : null)">
+						@promotion.Name
+					</option>
+				}
+			</select>
+			<span asp-validation-for="UpdateAppointment.PromotionId" class="text-danger"></span>
 		</div>
 
 		<button type="submit">Save Changes</button>

@@ -3,6 +3,7 @@ using HairSalon.Contract.Services.Interface;
 using HairSalon.ModelViews.ApplicationUserModelViews;
 using HairSalon.ModelViews.AppointmentModelViews;
 using HairSalon.ModelViews.ComboModelViews;
+using HairSalon.ModelViews.PromotionModelViews;
 using HairSalon.ModelViews.ServiceModelViews;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -16,13 +17,15 @@ namespace HairSalon.RazorPage.Pages.Appointment
         private readonly IServiceService _serviceService;
         private readonly IComboService _comboService;
         private readonly IAppUserService _appUserService;
+        private readonly IPromotionService _promotionService;
 
-        public UpdateModel(IAppointmentService appointmentService, IServiceService serviceService, IComboService comboService, IAppUserService appUserService)
+        public UpdateModel(IAppointmentService appointmentService, IServiceService serviceService, IComboService comboService, IAppUserService appUserService, IPromotionService promotionService)
         {
             _appointmentService = appointmentService;
             _serviceService = serviceService;
             _comboService = comboService;
             _appUserService = appUserService;
+            _promotionService = promotionService;
         }
 
         [BindProperty(SupportsGet = true)]
@@ -37,6 +40,7 @@ namespace HairSalon.RazorPage.Pages.Appointment
         public List<AppUserModelView> Stylists { get; set; }
         public List<ComboAppointment> ComboAppointment { get; set; }
         public List<ServiceAppointment> ServiceAppointment { get; set; }
+        public List<PromotionModelView> Promotions { get; set; }
 
         [TempData]
         public string ResponseMessage { get; set; }
@@ -73,8 +77,10 @@ namespace HairSalon.RazorPage.Pages.Appointment
             Services = await _serviceService.GetAllServicesAsync();
             Combos = await _comboService.GetAllComboAsync();
             Stylists = await _appUserService.GetAllStylistAsync();
+            Promotions = await _promotionService.GetAllPromotionAsync();
             ComboAppointment = await _appointmentService.GetAllComboAppointment(Id);
             ServiceAppointment = await _appointmentService.GetAllServiceAppointment(Id);
+
 
             return Page();
         }
@@ -93,8 +99,8 @@ namespace HairSalon.RazorPage.Pages.Appointment
             if (response == "Appointment updated successfully.")
             {
                 ResponseMessage = response;
-                return RedirectToPage("/Appointment/Index");
-            }
+				return RedirectToPage("/Appointment/Detail", new { id = Id });
+			}
             else 
             {
                 TempData["ErrorMessage"] = response;
@@ -102,7 +108,8 @@ namespace HairSalon.RazorPage.Pages.Appointment
                 Services = await _serviceService.GetAllServicesAsync();
                 Combos = await _comboService.GetAllComboAsync();
                 Stylists = await _appUserService.GetAllStylistAsync();
-                ComboAppointment = await _appointmentService.GetAllComboAppointment(Id);
+				Promotions = await _promotionService.GetAllPromotionAsync();
+				ComboAppointment = await _appointmentService.GetAllComboAppointment(Id);
                 ServiceAppointment = await _appointmentService.GetAllServiceAppointment(Id);
             }
 

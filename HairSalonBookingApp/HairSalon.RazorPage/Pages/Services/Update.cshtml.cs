@@ -50,7 +50,7 @@ namespace HairSalon.RazorPage.Pages.Service
 
             var userRoles = JsonConvert.DeserializeObject<List<string>>(userRolesJson);
 
-            if (!userRoles.Any(role => role == "Admin"))
+            if (!userRoles.Any(role => role == "Admin" || role == "Manager"))
             {
                 TempData["DeniedMessage"] = "You do not have permission to update a service.";
                 return Page(); // Redirect to a different page with a denied message
@@ -81,6 +81,7 @@ namespace HairSalon.RazorPage.Pages.Service
             var userId = HttpContext.Session.GetString("UserId");
 
             var response = await _serviceService.UpdateServiceAsync(Id, UpdatedService, userId);
+
             if (response == "Service updated successfully")
             {
                 ResponseMessage = response;
